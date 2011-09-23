@@ -1,6 +1,2 @@
-<<<<<<< HEAD
 .idea/workspace.xml
-
-=======
 out
->>>>>>> adding camera spike. still need to add tests and refactor, but I think it is working
