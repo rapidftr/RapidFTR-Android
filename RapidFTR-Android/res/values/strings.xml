@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RapidFTR-Android</string>
+    <string name="camera_button">Go to camera</string>
+    <string name="take_picture">Take Picture</string>
 </resources>
