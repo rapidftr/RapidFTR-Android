@@ -12,12 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Radu Muresan
- * Date: 9/26/11
- * Time: 2:50 PM
- */
 public class LoginService extends AbstractService {
 
     public HttpResponse login(Context context, String loginUrl, String username, String password) throws IOException {

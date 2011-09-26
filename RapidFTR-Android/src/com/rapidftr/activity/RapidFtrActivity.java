@@ -5,12 +5,6 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Radu Muresan
- * Date: 9/26/11
- * Time: 10:26 AM
- */
 public abstract class RapidFtrActivity extends Activity {
 
     public static final String APP_IDENTIFIER="RapidFTR";

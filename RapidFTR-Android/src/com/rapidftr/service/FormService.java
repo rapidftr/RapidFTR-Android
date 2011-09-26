@@ -5,12 +5,6 @@ import org.apache.http.client.methods.HttpGet;
 
 import java.io.IOException;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Radu Muresan
- * Date: 9/26/11
- * Time: 2:56 PM
- */
 public class FormService extends AbstractService{
 
     public HttpResponse getPublishedFormSections(String url) throws IOException {

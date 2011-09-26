@@ -12,12 +12,6 @@ import org.apache.http.HttpResponse;
 
 import java.io.IOException;
 
-/**
- * Created by IntelliJ IDEA.
- * User: Radu Muresan
- * Date: 9/23/11
- * Time: 1:17 PM
- */
 public class LoginActivity extends RapidFtrActivity {
 
     public static final String DEFAULT_USERNAME = "rapidftr";
