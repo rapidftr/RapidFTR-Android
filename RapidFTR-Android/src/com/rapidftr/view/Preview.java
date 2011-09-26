@@ -87,8 +87,8 @@ public class Preview extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         // Now that the size is known, set up the camera parameters and begin the preview.
         Camera.Parameters parameters = camera.getParameters();
-        parameters.setPreviewSize(w, h);
-        camera.setParameters(parameters);
+//        parameters.setPreviewSize(w, h);
+//        camera.setParameters(parameters);
         camera.startPreview();
     }
 
