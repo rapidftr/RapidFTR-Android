@@ -12,6 +12,10 @@
         </activity>
         <activity android:name=".activity.CameraPreviewActivity"/>
     </application>
+
+    <instrumentation android:targetPackage="com.rapidftr"
+                   android:name="com.google.android.testing.nativedriver.server.ServerInstrumentation" />
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
