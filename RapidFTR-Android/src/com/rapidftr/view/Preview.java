@@ -1,4 +1,4 @@
-package com.rapidftr;
+package com.rapidftr.view;
 
 import android.content.Context;
 import android.graphics.Canvas;

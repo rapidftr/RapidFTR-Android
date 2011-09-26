@@ -1,4 +1,4 @@
-package com.rapidftr;
+package com.rapidftr.activity;
 
 import android.app.Activity;
 import android.hardware.Camera;
@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.*;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import com.rapidftr.R;
+import com.rapidftr.view.Preview;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

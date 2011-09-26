@@ -8,7 +8,6 @@ import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.rapidftr.CameraPreviewActivity;
 import com.rapidftr.R;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
