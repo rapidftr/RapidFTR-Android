@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jvnet.hudson.plugins.thinbackup.ThinBackupPluginImpl>
+  <fullBackupSchedule></fullBackupSchedule>
+  <diffBackupSchedule></diffBackupSchedule>
+  <backupPath>/home/sikuli/Jenkins/jenkins-backup</backupPath>
+  <nrMaxStoredFull></nrMaxStoredFull>
+  <cleanupDiff>false</cleanupDiff>
+  <moveOldBackupsToZipFile>false</moveOldBackupsToZipFile>
+  <backupBuildResults>false</backupBuildResults>
+  <excludedFilesRegex></excludedFilesRegex>
+</org.jvnet.hudson.plugins.thinbackup.ThinBackupPluginImpl>

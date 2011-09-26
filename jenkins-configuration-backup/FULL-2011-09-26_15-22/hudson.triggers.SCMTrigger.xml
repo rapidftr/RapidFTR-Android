@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.triggers.SCMTrigger_-DescriptorImpl>
+  <helpRedirect/>
+  <synchronousPolling>false</synchronousPolling>
+  <maximumThreads>0</maximumThreads>
+</hudson.triggers.SCMTrigger_-DescriptorImpl>
