@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class LoginTest {
   private AndroidNativeDriver driver;
@@ -37,7 +39,9 @@ public class LoginTest {
     driver.findElement(By.id("username")).sendKeys("rapidftr");
     driver.findElement(By.id("password")).click();
     driver.findElement(By.id("password")).sendKeys("rapidftr");
-    driver.findElement(By.id("login_button2")).click();
+    driver.findElement(By.id("login_button")).click();
+
+    assertEquals("Result", "Login", driver.findElement(By.id("login_button")).getText());
   }
 
 
