@@ -21,7 +21,7 @@ public class Preview extends SurfaceView implements SurfaceHolder.Callback {
     SurfaceHolder mHolder;
     private Camera camera;
 
-    Preview(Context context) {
+    public Preview(Context context) {
         super(context);
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
