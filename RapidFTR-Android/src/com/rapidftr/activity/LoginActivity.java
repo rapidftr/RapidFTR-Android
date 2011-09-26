@@ -1,8 +1,10 @@
 package com.rapidftr.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -70,8 +72,9 @@ public class LoginActivity extends Activity {
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
         nameValuePairs.add(new BasicNameValuePair("user_name", username));
         nameValuePairs.add(new BasicNameValuePair("password", password));
-        nameValuePairs.add(new BasicNameValuePair("imei", "123456"));
-        nameValuePairs.add(new BasicNameValuePair("mobile_number", "155512345678"));
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        nameValuePairs.add(new BasicNameValuePair("imei", telephonyManager.getDeviceId()));
+        nameValuePairs.add(new BasicNameValuePair("mobile_number", telephonyManager.getLine1Number()));
         post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
         HttpResponse response = httpClient.execute(post);
         String message = response.getStatusLine().getStatusCode() == 201
