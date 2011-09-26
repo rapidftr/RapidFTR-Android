@@ -11,11 +11,15 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +75,16 @@ public class LoginActivity extends RapidFtrActivity {
         String message = response.getStatusLine().getStatusCode() == 201
                 ? "Login Successful" : "Login Failed: " + response.getStatusLine().toString();
         displayMessage(message);
+
+        HttpGet get = new HttpGet("http://" + loginUrl + "/published_form_sections");
+        get.addHeader("Accept", "application/json");
+        HttpResponse formSectionsResponse = httpClient.execute(get);
+        InputStream content = formSectionsResponse.getEntity().getContent();
+        BufferedReader br = new BufferedReader(new InputStreamReader(content));
+        String line;
+        while ((line = br.readLine()) != null) {
+            loge("LINE:" + line);
+        }
     }
 
     private void displayMessage(String message) {
