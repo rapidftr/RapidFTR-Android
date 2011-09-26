@@ -33,7 +33,11 @@ public class LoginTest {
   @Test
   public void shouldLogIn() {
     startActivity();
-    driver.findElement(By.id("login_button")).click();
+    driver.findElement(By.id("username")).click();
+    driver.findElement(By.id("username")).sendKeys("rapidftr");
+    driver.findElement(By.id("password")).click();
+    driver.findElement(By.id("password")).sendKeys("rapidftr");
+    driver.findElement(By.id("login_button2")).click();
   }
 
 
