@@ -1,27 +1,16 @@
 package com.rapidftr.activity;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.rapidftr.R;
+import com.rapidftr.service.FormService;
+import com.rapidftr.service.LoginService;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -60,32 +49,18 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     //TODO move this out to a service layer
-    private void login(String loginUrl, String username, String password) throws IOException {
-        HttpClient httpClient = new DefaultHttpClient();
-        HttpPost post = new HttpPost("http://" + loginUrl + "/sessions");
-        post.addHeader("Accept", "application/json");
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-        nameValuePairs.add(new BasicNameValuePair("user_name", username));
-        nameValuePairs.add(new BasicNameValuePair("password", password));
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        nameValuePairs.add(new BasicNameValuePair("imei", telephonyManager.getDeviceId()));
-        nameValuePairs.add(new BasicNameValuePair("mobile_number", telephonyManager.getLine1Number()));
-        post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-        HttpResponse response = httpClient.execute(post);
+    private void login(String url, String username, String password) throws IOException {
+        HttpResponse response = new LoginService().login(this, url, username, password);
         String message = response.getStatusLine().getStatusCode() == 201
                 ? "Login Successful" : "Login Failed: " + response.getStatusLine().toString();
         displayMessage(message);
 
-        HttpGet get = new HttpGet("http://" + loginUrl + "/published_form_sections");
-        get.addHeader("Accept", "application/json");
-        HttpResponse formSectionsResponse = httpClient.execute(get);
-        InputStream content = formSectionsResponse.getEntity().getContent();
-        BufferedReader br = new BufferedReader(new InputStreamReader(content));
-        String line;
-        while ((line = br.readLine()) != null) {
-            loge("LINE:" + line);
-        }
+        HttpResponse formSectionsResponse = new FormService().getPublishedFormSections(url);
+
+        String body = IOUtils.toString(formSectionsResponse.getEntity().getContent());
+        loge(body);
     }
+
 
     private void displayMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
