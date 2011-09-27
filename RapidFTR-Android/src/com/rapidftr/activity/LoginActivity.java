@@ -45,7 +45,7 @@ public class LoginActivity extends RapidFtrActivity {
 
     private void updateBaseUrl() {
         String baseUrl = getEditText(R.id.base_url);
-        if (!"".equals(baseUrl)){
+        if (!"".equals(baseUrl)) {
             Config.setBaseUrl(baseUrl);
         }
     }
@@ -54,14 +54,14 @@ public class LoginActivity extends RapidFtrActivity {
         HttpResponse response = new LoginService().login(this, username, password);
         boolean success = response.getStatusLine().getStatusCode() == 201;
         displayMessage(success ? "Login Successful" : "Login Failed: " + response.getStatusLine().toString());
-        if (success){
+        if (success) {
             getFormSectionBody();
             goToHomeScreen();
         }
     }
 
     private void goToHomeScreen() {
-        startActivity(new Intent(this, HomeScreenActivity.class));
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     private void getFormSectionBody() throws IOException {

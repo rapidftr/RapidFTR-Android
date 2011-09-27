@@ -2,4 +2,11 @@
     <string name="app_name">RapidFTR-Android</string>
     <string name="camera_button">Go to camera</string>
     <string name="take_picture">Take Picture</string>
+
+    <string name="log_in">Log In</string>
+    <string name="register_child">Register Child</string>
+    <string name="view_all_children">View All Children</string>
+    <string name="search_for_a_child">Search for a Child</string>
+    <string name="synchronize">Synchronize</string>
+
 </resources>

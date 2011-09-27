@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_vertical"
+              android:orientation="vertical">
+    <Button android:id="@+id/login_button"
+            android:text="@string/log_in"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+    <Button android:text="@string/register_child"
+            android:enabled="false"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+    <Button android:text="@string/view_all_children"
+            android:enabled="false"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+    <Button android:text="@string/search_for_a_child"
+            android:enabled="false"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+    <Button android:text="@string/synchronize"
+            android:enabled="false"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+</LinearLayout>

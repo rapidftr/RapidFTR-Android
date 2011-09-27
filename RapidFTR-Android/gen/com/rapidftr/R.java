@@ -27,10 +27,16 @@ public final class R {
         public static final int camera=0x7f030000;
         public static final int home=0x7f030001;
         public static final int login=0x7f030002;
+        public static final int main=0x7f030003;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
         public static final int camera_button=0x7f040001;
+        public static final int log_in=0x7f040003;
+        public static final int register_child=0x7f040004;
+        public static final int search_for_a_child=0x7f040006;
+        public static final int synchronize=0x7f040007;
         public static final int take_picture=0x7f040002;
+        public static final int view_all_children=0x7f040005;
     }
 }
