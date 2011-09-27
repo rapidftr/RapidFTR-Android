@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import static org.junit.Assert.assertEquals;
 
 public class LoginTest {
   private AndroidNativeDriver driver;
@@ -32,11 +33,16 @@ public class LoginTest {
     driver.startActivity("com.rapidftr.activity.LoginActivity");
   }
 
-  @Test
+   @Test
   public void shouldLogIn() {
     startActivity();
+    driver.findElement(By.id("username")).click();
+    driver.findElement(By.id("username")).sendKeys("rapidftr");
+    driver.findElement(By.id("password")).click();
+    driver.findElement(By.id("password")).sendKeys("rapidftr");
     driver.findElement(By.id("login_button")).click();
 
+    assertEquals( "Login", driver.findElement(By.id("login_button")).getText());
   }
 
   @Test
@@ -51,8 +57,8 @@ public class LoginTest {
     @Test
     public void enterUrl(){
         startActivity();
-        enterTextByID("login_url", "dev.rapidftr.com:3000");
-        Assert.assertTrue(driver.findElement(By.id("login_url")).getText().equalsIgnoreCase("dev.rapidftr.com:3000")) ;
+        enterTextByID("base_url", "dev.rapidftr.com:3000");
+        Assert.assertTrue(driver.findElement(By.id("base_url")).getText().equalsIgnoreCase("dev.rapidftr.com:3000")) ;
 
     }
 
@@ -98,7 +104,7 @@ public class LoginTest {
            Assert.assertTrue(driver.findElement(By.id("username")).getText().equalsIgnoreCase("HELLO WORLD"));
              enterTextByID("password", "rapiftr");
            Assert.assertTrue(driver.findElement(By.id("password")).getText().equals("rapidftr"));
-          enterTextByID("login_url", "www.google.com");
+          enterTextByID("base_url", "www.google.com");
         Assert.assertTrue(driver.findElement(By.id("password")).getText().equalsIgnoreCase("google.com")) ;
 
            driver.findElement(By.id("login_button")).click();
@@ -109,25 +115,8 @@ public class LoginTest {
     private void enterTextByID(String id, String text) {
            driver.findElement(By.id(id)).click();
            driver.findElement(By.id(id)).sendKeys(text);
-       }
+    }
 
 
 }
 
-/**
-
-Test
-  public void shouldLogIn() throws InterruptedException{
-    startActivity();
-         Thread.sleep(2000);
-    driver.findElement(By.id("username")).click();
-    driver.findElement(By.id("username")).sendKeys("rapidftr");
-      Thread.sleep(2000);
-    driver.findElement(By.id("password")).click();
-    driver.findElement(By.id("password")).sendKeys("rapidftr");
-    driver.findElement(By.id("login_button")).click();
-
-    assertEquals("Result", "Login", driver.findElement(By.id("login_button")).getText());
-  }
-
-**/
