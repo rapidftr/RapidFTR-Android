@@ -16,7 +16,6 @@ public final class R {
     public static final class id {
         public static final int base_url=0x7f050006;
         public static final int buttonClick=0x7f050002;
-        public static final int camera_button=0x7f050007;
         public static final int layout=0x7f050000;
         public static final int login_button=0x7f050005;
         public static final int password=0x7f050004;

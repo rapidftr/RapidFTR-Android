@@ -40,7 +40,6 @@ public class LoginActivity extends RapidFtrActivity {
                 }
             }
         });
-        startActivityOn(R.id.camera_button, CameraPreviewActivity.class);
     }
 
     private void updateBaseUrl() {
