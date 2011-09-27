@@ -16,6 +16,9 @@ public class LoginTest {
   private static String login_button_id = "login_button";
   private static String base_url_id = "base_url";
 
+  private static String valid_username = "rapidftr";
+  private static String valid_password = "rapidftr";
+
 
   @Before
   public void setUp() {
@@ -40,14 +43,11 @@ public class LoginTest {
 
    @Test
   public void shouldLogIn() {
-       String username = "rapidftr";
-       String password = "rapidftr";
-
        startActivity();
 
-       enterTextByID(username_id, username);
-       enterTextByID(password_id, password);
-       driver.findElement(By.id(login_button_id)).click();
+       enterTextByID(username_id, valid_username);
+       enterTextByID(password_id, valid_password);
+       clickLoginButton();
 
        assertEquals( "Login", driver.findElement(By.id(login_button_id)).getText());
   }
@@ -63,64 +63,80 @@ public class LoginTest {
 
     @Test
     public void enterUrl(){
+        String baseUrl =  "dev.rapidftr.com:3000";
+
         startActivity();
-        enterTextByID(base_url_id, "dev.rapidftr.com:3000");
-        Assert.assertTrue(driver.findElement(By.id(base_url_id)).getText().equalsIgnoreCase("dev.rapidftr.com:3000")) ;
+        clearTextById(base_url_id);
+        enterTextByID(base_url_id, baseUrl);
+        Assert.assertTrue(driver.findElement(By.id(base_url_id)).getText().equalsIgnoreCase(baseUrl)) ;
 
     }
 
 
     @Test
     public void enterUserName(){
+        String username = "HELLO WORLD";
+
         startActivity();
-        enterTextByID(username_id, "HELLO WORLD");
-        Assert.assertTrue(driver.findElement(By.id(username_id)).getText().equalsIgnoreCase("HELLO WORLD"));
+        enterTextByID(username_id, username);
+        Assert.assertTrue(driver.findElement(By.id(username_id)).getText().equalsIgnoreCase(username));
     }
 
     @Test
     public void attemptLoginWithoutPassword(){
-        startActivity();
-        enterTextByID(username_id, "rapiftr");
+        String username = "HELLO WORLD";
 
-        Assert.assertTrue(driver.findElement(By.id(username_id)).getText().equalsIgnoreCase("HELLO WORLD"));
+        startActivity();
+        enterTextByID(username_id, username);
         enterTextByID(password_id, "");
 
         Assert.assertTrue(driver.findElement(By.id(password_id)).getText().equals(""));
-        driver.findElement(By.id(login_button_id)).click();
+        clickLoginButton();
     }
 
     @Test
     public void attemptLoginWithIncorrectPassword(){
+        String password = "INCORRECT PASSWORD";
+
         startActivity();
-        enterTextByID(username_id, "rapiftr");
-        Assert.assertTrue(driver.findElement(By.id(username_id)).getText().equalsIgnoreCase("HELLO WORLD"));
+        enterTextByID(username_id, valid_username);
+        enterTextByID(password_id, password);
 
-        enterTextByID(password_id, "INCORRECT PASSWORD");
-        Assert.assertTrue(driver.findElement(By.id(password_id)).getText().equals("INCORRECT PASSWORD"));
-        driver.findElement(By.id(login_button_id)).click();
-
+        clickLoginButton();
     }
 
 
 
-    @Test
-    public void enterCorrectLoginButBadUrl(){
-        startActivity();
-        enterTextByID(username_id, "rapiftr");
-        Assert.assertTrue(driver.findElement(By.id(username_id)).getText().equalsIgnoreCase("HELLO WORLD"));
-        enterTextByID(password_id, "rapiftr");
-        Assert.assertTrue(driver.findElement(By.id(password_id)).getText().equals("rapidftr"));
-        enterTextByID(base_url_id, "www.google.com");
-        Assert.assertTrue(driver.findElement(By.id(password_id)).getText().equalsIgnoreCase("google.com")) ;
-
-        driver.findElement(By.id(login_button_id)).click();
-
-
-    }
+//    @Test
+//    public void enterCorrectLoginButBadUrl(){
+//        String badUrl = "www.google.com";
+//
+//        startActivity();
+//        enterTextByID(username_id, valid_username);
+//        enterTextByID(password_id, valid_password);
+//
+//        clearTextById(base_url_id);
+//        enterTextByID(base_url_id, badUrl);
+//        Assert.assertTrue(driver.findElement(By.id(base_url_id)).getText().equalsIgnoreCase(badUrl)) ;
+//
+//        clickLoginButton();
+//
+//
+//    }
 
     private void enterTextByID(String id, String text) {
         driver.findElement(By.id(id)).click();
         driver.findElement(By.id(id)).sendKeys(text);
+    }
+
+    private void clickLoginButton()
+    {
+        driver.findElement(By.id(login_button_id)).click();
+    }
+
+    private void clearTextById(String id)
+    {
+        driver.findElement(By.id(id)).clear();
     }
 
 
