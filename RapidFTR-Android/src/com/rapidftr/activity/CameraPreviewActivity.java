@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import com.rapidftr.R;
-import com.rapidftr.view.Preview;
+import com.rapidftr.view.CameraPreview;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,7 +14,7 @@ import java.io.IOException;
 
 
 public class CameraPreviewActivity extends RapidFtrActivity {
-    private Preview preview;
+    private CameraPreview cameraPreview;
     private Button buttonClick;
 
     @Override
@@ -22,13 +22,13 @@ public class CameraPreviewActivity extends RapidFtrActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera);
 
-        preview = new Preview(this);
-        ((FrameLayout) findViewById(R.id.preview)).addView(preview);
+        cameraPreview = new CameraPreview(this);
+        ((FrameLayout) findViewById(R.id.preview)).addView(cameraPreview);
 
         buttonClick = (Button) findViewById(R.id.buttonClick);
         buttonClick.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                preview.getCamera().takePicture(null, null, jpegCallback);
+                cameraPreview.getCamera().takePicture(null, null, jpegCallback);
             }
         });
 
@@ -38,13 +38,13 @@ public class CameraPreviewActivity extends RapidFtrActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        preview.openCamera();
+        cameraPreview.openCamera();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        preview.releaseCamera();
+        cameraPreview.releaseCamera();
     }
 
     Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {

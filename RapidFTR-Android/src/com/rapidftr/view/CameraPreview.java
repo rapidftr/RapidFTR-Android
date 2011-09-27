@@ -15,13 +15,13 @@ import java.io.IOException;
 
 import static android.view.SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS;
 
-public class Preview extends SurfaceView implements SurfaceHolder.Callback {
-    private static final String TAG = "Preview";
+public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+    private static final String TAG = "CameraPreview";
 
     SurfaceHolder mHolder;
     private Camera camera;
 
-    public Preview(Context context) {
+    public CameraPreview(Context context) {
         super(context);
         // Install a SurfaceHolder.Callback so we get notified when the
         // underlying surface is created and destroyed.
@@ -68,7 +68,7 @@ public class Preview extends SurfaceView implements SurfaceHolder.Callback {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Preview.this.invalidate();
+                    CameraPreview.this.invalidate();
                 }
             });
         } catch (IOException e) {
