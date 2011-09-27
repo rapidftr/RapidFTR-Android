@@ -68,7 +68,7 @@ public class LoginActivity extends RapidFtrActivity {
 
     private void getFormSectionBody() throws IOException {
         HttpResponse formSectionsResponse = new FormService().getPublishedFormSections();
-        RapidFtrApplication.setFormSectionsBody(IOUtils.toString(formSectionsResponse.getEntity().getContent()));
+        RapidFtrApplication.setFormSectionsTemplate(IOUtils.toString(formSectionsResponse.getEntity().getContent()));
     }
 
     private String getEditText(int resId) {

@@ -1,17 +1,24 @@
 package com.rapidftr;
 
+import com.rapidftr.forms.ChildDetailsForm;
+import org.codehaus.jackson.map.ObjectMapper;
+
 public class RapidFtrApplication {
 
-    private static String formSectionsBody;
+    private static String formSectionsTemplate;
 
     private static boolean loggedIn;
 
     public static String getFormSectionsBody() {
-        return formSectionsBody;
+        return formSectionsTemplate;
     }
 
-    public static void setFormSectionsBody(String formSectionsBody) {
-        RapidFtrApplication.formSectionsBody = formSectionsBody;
+    public static void setFormSectionsTemplate(String formSectionsTemplate) {
+        RapidFtrApplication.formSectionsTemplate = formSectionsTemplate;
+    }
+
+    public static ChildDetailsForm[] getChildFormSections() throws Exception{
+        return new ObjectMapper().readValue(getFormSectionsBody(), ChildDetailsForm[].class);
     }
 
     public static boolean isLoggedIn() {
