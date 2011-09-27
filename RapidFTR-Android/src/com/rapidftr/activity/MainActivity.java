@@ -10,5 +10,6 @@ public class MainActivity extends RapidFtrActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         startActivityOn(R.id.login_button, LoginActivity.class);
+        startActivityOn(R.id.register_button, RegisterChildActivity.class);
     }
 }

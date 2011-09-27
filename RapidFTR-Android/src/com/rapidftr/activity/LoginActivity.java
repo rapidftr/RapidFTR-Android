@@ -27,6 +27,7 @@ public class LoginActivity extends RapidFtrActivity {
         ((EditText) findViewById(R.id.username)).setHint(DEFAULT_USERNAME);
         ((EditText) findViewById(R.id.password)).setHint(DEFAULT_PASSWORD);
         ((EditText) findViewById(R.id.base_url)).setText(Config.getBaseUrl());
+
         findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 updateBaseUrl();

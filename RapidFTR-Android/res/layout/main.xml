@@ -8,8 +8,9 @@
             android:text="@string/log_in"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
-    <Button android:text="@string/register_child"
-            android:enabled="false"
+    <Button android:id="@+id/register_button"
+            android:text="@string/register_child"
+            android:enabled="true"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
     <Button android:text="@string/view_all_children"
