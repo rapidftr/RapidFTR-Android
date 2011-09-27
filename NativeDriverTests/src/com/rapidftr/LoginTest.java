@@ -61,7 +61,7 @@ public class LoginTest {
     public void enterUserName(){
      startActivity();
      enterTextByID("username", "HELLO WORLD");
-     Assert.assertTrue(driver.findElement(By.id("username")).getText().equalsIgnoreCase("HELLO WORLD"));;
+     Assert.assertTrue(driver.findElement(By.id("username")).getText().equalsIgnoreCase("HELLO WORLD"));
 
 
    }
