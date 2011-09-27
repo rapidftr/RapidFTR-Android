@@ -34,11 +34,11 @@
 
 	<target name ="test" depends="compile" description="Run Android NativeDriver tests after compilation">
 		<mkdir dir="${testOutputDir}"/>
-		<junit printsummary="yes">
+		<junit printsummary="yes" haltonerror="Yes">
 			<classpath>
 				<path refid="nativedriver.classpath"/>
 			</classpath>
-			<batchtest fork="yes" todir="${testOutputDir}">
+			<batchtest fork="no	" todir="${testOutputDir}">
 				<fileset dir="${baseDir}/src" includes="**/**/**/*Test.java"/>
 			</batchtest>
 		</junit>
