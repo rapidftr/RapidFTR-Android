@@ -1,5 +1,6 @@
 package com.rapidftr.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -53,8 +54,14 @@ public class LoginActivity extends RapidFtrActivity {
         HttpResponse response = new LoginService().login(this, username, password);
         boolean success = response.getStatusLine().getStatusCode() == 201;
         displayMessage(success ? "Login Successful" : "Login Failed: " + response.getStatusLine().toString());
-        if (success)
+        if (success){
             getFormSectionBody();
+            goToHomeScreen();
+        }
+    }
+
+    private void goToHomeScreen() {
+        startActivity(new Intent(this, HomeScreenActivity.class));
     }
 
     private void getFormSectionBody() throws IOException {

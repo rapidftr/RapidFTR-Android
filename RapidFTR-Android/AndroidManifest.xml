@@ -11,6 +11,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.CameraPreviewActivity"/>
+        <activity android:name=".activity.HomeScreenActivity"/>
     </application>
 
     <instrumentation android:targetPackage="com.rapidftr"
