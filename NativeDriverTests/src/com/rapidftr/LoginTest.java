@@ -23,7 +23,6 @@ public class LoginTest {
   @Before
   public void setUp() {
         driver = getDriver();
-
   }
 
   @After
@@ -41,8 +40,8 @@ public class LoginTest {
         driver.startActivity("com.rapidftr.activity.LoginActivity");
   }
 
-   @Test
-  public void shouldLogIn() {
+    @Test
+    public void shouldLogIn() {
        startActivity();
 
        enterTextByID(username_id, valid_username);
@@ -50,9 +49,9 @@ public class LoginTest {
        clickLoginButton();
 
        assertEquals( "Login", driver.findElement(By.id(login_button_id)).getText());
-  }
+    }
 
-  @Test
+    @Test
     public void enterUserPassword(){
         String password = "PAZZWERD";
 
@@ -71,7 +70,6 @@ public class LoginTest {
         Assert.assertTrue(driver.findElement(By.id(base_url_id)).getText().equalsIgnoreCase(baseUrl)) ;
 
     }
-
 
     @Test
     public void enterUserName(){
