@@ -49,16 +49,21 @@ public class LoginActivity extends RapidFtrActivity {
         }
     }
 
-
-    //TODO move this out to a service layer
     private void login(String username, String password) throws IOException {
         HttpResponse response = new LoginService().login(this, username, password);
-        String message = response.getStatusLine().getStatusCode() == 201
+        int statusCode = response.getStatusLine().getStatusCode();
+        displayMessage(getStatusMessage(response, statusCode));
+        if (statusCode == 201)
+            getFormSectionBody();
+    }
+
+    private String getStatusMessage(HttpResponse response, int statusCode) {
+        return statusCode == 201
                 ? "Login Successful" : "Login Failed: " + response.getStatusLine().toString();
-        displayMessage(message);
+    }
 
+    private void getFormSectionBody() throws IOException {
         HttpResponse formSectionsResponse = new FormService().getPublishedFormSections();
-
         RapidFtrApplication.setFormSectionsBody(IOUtils.toString(formSectionsResponse.getEntity().getContent()));
     }
 
