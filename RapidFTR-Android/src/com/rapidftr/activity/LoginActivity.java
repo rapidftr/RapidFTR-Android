@@ -53,6 +53,9 @@ public class LoginActivity extends RapidFtrActivity {
     private void login(String username, String password) throws IOException {
         HttpResponse response = new LoginService().login(this, username, password);
         boolean success = response.getStatusLine().getStatusCode() == 201;
+        if(success){
+            RapidFtrApplication.setLoggedIn(true);
+        }
         displayMessage(success ? "Login Successful" : "Login Failed: " + response.getStatusLine().toString());
         if (success) {
             getFormSectionBody();
