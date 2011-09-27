@@ -51,15 +51,10 @@ public class LoginActivity extends RapidFtrActivity {
 
     private void login(String username, String password) throws IOException {
         HttpResponse response = new LoginService().login(this, username, password);
-        int statusCode = response.getStatusLine().getStatusCode();
-        displayMessage(getStatusMessage(response, statusCode));
-        if (statusCode == 201)
+        boolean success = response.getStatusLine().getStatusCode() == 201;
+        displayMessage(success ? "Login Successful" : "Login Failed: " + response.getStatusLine().toString());
+        if (success)
             getFormSectionBody();
-    }
-
-    private String getStatusMessage(HttpResponse response, int statusCode) {
-        return statusCode == 201
-                ? "Login Successful" : "Login Failed: " + response.getStatusLine().toString();
     }
 
     private void getFormSectionBody() throws IOException {
