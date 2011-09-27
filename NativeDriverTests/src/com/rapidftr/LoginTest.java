@@ -11,16 +11,21 @@ import static org.junit.Assert.assertEquals;
 
 public class LoginTest {
   private AndroidNativeDriver driver;
+  private static String username_id = "username";
+  private static String password_id = "password";
+  private static String login_button_id = "login_button";
+  private static String base_url_id = "base_url";
+
 
   @Before
   public void setUp() {
-    driver = getDriver();
+        driver = getDriver();
 
   }
 
   @After
   public void tearDown() {
-    driver.quit();
+        driver.quit();
   }
 
   protected AndroidNativeDriver getDriver() {
@@ -30,68 +35,69 @@ public class LoginTest {
   }
 
   private void startActivity() {
-    driver.startActivity("com.rapidftr.activity.LoginActivity");
+        driver.startActivity("com.rapidftr.activity.LoginActivity");
   }
 
    @Test
   public void shouldLogIn() {
-    startActivity();
-    driver.findElement(By.id("username")).click();
-    driver.findElement(By.id("username")).sendKeys("rapidftr");
-    driver.findElement(By.id("password")).click();
-    driver.findElement(By.id("password")).sendKeys("rapidftr");
-    driver.findElement(By.id("login_button")).click();
+       String username = "rapidftr";
+       String password = "rapidftr";
 
-    assertEquals( "Login", driver.findElement(By.id("login_button")).getText());
+       startActivity();
+
+       enterTextByID(username_id, username);
+       enterTextByID(password_id, password);
+       driver.findElement(By.id(login_button_id)).click();
+
+       assertEquals( "Login", driver.findElement(By.id(login_button_id)).getText());
   }
 
   @Test
     public void enterUserPassword(){
+        String password = "PAZZWERD";
+
         startActivity();
-       // enterTextByID("password", "PAZZWERD");
-       driver.findElement(By.id("password")).click();
-           driver.findElement(By.id("password")).sendKeys("PAZZWERD");
-        Assert.assertTrue(driver.findElement(By.id("password")).getText().equalsIgnoreCase("PAZZWERD")) ;
+        enterTextByID(password_id, password);
+        Assert.assertTrue(driver.findElement(By.id(password_id)).getText().equalsIgnoreCase(password)) ;
     }
 
     @Test
     public void enterUrl(){
         startActivity();
-        enterTextByID("base_url", "dev.rapidftr.com:3000");
-        Assert.assertTrue(driver.findElement(By.id("base_url")).getText().equalsIgnoreCase("dev.rapidftr.com:3000")) ;
+        enterTextByID(base_url_id, "dev.rapidftr.com:3000");
+        Assert.assertTrue(driver.findElement(By.id(base_url_id)).getText().equalsIgnoreCase("dev.rapidftr.com:3000")) ;
 
     }
 
 
     @Test
     public void enterUserName(){
-     startActivity();
-     enterTextByID("username", "HELLO WORLD");
-     Assert.assertTrue(driver.findElement(By.id("username")).getText().equalsIgnoreCase("HELLO WORLD"));
-
-
-   }
+        startActivity();
+        enterTextByID(username_id, "HELLO WORLD");
+        Assert.assertTrue(driver.findElement(By.id(username_id)).getText().equalsIgnoreCase("HELLO WORLD"));
+    }
 
     @Test
     public void attemptLoginWithoutPassword(){
-     startActivity();
-      enterTextByID("username", "rapiftr");
+        startActivity();
+        enterTextByID(username_id, "rapiftr");
 
-     Assert.assertTrue(driver.findElement(By.id("username")).getText().equalsIgnoreCase("HELLO WORLD"));
-        enterTextByID("password", "");
+        Assert.assertTrue(driver.findElement(By.id(username_id)).getText().equalsIgnoreCase("HELLO WORLD"));
+        enterTextByID(password_id, "");
 
-     Assert.assertTrue(driver.findElement(By.id("password")).getText().equals(""));
-     driver.findElement(By.id("login_button")).click();
+        Assert.assertTrue(driver.findElement(By.id(password_id)).getText().equals(""));
+        driver.findElement(By.id(login_button_id)).click();
     }
 
     @Test
     public void attemptLoginWithIncorrectPassword(){
         startActivity();
-     enterTextByID("username", "rapiftr");
-     Assert.assertTrue(driver.findElement(By.id("username")).getText().equalsIgnoreCase("HELLO WORLD"));
-     enterTextByID("password", "INCORRECT PASSWORD");
-     Assert.assertTrue(driver.findElement(By.id("password")).getText().equals("INCORRECT PASSWORD"));
-     driver.findElement(By.id("login_button")).click();
+        enterTextByID(username_id, "rapiftr");
+        Assert.assertTrue(driver.findElement(By.id(username_id)).getText().equalsIgnoreCase("HELLO WORLD"));
+
+        enterTextByID(password_id, "INCORRECT PASSWORD");
+        Assert.assertTrue(driver.findElement(By.id(password_id)).getText().equals("INCORRECT PASSWORD"));
+        driver.findElement(By.id(login_button_id)).click();
 
     }
 
@@ -100,21 +106,21 @@ public class LoginTest {
     @Test
     public void enterCorrectLoginButBadUrl(){
         startActivity();
-             enterTextByID("username", "rapiftr");
-           Assert.assertTrue(driver.findElement(By.id("username")).getText().equalsIgnoreCase("HELLO WORLD"));
-             enterTextByID("password", "rapiftr");
-           Assert.assertTrue(driver.findElement(By.id("password")).getText().equals("rapidftr"));
-          enterTextByID("base_url", "www.google.com");
-        Assert.assertTrue(driver.findElement(By.id("password")).getText().equalsIgnoreCase("google.com")) ;
+        enterTextByID(username_id, "rapiftr");
+        Assert.assertTrue(driver.findElement(By.id(username_id)).getText().equalsIgnoreCase("HELLO WORLD"));
+        enterTextByID(password_id, "rapiftr");
+        Assert.assertTrue(driver.findElement(By.id(password_id)).getText().equals("rapidftr"));
+        enterTextByID(base_url_id, "www.google.com");
+        Assert.assertTrue(driver.findElement(By.id(password_id)).getText().equalsIgnoreCase("google.com")) ;
 
-           driver.findElement(By.id("login_button")).click();
+        driver.findElement(By.id(login_button_id)).click();
 
 
     }
 
     private void enterTextByID(String id, String text) {
-           driver.findElement(By.id(id)).click();
-           driver.findElement(By.id(id)).sendKeys(text);
+        driver.findElement(By.id(id)).click();
+        driver.findElement(By.id(id)).sendKeys(text);
     }
 
 
