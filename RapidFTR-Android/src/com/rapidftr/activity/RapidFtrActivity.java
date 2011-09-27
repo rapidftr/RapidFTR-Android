@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 public abstract class RapidFtrActivity extends Activity {
 
@@ -25,4 +26,7 @@ public abstract class RapidFtrActivity extends Activity {
         Log.d(APP_IDENTIFIER, message);
     }
 
+    protected void toastMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 }

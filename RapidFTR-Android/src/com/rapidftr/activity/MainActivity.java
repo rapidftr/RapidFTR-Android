@@ -30,7 +30,7 @@ public class MainActivity extends RapidFtrActivity {
         if (RapidFtrApplication.isLoggedIn()) {
             loginButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View view) {
-                    Toast.makeText(MainActivity.this, "Log Out not really implemented yet!", Toast.LENGTH_SHORT).show();
+                    toastMessage("Log Out not really implemented yet!");
                     RapidFtrApplication.setLoggedIn(false);
                     updateButtons();
                 }
