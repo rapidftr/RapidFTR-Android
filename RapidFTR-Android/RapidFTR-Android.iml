@@ -33,7 +33,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/commons-io-2.0.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/droid-fu-1.0-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -42,10 +42,10 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/droid-fu-1.0-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/commons-io-2.0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
