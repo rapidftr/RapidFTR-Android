@@ -8,8 +8,8 @@ public abstract class AbstractService {
 
     protected static HttpClient httpClient = new DefaultHttpClient();
 
-    protected String getBaseUrl(){
-        if (!Config.getBaseUrl().startsWith("http://"))
+    protected String getBaseUrl() {
+        if (!Config.getBaseUrl().startsWith("http://") && !Config.getBaseUrl().startsWith("https://"))
             return "http://" + Config.getBaseUrl();
         return Config.getBaseUrl();
     }
