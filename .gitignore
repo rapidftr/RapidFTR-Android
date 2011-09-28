@@ -3,3 +3,4 @@ out
 RapidFTR-Android/local.properties
 RapidFTR-Android/bin
 NativeDriverTests/.DS_Store
+RapidFTR-Android/libs/server-standalone.jar

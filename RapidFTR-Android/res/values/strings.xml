@@ -13,4 +13,7 @@
     <string name="password">Password</string>
     <string name="url">URL</string>
 
+    <string name="loading_title"/>
+    <string name="loading_message">Loading...</string>
+
 </resources>

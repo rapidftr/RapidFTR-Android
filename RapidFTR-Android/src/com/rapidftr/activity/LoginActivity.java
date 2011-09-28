@@ -1,9 +1,11 @@
 package com.rapidftr.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import com.github.droidfu.concurrent.BetterAsyncTask;
 import com.rapidftr.Config;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -50,16 +52,7 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     private void login(String username, String password) throws IOException {
-        HttpResponse response = new LoginService().login(this, username, password);
-        boolean success = response.getStatusLine().getStatusCode() == 201;
-        if(success){
-            RapidFtrApplication.setLoggedIn(true);
-        }
-        toastMessage(success ? "Login Successful" : "Login Failed: " + response.getStatusLine().toString());
-        if (success) {
-            getFormSectionBody();
-            goToHomeScreen();
-        }
+        new LoginAsyncTask(this).execute(username, password);
     }
 
     private void goToHomeScreen() {
@@ -73,6 +66,41 @@ public class LoginActivity extends RapidFtrActivity {
 
     private String getEditText(int resId) {
         return ((EditText) findViewById(resId)).getText().toString().trim();
+    }
+
+    private class LoginAsyncTask extends BetterAsyncTask<String, Void, HttpResponse> {
+
+        public LoginAsyncTask(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected HttpResponse doCheckedInBackground(Context context, String... params) throws Exception {
+            return new LoginService().login(context, params[0], params[1]);
+        }
+
+        @Override
+        protected void handleError(Context context, Exception error) {
+            //TODO implement me, figure out exception handling
+        }
+
+        @Override
+        protected void after(Context context, HttpResponse response) {
+            boolean success = response.getStatusLine().getStatusCode() == 201;
+            if (success) {
+                RapidFtrApplication.setLoggedIn(true);
+            }
+            toastMessage(success ? "Login Successful" : "Login Failed: " + response.getStatusLine().toString());
+            if (success) {
+                try {
+                    getFormSectionBody();
+                } catch (IOException e) {
+                    //TODO move getFormSectionBody in an async task as well
+                    e.printStackTrace();
+                }
+                goToHomeScreen();
+            }
+        }
     }
 
 }

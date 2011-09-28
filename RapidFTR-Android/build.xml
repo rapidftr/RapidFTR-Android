@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="LoginActivity" default="help">
+<project name="RapidFtr" default="help">
 
-<!-- The local.properties file is created and updated by the 'android'
-     tool.
-     It contains the path to the SDK. It should *NOT* be checked into
-     Version Control Systems. -->
-    <property file="local.properties" />
+    <!-- The local.properties file is created and updated by the 'android'
+ tool.
+ It contains the path to the SDK. It should *NOT* be checked into
+ Version Control Systems. -->
+    <property file="local.properties"/>
 
     <!-- The build.properties file can be created by you and is never touched
          by the 'android' tool. This is the place to change some of the
@@ -24,33 +24,33 @@
          application and should be checked into Version Control Systems.
 
          -->
-    <property file="build.properties" />
+    <property file="build.properties"/>
 
     <!-- The default.properties file is created and updated by the 'android'
          tool, as well as ADT.
          This file is an integral part of the build system for your
          application and should be checked into Version Control Systems. -->
-    <property file="default.properties" />
+    <property file="default.properties"/>
 
 
     <!-- Required pre-setup import -->
-    <import file="${sdk.dir}/tools/ant/pre_setup.xml" />
+    <import file="${sdk.dir}/tools/ant/pre_setup.xml"/>
 
 
-<!-- extension targets. Uncomment the ones where you want to do custom work
-     in between standard targets -->
-<!--
-    <target name="-pre-build">
-    </target>
-    <target name="-pre-compile">
-    </target>
+    <!-- extension targets. Uncomment the ones where you want to do custom work
+in between standard targets -->
+    <!--
+        <target name="-pre-build">
+        </target>
+        <target name="-pre-compile">
+        </target>
 
-    [This is typically used for code obfuscation.
-     Compiled code location: ${out.classes.absolute.dir}
-     If this is not done in place, override ${out.dex.input.absolute.dir}]
-    <target name="-post-compile">
-    </target>
--->
+        [This is typically used for code obfuscation.
+         Compiled code location: ${out.classes.absolute.dir}
+         If this is not done in place, override ${out.dex.input.absolute.dir}]
+        <target name="-post-compile">
+        </target>
+    -->
 
     <!-- Execute the Android Setup task that will setup some properties
          specific to the target, and import the build rules files.
@@ -74,6 +74,14 @@
                below to <setup import="false" />.
              - customize to your needs.
     -->
-    <setup />
+    <setup/>
+
+    <target name="enable_nativedriver">
+        <copy file="native_driver_libs/server-standalone.jar" todir="libs"/>
+    </target>
+
+    <target name="disable_nativedriver">
+        <delete file="libs/server-standalone.jar"/>
+    </target>
 
 </project>

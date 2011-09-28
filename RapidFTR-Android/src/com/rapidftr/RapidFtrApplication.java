@@ -2,8 +2,9 @@ package com.rapidftr;
 
 import com.rapidftr.forms.ChildDetailsForm;
 import org.codehaus.jackson.map.ObjectMapper;
+import com.github.droidfu.DroidFuApplication;
 
-public class RapidFtrApplication {
+public class RapidFtrApplication extends DroidFuApplication {
 
     private static String formSectionsTemplate;
 

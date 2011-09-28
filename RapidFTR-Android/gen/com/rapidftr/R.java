@@ -32,6 +32,8 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f040000;
         public static final int camera_button=0x7f040001;
+        public static final int loading_message=0x7f04000c;
+        public static final int loading_title=0x7f04000b;
         public static final int log_in=0x7f040002;
         public static final int log_out=0x7f040003;
         public static final int password=0x7f040009;
