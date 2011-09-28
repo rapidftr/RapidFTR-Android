@@ -37,7 +37,7 @@ public class RapidFtrApplication extends DroidFuApplication {
         RapidFtrApplication.loggedIn = loggedIn;
     }
 
-    // TODO - this is sample data cleanit up after dev complete.
+    // TODO - this is sample data clean it up after dev complete.
     private static String get_sample_data(){
 
      return "[" +
