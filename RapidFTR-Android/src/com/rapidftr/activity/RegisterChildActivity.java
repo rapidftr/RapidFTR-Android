@@ -2,8 +2,11 @@ package com.rapidftr.activity;
 
 import android.os.Bundle;
 import android.text.AndroidCharacter;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.ChildDetailsForm;
@@ -24,6 +27,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
         setContentView(R.layout.register_child);
         try{
             formSections = RapidFtrApplication.getChildFormSections();
+            setFormSectionSelectionListener();
             populateDropDown(formSections);
             loge(String.valueOf(formSections.size()));
         }
@@ -32,9 +36,28 @@ public class RegisterChildActivity extends RapidFtrActivity {
         }
     }
 
+    private void setFormSectionSelectionListener() {
+        Spinner spinner = ((Spinner) findViewById(R.id.spinner));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> arg0,
+            View arg1, int arg2, long arg3)
+            {
+                Spinner spinner = ((Spinner) findViewById(R.id.spinner));
+                ChildDetailsForm section = (ChildDetailsForm)spinner.getSelectedItem();
+
+            }
+
+            public void onNothingSelected(AdapterView<?> arg0) {}
+        }
+        );
+    }
+
     private void populateDropDown(List<ChildDetailsForm> formSections) {
         ArrayAdapter<ChildDetailsForm> childDetailsFormArrayAdapter = new ArrayAdapter<ChildDetailsForm>(this, android.R.layout.simple_spinner_item, formSections);
-        ((Spinner) findViewById(R.id.spinner)).setAdapter(childDetailsFormArrayAdapter);
+        Spinner spinner = ((Spinner) findViewById(R.id.spinner));
+        spinner.setAdapter(childDetailsFormArrayAdapter);
     }
+
 }
 
