@@ -17,16 +17,17 @@ public final class R {
         public static final int base_url=0x7f050006;
         public static final int buttonClick=0x7f050002;
         public static final int details=0x7f050009;
-        public static final int field_options=0x7f05000b;
-        public static final int label=0x7f05000a;
+        public static final int field_options=0x7f05000c;
+        public static final int label=0x7f05000b;
         public static final int layout=0x7f050000;
         public static final int login_button=0x7f050005;
         public static final int password=0x7f050004;
         public static final int preview=0x7f050001;
         public static final int register_child_button=0x7f050007;
         public static final int spinner=0x7f050008;
+        public static final int submit=0x7f05000a;
         public static final int username=0x7f050003;
-        public static final int value=0x7f05000c;
+        public static final int value=0x7f05000d;
     }
     public static final class layout {
         public static final int audio_upload_box=0x7f030000;
@@ -49,6 +50,7 @@ public final class R {
         public static final int password=0x7f040009;
         public static final int register_child=0x7f040004;
         public static final int search_for_a_child=0x7f040006;
+        public static final int submit=0x7f04000d;
         public static final int synchronize=0x7f040007;
         public static final int url=0x7f04000a;
         public static final int username=0x7f040008;

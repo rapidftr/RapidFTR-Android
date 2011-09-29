@@ -15,5 +15,6 @@
 
     <string name="loading_title"/>
     <string name="loading_message">Loading...</string>
+    <string name="submit">Submit</string>
 
 </resources>
