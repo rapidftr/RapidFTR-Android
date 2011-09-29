@@ -3,9 +3,7 @@ package com.rapidftr.forms;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.widget.*;
 import com.rapidftr.R;
 
 import java.util.Hashtable;
@@ -43,13 +41,17 @@ public class FormSectionViewBuilder {
                                         public View build(FormField field) { return buildTextArea(field);}
                              });
         widgetBuilderHash.put("select_box", new IWidgetBuilder() {
-                                        @Override
-                                        public View build(FormField field) { return buildSelectBox(field);}
-                             });
+            @Override
+            public View build(FormField field) {
+                return buildSelectBox(field);
+            }
+        });
         widgetBuilderHash.put("photo_upload_box", new IWidgetBuilder() {
-                                        @Override
-                                        public View build(FormField field) { return buildPhotoUploadBox(field);}
-                             });
+            @Override
+            public View build(FormField field) {
+                return buildPhotoUploadBox(field);
+            }
+        });
         widgetBuilderHash.put("audio_upload_box", new IWidgetBuilder() {
             @Override
             public View build(FormField field) {
@@ -72,22 +74,39 @@ public class FormSectionViewBuilder {
         return scrollView;
     }
 
+    private View fetchView(int view) {
+        return layoutInflater.inflate(view, null);
+    }
+
+    private void setLabel(View view, String display_name) {
+        ((TextView)view.findViewById(R.id.label)).setText(display_name);
+    }
+
     private View buildTextBox(FormField field){
-        View view = layoutInflater.inflate(R.layout.text_field, null);
-        ((TextView)view.findViewById(R.id.label)).setText(field.getDisplay_name());
+        View view = fetchView(R.layout.text_field);
+        setLabel(view, field.getDisplay_name());
+        ((EditText)view.findViewById(R.id.value)).setText(field.getValue() != null ? field.getValue().toString() : "");
         return view;
     }
+
     private View buildTextArea(FormField field){
-        return layoutInflater.inflate(R.layout.textarea, null);
+        View view = fetchView(R.layout.textarea);
+        setLabel(view, field.getDisplay_name());
+        return view;
     }
     private View buildSelectBox(FormField field){
-        return layoutInflater.inflate(R.layout.select_box, null);
+        View view = fetchView(R.layout.select_box);
+        setLabel(view, field.getDisplay_name());
+        ArrayAdapter<String> optionsAdapter =
+                new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, field.getOption_strings());
+        ((Spinner)view.findViewById(R.id.field_options)).setAdapter(optionsAdapter);
+        return view;
     }
     private View buildPhotoUploadBox(FormField field){
-        return layoutInflater.inflate(R.layout.photo_upload_box, null);
+        return fetchView(R.layout.photo_upload_box);
     }
     private View buildAudioUploadBox(FormField field){
-        return layoutInflater.inflate(R.layout.audio_upload_box, null);
+        return fetchView(R.layout.audio_upload_box);
     }
 
 }

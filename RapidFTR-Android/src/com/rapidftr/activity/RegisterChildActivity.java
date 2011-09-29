@@ -11,14 +11,12 @@ import com.rapidftr.forms.FormSectionViewBuilder;
 import com.rapidftr.view.CameraPreview;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class RegisterChildActivity extends RapidFtrActivity {
 
     private List<ChildDetailsForm> formSections;
+    private Hashtable<String, View> views = new Hashtable<String, View>();
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +33,14 @@ public class RegisterChildActivity extends RapidFtrActivity {
     }
 
     private void displayFormSection(ChildDetailsForm section){
-        ScrollView view = new FormSectionViewBuilder(this).with(section).build();
+        View view;
+        if (views.contains(section.getName()))
+            view = views.get(section.getName());
+        else
+        {
+            view = new FormSectionViewBuilder(this).with(section).build();
+            views.put(section.getName(), view);
+        }
         LinearLayout byId = (LinearLayout) this.findViewById(R.id.details);
         byId.removeAllViews();
         byId.addView(view);
