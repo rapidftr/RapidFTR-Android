@@ -3,8 +3,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
-    <TextView android:text="this is a text field"
-             android:layout_width="fill_parent"
+    <TextView android:id="@+id/label"
+              android:text="sample label"
+             android:layout_width="wrap_content"
              android:layout_height="wrap_content"/>
-
+    <EditText  android:id="@+id/value"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:singleLine="true"
+                android:editable="true"
+                android:layout_weight="6"
+                android:padding="5px"/>
 </LinearLayout>

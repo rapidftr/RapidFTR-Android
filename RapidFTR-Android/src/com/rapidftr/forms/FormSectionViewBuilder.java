@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import com.rapidftr.R;
 
 import java.util.Hashtable;
@@ -33,7 +34,7 @@ public class FormSectionViewBuilder {
 
     private void setupWidgetBuilders() {
         widgetBuilderHash = new Hashtable<String, IWidgetBuilder>();
-        widgetBuilderHash.put("text_box", new IWidgetBuilder() {
+        widgetBuilderHash.put("text_field", new IWidgetBuilder() {
                                         @Override
                                         public View build(FormField field) { return buildTextBox(field);}
                              });
@@ -72,7 +73,9 @@ public class FormSectionViewBuilder {
     }
 
     private View buildTextBox(FormField field){
-        return layoutInflater.inflate(R.layout.text_field, null);
+        View view = layoutInflater.inflate(R.layout.text_field, null);
+        ((TextView)view.findViewById(R.id.label)).setText(field.getDisplay_name());
+        return view;
     }
     private View buildTextArea(FormField field){
         return layoutInflater.inflate(R.layout.textarea, null);
