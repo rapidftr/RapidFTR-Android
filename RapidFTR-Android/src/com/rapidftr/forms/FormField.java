@@ -14,6 +14,15 @@ public class FormField{
     private String display_name;
     private String help_text;
     private ArrayList<String> option_strings;
+    private Object value;
+
+    public Object getValue(){
+        return value;
+    }
+
+    public void setValue(Object value){
+        this.value = value;
+    }
 
     public String getName() {
         return name;
