@@ -24,7 +24,9 @@ public class RapidFtrApplication extends DroidFuApplication {
     }
 
     public static List<ChildDetailsForm> getChildFormSections() throws Exception{
-        List<ChildDetailsForm> formList = Arrays.asList(new ObjectMapper().readValue(get_sample_data(), ChildDetailsForm[].class));
+        // uncomment the below line only for development purpose, the data is hardcoded in the get_sample_data
+        //List<ChildDetailsForm> formList = Arrays.asList(new ObjectMapper().readValue(get_sample_data(), ChildDetailsForm[].class));
+        List<ChildDetailsForm> formList = Arrays.asList(new ObjectMapper().readValue(getFormSectionsBody(), ChildDetailsForm[].class));
         Collections.sort(formList);
         return formList;
     }
@@ -37,7 +39,7 @@ public class RapidFtrApplication extends DroidFuApplication {
         RapidFtrApplication.loggedIn = loggedIn;
     }
 
-    // TODO - this is sample data clean it up after dev complete.
+    // TODO - this is sample data, clean it up after dev complete.
     private static String get_sample_data(){
 
      return "[" +
