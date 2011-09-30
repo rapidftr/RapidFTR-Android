@@ -16,11 +16,11 @@ public class FormSectionViewBuilder {
     private LayoutInflater layoutInflater;
     private LinearLayout linearLayout;
 
-    interface IWidgetBuilder{
+    interface IWidgetBuilder {
         View build(FormField field);
     }
 
-    public FormSectionViewBuilder(Context context){
+    public FormSectionViewBuilder(Context context) {
         this.context = context;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         scrollView = new ScrollView(context);
@@ -33,13 +33,17 @@ public class FormSectionViewBuilder {
     private void setupWidgetBuilders() {
         widgetBuilderHash = new Hashtable<String, IWidgetBuilder>();
         widgetBuilderHash.put("text_field", new IWidgetBuilder() {
-                                        @Override
-                                        public View build(FormField field) { return buildTextBox(field);}
-                             });
+            @Override
+            public View build(FormField field) {
+                return buildTextBox(field);
+            }
+        });
         widgetBuilderHash.put("textarea", new IWidgetBuilder() {
-                                        @Override
-                                        public View build(FormField field) { return buildTextArea(field);}
-                             });
+            @Override
+            public View build(FormField field) {
+                return buildTextArea(field);
+            }
+        });
         widgetBuilderHash.put("select_box", new IWidgetBuilder() {
             @Override
             public View build(FormField field) {
@@ -60,9 +64,9 @@ public class FormSectionViewBuilder {
         });
     }
 
-    public FormSectionViewBuilder with(ChildDetailsForm section){
+    public FormSectionViewBuilder with(ChildDetailsForm section) {
 
-        for (FormField field : section.getFields()){
+        for (FormField field : section.getFields()) {
             IWidgetBuilder builder = widgetBuilderHash.get(field.getType());
             if (builder != null)
                 linearLayout.addView(builder.build(field));
@@ -70,7 +74,7 @@ public class FormSectionViewBuilder {
         return this;
     }
 
-    public ScrollView build(){
+    public ScrollView build() {
         return scrollView;
     }
 
@@ -79,33 +83,36 @@ public class FormSectionViewBuilder {
     }
 
     private void setLabel(View view, String display_name) {
-        ((TextView)view.findViewById(R.id.label)).setText(display_name);
+        ((TextView) view.findViewById(R.id.label)).setText(display_name);
     }
 
-    private View buildTextBox(FormField field){
+    private View buildTextBox(FormField field) {
         View view = fetchView(R.layout.text_field);
         setLabel(view, field.getDisplay_name());
-        ((EditText)view.findViewById(R.id.value)).setText(field.getValue() != null ? field.getValue().toString() : "");
+        ((EditText) view.findViewById(R.id.value)).setText(field.getValue() != null ? field.getValue().toString() : "");
         return view;
     }
 
-    private View buildTextArea(FormField field){
+    private View buildTextArea(FormField field) {
         View view = fetchView(R.layout.textarea);
         setLabel(view, field.getDisplay_name());
         return view;
     }
-    private View buildSelectBox(FormField field){
+
+    private View buildSelectBox(FormField field) {
         View view = fetchView(R.layout.select_box);
         setLabel(view, field.getDisplay_name());
         ArrayAdapter<String> optionsAdapter =
                 new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, field.getOption_strings());
-        ((Spinner)view.findViewById(R.id.field_options)).setAdapter(optionsAdapter);
+        ((Spinner) view.findViewById(R.id.field_options)).setAdapter(optionsAdapter);
         return view;
     }
-    private View buildPhotoUploadBox(FormField field){
+
+    private View buildPhotoUploadBox(FormField field) {
         return fetchView(R.layout.photo_upload_box);
     }
-    private View buildAudioUploadBox(FormField field){
+
+    private View buildAudioUploadBox(FormField field) {
         return fetchView(R.layout.audio_upload_box);
     }
 
