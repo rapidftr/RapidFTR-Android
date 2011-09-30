@@ -3,13 +3,14 @@ package com.rapidftr.forms;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChildDetailsForm implements Comparable{
     private String name;
     private int order;
     private boolean enabled;
-    private ArrayList<FormField> fields = new ArrayList<FormField>();
+    private List<FormField> fields = new ArrayList<FormField>();
 
     public String getName() {
         return name;
@@ -35,7 +36,7 @@ public class ChildDetailsForm implements Comparable{
         this.enabled = enabled;
     }
 
-    public ArrayList<FormField> getFields() {
+    public List<FormField> getFields() {
         return fields;
     }
 
