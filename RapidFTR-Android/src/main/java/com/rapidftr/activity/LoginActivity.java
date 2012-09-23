@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import com.github.droidfu.concurrent.BetterAsyncTask;
-import com.rapidftr.Config;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.FormService;

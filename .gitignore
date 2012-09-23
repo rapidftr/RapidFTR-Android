@@ -7,3 +7,5 @@ RapidFTR-Android/libs/server-standalone.jar
 AndroidTests/local.properties
 *.iml
 .idea/*
+tmp/
+target/
