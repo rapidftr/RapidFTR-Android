@@ -2,7 +2,7 @@ package com.rapidftr;
 
 public class Config {
 
-    private static String baseUrl = "dev.rapidftr.com:3000";
+    private static String baseUrl;
 
     public static String getBaseUrl() {
         return baseUrl;

@@ -14,8 +14,8 @@ import java.util.List;
 
 public class LoginService extends AbstractService {
 
-    public HttpResponse login(Context context, String username, String password) throws IOException {
-        HttpPost post = new HttpPost(getBaseUrl() + "/sessions");
+    public HttpResponse login(Context context, String username, String password, String url) throws IOException {
+        HttpPost post = new HttpPost(getFormattedUrl(url) + "/sessions");
         post.addHeader("Accept", "application/json");
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("user_name", username));

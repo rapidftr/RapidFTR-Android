@@ -27,8 +27,11 @@ public abstract class RapidFtrActivity extends BetterDefaultActivity {
         });
     }
 
-    protected void loge(String message) {
-        Log.e(APP_IDENTIFIER, message);
+    protected void logError(String message) {
+        if(message!=null){
+           Log.e(APP_IDENTIFIER, message);
+        }
+
     }
 
     protected void logd(String message) {

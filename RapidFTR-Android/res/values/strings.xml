@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">RapidFTR-Android</string>
+    <string name="app_name">RapidFTR</string>
     <string name="camera_button">Go to camera</string>
 
     <string name="log_in">Log In</string>
     <string name="log_out">Log Out</string>
+    <string name="change_url">Change URL</string>
     <string name="register_child">Register Child</string>
     <string name="view_all_children">View All Children</string>
     <string name="search_for_a_child">Search for a Child</string>
@@ -16,5 +17,10 @@
     <string name="loading_title"/>
     <string name="loading_message">Loading...</string>
     <string name="submit">Submit</string>
+    <string name="unauthorized">Incorrect username or password</string>
+    <string name="login_successful">Login Successful</string>
+    <string name="invalid_url">Please enter a valid url</string>
+    <string name="server_not_reachable">Unable to connect to the server, please contact your system administrator</string>
+
 
 </resources>

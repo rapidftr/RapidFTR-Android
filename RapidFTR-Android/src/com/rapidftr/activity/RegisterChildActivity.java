@@ -26,7 +26,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
             setFormSectionSelectionListener();
             populateDropDown(RapidFtrApplication.getChildFormSections());
         } catch (Exception ex) {
-            loge(ex.getMessage());
+            logError(ex.getMessage());
         }
     }
 

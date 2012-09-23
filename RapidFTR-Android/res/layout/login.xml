@@ -23,9 +23,16 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
     <TextView android:text="@string/url"
+              android:id="@+id/url_text"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"/>
     <EditText android:id="@+id/base_url"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"/>
+    <Button android:id="@+id/change_url"
+            android:visibility="invisible"
+            android:text="@string/change_url"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+
 </LinearLayout>
