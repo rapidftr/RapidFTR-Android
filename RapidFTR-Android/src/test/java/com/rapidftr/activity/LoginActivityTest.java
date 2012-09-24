@@ -42,13 +42,15 @@ public class LoginActivityTest {
         loginActivity.onCreate(null);
         loginButton = (Button) loginActivity.findViewById(R.id.login_button);
         serverUrl = (EditText) loginActivity.findViewById(R.id.base_url);
+        serverUrl.setText("http://dev.rapidftr.com:3000");
         userName = (EditText) loginActivity.findViewById(R.id.username);
+        userName.setText("rapidftr");
         password = (EditText) loginActivity.findViewById(R.id.password);
+        password.setText("rapidftr");
     }
 
     @Test
     public void shouldThrowUnauthorizedErrorForInvalidUsernameAndPassword() throws IOException {
-        serverUrl.setText("http://dev.rapidftr.com:3000");
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401,"some response body");
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
@@ -66,7 +68,6 @@ public class LoginActivityTest {
 
     @Test
     public void shouldLoginSuccessfullyForValidUserAndUrl() {
-        serverUrl.setText("http://dev.rapidftr.com:3000");
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200,"some response body");
 
         loginButton.performClick();
