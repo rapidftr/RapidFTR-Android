@@ -21,6 +21,6 @@
     <string name="login_successful">Login Successful</string>
     <string name="invalid_url">Please enter a valid url</string>
     <string name="server_not_reachable">Unable to connect to the server, please contact your system administrator</string>
-
+    <string name="RapidFTRLogo">RapidFTR</string>
 
 </resources>

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import com.github.droidfu.concurrent.BetterAsyncTask;
-import com.rapidftr.Config;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.FormService;
@@ -34,8 +33,7 @@ public class LoginActivity extends RapidFtrActivity {
             public void onClick(View view) {
                 String preferencesUrl = getStringFromSharedPreferences("RAPIDFTR_PREFERENCES", "SERVER_URL");
                 toggleView(R.id.base_url, View.VISIBLE);
-                toggleView(R.id.url_text, View.VISIBLE);
-                toggleView(R.id.change_url, View.INVISIBLE);
+                toggleView(R.id.change_url, View.GONE);
                 if(preferencesUrl != null){
                    setEditText(R.id.base_url, preferencesUrl);
                 }
@@ -47,7 +45,9 @@ public class LoginActivity extends RapidFtrActivity {
                 String password = getEditText(R.id.password);
                 String baseUrl = getBaseUrl();
                 try {
-                    login(username, password, baseUrl);
+                    if (isValid(username, password, baseUrl)){
+                        login(username, password, baseUrl);
+                    }
                 } catch (IOException e) {
                     logError(e.getMessage());
                     toastMessage("Login Failed: " + e.getMessage());
@@ -59,10 +59,29 @@ public class LoginActivity extends RapidFtrActivity {
     private void toggleBaseUrl() {
         String preferencesUrl = getStringFromSharedPreferences("RAPIDFTR_PREFERENCES", "SERVER_URL");
         if(preferencesUrl != null && !preferencesUrl.equals("")){
-            toggleView(R.id.base_url, View.INVISIBLE);
-            toggleView(R.id.url_text, View.INVISIBLE);
+            toggleView(R.id.base_url, View.GONE);
             toggleView(R.id.change_url, View.VISIBLE);
         }
+    }
+
+    private boolean isValid(String username, String password, String baseUrl) {
+        boolean isValid = true;
+        if (username == null || username.equals("")) {
+            EditText userNameEditText = (EditText) findViewById(R.id.username);
+            userNameEditText.setError("Username is required");
+            isValid = false;
+        }
+        if (password == null || password.equals("")) {
+            EditText passwordEditText = (EditText) findViewById(R.id.password);
+            passwordEditText.setError("Password is required");
+            isValid = false;
+        }
+        if (baseUrl == null || baseUrl.equals("")) {
+            EditText baseUrlEditText = (EditText) findViewById(R.id.base_url);
+            baseUrlEditText.setError("Server Url is required");
+            isValid = false;
+        }
+        return isValid;
     }
 
     private void toggleView(int field, int visibility) {
