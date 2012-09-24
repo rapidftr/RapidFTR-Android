@@ -60,6 +60,12 @@ public class LoginActivity extends RapidFtrActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        // Suppress the BACK key when this activity is running
+        // no-op
+    }
+
     private void toggleBaseUrl() {
         String preferencesUrl = getStringFromSharedPreferences("RAPIDFTR_PREFERENCES", "SERVER_URL");
         if(preferencesUrl != null && !preferencesUrl.equals("")){

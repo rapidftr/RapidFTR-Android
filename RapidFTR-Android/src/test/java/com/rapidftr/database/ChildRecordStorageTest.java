@@ -2,10 +2,12 @@ package com.rapidftr.database;
 
 import android.test.ActivityInstrumentationTestCase2;
 import com.rapidftr.activity.MainActivity;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
 
+@Ignore
 public class ChildRecordStorageTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
     public ChildRecordStorageTest() {
