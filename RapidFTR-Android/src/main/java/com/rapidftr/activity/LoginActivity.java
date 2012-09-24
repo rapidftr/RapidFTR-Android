@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import com.github.droidfu.concurrent.BetterAsyncTask;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.FormService;
@@ -19,6 +20,9 @@ import java.io.IOException;
 import static com.rapidftr.utils.HttpUtils.getToastMessage;
 
 public class LoginActivity extends RapidFtrActivity {
+
+    @Inject
+    LoginService loginService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +132,7 @@ public class LoginActivity extends RapidFtrActivity {
 
         @Override
         protected HttpResponse doCheckedInBackground(Context context, String... params) throws Exception {
-            return new LoginService().login(context, params[0], params[1], params[2]);
+            return loginService.login(context, params[0], params[1], params[2]);
         }
 
         @Override
