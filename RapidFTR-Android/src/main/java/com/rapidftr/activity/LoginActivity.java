@@ -1,12 +1,13 @@
 package com.rapidftr.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import com.github.droidfu.concurrent.BetterAsyncTask;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -23,10 +24,13 @@ public class LoginActivity extends RapidFtrActivity {
 
     @Inject
     LoginService loginService;
+    private ProgressDialog mProgressDialog;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         if(RapidFtrApplication.isLoggedIn()) {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
@@ -111,7 +115,7 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     private void login(String username, String password, String baseUrl) throws IOException {
-        new LoginAsyncTask(this).execute(username, password, baseUrl);
+        new LoginAsyncTask().execute(username, password, baseUrl);
     }
 
     private void goToHomeScreen() {
@@ -130,25 +134,29 @@ public class LoginActivity extends RapidFtrActivity {
     private void setEditText(int resId, String text){
         ((EditText)findViewById(resId)).setText(text);
     }
-    private class LoginAsyncTask extends BetterAsyncTask<String, Void, HttpResponse> {
+    private class LoginAsyncTask extends AsyncTask<String, Void, HttpResponse> {
 
-        public LoginAsyncTask(Context context) {
-            super(context);
+        @Override
+        protected void onPreExecute(){
+            mProgressDialog = new ProgressDialog(context);
+            mProgressDialog.setMessage(getString(R.string.loading_message));
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.show();
         }
 
         @Override
-        protected HttpResponse doCheckedInBackground(Context context, String... params) throws Exception {
-            return loginService.login(context, params[0], params[1], params[2]);
+        protected HttpResponse doInBackground(String... params) {
+            try {
+                return loginService.login(getApplicationContext(), params[0], params[1], params[2]);
+            } catch (IOException error) {
+                logError(error.getMessage());
+                toastMessage(getString(R.string.server_not_reachable));
+            }
+            return null;
         }
 
         @Override
-        protected void handleError(Context context, Exception error) {
-            logError(error.getMessage());
-            toastMessage(getString(R.string.server_not_reachable));
-        }
-
-        @Override
-        protected void after(Context context, HttpResponse response) {
+        protected void onPostExecute(HttpResponse response) {
             int statusCode = response.getStatusLine().getStatusCode();
             boolean success = statusCode == 201;
                 if (success) {
@@ -166,6 +174,7 @@ public class LoginActivity extends RapidFtrActivity {
                 }
                 goToHomeScreen();
             }
+            mProgressDialog.dismiss();
             toastMessage(getToastMessage(statusCode, context));
         }
     }

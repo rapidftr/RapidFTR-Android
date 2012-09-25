@@ -59,7 +59,7 @@ public class LoginActivityTest {
 
     @Test
     public void shouldThrowConnectionRefusedIfServerIsNotAvailable() throws IOException {
-        serverUrl.setText("invalid url");
+        serverUrl.setText("http://rapidftr.com");
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(404,"some response body");
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
