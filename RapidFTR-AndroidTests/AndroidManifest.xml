@@ -3,10 +3,10 @@
           package="com.jayway.test"
           android:versionCode="1"
           android:versionName="1.0">
-    <application  android:label="@string/app_name">
-
-        <uses-library android:name="android.test.runner" />
+    <application android:debuggable="true">
+        <uses-library android:name="android.test.runner"/>
     </application>
+
     <uses-sdk android:minSdkVersion="8" />
-    <instrumentation android:targetPackage="com.rapidftr" android:name="com.rapidftr.test.TestRunner" android:label="All tests"/>
+    <instrumentation android:targetPackage="com.rapidftr" android:name="android.test.InstrumentationTestRunner" android:label="Integration Tests"/>
 </manifest> 

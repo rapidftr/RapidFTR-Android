@@ -3,15 +3,20 @@
     <modelVersion>4.0.0</modelVersion>
 
 
-    <groupId>com.alpha</groupId>
-    <artifactId>rapidftr-test</artifactId>
+    <artifactId>rapidftr-integration-tests</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>apk</packaging>
     <name>RapidFTR Client Integration Test suite Application</name>
     <description>RapidFTR is a mobile app and database system that lets aid workers collect and share information about
         children in emergency situations, so they can be reunited with their families.
     </description>
-    <url>https://github.com/jorgej/RapidFTR/</url>
+    <url>https://github.com/jorgej/RapidFTR---Android</url>
+
+    <parent>
+        <version>1.0</version>
+        <groupId>com.rapidftr</groupId>
+        <artifactId>rapidftr-android-parent</artifactId>
+    </parent>
 
     <properties>
         <robolectric.version>1.1</robolectric.version>
@@ -23,44 +28,14 @@
         <version.name>${version.code} (${environment}) - Built on ${maven.build.timestamp}</version.name>
 
         <environment>dev</environment>
-        <flurry_logging>true</flurry_logging>
     </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>13.0</version>
-        </dependency>
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
             <version>2.2.1</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.jayway.android.robotium</groupId>
-            <artifactId>robotium-solo</artifactId>
-            <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
         </dependency>
 
         <dependency>
@@ -69,6 +44,55 @@
             <version>2.3.1</version>
             <scope>provided</scope>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.hamcrest</groupId>-->
+            <!--<artifactId>hamcrest-core</artifactId>-->
+            <!--<version>1.2</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
+            <!--<dependency>-->
+                <!--<groupId>junit</groupId>-->
+                <!--<artifactId>junit</artifactId>-->
+                <!--<version>4.8.2</version>-->
+                <!--<scope>test</scope>-->
+            <!--</dependency>-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.android.robotium</groupId>
+            <artifactId>robotium-solo</artifactId>
+            <version>3.1</version>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>commons-io</groupId>-->
+            <!--<artifactId>commons-io</artifactId>-->
+            <!--<version>2.4</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.roboguice</groupId>
+            <artifactId>roboguice</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.rapidftr</groupId>
+            <artifactId>rapidftr-android</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <type>apk</type>
+        </dependency>
+        <dependency>
+            <groupId>com.rapidftr</groupId>
+            <artifactId>rapidftr-android</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+            <type>jar</type>
+        </dependency>
+
     </dependencies>
 
     <repositories>
@@ -94,20 +118,6 @@
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
-                <version>3.0.0-alpha-13</version>
-                <configuration>
-                    <sdk>
-                        <!-- platform or api level (api level 4 = platform 1.6)-->
-                        <platform>8</platform>
-                    </sdk>
-                    <dex>
-                        <jvmArguments>
-                            <jvmArgument>-Xms512m</jvmArgument>
-                            <jvmArgument>-Xmx1024m</jvmArgument>
-                        </jvmArguments>
-                    </dex>
-                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                </configuration>
                 <extensions>true</extensions>
             </plugin>
             <plugin>
@@ -119,8 +129,8 @@
     </build>
 
     <scm>
-        <url>git@github.com:jorgej/RapidFTR.git</url>
-        <connection>scm:git:git@github.com:jorgej/RapidFTR.git</connection>
+        <url>git@github.com:jorgej/RapidFTR---Android.git</url>
+        <connection>scm:git:git@github.com:jorgej/RapidFTR---Android.git</connection>
     </scm>
 
 </project>

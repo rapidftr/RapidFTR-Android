@@ -3,8 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
 
-    <groupId>com.alpha</groupId>
-    <artifactId>rapidftr</artifactId>
+    <artifactId>rapidftr-android</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>apk</packaging>
     <name>RapidFTR Client Application</name>
@@ -12,6 +11,12 @@
         children in emergency situations, so they can be reunited with their families.
     </description>
     <url>https://github.com/jorgej/RapidFTR/</url>
+
+    <parent>
+        <version>1.0</version>
+        <groupId>com.rapidftr</groupId>
+        <artifactId>rapidftr-android-parent</artifactId>
+    </parent>
 
     <properties>
         <robolectric.version>1.1</robolectric.version>
@@ -130,7 +135,6 @@
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
-                <version>3.0.0-alpha-13</version>
                 <configuration>
                     <sdk>
                         <!-- platform or api level (api level 4 = platform 1.6)-->
@@ -150,11 +154,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.6</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/Test*.java</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>

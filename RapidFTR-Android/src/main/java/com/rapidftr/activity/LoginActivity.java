@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -150,14 +151,13 @@ public class LoginActivity extends RapidFtrActivity {
                 return loginService.login(getApplicationContext(), params[0], params[1], params[2]);
             } catch (IOException error) {
                 logError(error.getMessage());
-                toastMessage(getString(R.string.server_not_reachable));
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(HttpResponse response) {
-            int statusCode = response.getStatusLine().getStatusCode();
+            int statusCode = response == null ? 404 : response.getStatusLine().getStatusCode();
             boolean success = statusCode == 201;
                 if (success) {
                 RapidFtrApplication.setLoggedIn(true);
