@@ -8,8 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
-import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.FormService;
@@ -23,7 +21,6 @@ import static com.rapidftr.utils.HttpUtils.getToastMessage;
 
 public class LoginActivity extends RapidFtrActivity {
 
-    @Inject
     LoginService loginService;
     private ProgressDialog mProgressDialog;
     private Context context;
@@ -32,6 +29,7 @@ public class LoginActivity extends RapidFtrActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+        loginService = new LoginService();
         if(RapidFtrApplication.isLoggedIn()) {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);

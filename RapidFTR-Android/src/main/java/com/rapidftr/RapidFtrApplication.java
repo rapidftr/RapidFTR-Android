@@ -1,6 +1,6 @@
 package com.rapidftr;
 
-import com.github.droidfu.DroidFuApplication;
+import android.app.Application;
 import com.rapidftr.forms.ChildDetailsForm;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class RapidFtrApplication extends DroidFuApplication {
+public class RapidFtrApplication extends Application {
 
     private static String formSectionsTemplate;
 

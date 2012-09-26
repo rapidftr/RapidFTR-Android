@@ -1,5 +1,5 @@
 /** Automatically generated file. DO NOT MODIFY */
-package com.jayway.test;
+package com.rapidftr.tests;
 
 public final class BuildConfig {
     public final static boolean DEBUG = true;

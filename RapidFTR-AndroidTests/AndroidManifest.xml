@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.jayway.test"
+          package="com.rapidftr.tests"
           android:versionCode="1"
           android:versionName="1.0">
     <application android:debuggable="true">
@@ -8,5 +8,6 @@
     </application>
 
     <uses-sdk android:minSdkVersion="8" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <instrumentation android:targetPackage="com.rapidftr" android:name="android.test.InstrumentationTestRunner" android:label="Integration Tests"/>
 </manifest> 

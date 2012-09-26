@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
-import com.rapidftr.runner.ActivityTestInjector;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowHandler;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
@@ -15,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -29,16 +27,11 @@ public class LoginActivityTest {
     private EditText userName;
     private EditText password;
 
-    @Inject
     private LoginActivity loginActivity;
-
-    private final ActivityTestInjector<LoginActivity> activityTestInjector =
-            new ActivityTestInjector<LoginActivity>(this, LoginActivity.class);
-
 
     @Before
     public void setUp() throws Exception {
-        activityTestInjector.configureActivity();
+        loginActivity = new LoginActivity();
         loginActivity.onCreate(null);
         loginButton = (Button) loginActivity.findViewById(R.id.login_button);
         serverUrl = (EditText) loginActivity.findViewById(R.id.base_url);

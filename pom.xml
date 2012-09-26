@@ -63,6 +63,7 @@
                             </jvmArguments>
                         </dex>
                         <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                        <androidManifestFile>AndroidManifest.xml</androidManifestFile>
                     </configuration>
                 </plugin>
             </plugins>

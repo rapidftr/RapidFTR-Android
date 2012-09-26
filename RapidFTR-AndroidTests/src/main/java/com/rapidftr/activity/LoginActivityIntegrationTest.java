@@ -1,11 +1,13 @@
-package com.rapidftr.activity.test;
+package com.rapidftr.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.widget.EditText;
 import com.jayway.android.robotium.solo.Solo;
-import com.rapidftr.activity.LoginActivity;
+import com.rapidftr.R;
 
 public class LoginActivityIntegrationTest  extends ActivityInstrumentationTestCase2<LoginActivity> {
     private Solo solo;
+
     public LoginActivityIntegrationTest() {
         super(LoginActivity.class);
     }
@@ -23,8 +25,11 @@ public class LoginActivityIntegrationTest  extends ActivityInstrumentationTestCa
     public void testSuccessfulLogin(){
         solo.enterText(0,"rapidftr");
         solo.enterText(1,"rapidftr");
-        solo.enterText(2,"dev.rapidftr.com:3000");
+        EditText baseUrl = (EditText) solo.getCurrentActivity().findViewById(R.id.base_url);
+        if(baseUrl != null){
+           solo.enterText(2,"dev.rapidftr.com:3000");
+        }
         solo.clickOnButton("Log In");
-        assertTrue("Login should be successful", solo.searchText("Login Successful"));
+        assertTrue("Login should be successful", solo.waitForText("Login Successful"));
     }
 }
