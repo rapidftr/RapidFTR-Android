@@ -30,19 +30,19 @@ public class LoginActivity extends RapidFtrActivity {
         super.onCreate(savedInstanceState);
         context = this;
         loginService = new LoginService();
-        if(RapidFtrApplication.isLoggedIn()) {
+        if (RapidFtrApplication.isLoggedIn()) {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
         }
         setContentView(R.layout.login);
         toggleBaseUrl();
-        findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener(){
+        findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 String preferencesUrl = getStringFromSharedPreferences("RAPIDFTR_PREFERENCES", "SERVER_URL");
                 toggleView(R.id.base_url, View.VISIBLE);
                 toggleView(R.id.change_url, View.GONE);
-                if(preferencesUrl != null){
-                   setEditText(R.id.base_url, preferencesUrl);
+                if (preferencesUrl != null) {
+                    setEditText(R.id.base_url, preferencesUrl);
                 }
             }
         });
@@ -52,7 +52,7 @@ public class LoginActivity extends RapidFtrActivity {
                 String password = getEditText(R.id.password);
                 String baseUrl = getBaseUrl();
                 try {
-                    if (isValid(username, password, baseUrl)){
+                    if (isValid(username, password, baseUrl)) {
                         login(username, password, baseUrl);
                     }
                 } catch (IOException e) {
@@ -71,7 +71,7 @@ public class LoginActivity extends RapidFtrActivity {
 
     private void toggleBaseUrl() {
         String preferencesUrl = getStringFromSharedPreferences("RAPIDFTR_PREFERENCES", "SERVER_URL");
-        if(preferencesUrl != null && !preferencesUrl.equals("")){
+        if (preferencesUrl != null && !preferencesUrl.equals("")) {
             toggleView(R.id.base_url, View.GONE);
             toggleView(R.id.change_url, View.VISIBLE);
         }
@@ -130,13 +130,14 @@ public class LoginActivity extends RapidFtrActivity {
         return ((EditText) findViewById(resId)).getText().toString().trim();
     }
 
-    private void setEditText(int resId, String text){
-        ((EditText)findViewById(resId)).setText(text);
+    private void setEditText(int resId, String text) {
+        ((EditText) findViewById(resId)).setText(text);
     }
+
     private class LoginAsyncTask extends AsyncTask<String, Void, HttpResponse> {
 
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             mProgressDialog = new ProgressDialog(context);
             mProgressDialog.setMessage(getString(R.string.loading_message));
             mProgressDialog.setCancelable(false);
@@ -157,12 +158,12 @@ public class LoginActivity extends RapidFtrActivity {
         protected void onPostExecute(HttpResponse response) {
             int statusCode = response == null ? 404 : response.getStatusLine().getStatusCode();
             boolean success = statusCode == 201;
-                if (success) {
+            if (success) {
                 RapidFtrApplication.setLoggedIn(true);
             }
             if (success) {
                 try {
-                    SharedPreferences preferences = getApplication().getSharedPreferences("RAPIDFTR_PREFERENCES",0);
+                    SharedPreferences preferences = getApplication().getSharedPreferences("RAPIDFTR_PREFERENCES", 0);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("SERVER_URL", getBaseUrl());
                     editor.commit();
