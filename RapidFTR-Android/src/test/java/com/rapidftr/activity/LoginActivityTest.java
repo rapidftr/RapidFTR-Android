@@ -44,7 +44,7 @@ public class LoginActivityTest {
 
     @Test
     public void shouldThrowUnauthorizedErrorForInvalidUsernameAndPassword() throws IOException {
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401,"some response body");
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "some response body");
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.unauthorized)));
@@ -53,7 +53,7 @@ public class LoginActivityTest {
     @Test
     public void shouldThrowConnectionRefusedIfServerIsNotAvailable() throws IOException {
         serverUrl.setText("http://rapidftr.com");
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(404,"some response body");
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(404, "some response body");
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.server_not_reachable)));
@@ -61,14 +61,15 @@ public class LoginActivityTest {
 
     @Test
     public void shouldLoginSuccessfullyForValidUserAndUrl() {
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200,"some response body");
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, "some response body");
 
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
     }
+
     @Test
-    public void shouldSaveServerUrlAfterSuccessfulLogin(){
+    public void shouldSaveServerUrlAfterSuccessfulLogin() {
         SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", Context.MODE_PRIVATE);
         sharedPreferences.edit().putString("SERVER_URL", "http://dev.rapidftr.com:3000").commit();
         serverUrl.setText("http://dev.rapidftr.com:3000");
