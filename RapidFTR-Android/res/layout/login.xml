@@ -27,7 +27,7 @@
               android:layout_margin="5dp"/>
 
 
-    <EditText android:id="@+id/base_url"
+    <EditText android:id="@+id/url"
               android:hint="@string/url"
               android:inputType="textUri"
               android:layout_width="fill_parent"

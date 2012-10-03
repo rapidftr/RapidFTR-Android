@@ -20,7 +20,6 @@ public final class R {
         public static final int logo=0x7f020002;
     }
     public static final class id {
-        public static final int base_url=0x7f060005;
         public static final int buttonClick=0x7f060002;
         public static final int change_url=0x7f060007;
         public static final int details=0x7f06000a;
@@ -33,6 +32,7 @@ public final class R {
         public static final int register_child_button=0x7f060008;
         public static final int spinner=0x7f060009;
         public static final int submit=0x7f06000b;
+        public static final int url=0x7f060005;
         public static final int username=0x7f060003;
         public static final int value=0x7f06000e;
     }
@@ -48,25 +48,28 @@ public final class R {
         public static final int textarea=0x7f030008;
     }
     public static final class string {
-        public static final int RapidFTRLogo=0x7f040013;
+        public static final int RapidFTRLogo=0x7f040016;
         public static final int app_name=0x7f040000;
         public static final int camera_button=0x7f040001;
         public static final int change_url=0x7f040004;
-        public static final int invalid_url=0x7f040011;
-        public static final int loading_message=0x7f04000d;
-        public static final int loading_title=0x7f04000c;
+        public static final int invalid_url=0x7f040014;
+        public static final int loading_message=0x7f040010;
+        public static final int loading_title=0x7f04000f;
         public static final int log_in=0x7f040002;
         public static final int log_out=0x7f040003;
-        public static final int login_successful=0x7f040010;
+        public static final int login_successful=0x7f040013;
         public static final int password=0x7f04000a;
+        public static final int password_required=0x7f04000d;
         public static final int register_child=0x7f040005;
         public static final int search_for_a_child=0x7f040007;
-        public static final int server_not_reachable=0x7f040012;
-        public static final int submit=0x7f04000e;
+        public static final int server_not_reachable=0x7f040015;
+        public static final int submit=0x7f040011;
         public static final int synchronize=0x7f040008;
-        public static final int unauthorized=0x7f04000f;
+        public static final int unauthorized=0x7f040012;
         public static final int url=0x7f04000b;
+        public static final int url_required=0x7f04000e;
         public static final int username=0x7f040009;
+        public static final int username_required=0x7f04000c;
         public static final int view_all_children=0x7f040006;
     }
 }
