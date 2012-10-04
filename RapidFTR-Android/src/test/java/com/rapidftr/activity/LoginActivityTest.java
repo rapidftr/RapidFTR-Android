@@ -3,7 +3,6 @@ package com.rapidftr.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
@@ -63,7 +62,7 @@ public class LoginActivityTest {
 
     @Test
     public void shouldLoginSuccessfullyForValidUserAndUrl() {
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, "some response body");
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "some response body");
 
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
@@ -73,11 +72,23 @@ public class LoginActivityTest {
     @Test
     public void shouldSaveServerUrlAfterSuccessfulLogin(){
         SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", Context.MODE_PRIVATE);
-        sharedPreferences.edit().putString("SERVER_URL", "http://dev.rapidftr.com:3000").commit();
+        sharedPreferences.edit().putString("SERVER_URL", "").commit();
+
         serverUrl.setText("http://dev.rapidftr.com:3000");
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, "some response body");
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "some response body");
+
         loginButton.performClick();
-        assertThat(loginActivity.getApplicationContext().getSharedPreferences("RAPIDFTR_PREFERENCES", 0).getString("SERVER_URL", ""), equalTo(serverUrl.getText().toString()));
+        assertThat(sharedPreferences.getString("SERVER_URL", ""), equalTo(serverUrl.getText().toString()));
+    }
+
+    @Test
+    public void shouldRestoreServerUrlOnLoad() {
+        String url = "http://dev.rapidftr.com:3000";
+        SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", Context.MODE_PRIVATE);
+        sharedPreferences.edit().putString("SERVER_URL", "http://dev.rapidftr.com:3000").commit();
+
+        loginActivity.onCreate(null);
+        assertThat(serverUrl.getText().toString(), equalTo(url));
     }
 
     @Test

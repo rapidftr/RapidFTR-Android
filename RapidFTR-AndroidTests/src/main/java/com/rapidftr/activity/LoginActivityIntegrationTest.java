@@ -22,10 +22,11 @@ public class LoginActivityIntegrationTest  extends ActivityInstrumentationTestCa
         solo.finishOpenedActivities();
     }
 
-    public void testSuccessfulLogin(){
+    public void testSuccessfulLogin() {
+
         solo.enterText(0,"rapidftr");
         solo.enterText(1,"rapidftr");
-        EditText baseUrl = (EditText) solo.getCurrentActivity().findViewById(R.id.base_url);
+        EditText baseUrl = (EditText) solo.getCurrentActivity().findViewById(R.id.url);
         if(baseUrl != null){
            solo.enterText(2,"dev.rapidftr.com:3000");
         }

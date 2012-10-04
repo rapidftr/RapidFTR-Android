@@ -15,6 +15,8 @@
 
     <EditText android:id="@+id/username"
               android:hint="@string/username"
+              android:autoText="false"
+              android:inputType="textFilter|textNoSuggestions|textVisiblePassword"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:layout_margin="5dp"/>
@@ -29,7 +31,8 @@
 
     <EditText android:id="@+id/url"
               android:hint="@string/url"
-              android:inputType="textUri"
+              android:inputType="textFilter|textUri|textVisiblePassword|textNoSuggestions"
+              android:autoText="false"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:layout_margin="5dp"/>

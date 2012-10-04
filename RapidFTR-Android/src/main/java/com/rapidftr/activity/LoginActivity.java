@@ -38,12 +38,8 @@ public class LoginActivity extends RapidFtrActivity {
         toggleBaseUrl();
         findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {
-                String preferencesUrl = getStringFromSharedPreferences("RAPIDFTR_PREFERENCES", "SERVER_URL");
                 toggleView(R.id.url, View.VISIBLE);
                 toggleView(R.id.change_url, View.GONE);
-                if(preferencesUrl != null){
-                   setEditText(R.id.url, preferencesUrl);
-                }
             }
         });
         findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
@@ -71,7 +67,8 @@ public class LoginActivity extends RapidFtrActivity {
 
     private void toggleBaseUrl() {
         String preferencesUrl = getStringFromSharedPreferences("RAPIDFTR_PREFERENCES", "SERVER_URL");
-        if(preferencesUrl != null && !preferencesUrl.equals("")){
+        if(preferencesUrl != null && !preferencesUrl.equals("")) {
+            setEditText(R.id.url, preferencesUrl);
             toggleView(R.id.url, View.GONE);
             toggleView(R.id.change_url, View.VISIBLE);
         }
