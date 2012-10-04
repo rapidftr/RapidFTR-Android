@@ -52,10 +52,24 @@
                     <artifactId>android-maven-plugin</artifactId>
                     <version>3.3.0</version>
                     <extensions>true</extensions>
+                    <executions>
+                        <execution>
+                            <id>startEmulator</id>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>emulator-start</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                     <configuration>
                         <sdk>
                             <platform>8</platform>
                         </sdk>
+                        <emulator>
+                            <avd>Androi2.2</avd>
+                            <wait>10000</wait>
+                            <options>-no-skin</options>
+                        </emulator>
                         <dex>
                             <jvmArguments>
                                 <jvmArgument>-Xms512m</jvmArgument>
