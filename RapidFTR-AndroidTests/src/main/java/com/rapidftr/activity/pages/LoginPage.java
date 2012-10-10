@@ -13,8 +13,8 @@ public class LoginPage {
             if (Page.solo.searchText("Change URL") == true ){
                     changeURL();
             }
-            Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById(R.id.base_url),"");
-            Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById(R.id.base_url),url);
+            Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById(R.id.url),"");
+            Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById(R.id.url),url);
         clickLoginButton();
     }
 

@@ -14,3 +14,10 @@ classes/
 target/
 tmp/
 classes/
+.project
+.settings/
+RapidFTR-Android/.classpath
+RapidFTR-Android/.project
+RapidFTR-AndroidTests/.classpath
+RapidFTR-AndroidTests/bin/
+RapidFTR-AndroidTests/bin/
