@@ -18,6 +18,12 @@ public class LoginPage {
         clickLoginButton();
     }
 
+    public static void loginWithStoredURL(String username, String password){
+        Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById((R.id.username)),username);
+        Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById((R.id.password)), password);
+        clickLoginButton();
+    }
+
     public static void logout() {
         System.out.println(Page.solo.searchButton("Log Out"));
         Page.solo.clickOnButton("Log Out");

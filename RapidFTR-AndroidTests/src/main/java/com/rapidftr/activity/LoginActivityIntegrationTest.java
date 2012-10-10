@@ -3,7 +3,7 @@ package com.rapidftr.activity;
 import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.activity.pages.Page;
-import org.junit.Ignore;
+//import org.junit.Ignore;
 
 
 public class LoginActivityIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
@@ -40,24 +40,24 @@ public class LoginActivityIntegrationTest extends ActivityInstrumentationTestCas
         assertTrue("Incorrect Username Or Password", solo.waitForText("Incorrect username or password"));
     }
 
-    @Ignore
-    public void testNoLoginDetailsErrorMessages(){
-          Page.loginPage.login("","","");
-
-    }
-
+//    @Ignore
+//    public void testNoLoginDetailsErrorMessages(){
+//          Page.loginPage.login("","","");
+//
+//    }
+//
     public void testUserCanLoginWithoutURLAfterOneSuccessfulLogin(){
         Page.loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
         solo.waitForText("Login Successful");
         Page.loginPage.logout();
         Page.loginPage.clickLoginButton();
-        Page.loginPage.login(USERNAME,PASSWORD,"");
+        Page.loginPage.loginWithStoredURL(USERNAME,PASSWORD);
         assertTrue("Login should be successful", solo.waitForText("Login Successful"));
     }
 
-
-    @Ignore
-    public void testUserCanChangeUrlAndLoginInAnotherAccount() {
-
-    }
+//
+//    @Ignore
+//    public void testUserCanChangeUrlAndLoginInAnotherAccount() {
+//
+//    }
 }

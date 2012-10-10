@@ -45,12 +45,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -62,11 +56,6 @@
             <artifactId>robotium-solo</artifactId>
             <version>3.1</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>commons-io</groupId>-->
-            <!--<artifactId>commons-io</artifactId>-->
-            <!--<version>2.4</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.roboguice</groupId>
             <artifactId>roboguice</artifactId>
