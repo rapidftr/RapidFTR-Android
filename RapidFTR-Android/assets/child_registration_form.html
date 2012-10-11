@@ -1,0 +1,172 @@
+<html>
+<head>
+    <script type="text/javascript" src="jquery-1.8.2.min.js"></script>
+    <script type="text/javascript">
+
+    </script>
+</head>
+
+<body>
+
+<form id="form" action="">
+    <input id="child_posted_from" name="child[posted_from]" type="hidden" value="Browser"/>
+    <fieldset id="tab_basic_identity" class="basic_identity tab">
+        <div class="form-section-info">
+            <div class="form-section-description">
+                Basic identity information about a separated or unaccompanied child.
+            </div>
+        </div>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_name">Name</label>
+  </span>
+            <input id="child_name" name="child[name]" type="text" />
+
+        </p>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_rc_id_no">RC ID No.</label>
+  </span>
+            <input id="child_rc_id_no" name="child[rc_id_no]" type="text"/>
+
+        </p>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_id_document">Personal ID Document No.</label>
+  </span>
+            <input id="child_id_document" name="child[id_document]" type="text"/>
+
+        </p>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_nick_name">Also Known As (nickname)</label>
+  </span>
+            <input id="child_nick_name" name="child[nick_name]" type="text"/>
+
+        </p>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_dob_or_age">Date of Birth / Age</label>
+  </span>
+            <input id="child_dob_or_age" name="child[dob_or_age]" type="text"/>
+
+        </p>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_birthplace">Birthplace</label>
+  </span>
+            <input id="child_birthplace" name="child[birthplace]" type="text"/>
+
+        </p>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_nationality">Nationality</label>
+  </span>
+            <input id="child_nationality" name="child[nationality]" type="text"/>
+
+        </p>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_ethnicity_or_tribe">Ethnic group / tribe</label>
+  </span>
+            <input id="child_ethnicity_or_tribe" name="child[ethnicity_or_tribe]" type="text"/>
+
+        </p>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_languages">Languages spoken</label>
+  </span>
+            <input id="child_languages" name="child[languages]" type="text"/>
+
+        </p>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_characteristics">Distinguishing Physical Characteristics</label>
+  </span>
+            <textarea id="child_characteristics" name="child[characteristics]"></textarea>
+        </p>
+
+        <p>
+  <span class="tool-tip-label">
+      <label for="child_documents">Documents carried by the child</label>
+  </span>
+            <input id="child_documents" name="child[documents]" type="text"/>
+
+        </p>
+
+        <p>
+            Photos should be no larger than 10mb. Audio files should be no larger than 10mb. The smaller the better.
+        </p>
+
+        <p class="file">
+  <span class="tool-tip-label">
+      <label for="child_photo0">Add Photo</label>
+  </span>
+            <input id="child_photo0" name="child[photo]0" type="file"/>
+        </p>
+
+        <dl class="radioList">
+            <dt><span>Gender</span></dt>
+
+            <dd>
+                <p>
+                    <input id="child_gender_Male" name="child[gender]" type="radio" value="Male"/>
+                    <label for="child_gender_male">Male</label>
+                </p>
+
+                <p>
+                    <input id="child_gender_Female" name="child[gender]" type="radio" value="Female"/>
+                    <label for="child_gender_female">Female</label>
+                </p>
+            </dd>
+        </dl>
+
+        <input id="input" type="submit" name="submit" value="Post It"/>
+
+    </fieldset>
+
+</form>
+
+<div id="result"></div>
+
+<script>
+    $.fn.formToJSON = function () {
+        var objectGraph = {};
+
+        function add(objectGraph, name, value) {
+            if (objectGraph[name] == null) {
+                objectGraph[name] = {};
+            }
+            objectGraph[name] = value;
+        };
+
+        $('#form').find('input, textarea').each(function () {
+            if ($(this).attr('name') != 'submit') {
+                add(objectGraph, $(this).attr('name'), $(this).val());
+            }
+        });
+        return JSON.stringify(objectGraph);
+    };
+
+
+    $(document).ready(function () {
+        $('#input').click(function () {
+            var childData = $("#form").formToJSON();
+           DBInterface.storeRecord(childData);
+        });
+
+    });
+</script>
+</body>
+</html>
+

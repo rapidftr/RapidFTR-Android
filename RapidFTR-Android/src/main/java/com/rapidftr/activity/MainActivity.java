@@ -1,5 +1,6 @@
 package com.rapidftr.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -12,7 +13,15 @@ public class MainActivity extends RapidFtrActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        startActivityOn(R.id.register_child_button, RegisterChildActivity.class);
+
+        Button registerChildButton = (Button) findViewById(R.id.register_child_button);
+        registerChildButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), MyRegisterChildActivity.class));
+            }
+        });
+
     }
 
     @Override
