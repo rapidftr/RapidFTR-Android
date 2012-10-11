@@ -1,6 +1,7 @@
 package com.rapidftr.activity.pages;
 
 
+import android.view.View;
 import android.widget.EditText;
 import com.rapidftr.R;
 
@@ -8,13 +9,14 @@ public class LoginPage {
 
     public static void login(String username, String password, String url) {
 
-        Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById((R.id.username)),username);
+        Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById((R.id.username)), username);
         Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById((R.id.password)), password);
-            if (Page.solo.searchText("Change URL") == true ){
-                    changeURL();
-            }
-            Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById(R.id.url),"");
-            Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById(R.id.url),url);
+        View linkView = Page.solo.getCurrentActivity().findViewById(R.id.change_url);
+        if (View.VISIBLE == linkView.getVisibility()) {
+            changeURL();
+        }
+        Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById(R.id.url), "");
+        Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById(R.id.url), url);
         clickLoginButton();
     }
 

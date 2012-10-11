@@ -109,7 +109,24 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.6</version>
             </plugin>
-       </plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unlock keyguard</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/src/scripts/unlock_keyguard.sh</executable>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
     </build>
 
     <scm>
