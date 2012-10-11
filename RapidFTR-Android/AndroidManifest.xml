@@ -11,7 +11,7 @@
         </activity>
         <activity android:name=".activity.MainActivity"/>
         <activity android:name=".activity.CameraPreviewActivity"/>
-        <activity android:name=".activity.MyRegisterChildActivity"/>
+        <activity android:name=".activity.RegisterChildActivity"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>

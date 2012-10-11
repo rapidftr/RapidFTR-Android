@@ -8,7 +8,7 @@ import android.webkit.WebViewClient;
 import com.rapidftr.R;
 import com.rapidftr.javascript.DatabaseInterface;
 
-public class MyRegisterChildActivity extends Activity {
+public class RegisterChildActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

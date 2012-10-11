@@ -18,7 +18,7 @@ public class MainActivity extends RapidFtrActivity {
         registerChildButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), MyRegisterChildActivity.class));
+                startActivity(new Intent(getApplicationContext(), RegisterChildActivity.class));
             }
         });
 
