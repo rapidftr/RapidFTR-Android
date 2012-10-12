@@ -114,7 +114,6 @@
   </span>
             <input id="child_photo0" name="child[photo]0" type="file"/>
         </p>
-
         <dl class="radioList">
             <dt><span>Gender</span></dt>
 
@@ -150,11 +149,12 @@
             objectGraph[name] = value;
         };
 
-        $('#form').find('input, textarea').each(function () {
-            if ($(this).attr('name') != 'submit') {
+        $('#form').find('input[type="text"]').each(function () {
                 add(objectGraph, $(this).attr('name'), $(this).val());
-            }
         });
+
+
+        add(objectGraph,$('input:radio').attr('name'),$('input:radio:checked').val());
         return JSON.stringify(objectGraph);
     };
 
