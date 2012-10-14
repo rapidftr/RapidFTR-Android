@@ -17,7 +17,4 @@ public class HttpUtils {
         return "";
     }
 
-    public static String getFormattedUrl(String url) {
-        return (!url.startsWith("http://") && !url.startsWith("https://")) ? "http://" + url : url ;
-    }
 }

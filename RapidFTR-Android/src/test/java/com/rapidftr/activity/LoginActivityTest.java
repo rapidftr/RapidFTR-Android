@@ -53,11 +53,17 @@ public class LoginActivityTest {
 
     @Test
     public void shouldThrowConnectionRefusedIfServerIsNotAvailable() throws IOException {
-        serverUrl.setText("http://rapidftr.com");
+        serverUrl.setText("rapidftr.com:abcd");
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(404,"some response body");
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.server_not_reachable)));
+    }
+
+    @Test
+    public void shouldTimeoutLongRunningOperations() throws IOException {
+        // TODO: A Test must be written to ensure long running operations are timed out
+        // Currently this is work in progress, we are evaluating how to go about testing this
     }
 
     @Test

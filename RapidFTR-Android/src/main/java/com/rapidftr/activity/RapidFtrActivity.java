@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 public abstract class RapidFtrActivity extends Activity {
 
+    public static final String SHARED_PREFERENCES_FILE = "RAPIDFTR_PREFERENCES";
+
     public static final String APP_IDENTIFIER = "RapidFTR";
 
     @Override

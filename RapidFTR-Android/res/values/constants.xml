@@ -1,0 +1,3 @@
+<resources>
+    <integer name="http_timeout">15000</integer>
+</resources>

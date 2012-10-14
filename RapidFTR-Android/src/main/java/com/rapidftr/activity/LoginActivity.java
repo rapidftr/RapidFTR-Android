@@ -66,7 +66,7 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     private void toggleBaseUrl() {
-        String preferencesUrl = getStringFromSharedPreferences("RAPIDFTR_PREFERENCES", "SERVER_URL");
+        String preferencesUrl = getStringFromSharedPreferences("SERVER_URL");
         if(preferencesUrl != null && !preferencesUrl.equals("")) {
             setEditText(R.id.url, preferencesUrl);
             toggleView(R.id.url, View.GONE);
@@ -97,8 +97,8 @@ public class LoginActivity extends RapidFtrActivity {
         view.setVisibility(visibility);
     }
 
-    private String getStringFromSharedPreferences(String fileName, String key) {
-        SharedPreferences preferences = getApplication().getSharedPreferences(fileName, 0);
+    private String getStringFromSharedPreferences(String key) {
+        SharedPreferences preferences = getApplication().getSharedPreferences(SHARED_PREFERENCES_FILE, 0);
         return preferences.getString(key, "");
     }
 
@@ -115,7 +115,7 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     private void getFormSectionBody() throws IOException {
-        HttpResponse formSectionsResponse = new FormService().getPublishedFormSections(getBaseUrl());
+        HttpResponse formSectionsResponse = new FormService().getPublishedFormSections(this);
         RapidFtrApplication.setFormSectionsTemplate(IOUtils.toString(formSectionsResponse.getEntity().getContent()));
     }
 
@@ -127,6 +127,7 @@ public class LoginActivity extends RapidFtrActivity {
     private void setEditText(int resId, String text){
         ((EditText)findViewById(resId)).setText(text);
     }
+
     private class LoginAsyncTask extends AsyncTask<String, Void, HttpResponse> {
 
         @Override
@@ -141,20 +142,18 @@ public class LoginActivity extends RapidFtrActivity {
         protected HttpResponse doInBackground(String... params) {
             try {
                 return loginService.login(getApplicationContext(), params[0], params[1], params[2]);
-            } catch (IOException error) {
+            } catch (Exception error) {
                 logError(error.getMessage());
+                return null;
             }
-            return null;
         }
 
         @Override
         protected void onPostExecute(HttpResponse response) {
             int statusCode = response == null ? 404 : response.getStatusLine().getStatusCode();
             boolean success = statusCode == 201;
-                if (success) {
-                RapidFtrApplication.setLoggedIn(true);
-            }
             if (success) {
+                RapidFtrApplication.setLoggedIn(true);
                 try {
                     SharedPreferences preferences = getApplication().getSharedPreferences("RAPIDFTR_PREFERENCES",0);
                     SharedPreferences.Editor editor = preferences.edit();
