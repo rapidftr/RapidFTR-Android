@@ -45,19 +45,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.hamcrest</groupId>-->
-            <!--<artifactId>hamcrest-core</artifactId>-->
-            <!--<version>1.2</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
 
-            <!--<dependency>-->
-                <!--<groupId>junit</groupId>-->
-                <!--<artifactId>junit</artifactId>-->
-                <!--<version>4.8.2</version>-->
-                <!--<scope>test</scope>-->
-            <!--</dependency>-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -68,11 +56,6 @@
             <artifactId>robotium-solo</artifactId>
             <version>3.1</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>commons-io</groupId>-->
-            <!--<artifactId>commons-io</artifactId>-->
-            <!--<version>2.4</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.roboguice</groupId>
             <artifactId>roboguice</artifactId>
@@ -126,7 +109,24 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.6</version>
             </plugin>
-       </plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unlock keyguard</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/src/scripts/unlock_keyguard.sh</executable>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
     </build>
 
     <scm>

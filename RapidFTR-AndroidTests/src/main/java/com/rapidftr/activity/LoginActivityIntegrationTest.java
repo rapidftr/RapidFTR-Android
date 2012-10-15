@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodSession;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.activity.pages.Page;
 import android.content.*;
+import org.junit.Ignore;
 
 
 public class LoginActivityIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
@@ -29,7 +30,9 @@ public class LoginActivityIntegrationTest extends ActivityInstrumentationTestCas
 
     @Override
     public void tearDown() throws Exception {
+
         solo.finishOpenedActivities();
+
     }
 
     public void testIncorrectLoginCredentials(){
@@ -37,10 +40,10 @@ public class LoginActivityIntegrationTest extends ActivityInstrumentationTestCas
         assertTrue("Incorrect Username Or Password", solo.waitForText("Incorrect username or password"));
     }
 
-
+    @Ignore
     public void testNoLoginDetailsErrorMessages(){
           Page.loginPage.login(" "," "," ");
-
+          Page.loginPage.getNoUserNameErrorMessage().equals("Username is required");
 
     }
 

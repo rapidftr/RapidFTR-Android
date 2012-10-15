@@ -66,9 +66,10 @@
                             <platform>8</platform>
                         </sdk>
                         <emulator>
-                            <avd>Androi2.2</avd>
-                            <wait>10000</wait>
-                            <options>-no-skin</options>
+                            <avd>android2.2</avd>
+                            <wait>20000</wait>
+                            <!--<options>-no-skin</options>-->
+                            <options>-no-window</options>
                         </emulator>
                         <dex>
                             <jvmArguments>
