@@ -20,7 +20,7 @@ public class CameraPreviewActivity extends RapidFtrActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.camera);
+        setContentView(R.layout.activity_camera);
 
         cameraPreview = new CameraPreview(this);
         ((FrameLayout) findViewById(R.id.preview)).addView(cameraPreview);

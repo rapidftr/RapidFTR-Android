@@ -11,7 +11,7 @@ public class MainActivity extends RapidFtrActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_main);
         startActivityOn(R.id.register_child_button, RegisterChildActivity.class);
     }
 

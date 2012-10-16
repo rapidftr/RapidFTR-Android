@@ -1,20 +1,35 @@
 package com.rapidftr.forms;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FormField{
-    private String name;
+public class FormField {
+
+    @JsonProperty("id")
+    private String id;
+
     private boolean enabled;
-    private HighlightInfo highlight_information;
+
+    @JsonProperty("highlight_info")
+    private HighlightInfo highlightInfo;
+
     private boolean editable;
+
     private String type;
-    private String display_name;
-    private String help_text;
-    private List<String> option_strings;
+
+    @JsonProperty("display_name")
+    private String displayName;
+
+    @JsonProperty("help_text")
+    private String helpText;
+
+    @JsonProperty("option_strings")
+    private List<String> optionStrings;
+
     private Object value;
 
     public Object getValue(){
@@ -25,12 +40,12 @@ public class FormField{
         this.value = value;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public boolean isEnabled() {
@@ -41,12 +56,12 @@ public class FormField{
         this.enabled = enabled;
     }
 
-    public HighlightInfo getHighlight_information() {
-        return highlight_information;
+    public HighlightInfo getHighlightInfo() {
+        return highlightInfo;
     }
 
-    public void setHighlight_information(HighlightInfo highlight_information) {
-        this.highlight_information = highlight_information;
+    public void setHighlightInfo(HighlightInfo highlightInfo) {
+        this.highlightInfo = highlightInfo;
     }
 
     public boolean isEditable() {
@@ -65,27 +80,27 @@ public class FormField{
         this.type = type;
     }
 
-    public String getDisplay_name() {
-        return display_name;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setDisplay_name(String display_name) {
-        this.display_name = display_name;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
-    public String getHelp_text() {
-        return help_text;
+    public String getHelpText() {
+        return helpText;
     }
 
-    public void setHelp_text(String help_text) {
-        this.help_text = help_text;
+    public void setHelpText(String helpText) {
+        this.helpText = helpText;
     }
 
-    public List<String> getOption_strings() {
-        return option_strings;
+    public List<String> getOptionStrings() {
+        return optionStrings;
     }
 
-    public void setOption_strings(ArrayList<String> option_strings) {
-        this.option_strings = option_strings;
+    public void setOptionStrings(ArrayList<String> optionStrings) {
+        this.optionStrings = optionStrings;
     }
 }
