@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ChildDetailsForm implements Comparable{
+public class FormSection implements Comparable{
+
     private String name;
     private int order;
     private boolean enabled;
@@ -46,11 +47,11 @@ public class ChildDetailsForm implements Comparable{
 
     @Override
     public int compareTo(Object other) {
-        if (!(other instanceof ChildDetailsForm)) {
+        if (!(other instanceof FormSection)) {
             throw new ClassCastException("Invalid object");
         }
 
-        int order = ((ChildDetailsForm)other).getOrder();
+        int order = ((FormSection)other).getOrder();
 
         if(this.getOrder() > order)
             return 1;
