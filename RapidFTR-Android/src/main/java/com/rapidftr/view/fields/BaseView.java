@@ -19,13 +19,11 @@ public abstract class BaseView extends LinearLayout {
         super(context, attrs);
     }
 
-    public FormField getFormField() {
-        return formField;
-    }
-
     public void setFormField(FormField formField) {
+        if (this.formField != null)
+            throw new IllegalArgumentException("Form field already initialized!");
+
         this.formField = formField;
-        this.initializeLabels();
         this.initialize();
     }
 
@@ -37,11 +35,11 @@ public abstract class BaseView extends LinearLayout {
         return (TextView) findViewById(R.id.help_text);
     }
 
-    protected void initializeLabels() {
+    protected void initialize() {
         getLabel().setText(formField.getDisplayName());
         getHelpText().setText(formField.getHelpText());
+        this.setVisibility(formField.isEnabled() ? VISIBLE : GONE);
+        this.setEnabled(formField.isEditable());
     }
-
-    protected abstract void initialize();
 
 }

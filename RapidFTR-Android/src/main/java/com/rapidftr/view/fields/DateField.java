@@ -19,8 +19,4 @@ public class DateField extends BaseView {
         return (DatePicker) findViewById(R.id.value);
     }
 
-    @Override
-    protected void initialize() {
-    }
-
 }

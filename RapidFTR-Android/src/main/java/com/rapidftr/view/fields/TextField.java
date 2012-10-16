@@ -23,6 +23,7 @@ public class TextField extends BaseView {
 
     @Override
     protected void initialize() {
+        super.initialize();
         getTextView().setText(formField.getValue() != null ? formField.getValue().toString() : "");
     }
 

@@ -22,6 +22,7 @@ public class RadioButtons extends BaseView {
     }
 
     protected RadioButton createRadioButton(String option){
+        super.initialize();
         RadioButton radioButton = (RadioButton)LayoutInflater.from(getContext()).inflate(R.layout.form_radio_option, null);
         radioButton.setText(option);
         return radioButton;

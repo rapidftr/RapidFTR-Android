@@ -14,7 +14,7 @@ public class FormField {
 
     private boolean enabled;
 
-    @JsonProperty("highlightInfo")
+    @JsonProperty("highlight_info")
     private HighlightInfo highlightInfo;
 
     private boolean editable;
@@ -28,7 +28,7 @@ public class FormField {
     private String helpText;
 
     @JsonProperty("option_strings")
-    private List<String> OptionStrings;
+    private List<String> optionStrings;
 
     private Object value;
 
@@ -97,10 +97,10 @@ public class FormField {
     }
 
     public List<String> getOptionStrings() {
-        return OptionStrings;
+        return optionStrings;
     }
 
     public void setOptionStrings(ArrayList<String> optionStrings) {
-        this.OptionStrings = optionStrings;
+        this.optionStrings = optionStrings;
     }
 }

@@ -21,7 +21,4 @@ public class TextArea extends BaseView {
         return (EditText) findViewById(R.id.value);
     }
 
-    @Override
-    protected void initialize() {
-    }
 }

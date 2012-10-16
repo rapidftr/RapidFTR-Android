@@ -30,11 +30,10 @@ public class FormSectionView extends ScrollView {
         return (LinearLayout) findViewById(R.id.container);
     }
 
-    public FormSection getFormSection() {
-        return formSection;
-    }
-
     public void setFormSection(FormSection formSection) {
+        if (this.formSection != null)
+            throw new IllegalArgumentException("Form section is already initialized!");
+
         this.formSection = formSection;
         this.initialize();
     }

@@ -16,9 +16,4 @@ public class AudioUploadBox extends BaseView {
         super(context, attrs);
     }
 
-    @Override
-    protected void initialize() {
-        // Nothing to do for now
-    }
-
 }

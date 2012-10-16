@@ -16,8 +16,4 @@ public class PhotoUploadBox extends BaseView {
         super(context, attrs);
     }
 
-    @Override
-    protected void initialize() {
-    }
-
 }
