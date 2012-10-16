@@ -9,8 +9,10 @@ import com.rapidftr.R;
 public class LoginPage {
 
     public static void login(String username, String password, String url) {
-
+        Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById(R.id.username), "");
         Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById((R.id.username)), username);
+
+        Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById(R.id.password), "");
         Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById((R.id.password)), password);
         View linkView = Page.solo.getCurrentActivity().findViewById(R.id.change_url);
         if (View.VISIBLE == linkView.getVisibility()) {
@@ -21,20 +23,6 @@ public class LoginPage {
         clickLoginButton();
     }
 
-//    public static void loginWithStoredURL(String username, String password){
-//        Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById((R.id.username)),username);
-//        Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById((R.id.password)), password);
-//        Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById((R.id.username)),username);
-//        Page.solo.enterText((EditText) Page.solo.getCurrentActivity().findViewById((R.id.password)), password);
-//        View linkView = Page.solo.getCurrentActivity().findViewById(R.id.change_url);
-//            if(View.VISIBLE==linkView.getVisibility())
-//            {
-//                    changeURL();
-//            }
-//        Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById(R.id.url),"");
-//        Page.solo.enterText((EditText)Page.solo.getCurrentActivity().findViewById(R.id.url),url);
-//        clickLoginButton();
-//    }
 
     public static void logout() {
         System.out.println(Page.solo.searchButton("Log Out"));
@@ -56,9 +44,19 @@ public class LoginPage {
 
     }
 
-    public static String getNoUserNameErrorMessage(){
+    public static String getUserNameRequiredMessage(){
         Page.solo.clickOnEditText(0);
-     return (Page.solo.getCurrentActivity().findViewById(R.string.username_required).toString());
+        return ((EditText)Page.solo.getCurrentActivity().findViewById(R.id.username)).getError().toString();
 
+    }
+
+    public static String getPasswordRequiredMEssage(){
+        Page.solo.clickOnEditText(1);
+        return ((EditText)Page.solo.getCurrentActivity().findViewById(R.id.password)).getError().toString();
+    }
+
+    public static String getURLRequiredMessage(){
+        Page.solo.clickOnEditText(2);
+        return ((EditText)Page.solo.getCurrentActivity().findViewById(R.id.url)).getError().toString();
     }
 }
