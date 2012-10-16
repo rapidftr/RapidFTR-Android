@@ -23,7 +23,6 @@ public class CheckBoxes extends BaseView {
 
     @Override
     protected void initialize() {
-        getLabel().setText(formField.getDisplayName());
         for (String option : formField.getOptionStrings())
             getCheckBoxGroup().addView(createCheckBoxFor(option));
     }

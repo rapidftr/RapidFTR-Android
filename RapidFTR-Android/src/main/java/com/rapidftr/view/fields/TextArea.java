@@ -23,6 +23,5 @@ public class TextArea extends BaseView {
 
     @Override
     protected void initialize() {
-        getLabel().setText(formField.getDisplayName());
     }
 }

@@ -21,7 +21,6 @@ public class DateField extends BaseView {
 
     @Override
     protected void initialize() {
-        getLabel().setText(formField.getDisplayName());
     }
 
 }

@@ -25,11 +25,21 @@ public abstract class BaseView extends LinearLayout {
 
     public void setFormField(FormField formField) {
         this.formField = formField;
+        this.initializeLabels();
         this.initialize();
     }
 
     protected TextView getLabel() {
         return ((TextView) findViewById(R.id.label));
+    }
+
+    protected TextView getHelpText() {
+        return (TextView) findViewById(R.id.help_text);
+    }
+
+    protected void initializeLabels() {
+        getLabel().setText(formField.getDisplayName());
+        getHelpText().setText(formField.getHelpText());
     }
 
     protected abstract void initialize();

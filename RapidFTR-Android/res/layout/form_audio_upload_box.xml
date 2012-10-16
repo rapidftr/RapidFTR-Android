@@ -4,8 +4,12 @@
               android:layout_width="fill_parent"
               android:layout_height="wrap_content">
 
+    <include layout="@layout/form_label" />
+
     <TextView android:text="this is a audio upload box"
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"/>
+
+    <include layout="@layout/form_help_text" />
 
 </com.rapidftr.view.fields.AudioUploadBox>

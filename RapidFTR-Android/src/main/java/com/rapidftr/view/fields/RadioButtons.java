@@ -29,7 +29,6 @@ public class RadioButtons extends BaseView {
 
     @Override
     protected void initialize() {
-        getLabel().setText(formField.getDisplayName());
         for(String options : formField.getOptionStrings())
             getRadioGroup().addView(createRadioButton(options));
     }

@@ -24,7 +24,6 @@ public class SelectBox extends BaseView {
 
     @Override
     protected void initialize() {
-        getLabel().setText(formField.getDisplayName());
         ArrayAdapter<String> optionsAdapter =
             new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, formField.getOptionStrings());
         getSpinner().setAdapter(optionsAdapter);

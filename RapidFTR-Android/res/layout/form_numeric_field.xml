@@ -5,9 +5,7 @@
                                     android:layout_width="fill_parent"
                                     android:layout_height="wrap_content">
 
-    <TextView android:id="@+id/label"
-              android:layout_width="fill_parent"
-              android:layout_height="wrap_content"/>
+    <include layout="@layout/form_label" />
 
     <EditText  android:id="@+id/value"
                android:layout_width="fill_parent"
@@ -18,5 +16,7 @@
                android:padding="5px"
                android:inputType="number|numberDecimal"
             />
+
+    <include layout="@layout/form_help_text" />
 
 </com.rapidftr.view.fields.NumericField>
