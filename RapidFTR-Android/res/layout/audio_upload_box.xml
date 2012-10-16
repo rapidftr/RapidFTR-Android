@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.rapidftr.view.fields.AudioUploadBox xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
     <TextView android:text="this is a audio upload box"
              android:layout_width="fill_parent"
              android:layout_height="wrap_content"/>
 
-</LinearLayout>
+</com.rapidftr.view.fields.AudioUploadBox>

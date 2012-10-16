@@ -30,20 +30,22 @@ public final class R {
     }
     public static final class id {
         public static final int buttonClick=0x7f080002;
-        public static final int change_url=0x7f080007;
-        public static final int details=0x7f08000a;
-        public static final int field_options=0x7f08000d;
-        public static final int label=0x7f08000c;
+        public static final int change_url=0x7f080008;
+        public static final int container=0x7f080003;
+        public static final int details=0x7f08000d;
+        public static final int field_options=0x7f08000f;
+        public static final int label=0x7f08000e;
         public static final int layout=0x7f080000;
-        public static final int login_button=0x7f080006;
-        public static final int password=0x7f080004;
+        public static final int login_button=0x7f080007;
+        public static final int password=0x7f080005;
         public static final int preview=0x7f080001;
-        public static final int register_child_button=0x7f080008;
-        public static final int spinner=0x7f080009;
+        public static final int register_child_button=0x7f080009;
+        public static final int spinner=0x7f08000c;
         public static final int submit=0x7f08000b;
-        public static final int url=0x7f080005;
-        public static final int username=0x7f080003;
-        public static final int value=0x7f08000e;
+        public static final int title=0x7f08000a;
+        public static final int url=0x7f080006;
+        public static final int username=0x7f080004;
+        public static final int value=0x7f080010;
     }
     public static final class integer {
         public static final int http_timeout=0x7f040000;
@@ -51,13 +53,14 @@ public final class R {
     public static final class layout {
         public static final int audio_upload_box=0x7f030000;
         public static final int camera=0x7f030001;
-        public static final int login=0x7f030002;
-        public static final int main=0x7f030003;
-        public static final int photo_upload_box=0x7f030004;
-        public static final int register_child=0x7f030005;
-        public static final int select_box=0x7f030006;
-        public static final int text_field=0x7f030007;
-        public static final int textarea=0x7f030008;
+        public static final int form_section=0x7f030002;
+        public static final int login=0x7f030003;
+        public static final int main=0x7f030004;
+        public static final int photo_upload_box=0x7f030005;
+        public static final int register_child=0x7f030006;
+        public static final int select_box=0x7f030007;
+        public static final int text_field=0x7f030008;
+        public static final int textarea=0x7f030009;
     }
     public static final class string {
         public static final int RapidFTRLogo=0x7f050016;

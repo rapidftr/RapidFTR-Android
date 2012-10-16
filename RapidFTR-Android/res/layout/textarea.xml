@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.rapidftr.view.fields.TextArea xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:orientation="vertical"
               android:layout_height="fill_parent">
+
     <TextView android:id="@+id/label"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"/>
@@ -11,7 +12,9 @@
                 android:layout_width="fill_parent"
                 android:layout_weight="6"
                 android:layout_height="wrap_content"
-                android:singleLine="false" android:lines="5"
-                android:layout_marginLeft="10dip" android:layout_marginRight="10dip"
+                android:singleLine="false"
+                android:lines="5"
+                android:gravity="top"
                 />
-</LinearLayout>
+
+</com.rapidftr.view.fields.TextArea>

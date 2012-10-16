@@ -1,7 +1,7 @@
 package com.rapidftr;
 
 import android.app.Application;
-import com.rapidftr.forms.ChildDetailsForm;
+import com.rapidftr.forms.FormSection;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.util.Arrays;
@@ -22,8 +22,8 @@ public class RapidFtrApplication extends Application {
         RapidFtrApplication.formSectionsTemplate = formSectionsTemplate;
     }
 
-    public static List<ChildDetailsForm> getChildFormSections() throws Exception{
-        List<ChildDetailsForm> formList = Arrays.asList(new ObjectMapper().readValue(getFormSectionsBody(), ChildDetailsForm[].class));
+    public static List<FormSection> getChildFormSections() throws Exception{
+        List<FormSection> formList = Arrays.asList(new ObjectMapper().readValue(getFormSectionsBody(), FormSection[].class));
         Collections.sort(formList);
         return formList;
     }
