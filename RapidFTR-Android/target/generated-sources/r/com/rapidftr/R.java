@@ -32,12 +32,12 @@ public final class R {
         public static final int buttonClick=0x7f080002;
         public static final int change_url=0x7f080007;
         public static final int container=0x7f080011;
-        public static final int details=0x7f08000c;
         public static final int field_options=0x7f080012;
         public static final int help_text=0x7f08000f;
         public static final int label=0x7f080010;
         public static final int layout=0x7f080000;
         public static final int login_button=0x7f080006;
+        public static final int pager=0x7f08000c;
         public static final int password=0x7f080004;
         public static final int preview=0x7f080001;
         public static final int register_child_button=0x7f080008;
