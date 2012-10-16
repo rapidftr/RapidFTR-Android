@@ -22,7 +22,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.register_child);
+        setContentView(R.layout.activity_register_child);
         try {
             setFormSectionSelectionListener();
             populateDropDown(RapidFtrApplication.getChildFormSections());

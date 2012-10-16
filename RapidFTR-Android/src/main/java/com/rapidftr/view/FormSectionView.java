@@ -45,7 +45,7 @@ public class FormSectionView extends ScrollView {
     }
 
     protected void addFormField(FormField field) {
-        int resourceId = getResources().getIdentifier(field.getType(), "layout", getContext().getPackageName());
+        int resourceId = getResources().getIdentifier("form_" + field.getType(), "layout", getContext().getPackageName());
         if (resourceId > 0) {
             BaseView fieldView = (BaseView) LayoutInflater.from(getContext()).inflate(resourceId, null);
             fieldView.setFormField(field);

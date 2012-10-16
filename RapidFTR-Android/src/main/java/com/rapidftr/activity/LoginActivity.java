@@ -34,7 +34,7 @@ public class LoginActivity extends RapidFtrActivity {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
         }
-        setContentView(R.layout.login);
+        setContentView(R.layout.activity_login);
         toggleBaseUrl();
         findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener(){
             public void onClick(View view) {

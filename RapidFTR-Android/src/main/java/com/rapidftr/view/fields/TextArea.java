@@ -7,7 +7,7 @@ import com.rapidftr.R;
 
 public class TextArea extends BaseView {
 
-    public static final int LAYOUT_RESOURCE_ID = R.layout.textarea;
+    public static final int LAYOUT_RESOURCE_ID = R.layout.form_textarea;
 
     public TextArea(Context context) {
         super(context);

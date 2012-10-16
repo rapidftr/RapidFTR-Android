@@ -7,7 +7,7 @@ import com.rapidftr.R;
 
 public class TextField extends BaseView {
 
-    public static final int LAYOUT_RESOURCE_ID = R.layout.text_field;
+    public static final int LAYOUT_RESOURCE_ID = R.layout.form_text_field;
 
     public TextField(Context context) {
         super(context);
