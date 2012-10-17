@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.jayway.android.robotium</groupId>
             <artifactId>robotium-solo</artifactId>
-            <version>3.1</version>
+            <version>3.5</version>
         </dependency>
         <dependency>
             <groupId>org.roboguice</groupId>
@@ -133,5 +133,7 @@
         <url>git@github.com:jorgej/RapidFTR---Android.git</url>
         <connection>scm:git:git@github.com:jorgej/RapidFTR---Android.git</connection>
     </scm>
+
+
 
 </project>

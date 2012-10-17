@@ -34,14 +34,18 @@ public class LoginActivityIntegrationTest extends ActivityInstrumentationTestCas
     public void testIncorrectLoginCredentials(){
         Page.loginPage.login("wrongUsername", "wrongPassword", LOGIN_URL);
         assertTrue("Incorrect Username Or Password", solo.waitForText("Incorrect username or password"));
+        Page.loginPage.login(USERNAME,PASSWORD,"http://dev.rapidftr.com:abc");
+        assertTrue(solo.waitForText("Unable to connect to the server, please contact your system administrator"));
     }
 
-//    @Ignore
-//    public void testNoLoginDetailsErrorMessages(){
-//          Page.loginPage.login(" "," "," ");
-//          Page.loginPage.getNoUserNameErrorMessage().equals("Username is required");
-//
-//    }
+
+    public void testNoLoginDetailsErrorMessages(){
+          Page.loginPage.login("","","");
+          Page.loginPage.getUserNameRequiredMessage().equals("Username is required");
+          Page.loginPage.getPasswordRequiredMEssage().equals("Password is required");
+          Page.loginPage.getURLRequiredMessage().equals("Server URL is required");
+
+    }
 
     public void testSuccessfulLogin() {
         Page.loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
@@ -59,6 +63,7 @@ public class LoginActivityIntegrationTest extends ActivityInstrumentationTestCas
          Page.loginPage.changeURL();
          Page.loginPage.getUrl().equals(LOGIN_URL);
     }
+
 
 
 
