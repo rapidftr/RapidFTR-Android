@@ -7,9 +7,11 @@
 
     <include layout="@layout/form_label" />
 
-    <DatePicker android:id="@+id/value"
-                android:layout_height="wrap_content"
-                android:layout_width="fill_parent"/>
+    <EditText android:id="@+id/value"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:editable="true"
+              android:inputType="date" />
 
     <include layout="@layout/form_help_text" />
 

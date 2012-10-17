@@ -1,6 +1,7 @@
 package com.rapidftr.forms;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,14 @@ import java.util.List;
 public class FormSection implements Comparable{
 
     private String name;
+
     private int order;
+
     private boolean enabled;
+
+    @JsonProperty("help_text")
+    private String helpText;
+
     private List<FormField> fields = new ArrayList<FormField>();
 
     public String getName() {
@@ -35,6 +42,14 @@ public class FormSection implements Comparable{
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getHelpText() {
+        return this.helpText;
+    }
+
+    public void setHelpText(String helpText) {
+        this.helpText = helpText;
     }
 
     public List<FormField> getFields() {
