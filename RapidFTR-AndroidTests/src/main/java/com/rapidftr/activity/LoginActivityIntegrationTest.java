@@ -1,74 +1,64 @@
 package com.rapidftr.activity;
 
-import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
-import com.rapidftr.activity.pages.Page;
-
+import com.rapidftr.activity.pages.LoginPage;
+import static com.rapidftr.activity.pages.LoginPage.*;
 
 public class LoginActivityIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
-    public static final String LOGIN_URL = "dev.rapidftr.com:3000";
-    public static final String PASSWORD = "rapidftr";
-    public static final String USERNAME = "rapidftr";
     public Solo solo;
-    private Context content;
+    public LoginPage loginPage;
 
     public LoginActivityIntegrationTest() {
-        super(LoginActivity.class);
+        super("com.rapidftr.activity", LoginActivity.class);
     }
 
     @Override
     public void setUp() throws Exception {
         solo = new Solo(getInstrumentation(), getActivity());
-        Page.setSolo(solo);
+        loginPage = new LoginPage(solo);
     }
 
     @Override
     public void tearDown() throws Exception {
-
         solo.finishOpenedActivities();
-
     }
 
     public void testIncorrectLoginCredentials(){
-        Page.loginPage.login("wrongUsername", "wrongPassword", LOGIN_URL);
+        loginPage.login("wrongUsername", "wrongPassword", LOGIN_URL);
         assertTrue("Incorrect Username Or Password", solo.waitForText("Incorrect username or password"));
-        Page.loginPage.login(USERNAME,PASSWORD,"http://dev.rapidftr.com:abc");
+        loginPage.login(USERNAME, PASSWORD,"http://dev.rapidftr.com:abc");
         assertTrue(solo.waitForText("Unable to connect to the server, please contact your system administrator"));
     }
 
 
     public void testNoLoginDetailsErrorMessages(){
-          Page.loginPage.login("","","");
-          Page.loginPage.getUserNameRequiredMessage().equals("Username is required");
-          Page.loginPage.getPasswordRequiredMEssage().equals("Password is required");
-          Page.loginPage.getURLRequiredMessage().equals("Server URL is required");
+          loginPage.login("","","");
+          loginPage.getUserNameRequiredMessage().equals("Username is required");
+          loginPage.getPasswordRequiredMEssage().equals("Password is required");
+          loginPage.getURLRequiredMessage().equals("Server URL is required");
 
     }
 
     public void testSuccessfulLogin() {
-        Page.loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
+        loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
         assertTrue("Login should be successful", solo.waitForText("Login Successful"));
-        Page.loginPage.logout();
+        loginPage.logout();
     }
 
      public void testUserAbleToSeeLastSuccessfulLoginUrl() {
-         Page.loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
+         loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
          solo.waitForText("Login Successful");
-         Page.loginPage.logout();
-         System.out.println("logged out ");
-         Page.loginPage.clickLoginButton();
-         System.out.println("logged in ");
-         Page.loginPage.changeURL();
-         Page.loginPage.getUrl().equals(LOGIN_URL);
+         loginPage.logout();
+         loginPage.clickLoginButton();
+         loginPage.changeURL();
+         loginPage.getUrl().equals(LOGIN_URL);
     }
-
-
-
 
 //    @Ignore
 //    public void testUserCanChangeUrlAndLoginInAnotherAccount() {
 //
 //    }
+
 }
