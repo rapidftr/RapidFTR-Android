@@ -1,22 +1,17 @@
 package com.rapidftr.database;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChildRecordStorage {
+public class  ChildRecordStorage {
 
     private String username;
     private String password;
-    private SQLiteDatabase database;
-    private Context context;
 
-    public ChildRecordStorage(Context context, String username, String password) {
-        this.context = context;
+    public ChildRecordStorage(String username, String password) {
         this.username = username;
         this.password = password;
     }
@@ -43,17 +38,16 @@ public class ChildRecordStorage {
         values.put("CHILD_ID", id);
         values.put("CONTENT", EncryptUtil.encrypt(content, password));
 
-        openDatabase().insert("CHILDREN", null, values);
+        openDatabase().insert("CHILDREN", values);
         closeDatabase();
     }
 
-    private SQLiteDatabase openDatabase() {
-        database = new DatabaseHelper(context).getWritableDatabase();
-        return database;
+    private DatabaseSession openDatabase() {
+        return new DatabaseHelper().getSession();
     }
 
     private void closeDatabase() {
-        database.close();
+        new DatabaseHelper().close();
     }
 
 }
