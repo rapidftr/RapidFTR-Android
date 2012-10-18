@@ -1,27 +1,28 @@
 package com.rapidftr.database;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import com.rapidftr.RapidFtrApplication;
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE CHILDREN (" +
-            "OWNER_USERNAME VARCHAR(255)," +
-            "CHILD_ID VARCHAR(255)," +
-            "CONTENT VARCHAR(9999))";
+    private SQLiteDatabase database;
 
-    public DatabaseHelper(Context context) {
-        super(context, "rapidftr", null, 1);
+    public DatabaseHelper() {
+        super(RapidFtrApplication.getContext(), "rapidftr", null, 1);
+        SQLiteDatabase.loadLibs(RapidFtrApplication.getContext());
+    }
+
+    public DatabaseSession getSession() {
+        database = new DatabaseHelper().getWritableDatabase(RapidFtrApplication.getDbKey());
+        return new DatabaseSession(database);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_TABLE_SQL);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        //not needed
     }
 }

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-
     <artifactId>rapidftr-android</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>apk</packaging>
@@ -83,19 +82,61 @@
         </dependency>
 
         <dependency>
+            <groupId>sqlcipher-dependency</groupId>
+            <artifactId>sqlcipher</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/armeabi/libdatabase_sqlcipher.so</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>sqlcipher-dependency</groupId>
+            <artifactId>sqlcipher</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/armeabi/libsqlcipher_android.so</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>sqlcipher-dependency</groupId>
+            <artifactId>sqlcipher</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/armeabi/libstlport_shared.so</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>sqlcipher</groupId>
+            <artifactId>sqlcipher</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/commons-codec.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>sqlcipher</groupId>
+            <artifactId>sqlcipher</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/guava-r09.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>sqlcipher</groupId>
+            <artifactId>sqlcipher</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/sqlcipher.jar</systemPath>
+        </dependency>
+
+
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>1.9.0</version>
             <scope>test</scope>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>com.github</groupId>-->
-            <!--<artifactId>droidfu</artifactId>-->
-            <!--<version>1.0-SNAPSHOT</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/libs/droid-fu-1.0-SNAPSHOT.jar</systemPath>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>commons-io</groupId>

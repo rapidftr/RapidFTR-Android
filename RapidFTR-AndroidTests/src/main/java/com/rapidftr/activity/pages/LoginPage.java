@@ -23,7 +23,6 @@ public class LoginPage {
         clickLoginButton();
     }
 
-
     public static void logout() {
         System.out.println(Page.solo.searchButton("Log Out"));
         Page.solo.clickOnButton("Log Out");
