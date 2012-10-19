@@ -2,12 +2,10 @@ package com.rapidftr.view.fields;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.TextView;
+import android.widget.EditText;
 import com.rapidftr.R;
 
 public class TextField extends BaseView {
-
-    public static final int LAYOUT_RESOURCE_ID = R.layout.form_text_field;
 
     public TextField(Context context) {
         super(context);
@@ -17,14 +15,23 @@ public class TextField extends BaseView {
         super(context, attrs);
     }
 
-    protected TextView getTextView() {
-        return (TextView) findViewById(R.id.value);
+    protected EditText getEditTextView() {
+        return (EditText) findViewById(R.id.value);
+    }
+
+    protected String getText() {
+        CharSequence text = getEditTextView().getText();
+        return text == null ? null : text.toString();
+    }
+
+    protected void setText(Object newText) {
+        getEditTextView().setText(newText == null ? "" : newText.toString());
     }
 
     @Override
     protected void initialize() {
         super.initialize();
-        getTextView().setText(formField.getValue() != null ? formField.getValue().toString() : "");
+        setText(formField.getValue());
     }
 
 }

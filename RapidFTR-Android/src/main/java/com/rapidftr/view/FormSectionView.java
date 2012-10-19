@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.forms.FormField;
@@ -26,6 +27,14 @@ public class FormSectionView extends ScrollView {
         super(context, attrs, defStyle);
     }
 
+    protected TextView getLabel() {
+        return (TextView) findViewById(R.id.label);
+    }
+
+    protected TextView getHelpText() {
+        return (TextView) findViewById(R.id.help_text);
+    }
+
     protected LinearLayout getContainer() {
         return (LinearLayout) findViewById(R.id.container);
     }
@@ -39,17 +48,29 @@ public class FormSectionView extends ScrollView {
     }
 
     protected void initialize() {
-        for (FormField field : formSection.getFields())
-            addFormField(field);
+        getLabel().setText(formSection.getName());
+        getHelpText().setText(formSection.getHelpText());
+        for (FormField field : formSection.getFields()) {
+            BaseView fieldView = createFormField(field);
+            if (fieldView != null)
+                getContainer().addView(fieldView);
+        }
     }
 
-    protected void addFormField(FormField field) {
-        int resourceId = getResources().getIdentifier("form_" + field.getType(), "layout", getContext().getPackageName());
+    protected int getFieldLayoutId(String fieldType) {
+        return getResources().getIdentifier("form_" + fieldType, "layout", getContext().getPackageName());
+    }
+
+    protected BaseView createFormField(FormField field) {
+        int resourceId = getFieldLayoutId(field.getType());
+
         if (resourceId > 0) {
             BaseView fieldView = (BaseView) LayoutInflater.from(getContext()).inflate(resourceId, null);
             fieldView.setFormField(field);
-            getContainer().addView(fieldView);
+            return fieldView;
         }
+
+        return null;
     }
 
 }

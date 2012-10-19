@@ -4,9 +4,18 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent">
 
-    <LinearLayout android:id="@+id/container"
-                  android:orientation="vertical"
+    <LinearLayout android:orientation="vertical"
                   android:layout_width="fill_parent"
-                  android:layout_height="wrap_content" />
+                  android:layout_height="fill_parent">
+
+        <include layout="@layout/form_label" />
+        <include layout="@layout/form_help_text" />
+
+        <LinearLayout android:id="@+id/container"
+                      android:orientation="vertical"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
 </com.rapidftr.view.FormSectionView>
