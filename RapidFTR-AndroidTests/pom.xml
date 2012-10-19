@@ -125,7 +125,47 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>startEmulator</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>emulator-start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stopEmulator</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>emulator-stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sdk>
+                        <platform>8</platform>
+                    </sdk>
+                    <emulator>
+                        <avd>android2.2</avd>
+                        <wait>40000</wait>
+                        <!--<options>-no-skin</options>-->
+                        <options>-no-window</options>
+                    </emulator>
+                    <dex>
+                        <jvmArguments>
+                            <jvmArgument>-Xms512m</jvmArgument>
+                            <jvmArgument>-Xmx1024m</jvmArgument>
+                        </jvmArguments>
+                    </dex>
+                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                    <androidManifestFile>AndroidManifest.xml</androidManifestFile>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
