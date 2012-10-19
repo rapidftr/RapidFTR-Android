@@ -14,10 +14,17 @@ import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
+import static com.rapidftr.RapidFtrApplication.setLoggedIn;
 import static com.rapidftr.utils.HttpUtils.getToastMessage;
+import static org.apache.http.HttpStatus.SC_CREATED;
+import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 
 public class LoginActivity extends RapidFtrActivity {
 
@@ -30,13 +37,13 @@ public class LoginActivity extends RapidFtrActivity {
         super.onCreate(savedInstanceState);
         context = this;
         loginService = new LoginService();
-        if(RapidFtrApplication.isLoggedIn()) {
+        if (RapidFtrApplication.isLoggedIn()) {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
         }
         setContentView(R.layout.activity_login);
         toggleBaseUrl();
-        findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener(){
+        findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 toggleView(R.id.url, View.VISIBLE);
                 toggleView(R.id.change_url, View.GONE);
@@ -76,8 +83,8 @@ public class LoginActivity extends RapidFtrActivity {
 
     public boolean isValid() {
         return validateTextFieldNotEmpty(R.id.username, R.string.username_required)
-             & validateTextFieldNotEmpty(R.id.password, R.string.password_required)
-             & validateTextFieldNotEmpty(R.id.url, R.string.url_required);
+                & validateTextFieldNotEmpty(R.id.password, R.string.password_required)
+                & validateTextFieldNotEmpty(R.id.url, R.string.url_required);
     }
 
     private boolean validateTextFieldNotEmpty(int id, int messageId) {
@@ -124,14 +131,14 @@ public class LoginActivity extends RapidFtrActivity {
         return value == null ? null : value.toString().trim();
     }
 
-    private void setEditText(int resId, String text){
-        ((EditText)findViewById(resId)).setText(text);
+    private void setEditText(int resId, String text) {
+        ((EditText) findViewById(resId)).setText(text);
     }
 
     private class LoginAsyncTask extends AsyncTask<String, Void, HttpResponse> {
 
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             mProgressDialog = new ProgressDialog(context);
             mProgressDialog.setMessage(getString(R.string.loading_message));
             mProgressDialog.setCancelable(false);
@@ -150,9 +157,10 @@ public class LoginActivity extends RapidFtrActivity {
 
         @Override
         protected void onPostExecute(HttpResponse response) {
-            int statusCode = response == null ? 404 : response.getStatusLine().getStatusCode();
-            boolean success = statusCode == 201;
-            if (success) {
+            int statusCode = response == null ? SC_NOT_FOUND : response.getStatusLine().getStatusCode();
+            if (statusCode == SC_CREATED) {
+                setLoggedIn(true);
+                setDbKey(response);
                 RapidFtrApplication.setLoggedIn(true);
                 try {
                     SharedPreferences preferences = getApplication().getSharedPreferences("RAPIDFTR_PREFERENCES",0);
@@ -168,6 +176,28 @@ public class LoginActivity extends RapidFtrActivity {
             mProgressDialog.dismiss();
             toastMessage(getToastMessage(statusCode, context));
         }
+
+        private void setDbKey(HttpResponse response) {
+            try {
+                String responseAsString = inputStreamToString(response.getEntity().getContent());
+                JSONObject responseAsJson = new JSONObject(responseAsString);
+                String db_key = responseAsJson.get("db_key").toString();
+                RapidFtrApplication.setDbKey(db_key);
+            } catch (Exception e) {
+                logError(e.getMessage());
+            }
+        }
+
+        private String inputStreamToString(InputStream is) throws IOException {
+            String line = "";
+            StringBuilder total = new StringBuilder();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            while ((line = rd.readLine()) != null) {
+                total.append(line);
+            }
+            return total.toString();
+        }
+
     }
 
 }

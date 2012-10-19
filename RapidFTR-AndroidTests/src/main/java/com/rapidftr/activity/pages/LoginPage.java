@@ -8,7 +8,7 @@ import com.rapidftr.R;
 
 public class LoginPage {
 
-    public static final String LOGIN_URL = "dev.rapidftr.com:3000";
+    public static final String LOGIN_URL = "dev.rapidftr.com:5000";
     public static final String PASSWORD = "rapidftr";
     public static final String USERNAME = "rapidftr";
 
@@ -37,14 +37,11 @@ public class LoginPage {
         clickLoginButton();
     }
 
-
     public void logout() {
-        System.out.println(solo.searchButton("Log Out"));
         solo.clickOnButton("Log Out");
     }
 
     public void clickLoginButton() {
-        System.out.println(solo.searchButton("Log In"));
         solo.clickOnButton("Log In");
     }
 
