@@ -31,6 +31,7 @@ public class CheckBoxes extends BaseView {
     protected CheckBox createCheckBoxFor(String optionName) {
         CheckBox checkBox = (CheckBox) LayoutInflater.from(getContext()).inflate(R.layout.form_check_box, null);
         checkBox.setText(optionName);
+        checkBox.setTag(optionName);
         return checkBox;
     }
 

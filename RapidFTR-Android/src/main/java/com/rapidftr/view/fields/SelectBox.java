@@ -8,8 +8,6 @@ import com.rapidftr.R;
 
 public class SelectBox extends BaseView {
 
-    public static final int LAYOUT_RESOURCE_ID = R.layout.form_select_box;
-
     public SelectBox(Context context) {
         super(context);
     }
@@ -19,7 +17,7 @@ public class SelectBox extends BaseView {
     }
 
     protected Spinner getSpinner() {
-        return (Spinner)findViewById(R.id.field_options);
+        return (Spinner) findViewById(R.id.field_options);
     }
 
     @Override

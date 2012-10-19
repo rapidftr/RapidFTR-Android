@@ -3,7 +3,6 @@ package com.rapidftr.forms;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -100,7 +99,7 @@ public class FormField {
         return optionStrings;
     }
 
-    public void setOptionStrings(ArrayList<String> optionStrings) {
+    public void setOptionStrings(List<String> optionStrings) {
         this.optionStrings = optionStrings;
     }
 }

@@ -7,6 +7,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 
 public class RapidFtrApplication extends Application {
 
@@ -25,6 +26,11 @@ public class RapidFtrApplication extends Application {
     public static List<FormSection> getChildFormSections() throws Exception{
         List<FormSection> formList = Arrays.asList(new ObjectMapper().readValue(getFormSectionsBody(), FormSection[].class));
         Collections.sort(formList);
+        ListIterator<FormSection> iterator = formList.listIterator();
+        while (iterator.hasNext())
+            if (!iterator.next().isEnabled())
+                iterator.remove();
+
         return formList;
     }
 

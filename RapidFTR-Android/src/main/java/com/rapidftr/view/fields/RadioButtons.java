@@ -21,17 +21,19 @@ public class RadioButtons extends BaseView {
         return (RadioGroup) findViewById(R.id.values);
     }
 
-    protected RadioButton createRadioButton(String option){
-        super.initialize();
-        RadioButton radioButton = (RadioButton)LayoutInflater.from(getContext()).inflate(R.layout.form_radio_option, null);
-        radioButton.setText(option);
-        return radioButton;
-    }
-
     @Override
     protected void initialize() {
+        super.initialize();
         for(String options : formField.getOptionStrings())
             getRadioGroup().addView(createRadioButton(options));
+    }
+
+    protected RadioButton createRadioButton(String optionName) {
+        super.initialize();
+        RadioButton radioButton = (RadioButton)LayoutInflater.from(getContext()).inflate(R.layout.form_radio_option, null);
+        radioButton.setText(optionName);
+        radioButton.setTag(optionName);
+        return radioButton;
     }
 
 }
