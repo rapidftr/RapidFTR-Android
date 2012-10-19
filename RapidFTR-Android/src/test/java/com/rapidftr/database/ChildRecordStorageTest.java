@@ -16,7 +16,7 @@ public class ChildRecordStorageTest extends ActivityInstrumentationTestCase2<Mai
 
     @Test
     public void shouldStoreAndRetrieveChildRecord() {
-        ChildRecordStorage storage = new ChildRecordStorage(getActivity(), "some_user", "some_password");
+        ChildRecordStorage storage = new ChildRecordStorage("some_user", "some_password");
         storage.clearAll();
         storage.addChild("id1", "child1");
         storage.addChild("id2", "child2");
@@ -28,10 +28,10 @@ public class ChildRecordStorageTest extends ActivityInstrumentationTestCase2<Mai
 
     @Test
     public void shouldNotSeeRecordsFromOtherUsers() {
-        ChildRecordStorage storage = new ChildRecordStorage(getActivity(), "user1", "some_password");
+        ChildRecordStorage storage = new ChildRecordStorage("user1", "some_password");
         storage.clearAll();
 
-        ChildRecordStorage otherStorage = new ChildRecordStorage(getActivity(), "user2", "some_password");
+        ChildRecordStorage otherStorage = new ChildRecordStorage("user2", "some_password");
         otherStorage.clearAll();
 
         storage.addChild("id3", "child3");
@@ -40,10 +40,10 @@ public class ChildRecordStorageTest extends ActivityInstrumentationTestCase2<Mai
 
     @Test
     public void shouldClearAllShouldOnlyDeleteRecordsForCurrentUser() {
-        ChildRecordStorage storage = new ChildRecordStorage(getActivity(), "user1", "some_password");
+        ChildRecordStorage storage = new ChildRecordStorage("user1", "some_password");
         storage.clearAll();
 
-        ChildRecordStorage otherStorage = new ChildRecordStorage(getActivity(), "user2", "some_password");
+        ChildRecordStorage otherStorage = new ChildRecordStorage("user2", "some_password");
         otherStorage.clearAll();
 
         storage.addChild("id5", "child5");

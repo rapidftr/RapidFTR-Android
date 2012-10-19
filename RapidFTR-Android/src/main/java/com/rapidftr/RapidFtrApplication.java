@@ -1,6 +1,7 @@
 package com.rapidftr;
 
 import android.app.Application;
+import android.content.Context;
 import com.rapidftr.forms.FormSection;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -12,8 +13,13 @@ import java.util.ListIterator;
 public class RapidFtrApplication extends Application {
 
     private static String formSectionsTemplate;
-
     private static boolean loggedIn;
+    private static String dbKey;
+    private static RapidFtrApplication instance;
+
+    public RapidFtrApplication(){
+        instance = this;
+    }
 
     public static String getFormSectionsBody() {
         return formSectionsTemplate;
@@ -42,4 +48,15 @@ public class RapidFtrApplication extends Application {
         RapidFtrApplication.loggedIn = loggedIn;
     }
 
+    public static String getDbKey(){
+        return dbKey;
+    }
+
+    public static void setDbKey(String dbKey) {
+        RapidFtrApplication.dbKey = dbKey;
+    }
+
+    public static Context getContext() {
+        return instance;
+    }
 }

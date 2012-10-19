@@ -37,14 +37,11 @@ public class LoginPage {
         clickLoginButton();
     }
 
-
     public void logout() {
-        System.out.println(solo.searchButton("Log Out"));
         solo.clickOnButton("Log Out");
     }
 
     public void clickLoginButton() {
-        System.out.println(solo.searchButton("Log In"));
         solo.clickOnButton("Log In");
     }
 

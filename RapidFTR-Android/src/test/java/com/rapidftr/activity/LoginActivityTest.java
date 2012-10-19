@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowHandler;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
@@ -16,7 +17,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -118,6 +119,22 @@ public class LoginActivityTest {
     public void shouldReturnEmptyStringWhenEditTextIsEmpty() {
         userName.setText("     ");
         assertThat(loginActivity.getEditText(R.id.username), equalTo(""));
+    }
+
+    @Test
+    public void shouldNotStoreTheDbKeyWhenFailingToLogin() {
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(404, "{'db_key' : 'fa8f5e7599ed5402'}");
+        loginButton.performClick();
+        ShadowHandler.idleMainLooper();
+        assertThat(RapidFtrApplication.getDbKey(), is(nullValue()));
+    }
+
+    @Test
+    public void shouldStoreTheDbKeyInMemoryAfterSuccessfulLogin() {
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "{'db_key' : 'fa8f5e7599ed5402'}");
+        loginButton.performClick();
+        ShadowHandler.idleMainLooper();
+        assertThat(RapidFtrApplication.getDbKey(), is("fa8f5e7599ed5402"));
     }
 
 }
