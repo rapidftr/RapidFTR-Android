@@ -5,9 +5,7 @@ import android.util.AttributeSet;
 import android.widget.EditText;
 import com.rapidftr.R;
 
-public class TextArea extends BaseView {
-
-    public static final int LAYOUT_RESOURCE_ID = R.layout.form_textarea;
+public class TextArea extends TextField {
 
     public TextArea(Context context) {
         super(context);
@@ -15,10 +13,6 @@ public class TextArea extends BaseView {
 
     public TextArea(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    protected EditText getEditTextView() {
-        return (EditText) findViewById(R.id.value);
     }
 
 }

@@ -68,6 +68,8 @@ public class RegisterChildActivity extends RapidFtrActivity {
         });
     }
 
+
+
     private class FormSectionPagerAdapter extends PagerAdapter {
 
         @Override
@@ -96,4 +98,3 @@ public class RegisterChildActivity extends RapidFtrActivity {
     }
 
 }
-

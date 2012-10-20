@@ -6,8 +6,6 @@ import com.rapidftr.R;
 
 public class AudioUploadBox extends BaseView {
 
-    public static final int LAYOUT_RESOURCE_ID = R.layout.form_audio_upload_box;
-
     public AudioUploadBox(Context context) {
         super(context);
     }

@@ -12,6 +12,7 @@
         <activity android:name=".activity.MainActivity"/>
         <activity android:name=".activity.CameraPreviewActivity"/>
         <activity android:name=".activity.RegisterChildActivity"/>
+        <uses-library android:name="android.test.runner"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -24,4 +25,5 @@
     <uses-feature android:name="android.hardware.camera"/>
     <uses-feature android:name="android.hardware.camera.autofocus"/>
     <uses-sdk android:minSdkVersion="8"/>
+    <instrumentation android:targetPackage="com.rapidftr" android:name="android.test.InstrumentationTestRunner" android:label="Integration Tests"/>
 </manifest>
