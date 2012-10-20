@@ -1,3 +1,4 @@
+[![Build Status](https://secure.travis-ci.org/kishoreyekkanti/RapidFTR---Android.png)](http://travis-ci.org/kishoreyekkanti/RapidFTR---Android)
 RapidFTR
 =============
 
