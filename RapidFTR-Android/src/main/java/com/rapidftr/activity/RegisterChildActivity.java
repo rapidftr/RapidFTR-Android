@@ -42,7 +42,9 @@ public class RegisterChildActivity extends RapidFtrActivity {
     }
 
     private void initializePager() {
-        getPager().setAdapter(new FormSectionPagerAdapter());
+        FormSectionPagerAdapter formSectionAdapter = new FormSectionPagerAdapter();
+        getPager().setAdapter(formSectionAdapter);
+        getPager().setOffscreenPageLimit(formSections.size());
         getPager().setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageScrolled(int i, float v, int i1) { }
             public void onPageScrollStateChanged(int i) { }
@@ -72,6 +74,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
 
     private class FormSectionPagerAdapter extends PagerAdapter {
 
+        FormSection section;
         @Override
         public int getCount() {
             return formSections.size();
@@ -85,7 +88,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             FormSectionView view = (FormSectionView) LayoutInflater.from(RegisterChildActivity.this).inflate(R.layout.form_section, null);
-            FormSection section = formSections.get(position);
+            section = formSections.get(position);
             view.setFormSection(section);
             container.addView(view, 0);
             return view;
