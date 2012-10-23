@@ -8,7 +8,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FormField {
 
-    @JsonProperty("id")
+    @JsonProperty("name")
     private String id;
 
     private boolean enabled;

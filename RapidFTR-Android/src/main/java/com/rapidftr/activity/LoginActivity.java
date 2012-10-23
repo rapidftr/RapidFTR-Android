@@ -161,7 +161,6 @@ public class LoginActivity extends RapidFtrActivity {
             if (statusCode == SC_CREATED) {
                 setLoggedIn(true);
                 setDbKey(response);
-                RapidFtrApplication.setLoggedIn(true);
                 try {
                     SharedPreferences preferences = getApplication().getSharedPreferences("RAPIDFTR_PREFERENCES",0);
                     SharedPreferences.Editor editor = preferences.edit();

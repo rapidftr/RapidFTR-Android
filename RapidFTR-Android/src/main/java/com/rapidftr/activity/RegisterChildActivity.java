@@ -13,12 +13,15 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.view.FormSectionView;
+import org.json.JSONObject;
 
 import java.util.List;
 
 public class RegisterChildActivity extends RapidFtrActivity {
 
     private List<FormSection> formSections = null;
+
+    private JSONObject child = new JSONObject();
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +31,12 @@ public class RegisterChildActivity extends RapidFtrActivity {
         } catch (Exception ex) {
             logError(ex.getMessage());
         }
-
+        findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               getPager();
+            }
+        });
         initializePager();
         initializeSpinner();
     }
@@ -44,7 +52,6 @@ public class RegisterChildActivity extends RapidFtrActivity {
     private void initializePager() {
         FormSectionPagerAdapter formSectionAdapter = new FormSectionPagerAdapter();
         getPager().setAdapter(formSectionAdapter);
-        getPager().setOffscreenPageLimit(formSections.size());
         getPager().setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageScrolled(int i, float v, int i1) { }
             public void onPageScrollStateChanged(int i) { }
@@ -89,7 +96,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
         public Object instantiateItem(ViewGroup container, int position) {
             FormSectionView view = (FormSectionView) LayoutInflater.from(RegisterChildActivity.this).inflate(R.layout.form_section, null);
             section = formSections.get(position);
-            view.setFormSection(section);
+            view.setFormSection(section, child);
             container.addView(view, 0);
             return view;
         }

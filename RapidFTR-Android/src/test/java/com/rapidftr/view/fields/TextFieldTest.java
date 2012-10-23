@@ -28,7 +28,7 @@ public class TextFieldTest extends BaseViewSpec<TextField> {
     @Test
     public void testDefaultValue() {
         field.setValue("sample");
-        view.setFormField(field);
+        view.setFormField(field, null);
         assertThat(view.getText(), equalTo("sample"));
     }
 

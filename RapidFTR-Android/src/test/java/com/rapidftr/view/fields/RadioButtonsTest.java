@@ -25,7 +25,7 @@ public class RadioButtonsTest extends BaseViewSpec<RadioButtons> {
     @Test
     public void testCreateSingleOption() {
         field.setOptionStrings(Arrays.asList("one"));
-        view.setFormField(field);
+        view.setFormField(field, null);
 
         RadioButton button = (RadioButton) view.getRadioGroup().findViewWithTag("one");
         assertThat(button.getText().toString(), equalTo("one"));
@@ -35,7 +35,7 @@ public class RadioButtonsTest extends BaseViewSpec<RadioButtons> {
     @Test
     public void testCreateMultipleOptions() {
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field);
+        view.setFormField(field, null);
 
         assertThat(view.getRadioGroup().getChildCount(), equalTo(3));
         assertNotNull(view.getRadioGroup().findViewWithTag("one"));

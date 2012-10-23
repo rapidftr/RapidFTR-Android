@@ -44,7 +44,7 @@ public class FormSectionViewTest {
 
     @Test
     public void shouldRenderFormSection() {
-        view.setFormSection(section);
+        view.setFormSection(section, null);
         assertThat(view.getLabel().getText().toString(), equalTo(section.getName()));
         assertThat(view.getHelpText().getText().toString(), equalTo(section.getHelpText()));
         assertThat(view.getContainer().getChildCount(), equalTo(0));
@@ -52,8 +52,8 @@ public class FormSectionViewTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotAllowTwoFormSectionInitialization() {
-        view.setFormSection(section);
-        view.setFormSection(section);
+        view.setFormSection(section, null);
+        view.setFormSection(section, null);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class FormSectionViewTest {
     public void shouldNotThrowExceptionForUnknownFields() {
         field.setType("abcd");
         section.getFields().add(field);
-        view.setFormSection(section);
+        view.setFormSection(section, null);
         assertThat(view.getContainer().getChildCount(), equalTo(0));
     }
 
@@ -127,7 +127,7 @@ public class FormSectionViewTest {
 
         view = spy(view);
         section.getFields().addAll(Arrays.asList(field1, field2, field3));
-        view.setFormSection(section);
+        view.setFormSection(section, null);
 
         assertThat(view.getContainer().getChildCount(), equalTo(2));
         verify(view).createFormField(field1);

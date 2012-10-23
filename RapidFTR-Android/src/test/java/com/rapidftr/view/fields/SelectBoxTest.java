@@ -24,7 +24,7 @@ public class SelectBoxTest extends BaseViewSpec<SelectBox> {
     @Test
     public void testAdapter() {
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field);
+        view.setFormField(field, null);
 
         assertThat(view.getSpinner().getAdapter().getCount(), equalTo(3));
         assertThat(view.getSpinner().getAdapter().getItem(0).toString(), equalTo("one"));

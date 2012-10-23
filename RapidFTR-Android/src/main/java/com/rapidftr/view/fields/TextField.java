@@ -1,9 +1,12 @@
 package com.rapidftr.view.fields;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
 import com.rapidftr.R;
+import org.json.JSONException;
 
 public class TextField extends BaseView {
 
@@ -32,6 +35,33 @@ public class TextField extends BaseView {
     protected void initialize() {
         super.initialize();
         setText(formField.getValue());
+
+        if (child.has(formField.getId())) {
+            try {
+                getEditTextView().setText(child.get(formField.getId()).toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        getEditTextView().addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    child.put(formField.getId(), s.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 }

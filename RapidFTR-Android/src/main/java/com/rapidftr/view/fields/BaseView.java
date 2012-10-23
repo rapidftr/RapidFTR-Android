@@ -6,10 +6,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormField;
+import org.json.JSONObject;
 
 public abstract class BaseView extends LinearLayout {
 
     protected FormField formField;
+
+    protected JSONObject child;
 
     public BaseView(Context context) {
         super(context);
@@ -19,11 +22,12 @@ public abstract class BaseView extends LinearLayout {
         super(context, attrs);
     }
 
-    public void setFormField(FormField formField) {
+    public void setFormField(FormField formField, JSONObject child) {
         if (this.formField != null)
             throw new IllegalArgumentException("Form field already initialized!");
 
         this.formField = formField;
+        this.child = child;
         this.initialize();
     }
 

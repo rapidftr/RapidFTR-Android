@@ -2,11 +2,9 @@ package com.rapidftr.view.fields;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.CheckBox;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
-import com.rapidftr.forms.FormField;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +25,7 @@ public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
     @Test
     public void testCreateSingleCheckBox() {
         field.setOptionStrings(Arrays.asList("one"));
-        view.setFormField(field);
+        view.setFormField(field, null);
 
         CheckBox box = (CheckBox) view.getCheckBoxGroup().getChildAt(0);
         assertThat(box.getText().toString(), equalTo("one"));
@@ -37,7 +35,7 @@ public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
     @Test
     public void testCreateMultipleCheckBoxes() {
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field);
+        view.setFormField(field, null);
 
         assertThat(view.getCheckBoxGroup().getChildCount(), equalTo(3));
         assertNotNull(view.getCheckBoxGroup().findViewWithTag("one"));
