@@ -1,5 +1,6 @@
 package com.rapidftr.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,6 +13,7 @@ import android.widget.Spinner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.model.Child;
 import com.rapidftr.view.FormSectionView;
 import org.json.JSONObject;
 
@@ -34,7 +36,9 @@ public class RegisterChildActivity extends RapidFtrActivity {
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               getPager();
+                SharedPreferences rapidftrPreferences = getApplication().getSharedPreferences(RapidFtrActivity.SHARED_PREFERENCES_FILE,0);
+                String username = rapidftrPreferences.getString("USER_NAME","");
+                Child.save(child, username);
             }
         });
         initializePager();

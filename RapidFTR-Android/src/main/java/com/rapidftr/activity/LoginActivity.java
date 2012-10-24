@@ -162,9 +162,10 @@ public class LoginActivity extends RapidFtrActivity {
                 setLoggedIn(true);
                 setDbKey(response);
                 try {
-                    SharedPreferences preferences = getApplication().getSharedPreferences("RAPIDFTR_PREFERENCES",0);
+                    SharedPreferences preferences = getApplication().getSharedPreferences(RapidFtrActivity.SHARED_PREFERENCES_FILE,0);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("SERVER_URL", getBaseUrl());
+                    editor.putString("USER_NAME", (getEditText(R.id.username)));
                     editor.commit();
                     getFormSectionBody();
                 } catch (IOException e) {
