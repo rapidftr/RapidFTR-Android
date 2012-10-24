@@ -7,6 +7,7 @@ import com.rapidftr.R;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.view.fields.*;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +27,7 @@ public class FormSectionViewTest {
     private FormSectionView view;
     private FormSection section;
     private FormField field;
+    private JSONObject child;
 
     @Before
     public void setUp() {
@@ -35,16 +37,18 @@ public class FormSectionViewTest {
         section.setName("Test Section");
         section.setHelpText("Help Section");
 
+        view.setFormSection(section, new JSONObject());
         field = new FormField();
         field.setId("test_field");
         field.setDisplayName("Test Field");
         field.setHelpText("Help Field");
         field.setOptionStrings(new ArrayList<String> ());
+
+        child = new JSONObject();
     }
 
     @Test
     public void shouldRenderFormSection() {
-        view.setFormSection(section, null);
         assertThat(view.getLabel().getText().toString(), equalTo(section.getName()));
         assertThat(view.getHelpText().getText().toString(), equalTo(section.getHelpText()));
         assertThat(view.getContainer().getChildCount(), equalTo(0));
@@ -52,8 +56,8 @@ public class FormSectionViewTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotAllowTwoFormSectionInitialization() {
-        view.setFormSection(section, null);
-        view.setFormSection(section, null);
+        view.setFormSection(section, child);
+        view.setFormSection(section, child);
     }
 
     @Test
@@ -114,7 +118,6 @@ public class FormSectionViewTest {
     public void shouldNotThrowExceptionForUnknownFields() {
         field.setType("abcd");
         section.getFields().add(field);
-        view.setFormSection(section, null);
         assertThat(view.getContainer().getChildCount(), equalTo(0));
     }
 
@@ -127,7 +130,7 @@ public class FormSectionViewTest {
 
         view = spy(view);
         section.getFields().addAll(Arrays.asList(field1, field2, field3));
-        view.setFormSection(section, null);
+        view.initialize();
 
         assertThat(view.getContainer().getChildCount(), equalTo(2));
         verify(view).createFormField(field1);

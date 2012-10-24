@@ -2,6 +2,7 @@ package com.rapidftr.view.fields;
 
 import com.rapidftr.forms.FormField;
 import junit.framework.TestCase;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,6 +15,7 @@ public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
 
     protected F view;
     protected FormField field;
+    protected JSONObject child;
 
     @Before
     public void setUpBefore() {
@@ -22,17 +24,18 @@ public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
         field.setHelpText("Help Field");
         field.setId("test_field");
         field.setOptionStrings(new ArrayList<String> ());
+        child = new JSONObject();
     }
 
     @Test
     public void testHaveLabel() {
-        view.setFormField(field, null);
+        view.setFormField(field, child);
         assertThat(view.getLabel().getText().toString(), equalTo(field.getDisplayName()));
     }
 
     @Test
     public void testHaveHelpText() {
-        view.setFormField(field, null);
+        view.setFormField(field, child);
         assertThat(view.getHelpText().getText().toString(), equalTo(field.getHelpText()));
     }
 

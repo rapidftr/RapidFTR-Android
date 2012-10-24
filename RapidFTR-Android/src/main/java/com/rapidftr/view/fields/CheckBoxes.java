@@ -10,6 +10,9 @@ import com.rapidftr.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CheckBoxes extends BaseView {
 
     public CheckBoxes(Context context) {
@@ -63,12 +66,12 @@ public class CheckBoxes extends BaseView {
                         options.put(buttonView.getText().toString());
                         child.put(formField.getId(), options);
                     } else {
-                        String[] tempOptions = new String[options.length()];
-                        for (int i = 0; i < tempOptions.length; i++) {
+                        List<String> tempOptions = new ArrayList<String>();
+                        for (int i = 0; i < options.length(); i++) {
                             if (!options.getString(i).equals(buttonView.getText().toString()))
-                                tempOptions[i] = options.getString(i);
+                                tempOptions.add(options.getString(i));
                         }
-                        child.put(formField.getId(), tempOptions);
+                        child.put(formField.getId(), new JSONArray(tempOptions.toArray()));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

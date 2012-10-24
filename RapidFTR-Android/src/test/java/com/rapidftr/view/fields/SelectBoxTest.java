@@ -2,8 +2,10 @@ package com.rapidftr.view.fields;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
+import android.widget.Spinner;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,12 +26,28 @@ public class SelectBoxTest extends BaseViewSpec<SelectBox> {
     @Test
     public void testAdapter() {
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field, null);
+        view.setFormField(field, child);
 
         assertThat(view.getSpinner().getAdapter().getCount(), equalTo(3));
         assertThat(view.getSpinner().getAdapter().getItem(0).toString(), equalTo("one"));
         assertThat(view.getSpinner().getAdapter().getItem(1).toString(), equalTo("two"));
         assertThat(view.getSpinner().getAdapter().getItem(2).toString(), equalTo("three"));
+    }
+
+    @Test
+    public void testShouldStoreSelectedValueInChildJSONObject() throws JSONException {
+        field.setOptionStrings(Arrays.asList("one", "two", "three"));
+        view.setFormField(field, child);
+
+        Spinner spinner = view.getSpinner();
+        String option1 = (String) spinner.getAdapter().getItem(0);
+        spinner.setSelection(0);
+
+        assertEquals(option1, child.get(field.getId()));
+
+        String option2 = (String) spinner.getAdapter().getItem(1);
+        spinner.setSelection(1);
+        assertEquals(option2, child.get(field.getId()));
     }
 
 }

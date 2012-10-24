@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +29,17 @@ public class TextFieldTest extends BaseViewSpec<TextField> {
     @Test
     public void testDefaultValue() {
         field.setValue("sample");
-        view.setFormField(field, null);
+        view.setFormField(field, child);
         assertThat(view.getText(), equalTo("sample"));
+    }
+
+    @Test
+    public void testShouldStoreTextValuesIntoChildJSONObject() throws JSONException {
+        view.setFormField(field, child);
+        view.setText("some text");
+        assertEquals("some text", child.get(field.getId()));
+        view.setText("");
+        assertEquals("", child.get(field.getId()));
     }
 
 }

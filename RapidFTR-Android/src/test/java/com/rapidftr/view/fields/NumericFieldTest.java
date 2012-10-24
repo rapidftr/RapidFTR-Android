@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -22,6 +23,13 @@ public class NumericFieldTest extends BaseViewSpec<NumericField> {
     @Test
     public void testInheritTextFieldBehavior() {
         assertThat(view, instanceOf(TextField.class));
+    }
+
+    @Test
+    public void testShouldStoreNumericDataInChildJSONObject() {
+        view.setFormField(field, child);
+        view.setText(24234324);
+        assertThat(Integer.parseInt(view.getText()), equalTo(24234324));
     }
 
 }
