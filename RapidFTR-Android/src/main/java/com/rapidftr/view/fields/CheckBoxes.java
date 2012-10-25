@@ -10,9 +10,6 @@ import com.rapidftr.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class CheckBoxes extends BaseView {
 
     public CheckBoxes(Context context) {
@@ -42,11 +39,10 @@ public class CheckBoxes extends BaseView {
         CheckBox checkBox = (CheckBox) LayoutInflater.from(getContext()).inflate(R.layout.form_check_box, null);
         checkBox.setText(optionName);
         checkBox.setTag(optionName);
-        JSONArray options;
+
         if (child.has(formField.getId()) && child.get(formField.getId()) instanceof JSONArray) {
-            options = (JSONArray) child.get(formField.getId());
-            String[] tempOptions = new String[options.length()];
-            for (int i = 0; i < tempOptions.length; i++) {
+            JSONArray options = child.getJSONArray(formField.getId());
+            for (int i = 0; i < options.length(); i++) {
                 if (options.getString(i).equals(optionName)){
                     checkBox.setChecked(true);
                 }
@@ -57,21 +53,12 @@ public class CheckBoxes extends BaseView {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 try {
-                    JSONArray options = new JSONArray();
-                    if (child.has(formField.getId()) && child.get(formField.getId()) instanceof JSONArray) {
-                        options = (JSONArray) child.get(formField.getId());
-                    }
+                    String value = buttonView.getText().toString();
 
                     if (isChecked) {
-                        options.put(buttonView.getText().toString());
-                        child.put(formField.getId(), options);
+                        child.addToJSONArray(formField.getId(), value);
                     } else {
-                        List<String> tempOptions = new ArrayList<String>();
-                        for (int i = 0; i < options.length(); i++) {
-                            if (!options.getString(i).equals(buttonView.getText().toString()))
-                                tempOptions.add(options.getString(i));
-                        }
-                        child.put(formField.getId(), new JSONArray(tempOptions.toArray()));
+                        child.removeFromJSONArray(formField.getId(), value);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
