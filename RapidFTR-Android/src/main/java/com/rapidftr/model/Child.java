@@ -1,14 +1,25 @@
 package com.rapidftr.model;
 
+import android.content.ContentValues;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.DatabaseSession;
 import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.UUID;
 
+import static com.rapidftr.database.DatabaseHelper.TABLE_CHILDREN_COLUMN_CHILD_JSON;
+import static com.rapidftr.database.DatabaseHelper.TABLE_CHILDREN_COLUMN_ID;
+
 public class Child {
 
     public static void save(JSONObject child, String username){
-
+        DatabaseHelper dbHelper = new DatabaseHelper();
+        DatabaseSession dbSession = dbHelper.getSession();
+        ContentValues values = new ContentValues();
+        values.put(TABLE_CHILDREN_COLUMN_ID, generateUniqueId(username));
+        values.put(TABLE_CHILDREN_COLUMN_CHILD_JSON, child.toString());
+        dbSession.insert(DatabaseHelper.TABLE_CHILDREN,values);
     }
 
     public static String generateUniqueId(String userName){
