@@ -4,6 +4,7 @@ package com.rapidftr.model;
 import com.rapidftr.CustomTestRunner;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -14,6 +15,7 @@ import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -101,6 +103,18 @@ public class ChildTest {
 
         assertTrue(guid.contains("rapidftr20120721"));
         assertTrue(guid.length() == 21);
+    }
+
+    @Test
+    public void testAtLeastOneFieldIsFilledExcludingIdAndOwner() throws JSONException {
+        Child child = new Child("id1", "owner1", null);
+        assertFalse(child.isValid());
+
+        child.put("test1", "value1");
+        assertTrue(child.isValid());
+
+        child.remove("test1");
+        assertFalse(child.isValid());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.rapidftr.model;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,6 +12,7 @@ public class Child extends JSONObject {
 
     public static final String ID_FIELD = "_id";
     public static final String OWNER_FIELD = "created_by";
+    public static final String[] INTERNAL_FIELDS = { ID_FIELD, OWNER_FIELD };
 
     public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 
@@ -43,6 +45,31 @@ public class Child extends JSONObject {
         put(OWNER_FIELD, owner);
     }
 
+    public void addToJSONArray(String key, Object element) throws JSONException {
+        JSONArray array = has(key) ? getJSONArray(key) : new JSONArray();
+        for (int i=0, j=array.length(); i < j; i++)
+            if (element.equals(array.get(i)))
+                return;
+
+        array.put(element);
+        put(key, array);
+    }
+
+    public void removeFromJSONArray(String key, Object element) throws JSONException {
+        if (!has(key))
+            return;
+
+        JSONArray array = getJSONArray(key);
+        JSONArray newArray = new JSONArray();
+        for (int i=0, j=array.length(); i < j; i++) {
+            if (!element.equals(array.get(i))) {
+                newArray.put(array.get(i));
+            }
+        }
+
+        put(key, newArray);
+    }
+
     public void generateUniqueId() throws JSONException {
         if (has(ID_FIELD))
             return;
@@ -64,4 +91,11 @@ public class Child extends JSONObject {
         return uuid.substring(uuid.length() - length, uuid.length()); //Fetch last 5 characrters of UUID
     }
 
+    public boolean isValid() {
+        int count = names().length();
+        for (String field : INTERNAL_FIELDS)
+            count = count - (has(field) ? 1 : 0);
+
+        return count > 0;
+    }
 }
