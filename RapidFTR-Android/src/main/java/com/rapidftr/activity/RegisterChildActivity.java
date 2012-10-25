@@ -1,6 +1,5 @@
 package com.rapidftr.activity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -10,50 +9,60 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.ChildRecordStorage;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.view.FormSectionView;
-import org.json.JSONObject;
+import lombok.Cleanup;
+import org.json.JSONException;
 
 import java.util.List;
 
 public class RegisterChildActivity extends RapidFtrActivity {
 
-    private List<FormSection> formSections = null;
+    protected List<FormSection> formSections = null;
 
-    private JSONObject child = new JSONObject();
+    protected Child child;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_child);
-        try {
-            this.formSections = RapidFtrApplication.getChildFormSections();
-        } catch (Exception ex) {
-            logError(ex.getMessage());
-        }
+
+        this.formSections = RapidFtrApplication.getChildFormSections();
+        this.child        = new Child();
+
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences rapidftrPreferences = getApplication().getSharedPreferences(RapidFtrActivity.SHARED_PREFERENCES_FILE,0);
-                String username = rapidftrPreferences.getString("USER_NAME","");
-                Child.save(child, username);
+            try {
+                child.setOwner(RapidFtrApplication.getUserName());
+                child.generateUniqueId();
+
+                @Cleanup ChildRecordStorage storage = new ChildRecordStorage(child.getOwner(), null);
+                storage.addChild(child);
+                toastMessage("Saved child record");
+            } catch (Exception e) {
+                toastMessage("Failed to save child record");
+            }
             }
         });
+
         initializePager();
         initializeSpinner();
     }
 
-    private Spinner getSpinner() {
+    protected Spinner getSpinner() {
         return ((Spinner) findViewById(R.id.spinner));
     }
 
-    private ViewPager getPager() {
+    protected ViewPager getPager() {
         return (ViewPager) findViewById(R.id.pager);
     }
 
-    private void initializePager() {
+    protected void initializePager() {
         FormSectionPagerAdapter formSectionAdapter = new FormSectionPagerAdapter();
         getPager().setAdapter(formSectionAdapter);
         getPager().setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -68,7 +77,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
         });
     }
 
-    private void initializeSpinner() {
+    protected void initializeSpinner() {
         ArrayAdapter<FormSection> childDetailsFormArrayAdapter = new ArrayAdapter<FormSection>(this, android.R.layout.simple_spinner_item , formSections);
         getSpinner().setAdapter(childDetailsFormArrayAdapter);
         getSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -83,9 +92,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
 
 
 
-    private class FormSectionPagerAdapter extends PagerAdapter {
-
-        FormSection section;
+    protected class FormSectionPagerAdapter extends PagerAdapter {
         @Override
         public int getCount() {
             return formSections.size();
@@ -99,7 +106,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             FormSectionView view = (FormSectionView) LayoutInflater.from(RegisterChildActivity.this).inflate(R.layout.form_section, null);
-            section = formSections.get(position);
+            FormSection section = formSections.get(position);
             view.setFormSection(section, child);
             container.addView(view, 0);
             return view;

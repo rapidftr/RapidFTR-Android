@@ -2,30 +2,120 @@ package com.rapidftr.model;
 
 
 import com.rapidftr.CustomTestRunner;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
-import static com.rapidftr.model.Child.generateUniqueId;
+import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 @RunWith(CustomTestRunner.class)
 public class ChildTest {
 
     @Test
-    public void testShouldGenerateUniqueId(){
-        Calendar calendar = mock(Calendar.class);
-        when(calendar.get(Calendar.YEAR)).thenReturn(2012);
-        when(calendar.get(Calendar.MONTH)).thenReturn(10);
-        when(calendar.get(Calendar.DAY_OF_MONTH)).thenReturn(24);
+    public void shouldCreateEmptyChild() throws JSONException {
+        Child child = new Child(null);
+    }
 
-        String guid = generateUniqueId("rapidftr");
+    @Test
+    public void shouldDecodeIDFromJSON() throws JSONException {
+        Child child = new Child("{ '_id' : 'test1' }");
+        assertThat(child.getId(), is("test1"));
+    }
 
-        assertTrue(guid.contains("rapidftr20121024"));
+    @Test
+    public void shouldDecodeOwnerFromJSON() throws JSONException {
+        Child child = new Child("{ 'created_by' : 'test1' }");
+        assertThat(child.getOwner(), is("test1"));
+    }
+
+    @Test
+    public void shouldDecodeString() throws JSONException {
+        Child child = new Child("{ 'test1' :  'value1' }");
+        assertThat(child.getString("test1"), is("value1"));
+    }
+
+    @Test
+    public void shouldDecodeInteger() throws JSONException {
+        Child child = new Child("{ 'test1' : 17 }");
+        assertThat(child.getInt("test1"), is(17));
+    }
+
+    @Test
+    public void shouldDecodeArrayOfStrings() throws JSONException {
+        Child child = new Child("{ 'test1' : ['value1', 'value2', 'value3' ]}");
+        assertThat(child.getJSONArray("test1").toString(), is(new JSONArray(Arrays.asList("value1", "value2", "value3")).toString()));
+    }
+
+    @Test
+    public void shouldGenerateWithIdAndOwnerAndContent() throws JSONException {
+        Child child = new Child("id1", "owner1", "{ 'test1' : 'value1' }");
+        assertThat(child.getId(), is("id1"));
+        assertThat(child.getOwner(), is("owner1"));
+        assertThat(child.getString("test1"), is("value1"));
+    }
+
+    @Test
+    public void shouldGenerateUniqueId() throws JSONException {
+        Child child = new Child(null, "rapidftr", null);
+        child = spy(child);
+
+        doReturn("xyz").when(child).createUniqueId(any(Calendar.class));
+
+        child.generateUniqueId();
+        assertThat(child.getId(), equalTo("xyz"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotGenerateUniqueIdIfOwnerIsNull() throws JSONException {
+        new Child().generateUniqueId();
+    }
+
+    @Test
+    public void shouldNotOverwriteIdIfAlreadyPresent() throws JSONException {
+        Child child = new Child("id1", "owner1", null);
+        child.generateUniqueId();
+        assertThat(child.getId(), equalTo("id1"));
+    }
+
+    @Test
+    public void testShouldGenerateUniqueIdInFormat() throws JSONException {
+        Child child = new Child(null, "rapidftr", null);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 2012);
+        calendar.set(Calendar.MONTH, Calendar.JULY);
+        calendar.set(Calendar.DAY_OF_MONTH, 21);
+
+        String guid = child.createUniqueId(calendar);
+
+        assertTrue(guid.contains("rapidftr20120721"));
         assertTrue(guid.length() == 21);
+    }
+
+    @Test
+    public void shouldNotGenerateDuplicateIdForSameUserSameChildNameAndSameDate() throws JSONException {
+        Child child = new Child(null, "rapidftr", null);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 2012);
+        calendar.set(Calendar.MONTH, Calendar.JULY);
+        calendar.set(Calendar.DAY_OF_MONTH, 21);
+
+        String guid1 = child.createUniqueId(calendar);
+        String guid2 = child.createUniqueId(calendar);
+
+        assertNotSame(guid1, guid2);
     }
 
 }

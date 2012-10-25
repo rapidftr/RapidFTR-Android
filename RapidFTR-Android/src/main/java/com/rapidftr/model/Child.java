@@ -1,40 +1,67 @@
 package com.rapidftr.model;
 
-import android.content.ContentValues;
-import com.rapidftr.database.DatabaseHelper;
-import com.rapidftr.database.DatabaseSession;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
 
-import static com.rapidftr.database.DatabaseHelper.TABLE_CHILDREN_COLUMN_CHILD_JSON;
-import static com.rapidftr.database.DatabaseHelper.TABLE_CHILDREN_COLUMN_ID;
+public class Child extends JSONObject {
 
-public class Child {
+    public static final String ID_FIELD = "_id";
+    public static final String OWNER_FIELD = "created_by";
 
-    public static void save(JSONObject child, String username){
-        DatabaseHelper dbHelper = new DatabaseHelper();
-        DatabaseSession dbSession = dbHelper.getSession();
-        ContentValues values = new ContentValues();
-        values.put(TABLE_CHILDREN_COLUMN_ID, generateUniqueId(username));
-        values.put(TABLE_CHILDREN_COLUMN_CHILD_JSON, child.toString());
-        dbSession.insert(DatabaseHelper.TABLE_CHILDREN,values);
+    public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+
+    public Child() {
     }
 
-    public static String generateUniqueId(String userName){
-        StringBuffer uuid = new StringBuffer(userName);
-        uuid.append(getDateString()).append(getUUID(5));
+    public Child(String content) throws JSONException {
+        super(content == null ? "{}" : content);
+    }
+
+    public Child(String id, String owner, String content) throws JSONException {
+        this(content);
+        setId(id);
+        setOwner(owner);
+    }
+
+    public String getId() throws JSONException {
+        return getString(ID_FIELD);
+    }
+
+    public void setId(String id) throws JSONException {
+        put(ID_FIELD, id);
+    }
+
+    public String getOwner() throws JSONException {
+        return getString(OWNER_FIELD);
+    }
+
+    public void setOwner(String owner) throws JSONException {
+        put(OWNER_FIELD, owner);
+    }
+
+    public void generateUniqueId() throws JSONException {
+        if (has(ID_FIELD))
+            return;
+        else if (!has(OWNER_FIELD))
+            throw new IllegalArgumentException("Owner is required for generating ID");
+        else
+            setId(createUniqueId(Calendar.getInstance()));
+    }
+
+    protected String createUniqueId(Calendar calendar) throws JSONException {
+        StringBuffer uuid = new StringBuffer(getOwner());
+        uuid.append(UUID_DATE_FORMAT.format(calendar.getTime()));
+        uuid.append(getUUIDRandom(5));
         return uuid.toString();
     }
 
-    private static String getDateString() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.get(Calendar.YEAR)+""+(calendar.get(Calendar.MONTH) + 1)+""+calendar.get(Calendar.DAY_OF_MONTH);
-    }
-
-    private static String getUUID(int length){
+    protected String getUUIDRandom(int length) {
         String uuid = String.valueOf(UUID.randomUUID());
         return uuid.substring(uuid.length() - length, uuid.length()); //Fetch last 5 characrters of UUID
     }
+
 }

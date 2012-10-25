@@ -9,14 +9,14 @@ import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.forms.FormField;
+import com.rapidftr.model.Child;
 import com.rapidftr.view.fields.BaseView;
-import org.json.JSONObject;
 
 public class FormSectionView extends ScrollView {
 
     private FormSection formSection;
 
-    private JSONObject child;
+    private Child child;
 
     public FormSectionView(Context context) {
         super(context);
@@ -42,7 +42,7 @@ public class FormSectionView extends ScrollView {
         return (LinearLayout) findViewById(R.id.container);
     }
 
-    public void setFormSection(FormSection formSection, JSONObject child) {
+    public void setFormSection(FormSection formSection, Child child) {
         if (this.formSection != null)
             throw new IllegalArgumentException("Form section is already initialized!");
 

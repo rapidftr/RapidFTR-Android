@@ -4,29 +4,33 @@ import com.rapidftr.RapidFtrApplication;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+import java.io.Closeable;
+
+public class DatabaseHelper extends SQLiteOpenHelper implements Closeable {
 
     private SQLiteDatabase database;
-    public static final String DATABASE_NAME = "rapidftr.db";
-    public static final int DATABASE_VERSION = 1;
-    public static final String TABLE_CHILDREN = "children";
-    public static final String TABLE_CHILDREN_COLUMN_ID = "id";
-    public static final String TABLE_CHILDREN_COLUMN_CHILD_JSON = "child_json";
+    public static final String DB_NAME = "rapidftr.db";
+    public static final int DB_VERSION = 1;
 
+    public static final String DB_CHILD_TABLE = "children";
+    public static final String DB_CHILD_ID = "id";
+    public static final String DB_CHILD_CONTENT = "child_json";
+    public static final String DB_CHILD_OWNER = "child_owner";
 
     // Database creation sql statement
-    private static final String DATABASE_CREATE = "create table "
-            + TABLE_CHILDREN + "(" + TABLE_CHILDREN_COLUMN_ID
-            + " text primary key , " + TABLE_CHILDREN_COLUMN_CHILD_JSON
-            + " text not null);";
+    private static final String DATABASE_CREATE = "create table " + DB_CHILD_TABLE + "("
+        + DB_CHILD_ID + " text primary key, "
+        + DB_CHILD_CONTENT + " text not null,"
+        + DB_CHILD_OWNER + " text not null"
+    + ");";
+
     public DatabaseHelper() {
-        super(RapidFtrApplication.getContext(), DATABASE_NAME, null, DATABASE_VERSION);
+        super(RapidFtrApplication.getContext(), DB_NAME, null, DB_VERSION);
         SQLiteDatabase.loadLibs(RapidFtrApplication.getContext());
     }
 
-    public DatabaseSession getSession() {
-        database = new DatabaseHelper().getWritableDatabase(RapidFtrApplication.getDbKey());
-        return new DatabaseSession(database);
+    public SQLiteDatabase getSession() {
+        return getWritableDatabase(RapidFtrApplication.getDbKey());
     }
 
     @Override
@@ -37,4 +41,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
     }
+
 }
