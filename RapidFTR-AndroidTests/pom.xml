@@ -97,7 +97,6 @@
     </repositories>
 
     <build>
-        <sourceDirectory>src</sourceDirectory>
         <finalName>${project.artifactId}</finalName>
 
         <plugins>
