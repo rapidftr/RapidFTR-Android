@@ -1,6 +1,7 @@
 <resources  xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="links">#0087ef</color>
     <color name="logoBackground">#31353f</color>
+    <color name="bg_formSelection">#666666</color>
     <style name="AppTheme" parent="android:Theme.Light" />
     <style name="button">
         <item name="android:layout_width">fill_parent</item>
@@ -10,6 +11,15 @@
         <item name="android:layout_margin">5dp</item>
         <item name="android:textSize">20dp</item>
     </style>
+    <style name="save_button">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:drawableLeft">@drawable/icon_save</item>
+        <item name="android:drawablePadding">5dp</item>
+        <item name="android:textColor">#ffffff</item>
+
+    </style>
     <style name="links">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -17,4 +27,21 @@
         <item name="android:padding">2dp</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
+
+    <style name="MyTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:textSize">18dip</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/SpinnerItem.DropDownItem</item>
+    </style>
+    <style name="SpinnerItem" parent="@android:style/Widget.TextView.SpinnerItem">
+        <item name="android:textColor">#00FF00</item>
+    </style>
+
+    <style name="SpinnerItem.DropDownItem" parent="@android:style/Widget.DropDownItem.Spinner">
+        <item name="android:textColor">#FF0000</item>
+    </style>
+
+
+
+
 </resources>

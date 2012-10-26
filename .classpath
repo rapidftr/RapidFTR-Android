@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="AndroidTests/src"/>
+	<classpathentry kind="src" path="NativeDriverTests/src"/>
+	<classpathentry kind="src" path="RapidFTR-Android/gen"/>
+	<classpathentry kind="src" path="RapidFTR-Android/src"/>
+	<classpathentry kind="lib" path="NativeDriverTests/lib/client-standalone.jar"/>
+	<classpathentry kind="lib" path="NativeDriverTests/lib/junit-4.8.jar"/>
+	<classpathentry kind="lib" path="NativeDriverTests/lib/resolver.jar"/>
+	<classpathentry kind="lib" path="NativeDriverTests/lib/serializer.jar"/>
+	<classpathentry kind="lib" path="NativeDriverTests/lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="NativeDriverTests/lib/xercesSamples.jar"/>
+	<classpathentry kind="lib" path="NativeDriverTests/lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="RapidFTR-Android/libs/commons-io-2.0.1.jar"/>
+	<classpathentry kind="lib" path="RapidFTR-Android/libs/droid-fu-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="RapidFTR-Android/libs/jackson-core-asl-1.8.5.jar"/>
+	<classpathentry kind="lib" path="RapidFTR-Android/libs/jackson-mapper-asl-1.8.5.jar"/>
+	<classpathentry kind="lib" path="RapidFTR-Android/native_driver_libs/server-standalone.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

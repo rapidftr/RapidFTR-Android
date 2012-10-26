@@ -4,32 +4,49 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical"
+              android:background="@drawable/bg_android"
         >
 
     <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="40dp"
+                  android:layout_height="wrap_content"
                   android:orientation="horizontal"
+                  android:background="@color/logoBackground"
+                  android:padding="0dp"
             >
         <TextView android:id="@+id/title"
                   android:text="New Registration"
                   android:gravity="center_vertical"
                   android:layout_height="fill_parent"
-                  android:layout_width="0dp"
-                  android:layout_weight="3"
+                  android:layout_width="wrap_content"
+                  android:layout_weight="1"
+                  android:textColor="#ffffff"
+                  android:padding="5dp"
                 />
+        <View android:layout_height="38dp"
+              android:layout_width="1dp"
+              android:background="#ffffff"></View>
+
         <Button android:id="@+id/submit"
-                android:gravity="right"
+                android:background="@drawable/save_button"
                 android:text="Save"
+                android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                />
+                style="@style/save_button"
+                android:layout_margin="0dp" />
+
     </LinearLayout>
+
+    <View android:background="#ffffff"
+          android:layout_height="1dp"
+          android:layout_width="fill_parent" />
 
     <Spinner
             android:id="@+id/spinner"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
+            android:layout_margin="0dp"
+
             />
 
     <android.support.v4.view.ViewPager

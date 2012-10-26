@@ -11,6 +11,7 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
+        public static final int bg_formSelection=0x7f060002;
         public static final int links=0x7f060000;
         public static final int logoBackground=0x7f060001;
     }
@@ -23,10 +24,15 @@ public final class R {
         public static final int button_pressed=0x7f020005;
         public static final int ic_action_search=0x7f020006;
         public static final int icon=0x7f020007;
-        public static final int logo=0x7f020008;
-        public static final int textbox=0x7f020009;
-        public static final int textbox_focused=0x7f02000a;
-        public static final int textbox_normal=0x7f02000b;
+        public static final int icon_save=0x7f020008;
+        public static final int logo=0x7f020009;
+        public static final int save_button=0x7f02000a;
+        public static final int save_button_focused=0x7f02000b;
+        public static final int save_button_normal=0x7f02000c;
+        public static final int save_button_pressed=0x7f02000d;
+        public static final int textbox=0x7f02000e;
+        public static final int textbox_focused=0x7f02000f;
+        public static final int textbox_normal=0x7f020010;
     }
     public static final class id {
         public static final int buttonClick=0x7f080002;
@@ -99,7 +105,11 @@ public final class R {
     }
     public static final class style {
         public static final int AppTheme=0x7f070000;
+        public static final int MyTheme=0x7f070004;
+        public static final int SpinnerItem=0x7f070005;
+        public static final int SpinnerItem_DropDownItem=0x7f070006;
         public static final int button=0x7f070001;
-        public static final int links=0x7f070002;
+        public static final int links=0x7f070003;
+        public static final int save_button=0x7f070002;
     }
 }
