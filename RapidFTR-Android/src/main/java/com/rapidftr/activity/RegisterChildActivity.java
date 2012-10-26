@@ -9,15 +9,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.database.ChildRecordStorage;
+import com.rapidftr.database.ChildDAO;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
+import com.rapidftr.task.SaveChildAsyncTask;
 import com.rapidftr.view.FormSectionView;
 import lombok.Cleanup;
-import org.json.JSONException;
 
 import java.util.List;
 
@@ -31,21 +30,20 @@ public class RegisterChildActivity extends RapidFtrActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_child);
 
-        this.formSections = RapidFtrApplication.getChildFormSections();
+        this.formSections = getContext().getFormSections();
         this.child        = new Child();
 
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             try {
-                child.setOwner(RapidFtrApplication.getUserName());
+                child.setOwner(RapidFtrApplication.getContext().getUserName());
                 child.generateUniqueId();
 
-                @Cleanup ChildRecordStorage storage = new ChildRecordStorage(child.getOwner(), null);
-                storage.addChild(child);
-                toastMessage("Saved child record");
+                @Cleanup ChildDAO dao = getInjector().getInstance(ChildDAO.class);
+                new SaveChildAsyncTask(dao, getContext()).execute(child);
             } catch (Exception e) {
-                toastMessage("Failed to save child record");
+                makeToast(R.string.internal_error);
             }
             }
         });
@@ -89,8 +87,6 @@ public class RegisterChildActivity extends RapidFtrActivity {
             public void onNothingSelected(AdapterView<?> parent) { }
         });
     }
-
-
 
     protected class FormSectionPagerAdapter extends PagerAdapter {
         @Override

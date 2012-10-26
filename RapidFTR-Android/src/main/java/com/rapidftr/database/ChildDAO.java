@@ -2,6 +2,8 @@ package com.rapidftr.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.rapidftr.model.Child;
 import lombok.Cleanup;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -14,41 +16,40 @@ import java.util.List;
 
 import static com.rapidftr.database.DatabaseHelper.*;
 
-public class ChildRecordStorage implements Closeable {
+public class ChildDAO implements Closeable {
 
-    private final String username;
-    private final String password;
+    private final String userName;
     private final DatabaseHelper helper;
     private final SQLiteDatabase session;
 
-    public ChildRecordStorage(String username, String password) {
-        this.username = username;
-        this.password = password;
-        this.helper   = new DatabaseHelper();
-        this.session  = helper.getSession();
+    @Inject
+    public ChildDAO(@Named("USER_NAME") String userName, DatabaseHelper helper) {
+        this.userName = userName;
+        this.helper = helper;
+        this.session = helper.openSession();
     }
 
     public void clearAll() {
-        session.delete("CHILDREN", " = ?", new String[]{username});
+        session.delete("CHILDREN", " = ?", new String[]{userName});
     }
 
 
     public List<Child> getAllChildren() throws JSONException {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM CHILDREN WHERE OWNER_USERNAME=? ORDER BY CHILD_ID", new String[]{username});
+        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM CHILDREN WHERE OWNER_USERNAME=? ORDER BY CHILD_ID", new String[]{userName});
 
         List<Child> children = new ArrayList<Child>();
         while (cursor.moveToNext()) {
-            children.add(new Child(EncryptUtil.decrypt(cursor.getString(0), password)));
+            children.add(new Child(cursor.getString(0)));
         }
 
         return children;
     }
 
-    public void addChild(Child child) throws JSONException {
+    public void create(Child child) throws JSONException {
         ContentValues values = new ContentValues();
         values.put(DB_CHILD_OWNER, child.getOwner());
         values.put(DB_CHILD_ID, child.getId());
-        values.put(DB_CHILD_CONTENT, EncryptUtil.encrypt(child.toString(), password));
+        values.put(DB_CHILD_CONTENT, child.toString());
 
         session.insert("CHILDREN", null, values);
     }

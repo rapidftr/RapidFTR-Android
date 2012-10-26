@@ -1,6 +1,10 @@
 package com.rapidftr.database;
 
+import android.content.Context;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
+import lombok.Delegate;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
@@ -8,7 +12,6 @@ import java.io.Closeable;
 
 public class DatabaseHelper extends SQLiteOpenHelper implements Closeable {
 
-    private SQLiteDatabase database;
     public static final String DB_NAME = "rapidftr.db";
     public static final int DB_VERSION = 1;
 
@@ -18,19 +21,25 @@ public class DatabaseHelper extends SQLiteOpenHelper implements Closeable {
     public static final String DB_CHILD_OWNER = "child_owner";
 
     // Database creation sql statement
-    private static final String DATABASE_CREATE = "create table " + DB_CHILD_TABLE + "("
-        + DB_CHILD_ID + " text primary key, "
-        + DB_CHILD_CONTENT + " text not null,"
-        + DB_CHILD_OWNER + " text not null"
-    + ");";
+    private static final String DATABASE_CREATE = "create table "
+        + DB_CHILD_TABLE + "("
+            + DB_CHILD_ID + " text primary key, "
+            + DB_CHILD_CONTENT + " text not null,"
+            + DB_CHILD_OWNER + " text not null"
+        + ");";
 
-    public DatabaseHelper() {
-        super(RapidFtrApplication.getContext(), DB_NAME, null, DB_VERSION);
-        SQLiteDatabase.loadLibs(RapidFtrApplication.getContext());
+    private final String dbKey;
+
+    @Inject
+    public DatabaseHelper(@Named("DB_KEY") String dbKey, Context context) {
+        super(context, DB_NAME, null, DB_VERSION);
+        SQLiteDatabase.loadLibs(context);
+
+        this.dbKey = dbKey;
     }
 
-    public SQLiteDatabase getSession() {
-        return getWritableDatabase(RapidFtrApplication.getDbKey());
+    public SQLiteDatabase openSession() {
+        return getWritableDatabase(dbKey);
     }
 
     @Override

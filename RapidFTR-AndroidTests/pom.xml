@@ -35,7 +35,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>0.11.4</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -54,12 +53,6 @@
 
 
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>13.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.jayway.android.robotium</groupId>
             <artifactId>robotium-solo</artifactId>
             <version>3.5</version>
@@ -71,11 +64,25 @@
         </dependency>
 
         <dependency>
-           <groupId>sqlcipher</groupId>
-           <artifactId>sqlcipher</artifactId>
-           <version>1.0</version>
-           <scope>system</scope>
-           <systemPath>${project.basedir}/../RapidFTR-Android/libs/sqlcipher.jar</systemPath>
+            <groupId>sqlcipher</groupId>
+            <artifactId>sqlcipher</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../RapidFTR-Android/libs/sqlcipher.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../RapidFTR-Android/libs/guava-r09.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../RapidFTR-Android/libs/commons-codec.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -114,11 +121,6 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                <artifactId>android-maven-plugin</artifactId>
-                <extensions>true</extensions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

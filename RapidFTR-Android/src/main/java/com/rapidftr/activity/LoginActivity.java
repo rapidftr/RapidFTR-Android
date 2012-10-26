@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import org.apache.commons.io.IOUtils;
@@ -21,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static com.rapidftr.RapidFtrApplication.setLoggedIn;
 import static com.rapidftr.utils.HttpUtils.getToastMessage;
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_NOT_FOUND;
@@ -37,7 +35,7 @@ public class LoginActivity extends RapidFtrActivity {
         super.onCreate(savedInstanceState);
         context = this;
         loginService = new LoginService();
-        if (RapidFtrApplication.isLoggedIn()) {
+        if (getContext().isLoggedIn()) {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
         }
@@ -60,7 +58,7 @@ public class LoginActivity extends RapidFtrActivity {
                     }
                 } catch (IOException e) {
                     logError(e.getMessage());
-                    toastMessage("Login Failed: " + e.getMessage());
+                    makeToast(R.string.internal_error);
                 }
             }
         });
@@ -123,7 +121,7 @@ public class LoginActivity extends RapidFtrActivity {
 
     private void getFormSectionBody() throws IOException {
         HttpResponse formSectionsResponse = new FormService().getPublishedFormSections(this);
-        RapidFtrApplication.setFormSectionsTemplate(IOUtils.toString(formSectionsResponse.getEntity().getContent()));
+        getContext().setFormSectionsTemplate(IOUtils.toString(formSectionsResponse.getEntity().getContent()));
     }
 
     public String getEditText(int resId) {
@@ -159,7 +157,7 @@ public class LoginActivity extends RapidFtrActivity {
         protected void onPostExecute(HttpResponse response) {
             int statusCode = response == null ? SC_NOT_FOUND : response.getStatusLine().getStatusCode();
             if (statusCode == SC_CREATED) {
-                setLoggedIn(true);
+                getContext().setLoggedIn(true);
                 setDbKey(response);
                 try {
                     SharedPreferences preferences = getApplication().getSharedPreferences(RapidFtrActivity.SHARED_PREFERENCES_FILE,0);
@@ -174,7 +172,7 @@ public class LoginActivity extends RapidFtrActivity {
                 goToHomeScreen();
             }
             mProgressDialog.dismiss();
-            toastMessage(getToastMessage(statusCode, context));
+            makeToast(getToastMessage(statusCode));
         }
 
         private void setDbKey(HttpResponse response) {
@@ -182,7 +180,7 @@ public class LoginActivity extends RapidFtrActivity {
                 String responseAsString = inputStreamToString(response.getEntity().getContent());
                 JSONObject responseAsJson = new JSONObject(responseAsString);
                 String db_key = responseAsJson.get("db_key").toString();
-                RapidFtrApplication.setDbKey(db_key);
+                getContext().setDbKey(db_key);
             } catch (Exception e) {
                 logError(e.getMessage());
             }

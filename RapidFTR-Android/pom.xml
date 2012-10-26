@@ -35,7 +35,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>0.11.4</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -72,11 +71,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>13.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.9</version>
@@ -88,45 +82,6 @@
             <version>1.9.9</version>
         </dependency>
 
-        <dependency>
-            <groupId>sqlcipher-dependency</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/armeabi/libdatabase_sqlcipher.so</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>sqlcipher-dependency</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/armeabi/libsqlcipher_android.so</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>sqlcipher-dependency</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/armeabi/libstlport_shared.so</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>sqlcipher</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/commons-codec.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>sqlcipher</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/guava-r09.jar</systemPath>
-        </dependency>
 
         <dependency>
             <groupId>sqlcipher</groupId>
@@ -135,7 +90,20 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/sqlcipher.jar</systemPath>
         </dependency>
-
+        <dependency>
+            <groupId>guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/guava-r09.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/commons-codec.jar</systemPath>
+        </dependency>
 
 
         <dependency>
@@ -170,7 +138,7 @@
         <repository>
             <id>local-repository</id>
             <name>Local Checked in Repo</name>
-            <url>file://${project.basedir}/repository</url>
+            <url>file://${project.basedir}/lib</url>
         </repository>
     </repositories>
 
@@ -179,7 +147,6 @@
 
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>

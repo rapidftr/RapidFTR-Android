@@ -73,21 +73,26 @@ public final class R {
         public static final int form_textarea=0x7f030011;
     }
     public static final class string {
-        public static final int RapidFTRLogo=0x7f050016;
+        public static final int RapidFTRLogo=0x7f050017;
         public static final int app_name=0x7f050000;
         public static final int camera_button=0x7f050001;
         public static final int change_url=0x7f050004;
-        public static final int invalid_url=0x7f050014;
+        public static final int internal_error=0x7f050018;
+        public static final int invalid_url=0x7f050015;
         public static final int loading_message=0x7f050010;
         public static final int loading_title=0x7f05000f;
         public static final int log_in=0x7f050002;
         public static final int log_out=0x7f050003;
         public static final int login_successful=0x7f050013;
+        public static final int logout_successful=0x7f050014;
         public static final int password=0x7f05000a;
         public static final int password_required=0x7f05000d;
         public static final int register_child=0x7f050005;
+        public static final int save_child_failure=0x7f05001b;
+        public static final int save_child_progress=0x7f050019;
+        public static final int save_child_success=0x7f05001a;
         public static final int search_for_a_child=0x7f050007;
-        public static final int server_not_reachable=0x7f050015;
+        public static final int server_not_reachable=0x7f050016;
         public static final int submit=0x7f050011;
         public static final int synchronize=0x7f050008;
         public static final int unauthorized=0x7f050012;

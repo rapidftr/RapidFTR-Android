@@ -1,8 +1,6 @@
 package com.rapidftr.forms;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -10,10 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Getter
-@Setter
-@EqualsAndHashCode
-public class FormSection implements Comparable{
+public class FormSection implements Comparable<FormSection> {
 
     private String name;
 
@@ -27,23 +22,53 @@ public class FormSection implements Comparable{
     private List<FormField> fields = new ArrayList<FormField>();
 
     @Override
-    public int compareTo(Object other) {
-        if (!(other instanceof FormSection)) {
-            throw new ClassCastException("Invalid object");
-        }
-
-        int order = ((FormSection)other).getOrder();
-
-        if(this.getOrder() > order)
-            return 1;
-        else if ( this.getOrder() < order)
-            return -1;
-        else
-            return 0;
+    public int compareTo(FormSection other) {
+        int otherOrder = other == null ? Integer.MIN_VALUE : ((FormSection)other).getOrder();
+        return Integer.valueOf(this.order).compareTo(otherOrder);
     }
 
     @Override
     public String toString() {
         return name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getHelpText() {
+        return helpText;
+    }
+
+    public void setHelpText(String helpText) {
+        this.helpText = helpText;
+    }
+
+    public List<FormField> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<FormField> fields) {
+        this.fields = fields;
     }
 }

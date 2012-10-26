@@ -2,7 +2,6 @@ package com.rapidftr.utils;
 
 import android.content.Context;
 import android.net.Uri;
-import android.net.http.AndroidHttpClient;
 import com.rapidftr.R;
 import com.rapidftr.activity.RapidFtrActivity;
 import org.apache.http.HttpResponse;

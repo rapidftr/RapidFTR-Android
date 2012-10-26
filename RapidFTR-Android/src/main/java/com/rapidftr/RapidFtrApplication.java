@@ -1,10 +1,14 @@
 package com.rapidftr;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.utils.ApplicationInjector;
+import lombok.Getter;
+import lombok.Setter;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -15,51 +19,71 @@ import java.util.ListIterator;
 
 public class RapidFtrApplication extends Application {
 
-    private static List<FormSection> formSectionsTemplate;
-    private static boolean loggedIn;
-    private static String dbKey;
     private static RapidFtrApplication instance;
+
+    public void setFormSections(List<FormSection> formSections) {
+        this.formSections = formSections;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
+
+    public void setDbKey(String dbKey) {
+        this.dbKey = dbKey;
+    }
+
+    public Injector getInjector() {
+
+        return injector;
+    }
+
+    public List<FormSection> getFormSections() {
+        return formSections;
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public String getDbKey() {
+        return dbKey;
+    }
+
+    private final Injector injector = Guice.createInjector(new ApplicationInjector());
+
+    private List<FormSection> formSections;
+    private boolean loggedIn;
+    private String dbKey;
 
     public RapidFtrApplication(){
         instance = this;
     }
 
-    public static String getUserName() {
-        SharedPreferences rapidftrPreferences = getContext().getSharedPreferences(RapidFtrActivity.SHARED_PREFERENCES_FILE,0);
-        return rapidftrPreferences.getString("USER_NAME", null);
+    public static RapidFtrApplication getContext() {
+        return instance;
     }
 
-    public static void setFormSectionsTemplate(String formSectionResponse) throws IOException {
-        formSectionsTemplate = Arrays.asList(new ObjectMapper().readValue(formSectionResponse, FormSection[].class));
-        Collections.sort(formSectionsTemplate);
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences(RapidFtrActivity.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
+    }
 
-        ListIterator<FormSection> iterator = formSectionsTemplate.listIterator();
+    public String getUserName() {
+        return getSharedPreferences().getString("USER_NAME", null);
+    }
+
+    public void setUserName(String userName) {
+        getSharedPreferences().edit().putString("USER_NAME", userName).commit();
+    }
+
+    public void setFormSectionsTemplate(String formSectionResponse) throws IOException {
+        formSections = Arrays.asList(new ObjectMapper().readValue(formSectionResponse, FormSection[].class));
+        Collections.sort(formSections);
+
+        ListIterator<FormSection> iterator = formSections.listIterator();
         while (iterator.hasNext())
             if (!iterator.next().isEnabled())
                 iterator.remove();
     }
 
-    public static List<FormSection> getChildFormSections() {
-        return formSectionsTemplate;
-    }
-
-    public static boolean isLoggedIn() {
-        return loggedIn;
-    }
-
-    public static void setLoggedIn(boolean loggedIn) {
-        RapidFtrApplication.loggedIn = loggedIn;
-    }
-
-    public static String getDbKey(){
-        return dbKey;
-    }
-
-    public static void setDbKey(String dbKey) {
-        RapidFtrApplication.dbKey = dbKey;
-    }
-
-    public static Context getContext() {
-        return instance;
-    }
 }

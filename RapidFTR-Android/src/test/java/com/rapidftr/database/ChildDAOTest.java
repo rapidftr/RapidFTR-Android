@@ -10,21 +10,24 @@ import org.junit.Test;
 import java.util.List;
 
 @Ignore
-public class ChildRecordStorageTest extends ActivityInstrumentationTestCase2<MainActivity> {
+public class ChildDAOTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
-    public ChildRecordStorageTest() {
+    private DatabaseHelper helper;
+
+    public ChildDAOTest() {
         super(MainActivity.class);
+        helper = new DatabaseHelper("SampleDBKey", getActivity());
     }
 
     @Test
     public void shouldStoreAndRetrieveChildRecord() throws JSONException {
-        ChildRecordStorage storage = new ChildRecordStorage("some_user", "some_password");
+        ChildDAO storage = new ChildDAO("some_user", helper);
         Child child1 = new Child("id1", "user1", "child1");
         Child child2 = new Child("id2", "user2", "child2");
 
         storage.clearAll();
-        storage.addChild(child1);
-        storage.addChild(child2);
+        storage.create(child1);
+        storage.create(child2);
 
         List<Child> children = storage.getAllChildren();
         assertEquals(2, children.size());
@@ -34,25 +37,25 @@ public class ChildRecordStorageTest extends ActivityInstrumentationTestCase2<Mai
 
     @Test
     public void shouldNotSeeRecordsFromOtherUsers() throws JSONException {
-        ChildRecordStorage storage = new ChildRecordStorage("user1", "some_password");
+        ChildDAO storage = new ChildDAO("user1", helper);
         storage.clearAll();
 
-        ChildRecordStorage otherStorage = new ChildRecordStorage("user2", "some_password");
+        ChildDAO otherStorage = new ChildDAO("user2", helper);
         otherStorage.clearAll();
 
-        storage.addChild(new Child("id3", "user3", "child3"));
+        storage.create(new Child("id3", "user3", "child3"));
         assertTrue(otherStorage.getAllChildren().isEmpty());
     }
 
     @Test
     public void shouldClearAllShouldOnlyDeleteRecordsForCurrentUser() throws JSONException {
-        ChildRecordStorage storage = new ChildRecordStorage("user1", "some_password");
+        ChildDAO storage = new ChildDAO("user1", helper);
         storage.clearAll();
 
-        ChildRecordStorage otherStorage = new ChildRecordStorage("user2", "some_password");
+        ChildDAO otherStorage = new ChildDAO("user2", helper);
         otherStorage.clearAll();
 
-        storage.addChild(new Child("id5", "user5", "child5"));
+        storage.create(new Child("id5", "user5", "child5"));
         otherStorage.clearAll();
 
         assertFalse(storage.getAllChildren().isEmpty());
