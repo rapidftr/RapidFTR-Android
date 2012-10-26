@@ -8,10 +8,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import com.google.common.io.CharStreams;
 import com.rapidftr.R;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.json.JSONObject;
 
@@ -121,7 +121,8 @@ public class LoginActivity extends RapidFtrActivity {
 
     private void getFormSectionBody() throws IOException {
         HttpResponse formSectionsResponse = new FormService().getPublishedFormSections(this);
-        getContext().setFormSectionsTemplate(IOUtils.toString(formSectionsResponse.getEntity().getContent()));
+        String formSectionsTemplate = CharStreams.toString(new InputStreamReader(formSectionsResponse.getEntity().getContent()));
+        getContext().setFormSectionsTemplate(formSectionsTemplate);
     }
 
     public String getEditText(int resId) {

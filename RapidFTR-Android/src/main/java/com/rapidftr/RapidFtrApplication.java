@@ -2,6 +2,8 @@ package com.rapidftr;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.activity.RapidFtrActivity;
@@ -19,49 +21,16 @@ import java.util.ListIterator;
 
 public class RapidFtrApplication extends Application {
 
-    private static RapidFtrApplication instance;
+    private @Getter static RapidFtrApplication instance;
 
-    public void setFormSections(List<FormSection> formSections) {
-        this.formSections = formSections;
-    }
+    private @Getter final Injector injector = Guice.createInjector(new ApplicationInjector());
 
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
-    }
-
-    public void setDbKey(String dbKey) {
-        this.dbKey = dbKey;
-    }
-
-    public Injector getInjector() {
-
-        return injector;
-    }
-
-    public List<FormSection> getFormSections() {
-        return formSections;
-    }
-
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
-
-    public String getDbKey() {
-        return dbKey;
-    }
-
-    private final Injector injector = Guice.createInjector(new ApplicationInjector());
-
-    private List<FormSection> formSections;
-    private boolean loggedIn;
-    private String dbKey;
+    private @Getter @Setter List<FormSection> formSections;
+    private @Getter @Setter boolean loggedIn;
+    private @Getter @Setter String dbKey;
 
     public RapidFtrApplication(){
         instance = this;
-    }
-
-    public static RapidFtrApplication getContext() {
-        return instance;
     }
 
     public SharedPreferences getSharedPreferences() {

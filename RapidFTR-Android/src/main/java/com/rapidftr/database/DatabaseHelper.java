@@ -3,8 +3,6 @@ package com.rapidftr.database;
 import android.content.Context;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.rapidftr.RapidFtrApplication;
-import lombok.Delegate;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 

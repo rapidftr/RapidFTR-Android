@@ -37,7 +37,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
             @Override
             public void onClick(View view) {
             try {
-                child.setOwner(RapidFtrApplication.getContext().getUserName());
+                child.setOwner(RapidFtrApplication.getInstance().getUserName());
                 child.generateUniqueId();
 
                 @Cleanup ChildDAO dao = getInjector().getInstance(ChildDAO.class);

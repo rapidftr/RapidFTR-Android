@@ -25,7 +25,7 @@ public class ApplicationInjector extends AbstractModule {
 
     @Provides
     public RapidFtrApplication getRapidFTRApplication() {
-        return RapidFtrApplication.getContext();
+        return RapidFtrApplication.getInstance();
     }
 
 }

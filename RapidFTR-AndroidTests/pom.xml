@@ -4,13 +4,8 @@
 
 
     <artifactId>rapidftr-integration-tests</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>apk</packaging>
     <name>RapidFTR Client Integration Test suite Application</name>
-    <description>RapidFTR is a mobile app and database system that lets aid workers collect and share information about
-        children in emergency situations, so they can be reunited with their families.
-    </description>
-    <url>https://github.com/jorgej/RapidFTR---Android</url>
 
     <parent>
         <version>1.0</version>
@@ -18,39 +13,13 @@
         <artifactId>rapidftr-android-parent</artifactId>
     </parent>
 
-    <properties>
-        <robolectric.version>1.1</robolectric.version>
-        <platform.version>2.2.1</platform.version>
-        <source.version>1.6</source.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.build.timestamp.format>MM/dd/yy hh:mm a z</maven.build.timestamp.format>
-        <version.code>-1</version.code>
-        <version.name>${version.code} (${environment}) - Built on ${maven.build.timestamp}</version.name>
-
-        <environment>dev</environment>
-    </properties>
-
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>0.11.4</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>compile</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>android</artifactId>
-            <version>2.2.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>android-test</artifactId>
-            <version>2.2.1</version>
-            <scope>provided</scope>
-        </dependency>
-
 
         <dependency>
             <groupId>com.jayway.android.robotium</groupId>
@@ -58,78 +27,35 @@
             <version>3.5</version>
         </dependency>
         <dependency>
-            <groupId>org.roboguice</groupId>
-            <artifactId>roboguice</artifactId>
-            <version>2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>sqlcipher</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../RapidFTR-Android/libs/sqlcipher.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../RapidFTR-Android/libs/guava-r09.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../RapidFTR-Android/libs/commons-codec.jar</systemPath>
-        </dependency>
-
-        <dependency>
             <groupId>com.rapidftr</groupId>
             <artifactId>rapidftr-android</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
-            <type>apk</type>
-        </dependency>
-        <dependency>
-            <groupId>com.rapidftr</groupId>
-            <artifactId>rapidftr-android</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
             <type>jar</type>
+            <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.rapidftr</groupId>
+            <artifactId>rapidftr-android</artifactId>
+            <version>${project.version}</version>
+            <type>apk</type>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>local-repository</id>
-            <name>Local Checked in Repo</name>
-            <url>file://${project.basedir}/repository</url>
-        </repository>
-    </repositories>
-
     <build>
-        <finalName>${project.artifactId}</finalName>
-
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.6</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
                 <executions>
                     <execution>
                         <id>unlock keyguard</id>
@@ -146,8 +72,6 @@
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
-                <version>3.3.0</version>
-                <extensions>true</extensions>
                 <executions>
                     <execution>
                         <id>startEmulator</id>
@@ -156,42 +80,47 @@
                             <goal>emulator-start</goal>
                         </goals>
                     </execution>
-                    <execution>
-                        <id>stopEmulator</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>emulator-stop</goal>
-                        </goals>
-                    </execution>
                 </executions>
                 <configuration>
-                    <sdk>
-                        <platform>8</platform>
-                    </sdk>
                     <emulator>
                         <avd>android2.2</avd>
                         <wait>40000</wait>
-                        <!--<options>-no-skin</options>-->
-                        <options>-no-window</options>
                     </emulator>
-                    <dex>
-                        <jvmArguments>
-                            <jvmArgument>-Xms512m</jvmArgument>
-                            <jvmArgument>-Xmx1024m</jvmArgument>
-                        </jvmArguments>
-                    </dex>
-                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                    <androidManifestFile>AndroidManifest.xml</androidManifestFile>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
-    <scm>
-        <url>git@github.com:jorgej/RapidFTR---Android.git</url>
-        <connection>scm:git:git@github.com:jorgej/RapidFTR---Android.git</connection>
-    </scm>
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <!-- Start emulator in no-window mode, Stop emulator only if running in CI, in Dev box let the emulator keep running -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <artifactId>android-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>stopEmulator</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>emulator-stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <emulator>
+                                <avd>android2.2</avd>
+                                <wait>40000</wait>
+                                <options>-no-window</options>
+                            </emulator>
+                        </configuration>
+                    </plugin>
 
-
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

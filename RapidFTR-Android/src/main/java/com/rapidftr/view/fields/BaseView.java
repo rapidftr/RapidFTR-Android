@@ -46,5 +46,4 @@ public abstract class BaseView extends LinearLayout {
         this.setEnabled(formField.isEditable());
     }
 
-
 }
