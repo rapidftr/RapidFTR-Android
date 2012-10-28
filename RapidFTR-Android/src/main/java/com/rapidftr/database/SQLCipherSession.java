@@ -4,10 +4,10 @@ import lombok.Delegate;
 import lombok.RequiredArgsConstructor;
 import net.sqlcipher.database.SQLiteDatabase;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(suppressConstructorProperties = true)
 public class SQLCipherSession implements DatabaseSession {
 
     @Delegate(types = DatabaseSession.class)
-    private final SQLiteDatabase database;
+    protected final SQLiteDatabase database;
 
 }
