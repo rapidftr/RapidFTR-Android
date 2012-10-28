@@ -11,7 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.database.ChildDAO;
+import com.rapidftr.dao.ChildDAO;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.task.SaveChildAsyncTask;

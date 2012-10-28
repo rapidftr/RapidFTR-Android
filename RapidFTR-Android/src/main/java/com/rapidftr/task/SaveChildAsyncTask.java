@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 import com.google.inject.Inject;
 import com.rapidftr.R;
-import com.rapidftr.database.ChildDAO;
+import com.rapidftr.dao.ChildDAO;
 import com.rapidftr.model.Child;
 
 public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {

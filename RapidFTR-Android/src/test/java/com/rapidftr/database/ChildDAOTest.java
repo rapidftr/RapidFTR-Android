@@ -1,22 +1,26 @@
 package com.rapidftr.database;
 
 import android.test.ActivityInstrumentationTestCase2;
+import com.rapidftr.CustomTestRunner;
 import com.rapidftr.activity.MainActivity;
+import com.rapidftr.dao.ChildDAO;
 import com.rapidftr.model.Child;
 import org.json.JSONException;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
 @Ignore
+@RunWith(CustomTestRunner.class)
 public class ChildDAOTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
     private DatabaseHelper helper;
 
     public ChildDAOTest() {
         super(MainActivity.class);
-        helper = new DatabaseHelper("SampleDBKey", getActivity());
+        helper = new SQLCipherHelper("SampleDBKey", getActivity());
     }
 
     @Test

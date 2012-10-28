@@ -3,7 +3,6 @@ package com.rapidftr.view.fields;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
 import junit.framework.TestCase;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 

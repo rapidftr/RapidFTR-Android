@@ -1,12 +1,13 @@
-package com.rapidftr.database;
+package com.rapidftr.dao;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Child;
 import lombok.Cleanup;
-import net.sqlcipher.database.SQLiteDatabase;
 import org.json.JSONException;
 
 import java.io.Closeable;
@@ -20,7 +21,7 @@ public class ChildDAO implements Closeable {
 
     private final String userName;
     private final DatabaseHelper helper;
-    private final SQLiteDatabase session;
+    private final DatabaseSession session;
 
     @Inject
     public ChildDAO(@Named("USER_NAME") String userName, DatabaseHelper helper) {

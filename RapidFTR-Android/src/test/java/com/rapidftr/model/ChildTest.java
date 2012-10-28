@@ -4,7 +4,6 @@ package com.rapidftr.model;
 import com.rapidftr.CustomTestRunner;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

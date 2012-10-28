@@ -40,7 +40,6 @@
             <scope>system</scope>
             <systemPath>${sqlcipher.dir}/commons-codec.jar</systemPath>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -49,6 +48,7 @@
                 <directory>libs</directory>
             </resource>
         </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
