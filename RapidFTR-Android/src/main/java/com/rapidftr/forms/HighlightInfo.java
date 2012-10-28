@@ -1,14 +1,14 @@
 package com.rapidftr.forms;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor(suppressConstructorProperties = true)
 public class HighlightInfo{
 
     private String order;

@@ -1,14 +1,20 @@
 package com.rapidftr.database;
 
+
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import lombok.Delegate;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/*
+ * Stub SQLite Helper class which uses an in-memory database provided by Robolectric
+ * Database is freshly created Whenever "getWritableDatabase" or "getReadableDatabase" is called
+ */
 public class ShadowSQLiteHelper extends SQLiteOpenHelper implements DatabaseHelper {
 
-    @RequiredArgsConstructor
+    @RequiredArgsConstructor(suppressConstructorProperties = true)
     public static class ShadowSQLiteSession implements DatabaseSession {
 
         @Delegate(types = DatabaseSession.class)
@@ -16,17 +22,11 @@ public class ShadowSQLiteHelper extends SQLiteOpenHelper implements DatabaseHelp
 
     }
 
+    private @Getter DatabaseSession session;
+
     public ShadowSQLiteHelper() {
-        super(new Activity(), "mydb", null, 1);
-    }
-
-    @Override
-    public DatabaseSession openSession() {
-        return new ShadowSQLiteSession(getWritableDatabase());
-    }
-
-    @Override
-    public void close() {
+        super(new Activity(), "test_database", null, 1);
+        session = new ShadowSQLiteSession(getWritableDatabase());
     }
 
     @Override

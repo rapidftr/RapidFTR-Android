@@ -1,10 +1,8 @@
 package com.rapidftr.forms;
 
+import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -12,6 +10,8 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor(suppressConstructorProperties = true)
 public class FormField {
 
     @JsonProperty("name")

@@ -5,8 +5,13 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.DatabaseSession;
+import com.rapidftr.database.SQLCipherHelper;
 
 public class ApplicationInjector extends AbstractModule {
+
+    public static final String DB_NAME = "rapidftr";
 
     @Override
     protected void configure() {
@@ -23,9 +28,24 @@ public class ApplicationInjector extends AbstractModule {
         return application.getDbKey();
     }
 
+    @Provides @Named("DB_NAME")
+    public String getDBName() {
+        return DB_NAME;
+    }
+
     @Provides
     public RapidFtrApplication getRapidFTRApplication() {
         return RapidFtrApplication.getInstance();
+    }
+
+    @Provides
+    public DatabaseHelper getDatabaseHelper(@Named("DB_NAME") String dbName, @Named("DB_KEY") String dbKey, Context context) {
+        return new SQLCipherHelper(dbName, dbKey, context);
+    }
+
+    @Provides
+    public DatabaseSession getDatabaseSession(DatabaseHelper helper) {
+        return helper.getSession();
     }
 
 }

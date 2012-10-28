@@ -1,8 +1,6 @@
 package com.rapidftr.forms;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
@@ -13,6 +11,8 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor(suppressConstructorProperties = true)
 public class FormSection implements Comparable<FormSection> {
 
     private String name;
@@ -30,6 +30,10 @@ public class FormSection implements Comparable<FormSection> {
     public int compareTo(FormSection other) {
         int otherOrder = other == null ? Integer.MIN_VALUE : ((FormSection)other).getOrder();
         return Integer.valueOf(this.order).compareTo(otherOrder);
+    }
+
+    public String toString() {
+        return name;
     }
 
 }

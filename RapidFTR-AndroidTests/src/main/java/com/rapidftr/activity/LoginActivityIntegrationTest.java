@@ -11,7 +11,7 @@ public class LoginActivityIntegrationTest extends ActivityInstrumentationTestCas
     public LoginPage loginPage;
 
     public LoginActivityIntegrationTest() {
-        super("com.rapidftr.activity", LoginActivity.class);
+        super(LoginActivity.class);
     }
 
     @Override

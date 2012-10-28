@@ -9,6 +9,6 @@ public interface DatabaseHelper extends Closeable {
     public static final String DB_CHILD_CONTENT = "child_json";
     public static final String DB_CHILD_OWNER = "child_owner";
 
-    DatabaseSession openSession();
+    public DatabaseSession getSession();
 
 }

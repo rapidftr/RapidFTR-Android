@@ -24,8 +24,8 @@ import static org.mockito.Mockito.spy;
 public class ChildTest {
 
     @Test
-    public void shouldCreateEmptyChild() throws JSONException {
-        Child child = new Child(null);
+    public void shouldCreateChildWithBlankContent() throws JSONException {
+        new Child("        ");
     }
 
     @Test

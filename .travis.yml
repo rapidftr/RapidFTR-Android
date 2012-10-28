@@ -12,7 +12,7 @@ before_install:
   - ln -s $ANDROID_HOME/tools/emulator-arm $ANDROID_HOME/tools/emulator
 
 install: echo
-script:  mvn clean install
+script:  mvn clean install -P ci
 
 notifications:
   email: false

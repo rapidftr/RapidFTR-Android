@@ -1,9 +1,12 @@
 package com.rapidftr.model;
 
+import com.google.common.base.Strings;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
@@ -15,12 +18,13 @@ public class Child extends JSONObject {
     public static final String[] INTERNAL_FIELDS = { ID_FIELD, OWNER_FIELD };
 
     public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+    public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();
 
     public Child() {
     }
 
     public Child(String content) throws JSONException {
-        super(content == null ? "{}" : content);
+        super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
     }
 
     public Child(String id, String owner, String content) throws JSONException {
@@ -98,4 +102,13 @@ public class Child extends JSONObject {
 
         return count > 0;
     }
+
+    public boolean equals(Object other) {
+        try {
+            return (other != null && other instanceof JSONObject) ? JSON_MAPPER.readTree(toString()).equals(JSON_MAPPER.readTree(other.toString())) : false;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 }
