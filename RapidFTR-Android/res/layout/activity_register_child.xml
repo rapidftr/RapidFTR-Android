@@ -30,12 +30,19 @@
             android:id="@+id/spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/form_spinner"
+            android:layout_margin="0dp"
             />
+
+    <View android:background="#ffffff"
+          android:layout_height="1dp"
+          android:layout_width="fill_parent" />
 
     <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            style="@style/formpanel"
             />
 
 </LinearLayout>
