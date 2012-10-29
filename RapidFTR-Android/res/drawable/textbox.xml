@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_focused="true" android:drawable="@drawable/textbox_focused"></item>
-    <item android:drawable="@drawable/textbox_normal"></item>
+    <item android:state_focused="true" android:drawable="@drawable/bgtextboxpressed"></item>
+    <item android:drawable="@drawable/bgtextbox"></item>
 </selector>
