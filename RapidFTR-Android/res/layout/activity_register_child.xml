@@ -26,16 +26,33 @@
                 />
     </LinearLayout>
 
+<<<<<<< HEAD
+
+
+
+=======
+>>>>>>> parent of 4ea4692... test
     <Spinner
             android:id="@+id/spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+<<<<<<< HEAD
+
+            android:background="@drawable/form_spinner"
+            android:layout_margin="0dp"
+=======
+>>>>>>> parent of 4ea4692... test
             />
+
+    <View android:background="#ffffff"
+          android:layout_height="1dp"
+          android:layout_width="fill_parent" />
 
     <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            style="@style/formpanel"
             />
 
 </LinearLayout>
