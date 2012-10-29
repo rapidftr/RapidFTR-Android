@@ -65,20 +65,21 @@ public final class R {
         public static final int activity_login=0x7f030001;
         public static final int activity_main=0x7f030002;
         public static final int activity_register_child=0x7f030003;
-        public static final int form_audio_upload_box=0x7f030004;
-        public static final int form_check_box=0x7f030005;
-        public static final int form_check_boxes=0x7f030006;
-        public static final int form_date_field=0x7f030007;
-        public static final int form_help_text=0x7f030008;
-        public static final int form_label=0x7f030009;
-        public static final int form_numeric_field=0x7f03000a;
-        public static final int form_photo_upload_box=0x7f03000b;
-        public static final int form_radio_button=0x7f03000c;
-        public static final int form_radio_option=0x7f03000d;
-        public static final int form_section=0x7f03000e;
-        public static final int form_select_box=0x7f03000f;
-        public static final int form_text_field=0x7f030010;
-        public static final int form_textarea=0x7f030011;
+        public static final int activity_view_child=0x7f030004;
+        public static final int form_audio_upload_box=0x7f030005;
+        public static final int form_check_box=0x7f030006;
+        public static final int form_check_boxes=0x7f030007;
+        public static final int form_date_field=0x7f030008;
+        public static final int form_help_text=0x7f030009;
+        public static final int form_label=0x7f03000a;
+        public static final int form_numeric_field=0x7f03000b;
+        public static final int form_photo_upload_box=0x7f03000c;
+        public static final int form_radio_button=0x7f03000d;
+        public static final int form_radio_option=0x7f03000e;
+        public static final int form_section=0x7f03000f;
+        public static final int form_select_box=0x7f030010;
+        public static final int form_text_field=0x7f030011;
+        public static final int form_textarea=0x7f030012;
     }
     public static final class string {
         public static final int RapidFTRLogo=0x7f050017;

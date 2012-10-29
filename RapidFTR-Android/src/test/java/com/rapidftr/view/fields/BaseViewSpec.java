@@ -29,13 +29,13 @@ public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
 
     @Test
     public void testHaveLabel() {
-        view.setFormField(field, child);
+        view.initialize(field, child);
         assertThat(view.getLabel().getText().toString(), equalTo(field.getDisplayName()));
     }
 
     @Test
     public void testHaveHelpText() {
-        view.setFormField(field, child);
+        view.initialize(field, child);
         assertThat(view.getHelpText().getText().toString(), equalTo(field.getHelpText()));
     }
 

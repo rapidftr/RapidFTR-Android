@@ -26,7 +26,7 @@ public class RadioButtonsTest extends BaseViewSpec<RadioButtons> {
     @Test
     public void testCreateSingleOption() {
         field.setOptionStrings(Arrays.asList("one"));
-        view.setFormField(field, child);
+        view.initialize(field, child);
 
         RadioButton button = (RadioButton) view.getRadioGroup().findViewWithTag("one");
         assertThat(button.getText().toString(), equalTo("one"));
@@ -36,7 +36,7 @@ public class RadioButtonsTest extends BaseViewSpec<RadioButtons> {
     @Test
     public void testCreateMultipleOptions() {
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field, child);
+        view.initialize(field, child);
 
         assertThat(view.getRadioGroup().getChildCount(), equalTo(3));
         assertNotNull(view.getRadioGroup().findViewWithTag("one"));
@@ -47,7 +47,7 @@ public class RadioButtonsTest extends BaseViewSpec<RadioButtons> {
     @Test
     public void testCheckRadioButtonToStoreValueInChildJSONArray() throws JSONException {
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field, child);
+        view.initialize(field, child);
 
         RadioButton button1 = (RadioButton) view.getRadioGroup().findViewWithTag("one");
         button1.performClick();

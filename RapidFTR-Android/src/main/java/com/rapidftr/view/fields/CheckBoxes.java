@@ -3,6 +3,7 @@ package com.rapidftr.view.fields;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -68,4 +69,17 @@ public class CheckBoxes extends BaseView {
         return checkBox;
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        LinearLayout group = getCheckBoxGroup();
+        for (int i=0, j=group.getChildCount(); i<j; i++) {
+            View view = group.getChildAt(i);
+            view.setEnabled(enabled);
+            view.setClickable(enabled);
+            view.setFocusable(enabled);
+            view.setFocusableInTouchMode(enabled);
+        }
+    }
 }

@@ -26,7 +26,7 @@ public class SelectBoxTest extends BaseViewSpec<SelectBox> {
     @Test
     public void testAdapter() {
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field, child);
+        view.initialize(field, child);
 
         assertThat(view.getSpinner().getAdapter().getCount(), equalTo(3));
         assertThat(view.getSpinner().getAdapter().getItem(0).toString(), equalTo("one"));
@@ -37,7 +37,7 @@ public class SelectBoxTest extends BaseViewSpec<SelectBox> {
     @Test
     public void testShouldStoreSelectedValueInChildJSONObject() throws JSONException {
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field, child);
+        view.initialize(field, child);
 
         Spinner spinner = view.getSpinner();
         String option1 = (String) spinner.getAdapter().getItem(0);

@@ -38,7 +38,7 @@ public class FormSectionViewTest {
         section.setName("Test Section");
         section.setHelpText("Help Section");
 
-        view.setFormSection(section, child);
+        view.initialize(section, child);
         field = new FormField();
         field.setId("test_field");
         field.setDisplayName("Test Field");
@@ -55,8 +55,8 @@ public class FormSectionViewTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotAllowTwoFormSectionInitialization() {
-        view.setFormSection(section, child);
-        view.setFormSection(section, child);
+        view.initialize(section, child);
+        view.initialize(section, child);
     }
 
     @Test

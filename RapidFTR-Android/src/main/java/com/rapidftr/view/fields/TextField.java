@@ -64,4 +64,14 @@ public class TextField extends BaseView {
         });
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        getEditTextView().setEnabled(enabled);
+        getEditTextView().setClickable(enabled);
+        getEditTextView().setFocusable(enabled);
+        getEditTextView().setFocusableInTouchMode(enabled);
+        getEditTextView().setCursorVisible(enabled);
+    }
 }

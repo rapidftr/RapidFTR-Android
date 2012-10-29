@@ -22,7 +22,7 @@ public abstract class BaseView extends LinearLayout {
         super(context, attrs);
     }
 
-    public void setFormField(FormField formField, Child child) {
+    public void initialize(FormField formField, Child child) {
         if (this.formField != null)
             throw new IllegalArgumentException("Form field already initialized!");
 
@@ -43,7 +43,6 @@ public abstract class BaseView extends LinearLayout {
         getLabel().setText(formField.getDisplayName());
         getHelpText().setText(formField.getHelpText());
         this.setVisibility(formField.isEnabled() ? VISIBLE : GONE);
-        this.setEnabled(formField.isEditable());
     }
 
 }
