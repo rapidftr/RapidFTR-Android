@@ -2,11 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.rapidftr">
 
     <application android:name=".RapidFtrApplication" android:icon="@drawable/icon" android:label="@string/app_name"
-<<<<<<< HEAD
                  android:theme="@style/Theme.RapidFTRtheme">
-=======
-                 android:theme="@android:style/Theme.Light.NoTitleBar">
->>>>>>> parent of 4ea4692... test
+
         <activity android:name=".activity.LoginActivity" android:label="RapidFTR">
         <intent-filter>
             <action android:name="android.intent.action.MAIN"/>

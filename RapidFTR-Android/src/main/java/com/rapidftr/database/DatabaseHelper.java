@@ -1,28 +1,14 @@
 package com.rapidftr.database;
 
-import com.rapidftr.RapidFtrApplication;
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SQLiteOpenHelper;
+import java.io.Closeable;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+public interface DatabaseHelper extends Closeable {
 
-    private SQLiteDatabase database;
+    public static final String DB_CHILD_TABLE = "children";
+    public static final String DB_CHILD_ID = "id";
+    public static final String DB_CHILD_CONTENT = "child_json";
+    public static final String DB_CHILD_OWNER = "child_owner";
 
-    public DatabaseHelper() {
-        super(RapidFtrApplication.getContext(), "rapidftr", null, 1);
-        SQLiteDatabase.loadLibs(RapidFtrApplication.getContext());
-    }
+    public DatabaseSession getSession();
 
-    public DatabaseSession getSession() {
-        database = new DatabaseHelper().getWritableDatabase(RapidFtrApplication.getDbKey());
-        return new DatabaseSession(database);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-    }
 }

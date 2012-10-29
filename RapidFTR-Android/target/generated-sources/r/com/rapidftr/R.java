@@ -17,7 +17,6 @@ public final class R {
     public static final class drawable {
         public static final int bg_android=0x7f020000;
         public static final int bg_btn=0x7f020001;
-<<<<<<< HEAD
         public static final int bgformspinner=0x7f020002;
         public static final int bgformspinnerpressed=0x7f020003;
         public static final int bgspinner=0x7f020004;
@@ -31,28 +30,11 @@ public final class R {
         public static final int form_spinner=0x7f02000c;
         public static final int ic_action_search=0x7f02000d;
         public static final int icon=0x7f02000e;
-        public static final int icon_save=0x7f02000f;
-        public static final int logo=0x7f020010;
-        public static final int save_button=0x7f020011;
-        public static final int save_button_focused=0x7f020012;
-        public static final int save_button_normal=0x7f020013;
-        public static final int save_button_pressed=0x7f020014;
-        public static final int spinner=0x7f020015;
-        public static final int textbox=0x7f020016;
-        public static final int textbox_focused=0x7f020017;
-        public static final int textbox_normal=0x7f020018;
-=======
-        public static final int button=0x7f020002;
-        public static final int button_focused=0x7f020003;
-        public static final int button_normal=0x7f020004;
-        public static final int button_pressed=0x7f020005;
-        public static final int ic_action_search=0x7f020006;
-        public static final int icon=0x7f020007;
-        public static final int logo=0x7f020008;
-        public static final int textbox=0x7f020009;
-        public static final int textbox_focused=0x7f02000a;
-        public static final int textbox_normal=0x7f02000b;
->>>>>>> parent of 4ea4692... test
+        public static final int logo=0x7f02000f;
+        public static final int spinner=0x7f020010;
+        public static final int textbox=0x7f020011;
+        public static final int textbox_focused=0x7f020012;
+        public static final int textbox_normal=0x7f020013;
     }
     public static final class id {
         public static final int buttonClick=0x7f080002;
@@ -99,21 +81,26 @@ public final class R {
         public static final int form_textarea=0x7f030011;
     }
     public static final class string {
-        public static final int RapidFTRLogo=0x7f050016;
+        public static final int RapidFTRLogo=0x7f050017;
         public static final int app_name=0x7f050000;
         public static final int camera_button=0x7f050001;
         public static final int change_url=0x7f050004;
-        public static final int invalid_url=0x7f050014;
+        public static final int internal_error=0x7f050018;
+        public static final int invalid_url=0x7f050015;
         public static final int loading_message=0x7f050010;
         public static final int loading_title=0x7f05000f;
         public static final int log_in=0x7f050002;
         public static final int log_out=0x7f050003;
         public static final int login_successful=0x7f050013;
+        public static final int logout_successful=0x7f050014;
         public static final int password=0x7f05000a;
         public static final int password_required=0x7f05000d;
         public static final int register_child=0x7f050005;
+        public static final int save_child_failure=0x7f05001b;
+        public static final int save_child_progress=0x7f050019;
+        public static final int save_child_success=0x7f05001a;
         public static final int search_for_a_child=0x7f050007;
-        public static final int server_not_reachable=0x7f050015;
+        public static final int server_not_reachable=0x7f050016;
         public static final int submit=0x7f050011;
         public static final int synchronize=0x7f050008;
         public static final int unauthorized=0x7f050012;
@@ -125,7 +112,6 @@ public final class R {
     }
     public static final class style {
         public static final int AppTheme=0x7f070000;
-<<<<<<< HEAD
         public static final int DropDownItem=0x7f070004;
         public static final int Spinner=0x7f070002;
         public static final int SpinnerItem=0x7f070003;
@@ -135,9 +121,5 @@ public final class R {
         public static final int formpanel=0x7f070009;
         public static final int links=0x7f070008;
         public static final int save_button=0x7f070007;
-=======
-        public static final int button=0x7f070001;
-        public static final int links=0x7f070002;
->>>>>>> parent of 4ea4692... test
     }
 }

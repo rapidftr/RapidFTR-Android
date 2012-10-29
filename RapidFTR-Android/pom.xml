@@ -2,14 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <artifactId>rapidftr-android</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>apk</packaging>
     <name>RapidFTR Client Application</name>
-    <description>RapidFTR is a mobile app and database system that lets aid workers collect and share information about
-        children in emergency situations, so they can be reunited with their families.
-    </description>
-    <url>https://github.com/jorgej/RapidFTR/</url>
 
     <parent>
         <version>1.0</version>
@@ -18,196 +14,55 @@
     </parent>
 
     <properties>
-        <robolectric.version>1.1</robolectric.version>
-        <platform.version>2.2.1</platform.version>
-        <source.version>1.6</source.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.build.timestamp.format>MM/dd/yy hh:mm a z</maven.build.timestamp.format>
-        <version.code>-1</version.code>
-        <version.name>${version.code} (${environment}) - Built on ${maven.build.timestamp}</version.name>
-
-        <environment>dev</environment>
+        <sqlcipher.dir>${project.basedir}/libs</sqlcipher.dir>
         <flurry_logging>true</flurry_logging>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>android</artifactId>
-            <version>2.2.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.roboguice</groupId>
-            <artifactId>roboguice</artifactId>
-            <version>2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.pivotallabs</groupId>
-            <artifactId>robolectric</artifactId>
-            <version>${robolectric.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
+            <groupId>sqlcipher</groupId>
+            <artifactId>sqlcipher</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${sqlcipher.dir}/sqlcipher.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
+            <groupId>guava</groupId>
             <artifactId>guava</artifactId>
-            <version>13.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.9</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>1.9.9</version>
-        </dependency>
-
-        <dependency>
-            <groupId>sqlcipher-dependency</groupId>
-            <artifactId>sqlcipher</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/armeabi/libdatabase_sqlcipher.so</systemPath>
+            <systemPath>${sqlcipher.dir}/guava-r09.jar</systemPath>
         </dependency>
-
         <dependency>
-            <groupId>sqlcipher-dependency</groupId>
-            <artifactId>sqlcipher</artifactId>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/armeabi/libsqlcipher_android.so</systemPath>
+            <systemPath>${sqlcipher.dir}/commons-codec.jar</systemPath>
         </dependency>
-
-        <dependency>
-            <groupId>sqlcipher-dependency</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/armeabi/libstlport_shared.so</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>sqlcipher</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/commons-codec.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>sqlcipher</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/guava-r09.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>sqlcipher</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/sqlcipher.jar</systemPath>
-        </dependency>
-
-
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.9.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>android-test</artifactId>
-            <version>2.2.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>support-v4</artifactId>
-            <version>r6</version>
-        </dependency>
-
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>local-repository</id>
-            <name>Local Checked in Repo</name>
-            <url>file://${project.basedir}/repository</url>
-        </repository>
-    </repositories>
-
     <build>
-        <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>libs</directory>
+            </resource>
+        </resources>
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                <artifactId>android-maven-plugin</artifactId>
-                <configuration>
-                    <sdk>
-                        <!-- platform or api level (api level 4 = platform 1.6)-->
-                        <platform>8</platform>
-                    </sdk>
-                    <dex>
-                        <jvmArguments>
-                            <jvmArgument>-Xms512m</jvmArgument>
-                            <jvmArgument>-Xmx1024m</jvmArgument>
-                        </jvmArguments>
-                    </dex>
-                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                </configuration>
-                <extensions>true</extensions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.6</version>
+            </plugin>
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
-
-    <scm>
-        <url>git@github.com:jorgej/RapidFTR.git</url>
-        <connection>scm:git:git@github.com:jorgej/RapidFTR.git</connection>
-    </scm>
 
 </project>

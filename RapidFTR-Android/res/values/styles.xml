@@ -28,9 +28,6 @@
     </style>
 
 
-
-
-
     <style name="Theme.RapidFTRtheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:editTextStyle">@style/TextView</item>
     </style>

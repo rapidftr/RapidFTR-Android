@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">RapidFTR</string>
     <string name="camera_button">Go to camera</string>
 
@@ -23,8 +24,15 @@
     <string name="submit">Submit</string>
     <string name="unauthorized">Incorrect username or password</string>
     <string name="login_successful">Login Successful</string>
+    <string name="logout_successful">Logout not really implemented yet</string>
     <string name="invalid_url">Please enter a valid url</string>
     <string name="server_not_reachable">Unable to connect to the server, please contact your system administrator</string>
     <string name="RapidFTRLogo">RapidFTR</string>
+
+    <string name="internal_error">An error occurred while performing this operation</string>
+
+    <string name="save_child_progress">Saving child record</string>
+    <string name="save_child_success">Saved child record successfully</string>
+    <string name="save_child_failure">Failed to save child record!</string>
 
 </resources>
