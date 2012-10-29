@@ -20,25 +20,52 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>support-v4</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <classifier>no_aop</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.pivotallabs</groupId>
+            <artifactId>robolectric</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${sqlcipher.dir}/sqlcipher.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>guava</groupId>
+            <groupId>sqlcipher</groupId>
             <artifactId>guava</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${sqlcipher.dir}/guava-r09.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>commons-codec</groupId>
+            <groupId>sqlcipher</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${sqlcipher.dir}/commons-codec.jar</systemPath>
         </dependency>
     </dependencies>
 
