@@ -53,19 +53,15 @@
         <item name="android:layout_margin">5dp</item>
         <item name="android:textSize">20dp</item>
     </style>
-<<<<<<< HEAD
 
     <style name="save_button">
         <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">fill_parent</item>
         <item name="android:textSize">16dp</item>
-        <item name="android:drawableLeft">@drawable/icon_save</item>
         <item name="android:drawablePadding">5dp</item>
         <item name="android:textColor">#ffffff</item>
     </style>
 
-=======
->>>>>>> parent of 4ea4692... test
     <style name="links">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -73,12 +69,9 @@
         <item name="android:padding">2dp</item>
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
-<<<<<<< HEAD
 
     <style name="formpanel">
         <item name="android:padding">5dp</item>
         <item name="android:background">@drawable/bg_android</item>
     </style>
-=======
->>>>>>> parent of 4ea4692... test
 </resources>
