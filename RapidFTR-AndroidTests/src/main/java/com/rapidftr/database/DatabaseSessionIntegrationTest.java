@@ -8,9 +8,6 @@ import com.rapidftr.activity.LoginActivity;
 import lombok.Cleanup;
 import net.sqlcipher.database.SQLiteException;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
 public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
     public Solo solo;
@@ -40,7 +37,7 @@ public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestC
     public void testRawQueryCountAs0() {
         @Cleanup Cursor cursor = session.rawQuery("select count(1) from children", new String[]{});
         cursor.moveToNext();
-        assertThat(cursor.getInt(0), equalTo(0));
+        assertEquals(cursor.getInt(0), 0);
     }
 
     public void testInsertNewChildRecord() {
