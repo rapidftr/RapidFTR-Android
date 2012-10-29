@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowHandler;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
@@ -126,7 +125,7 @@ public class LoginActivityTest {
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(404, "{'db_key' : 'fa8f5e7599ed5402'}");
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
-        assertThat(RapidFtrApplication.getDbKey(), is(nullValue()));
+        assertThat(loginActivity.getContext().getDbKey(), is(nullValue()));
     }
 
     @Test
@@ -134,7 +133,7 @@ public class LoginActivityTest {
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "{'db_key' : 'fa8f5e7599ed5402'}");
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
-        assertThat(RapidFtrApplication.getDbKey(), is("fa8f5e7599ed5402"));
+        assertThat(loginActivity.getContext().getDbKey(), is("fa8f5e7599ed5402"));
     }
 
 }

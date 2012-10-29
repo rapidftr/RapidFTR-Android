@@ -26,22 +26,12 @@
                 />
     </LinearLayout>
 
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> parent of 4ea4692... test
     <Spinner
             android:id="@+id/spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-<<<<<<< HEAD
-
             android:background="@drawable/form_spinner"
             android:layout_margin="0dp"
-=======
->>>>>>> parent of 4ea4692... test
             />
 
     <View android:background="#ffffff"

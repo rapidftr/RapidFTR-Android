@@ -1,16 +1,14 @@
 package com.rapidftr;
 
-import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 import org.junit.runners.model.InitializationError;
-
-import java.io.File;
+import org.mockito.MockitoAnnotations;
 
 public class CustomTestRunner extends RobolectricTestRunner {
 
-
     public CustomTestRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
+        MockitoAnnotations.initMocks(testClass);
     }
 
     @Override

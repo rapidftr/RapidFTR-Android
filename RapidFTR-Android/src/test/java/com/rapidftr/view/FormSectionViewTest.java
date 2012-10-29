@@ -6,8 +6,8 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.model.Child;
 import com.rapidftr.view.fields.*;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,24 +27,23 @@ public class FormSectionViewTest {
     private FormSectionView view;
     private FormSection section;
     private FormField field;
-    private JSONObject child;
+    private Child child;
 
     @Before
     public void setUp() {
         view = (FormSectionView) LayoutInflater.from(new Activity()).inflate(R.layout.form_section, null);
+        child = new Child();
 
         section = new FormSection();
         section.setName("Test Section");
         section.setHelpText("Help Section");
 
-        view.setFormSection(section, new JSONObject());
+        view.setFormSection(section, child);
         field = new FormField();
         field.setId("test_field");
         field.setDisplayName("Test Field");
         field.setHelpText("Help Field");
         field.setOptionStrings(new ArrayList<String> ());
-
-        child = new JSONObject();
     }
 
     @Test

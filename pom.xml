@@ -22,7 +22,12 @@
     <groupId>com.rapidftr</groupId>
     <artifactId>rapidftr-android-parent</artifactId>
     <name>RapidFTR Android parent</name>
+    <description>
+        RapidFTR is a mobile app and database system that lets aid workers collect and share information about
+        children in emergency situations, so they can be reunited with their families.
+    </description>
     <packaging>pom</packaging>
+    <url>https://github.com/jorgej/RapidFTR---Android</url>
 
     <issueManagement>
         <url>https://github.com/jorgej/RapidFTR---Android/issues</url>
@@ -41,8 +46,130 @@
     </modules>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <android.version>2.2</android.version>
+        <platform.version>2.2.1</platform.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>MM/dd/yy hh:mm a z</maven.build.timestamp.format>
+
+        <version.code>${project.version}</version.code>
+        <version.name>${version.code} (${environment}) - Built on ${maven.build.timestamp}</version.name>
+
+        <environment>dev</environment>
+        <local.repo.dir>${basedir}/repo</local.repo.dir>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>0.11.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>2.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android-test</artifactId>
+            <version>2.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>support-v4</artifactId>
+            <version>r6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>3.0</version>
+            <classifier>no_aop</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>1.9.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.pivotallabs</groupId>
+            <artifactId>robolectric</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <compilerVersion>1.6</compilerVersion>
+                        <source>1.6</source>
+                        <target>1.6</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <version>3.4.0</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <sdk>
+                            <platform>${android.version}</platform>
+                            <path>${env.ANDROID_HOME}</path>
+                        </sdk>
+                        <dex>
+                            <jvmArguments>
+                                <jvmArgument>-Xms512m</jvmArgument>
+                                <jvmArgument>-Xmx1024m</jvmArgument>
+                            </jvmArguments>
+                        </dex>
+                        <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                        <androidManifestFile>AndroidManifest.xml</androidManifestFile>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
 </project>
 

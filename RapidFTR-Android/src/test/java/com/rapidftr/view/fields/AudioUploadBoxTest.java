@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
-import com.rapidftr.forms.FormField;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
