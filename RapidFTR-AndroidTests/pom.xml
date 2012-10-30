@@ -42,6 +42,19 @@
             <type>apk</type>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>sqlcipher</groupId>
+            <artifactId>sqlcipher</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>sqlcipher</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>sqlcipher</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

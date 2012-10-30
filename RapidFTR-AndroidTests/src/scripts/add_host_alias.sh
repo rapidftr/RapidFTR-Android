@@ -11,4 +11,5 @@ adb remount
 adb pull /system/etc/hosts .
 echo "97.107.135.7  dev.rapidftr.com" >> hosts
 adb push hosts /system/etc/
+rm hosts
 echo "STOP - Adding host alias for dev.rapidftr.com"

@@ -72,7 +72,7 @@
     <build>
         <resources>
             <resource>
-                <directory>libs</directory>
+                <directory>${sqlcipher.dir}</directory>
             </resource>
         </resources>
 
