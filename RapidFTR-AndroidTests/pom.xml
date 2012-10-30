@@ -19,45 +19,21 @@
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>sqlcipher</groupId>
-            <artifactId>sqlcipher</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${sqlcipher.dir}/sqlcipher.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${sqlcipher.dir}/guava-r09.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${sqlcipher.dir}/commons-codec.jar</systemPath>
-        </dependency>
-
-        <dependency>
             <groupId>com.jayway.android.robotium</groupId>
             <artifactId>robotium-solo</artifactId>
-            <version>3.5</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.rapidftr</groupId>
             <artifactId>rapidftr-android</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.rapidftr</groupId>
@@ -91,6 +67,16 @@
                         </goals>
                         <configuration>
                             <executable>${basedir}/src/scripts/unlock_keyguard.sh</executable>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add host alias</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/src/scripts/add_host_alias.sh</executable>
                         </configuration>
                     </execution>
                 </executions>

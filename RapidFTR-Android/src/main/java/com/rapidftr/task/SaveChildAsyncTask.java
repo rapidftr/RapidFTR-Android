@@ -8,8 +8,9 @@ import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.dao.ChildDAO;
 import com.rapidftr.model.Child;
+import lombok.Cleanup;
 
-public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
+public abstract class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
 
     private final ChildDAO dao;
     private final ProgressDialog dialog;
@@ -32,6 +33,7 @@ public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Child... params) {
         try {
+            @Cleanup ChildDAO dao = this.dao;
             dao.create(params[0]);
             return true;
         } catch (Exception e) {
@@ -44,6 +46,12 @@ public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
         dialog.dismiss();
         toast.setText((result == null || result == false) ? R.string.save_child_failure : R.string.save_child_success);
         toast.show();
+
+        if (result != null && result == true) {
+            onSuccess();
+        }
     }
+
+    protected abstract void onSuccess();
 
 }

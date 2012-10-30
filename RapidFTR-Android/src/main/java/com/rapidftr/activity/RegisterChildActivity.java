@@ -1,5 +1,6 @@
 package com.rapidftr.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -16,7 +17,6 @@ import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.task.SaveChildAsyncTask;
 import com.rapidftr.view.FormSectionView;
-import lombok.Cleanup;
 
 import java.util.List;
 
@@ -26,30 +26,55 @@ public class RegisterChildActivity extends RapidFtrActivity {
 
     protected Child child;
 
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.initialize();
+    }
+
+    protected void initialize() {
         setContentView(R.layout.activity_register_child);
 
-        this.formSections = getContext().getFormSections();
-        this.child        = new Child();
+        initializeData();
+        initializePager();
+        initializeSpinner();
+        initializeListeners();
+    }
 
+    protected void initializeData() {
+        this.formSections = getContext().getFormSections();
+        this.child = new Child();
+    }
+
+    protected void initializeListeners() {
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            try {
-                child.setOwner(RapidFtrApplication.getInstance().getUserName());
-                child.generateUniqueId();
+                try {
+                    if (!child.isValid()) {
+                        makeToast(R.string.save_child_invalid);
+                        return;
+                    }
 
-                @Cleanup ChildDAO dao = getInjector().getInstance(ChildDAO.class);
-                new SaveChildAsyncTask(dao, getContext()).execute(child);
-            } catch (Exception e) {
-                makeToast(R.string.internal_error);
-            }
+                    child.setOwner(RapidFtrApplication.getInstance().getUserName());
+                    child.generateUniqueId();
+                    final String childId = child.getId();
+
+                    SaveChildAsyncTask task = new SaveChildAsyncTask(getInjector().getInstance(ChildDAO.class), RegisterChildActivity.this) {
+                        @Override
+                        protected void onSuccess() {
+                            Intent intent = new Intent(RegisterChildActivity.this, ViewChildActivity.class);
+                            intent.putExtra("id", childId);
+                            startActivity(intent);
+                        }
+                    };
+
+                    task.execute(child);
+                 } catch (Exception e) {
+                    makeToast(R.string.internal_error);
+                }
             }
         });
-
-        initializePager();
-        initializeSpinner();
     }
 
     protected Spinner getSpinner() {
@@ -88,6 +113,13 @@ public class RegisterChildActivity extends RapidFtrActivity {
         });
     }
 
+    protected FormSectionView createFormSectionView(int position) {
+        FormSectionView view = (FormSectionView) LayoutInflater.from(this).inflate(R.layout.form_section, null);
+        FormSection section = formSections.get(position);
+        view.initialize(section, child);
+        return view;
+    }
+
     protected class FormSectionPagerAdapter extends PagerAdapter {
         @Override
         public int getCount() {
@@ -101,9 +133,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            FormSectionView view = (FormSectionView) LayoutInflater.from(RegisterChildActivity.this).inflate(R.layout.form_section, null);
-            FormSection section = formSections.get(position);
-            view.setFormSection(section, child);
+            FormSectionView view = createFormSectionView(position);
             container.addView(view, 0);
             return view;
         }

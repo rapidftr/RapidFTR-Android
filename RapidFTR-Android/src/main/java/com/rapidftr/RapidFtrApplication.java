@@ -23,14 +23,19 @@ public class RapidFtrApplication extends Application {
 
     private @Getter static RapidFtrApplication instance;
 
-    private @Getter final Injector injector = Guice.createInjector(new ApplicationInjector());
+    private @Getter final Injector injector;
 
     private @Getter @Setter List<FormSection> formSections;
     private @Getter @Setter boolean loggedIn;
     private @Getter @Setter String dbKey;
 
-    public RapidFtrApplication(){
-        instance = this;
+    public RapidFtrApplication() {
+        this(Guice.createInjector(new ApplicationInjector()));
+    }
+
+    public RapidFtrApplication(Injector injector) {
+        RapidFtrApplication.instance = this;
+        this.injector = injector;
     }
 
     public SharedPreferences getSharedPreferences() {

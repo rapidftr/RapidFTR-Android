@@ -117,6 +117,50 @@ public class ChildTest {
     }
 
     @Test
+    public void shouldReturnNamesAsEmptyListInsteadOfNull() {
+        Child child = new Child();
+        assertThat(child.names().length(), equalTo(0));
+    }
+
+    @Test
+    public void shouldRemoveFieldIfBlank() throws JSONException {
+        Child child = new Child();
+        child.put("name", "test");
+        assertThat(child.names().length(), equalTo(1));
+
+        child.put("name", "\r  \n  \r  \n");
+        assertThat(child.names().length(), equalTo(0));
+    }
+
+    @Test
+    public void shouldRemoveFieldIfNull() throws JSONException {
+        Child child = new Child();
+        child.put("name", "test");
+        assertThat(child.names().length(), equalTo(1));
+
+        Object value = null;
+        child.put("name", value);
+        assertThat(child.names().length(), equalTo(0));
+    }
+
+    @Test
+    public void shouldRemoveFieldIfJSONArrayIsEmtpy() throws JSONException {
+        Child child = new Child();
+        child.put("name", new JSONArray(Arrays.asList("one")));
+        assertThat(child.names().length(), equalTo(1));
+
+        child.put("name", new JSONArray());
+        assertThat(child.names().length(), equalTo(0));
+    }
+
+    @Test
+    public void shouldTrimFieldValues() throws JSONException {
+        Child child = new Child();
+        child.put("name", "\r\n line1 \r\n line2 \r\n \r\n");
+        assertThat(child.getString("name"), equalTo("line1 \r\n line2"));
+    }
+
+    @Test
     public void shouldNotGenerateDuplicateIdForSameUserSameChildNameAndSameDate() throws JSONException {
         Child child = new Child(null, "rapidftr", null);
 

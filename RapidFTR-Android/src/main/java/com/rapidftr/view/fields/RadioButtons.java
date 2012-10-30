@@ -64,4 +64,17 @@ public class RadioButtons extends BaseView {
         return radioButton;
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        RadioGroup group = getRadioGroup();
+        for (int i=0, j=group.getChildCount(); i<j; i++) {
+            View view = group.getChildAt(i);
+            view.setEnabled(enabled);
+            view.setClickable(enabled);
+            view.setFocusable(enabled);
+            view.setFocusableInTouchMode(enabled);
+        }
+    }
 }
