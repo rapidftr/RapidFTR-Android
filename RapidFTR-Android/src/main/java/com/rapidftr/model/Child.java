@@ -74,6 +74,23 @@ public class Child extends JSONObject {
         put(key, newArray);
     }
 
+    @Override
+    public JSONArray names() {
+        JSONArray names = super.names();
+        return names == null ? new JSONArray() : names;
+    }
+
+    @Override
+    public JSONObject put(String key, Object value) throws JSONException {
+        if (value != null && value instanceof String) {
+            value = Strings.emptyToNull(((String) value).trim());
+        } else if (value != null && value instanceof JSONArray && ((JSONArray) value).length() == 0) {
+            value = null;
+        }
+
+        return super.put(key, value);
+    }
+
     public void generateUniqueId() throws JSONException {
         if (has(ID_FIELD))
             return;

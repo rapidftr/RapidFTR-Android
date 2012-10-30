@@ -51,6 +51,11 @@ public class RegisterChildActivity extends RapidFtrActivity {
             @Override
             public void onClick(View view) {
                 try {
+                    if (!child.isValid()) {
+                        makeToast(R.string.save_child_invalid);
+                        return;
+                    }
+
                     child.setOwner(RapidFtrApplication.getInstance().getUserName());
                     child.generateUniqueId();
                     final String childId = child.getId();

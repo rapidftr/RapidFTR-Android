@@ -38,8 +38,6 @@ public class TextFieldTest extends BaseViewSpec<TextField> {
         view.initialize(field, child);
         view.setText("some text");
         assertEquals("some text", child.get(field.getId()));
-        view.setText("");
-        assertEquals("", child.get(field.getId()));
     }
 
 }

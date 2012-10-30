@@ -4,6 +4,7 @@ import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,7 +34,7 @@ public class FormField {
     private String helpText;
 
     @JsonProperty("option_strings")
-    private List<String> optionStrings;
+    private List<String> optionStrings = new ArrayList<String>();
 
     private Object value;
 

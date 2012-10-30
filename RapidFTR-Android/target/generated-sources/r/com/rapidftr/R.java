@@ -97,9 +97,10 @@ public final class R {
         public static final int password=0x7f05000a;
         public static final int password_required=0x7f05000d;
         public static final int register_child=0x7f050005;
-        public static final int save_child_failure=0x7f05001b;
+        public static final int save_child_failure=0x7f05001c;
+        public static final int save_child_invalid=0x7f05001a;
         public static final int save_child_progress=0x7f050019;
-        public static final int save_child_success=0x7f05001a;
+        public static final int save_child_success=0x7f05001b;
         public static final int search_for_a_child=0x7f050007;
         public static final int server_not_reachable=0x7f050016;
         public static final int submit=0x7f050011;

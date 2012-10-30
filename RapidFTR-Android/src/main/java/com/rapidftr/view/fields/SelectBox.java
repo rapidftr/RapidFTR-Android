@@ -6,9 +6,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import com.google.common.base.Strings;
 import com.rapidftr.R;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectBox extends BaseView {
@@ -28,9 +30,13 @@ public class SelectBox extends BaseView {
     @Override
     protected void initialize() {
         super.initialize();
-        List<String> selectOptions = formField.getOptionStrings();
-        ArrayAdapter<String> optionsAdapter =
-                new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, selectOptions);
+
+        List<String> selectOptions = new ArrayList<String>( formField.getOptionStrings() );
+        if (selectOptions.size() == 0 || !Strings.isNullOrEmpty(selectOptions.get(0))) {
+            selectOptions.add(0, "");
+        }
+
+        ArrayAdapter<String> optionsAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, selectOptions);
         getSpinner().setAdapter(optionsAdapter);
 
         if (child.has(formField.getId())) {

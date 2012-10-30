@@ -6,7 +6,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.activity.LoginActivity;
 import lombok.Cleanup;
-import net.sqlcipher.database.SQLiteException;
 
 public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
@@ -67,7 +66,7 @@ public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestC
         try {
             helper = new SQLCipherHelper("test_db", "wrong_password", getActivity());
             fail();
-        } catch (SQLiteException e) { }
+        } catch (Exception e) { }
     }
 
 }

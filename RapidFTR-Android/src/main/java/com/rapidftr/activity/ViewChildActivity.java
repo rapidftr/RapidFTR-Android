@@ -1,6 +1,7 @@
 package com.rapidftr.activity;
 
 import android.os.Bundle;
+import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.dao.ChildDAO;
 import com.rapidftr.view.FormSectionView;
@@ -32,6 +33,8 @@ public class ViewChildActivity extends RegisterChildActivity {
         try {
             child = dao.get(childId);
             if (child == null) throw new NullPointerException();
+
+            ((TextView) findViewById(R.id.title)).setText(child.getId());
         } catch (Exception e) {
             makeToast(R.string.internal_error);
         }
