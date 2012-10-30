@@ -13,6 +13,7 @@
         <activity android:name=".activity.MainActivity"/>
         <activity android:name=".activity.CameraPreviewActivity"/>
         <activity android:name=".activity.RegisterChildActivity"/>
+        <activity android:name=".activity.ViewChildActivity"/>
         <uses-library android:name="android.test.runner"/>
     </application>
 

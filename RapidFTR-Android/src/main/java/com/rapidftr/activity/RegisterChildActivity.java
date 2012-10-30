@@ -17,7 +17,6 @@ import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.task.SaveChildAsyncTask;
 import com.rapidftr.view.FormSectionView;
-import lombok.Cleanup;
 
 import java.util.List;
 
@@ -30,6 +29,10 @@ public class RegisterChildActivity extends RapidFtrActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.initialize();
+    }
+
+    protected void initialize() {
         setContentView(R.layout.activity_register_child);
 
         initializeData();
@@ -50,13 +53,18 @@ public class RegisterChildActivity extends RapidFtrActivity {
                 try {
                     child.setOwner(RapidFtrApplication.getInstance().getUserName());
                     child.generateUniqueId();
+                    final String childId = child.getId();
 
-                    @Cleanup ChildDAO dao = getInjector().getInstance(ChildDAO.class);
-                    new SaveChildAsyncTask(dao, getContext()).execute(child);
+                    SaveChildAsyncTask task = new SaveChildAsyncTask(getInjector().getInstance(ChildDAO.class), RegisterChildActivity.this) {
+                        @Override
+                        protected void onSuccess() {
+                            Intent intent = new Intent(RegisterChildActivity.this, ViewChildActivity.class);
+                            intent.putExtra("id", childId);
+                            startActivity(intent);
+                        }
+                    };
 
-                    Intent intent = new Intent(RegisterChildActivity.this, ViewChildActivity.class);
-                    intent.putExtra("id", child.getId());
-                    startActivity(intent);
+                    task.execute(child);
                  } catch (Exception e) {
                     makeToast(R.string.internal_error);
                 }
@@ -101,7 +109,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
     }
 
     protected FormSectionView createFormSectionView(int position) {
-        FormSectionView view = (FormSectionView) LayoutInflater.from(RegisterChildActivity.this).inflate(R.layout.form_section, null);
+        FormSectionView view = (FormSectionView) LayoutInflater.from(this).inflate(R.layout.form_section, null);
         FormSection section = formSections.get(position);
         view.initialize(section, child);
         return view;

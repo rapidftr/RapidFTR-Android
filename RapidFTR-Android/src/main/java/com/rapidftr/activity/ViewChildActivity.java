@@ -3,22 +3,23 @@ package com.rapidftr.activity;
 import android.os.Bundle;
 import com.rapidftr.R;
 import com.rapidftr.dao.ChildDAO;
-import com.rapidftr.forms.FormSection;
-import com.rapidftr.model.Child;
 import com.rapidftr.view.FormSectionView;
 import lombok.Cleanup;
 
-import java.util.List;
-
 public class ViewChildActivity extends RegisterChildActivity {
-
-    protected List<FormSection> formSections = null;
-
-    protected Child child;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void initialize() {
+        setContentView(R.layout.activity_view_child);
+
+        initializeData();
+        initializePager();
+        initializeSpinner();
     }
 
     @Override
@@ -43,8 +44,4 @@ public class ViewChildActivity extends RegisterChildActivity {
         return view;
     }
 
-    @Override
-    protected void initializeListeners() {
-        // No-op
-    }
 }

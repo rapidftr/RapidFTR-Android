@@ -4,6 +4,7 @@ import android.app.Application;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
 import com.rapidftr.database.DatabaseHelper;
@@ -15,12 +16,16 @@ import org.mockito.MockitoAnnotations;
 
 public class CustomTestRunner extends RobolectricTestRunner {
 
-    static class TestInjector extends AbstractModule {
+    public static class TestInjector extends AbstractModule {
         @Override
         protected void configure() {
-            bind(DatabaseHelper.class).to(ShadowSQLiteHelper.class);
             bindConstant().annotatedWith(Names.named("USER_NAME")).to("user1");
             bindConstant().annotatedWith(Names.named("DB_KEY")).to("db_key");
+        }
+
+        @Provides
+        public DatabaseHelper getDatabaseHelper() {
+            return ShadowSQLiteHelper.getInstance();
         }
     }
 
