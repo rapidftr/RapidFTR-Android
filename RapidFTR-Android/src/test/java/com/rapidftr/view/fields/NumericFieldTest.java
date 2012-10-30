@@ -27,7 +27,7 @@ public class NumericFieldTest extends BaseViewSpec<NumericField> {
 
     @Test
     public void testShouldStoreNumericDataInChildJSONObject() {
-        view.setFormField(field, child);
+        view.initialize(field, child);
         view.setText(24234324);
         assertThat(Integer.parseInt(view.getText()), equalTo(24234324));
     }

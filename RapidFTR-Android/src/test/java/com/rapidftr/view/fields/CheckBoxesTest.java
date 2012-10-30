@@ -27,7 +27,7 @@ public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
     @Test
     public void testCreateSingleCheckBox() {
         field.setOptionStrings(Arrays.asList("one"));
-        view.setFormField(field, child);
+        view.initialize(field, child);
 
         CheckBox box = (CheckBox) view.getCheckBoxGroup().getChildAt(0);
         assertThat(box.getText().toString(), equalTo("one"));
@@ -37,7 +37,7 @@ public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
     @Test
     public void testCreateMultipleCheckBoxes() {
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field, child);
+        view.initialize(field, child);
 
         assertThat(view.getCheckBoxGroup().getChildCount(), equalTo(3));
         assertNotNull(view.getCheckBoxGroup().findViewWithTag("one"));
@@ -49,7 +49,7 @@ public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
     public void testStoreCheckedValueIntoChildJSONObject() throws JSONException {
 
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field, child);
+        view.initialize(field, child);
 
         CheckBox checkBox1 = checkCheckBoxAtIndex(0, true);
         JSONArray options = new JSONArray();
@@ -65,7 +65,7 @@ public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
     public void testRemoveUncheckedCheckBoxValuesFromChildJSONObject() throws JSONException {
 
         field.setOptionStrings(Arrays.asList("one", "two", "three"));
-        view.setFormField(field, child);
+        view.initialize(field, child);
 
         CheckBox checkBox1 = checkCheckBoxAtIndex(0, true);
         JSONArray options = new JSONArray();

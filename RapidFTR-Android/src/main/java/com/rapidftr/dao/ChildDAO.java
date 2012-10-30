@@ -63,8 +63,12 @@ public class ChildDAO implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
-        session.close();
+    public void close() {
+        try {
+            session.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

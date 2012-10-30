@@ -55,7 +55,7 @@
         <version.name>${version.code} (${environment}) - Built on ${maven.build.timestamp}</version.name>
 
         <environment>dev</environment>
-        <local.repo.dir>${basedir}/repo</local.repo.dir>
+        <sqlcipher.dir>${project.basedir}/RapidFTR-Android/libs</sqlcipher.dir>
     </properties>
 
     <dependencies>
@@ -78,54 +78,86 @@
             <version>2.2.1</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>support-v4</artifactId>
-            <version>r6</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>3.0</version>
-            <classifier>no_aop</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.10</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>1.9.10</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.pivotallabs</groupId>
-            <artifactId>robolectric</artifactId>
-            <version>1.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.9.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.android</groupId>
+                <artifactId>support-v4</artifactId>
+                <version>r6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>3.0</version>
+                <classifier>no_aop</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>1.9.10</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>1.9.10</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jayway.android.robotium</groupId>
+                <artifactId>robotium-solo</artifactId>
+                <version>3.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.pivotallabs</groupId>
+                <artifactId>robolectric</artifactId>
+                <version>1.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>1.9.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>1.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.10</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>sqlcipher</groupId>
+                <artifactId>sqlcipher</artifactId>
+                <version>1.0</version>
+                <scope>system</scope>
+                <systemPath>${sqlcipher.dir}/sqlcipher.jar</systemPath>
+            </dependency>
+            <dependency>
+                <groupId>sqlcipher</groupId>
+                <artifactId>guava</artifactId>
+                <version>1.0</version>
+                <scope>system</scope>
+                <systemPath>${sqlcipher.dir}/guava-r09.jar</systemPath>
+            </dependency>
+            <dependency>
+                <groupId>sqlcipher</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.0</version>
+                <scope>system</scope>
+                <systemPath>${sqlcipher.dir}/commons-codec.jar</systemPath>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <finalName>${project.artifactId}</finalName>

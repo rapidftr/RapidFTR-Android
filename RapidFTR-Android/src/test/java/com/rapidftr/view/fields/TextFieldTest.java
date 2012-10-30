@@ -29,17 +29,15 @@ public class TextFieldTest extends BaseViewSpec<TextField> {
     @Test
     public void testDefaultValue() {
         field.setValue("sample");
-        view.setFormField(field, child);
+        view.initialize(field, child);
         assertThat(view.getText(), equalTo("sample"));
     }
 
     @Test
     public void testShouldStoreTextValuesIntoChildJSONObject() throws JSONException {
-        view.setFormField(field, child);
+        view.initialize(field, child);
         view.setText("some text");
         assertEquals("some text", child.get(field.getId()));
-        view.setText("");
-        assertEquals("", child.get(field.getId()));
     }
 
 }

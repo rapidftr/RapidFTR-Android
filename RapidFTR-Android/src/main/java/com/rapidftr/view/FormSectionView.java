@@ -7,8 +7,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import com.rapidftr.R;
-import com.rapidftr.forms.FormSection;
 import com.rapidftr.forms.FormField;
+import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.view.fields.BaseView;
 
@@ -42,7 +42,7 @@ public class FormSectionView extends ScrollView {
         return (LinearLayout) findViewById(R.id.container);
     }
 
-    public void setFormSection(FormSection formSection, Child child) {
+    public void initialize(FormSection formSection, Child child) {
         if (this.formSection != null)
             throw new IllegalArgumentException("Form section is already initialized!");
 
@@ -70,11 +70,19 @@ public class FormSectionView extends ScrollView {
 
         if (resourceId > 0) {
             BaseView fieldView = (BaseView) LayoutInflater.from(getContext()).inflate(resourceId, null);
-            fieldView.setFormField(field, child);
+            fieldView.initialize(field, child);
             return fieldView;
         }
 
         return null;
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        LinearLayout container = getContainer();
+        for (int i=0, j=container.getChildCount(); i<j; i++)
+            container.getChildAt(i).setEnabled(enabled);
+    }
 }
