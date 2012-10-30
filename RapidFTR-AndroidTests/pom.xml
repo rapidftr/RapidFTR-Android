@@ -69,6 +69,16 @@
                             <executable>${basedir}/src/scripts/unlock_keyguard.sh</executable>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>add host alias</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/src/scripts/add_host_alias.sh</executable>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

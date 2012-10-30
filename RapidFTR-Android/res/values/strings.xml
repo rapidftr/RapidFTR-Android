@@ -32,6 +32,7 @@
     <string name="internal_error">An error occurred while performing this operation</string>
 
     <string name="save_child_progress">Saving child record</string>
+    <string name="save_child_invalid">Please fill up at least one field</string>
     <string name="save_child_success">Saved child record successfully</string>
     <string name="save_child_failure">Failed to save child record!</string>
 
