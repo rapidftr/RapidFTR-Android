@@ -42,9 +42,11 @@ public final class R {
     }
     public static final class id {
         public static final int buttonClick=0x7f080002;
+        public static final int capture=0x7f080013;
         public static final int change_url=0x7f080007;
-        public static final int container=0x7f080011;
-        public static final int field_options=0x7f080012;
+        public static final int container=0x7f080014;
+        public static final int field_options=0x7f080015;
+        public static final int gallery=0x7f080011;
         public static final int help_text=0x7f08000f;
         public static final int label=0x7f080010;
         public static final int layout=0x7f080000;
@@ -55,6 +57,7 @@ public final class R {
         public static final int register_child_button=0x7f080008;
         public static final int spinner=0x7f08000b;
         public static final int submit=0x7f08000a;
+        public static final int thumbnail=0x7f080012;
         public static final int title=0x7f080009;
         public static final int url=0x7f080005;
         public static final int username=0x7f080003;
@@ -89,6 +92,7 @@ public final class R {
         public static final int RapidFTRLogo=0x7f050017;
         public static final int app_name=0x7f050000;
         public static final int camera_button=0x7f050001;
+        public static final int capture_photo=0x7f05001d;
         public static final int change_url=0x7f050004;
         public static final int internal_error=0x7f050018;
         public static final int invalid_url=0x7f050015;

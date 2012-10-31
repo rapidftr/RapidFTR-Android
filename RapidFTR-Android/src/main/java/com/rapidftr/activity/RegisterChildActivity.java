@@ -1,6 +1,7 @@
 package com.rapidftr.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -17,6 +18,8 @@ import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.task.SaveChildAsyncTask;
 import com.rapidftr.view.FormSectionView;
+import com.rapidftr.view.fields.PhotoUploadBox;
+import org.json.JSONException;
 
 import java.util.List;
 
@@ -24,7 +27,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
 
     protected List<FormSection> formSections = null;
 
-    protected Child child;
+    protected Child child = new Child();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +46,6 @@ public class RegisterChildActivity extends RapidFtrActivity {
 
     protected void initializeData() {
         this.formSections = getContext().getFormSections();
-        this.child = new Child();
     }
 
     protected void initializeListeners() {
@@ -64,6 +66,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
                         @Override
                         protected void onSuccess() {
                             Intent intent = new Intent(RegisterChildActivity.this, ViewChildActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.putExtra("id", childId);
                             startActivity(intent);
                         }
@@ -75,6 +78,24 @@ public class RegisterChildActivity extends RapidFtrActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PhotoUploadBox.CAPTURE_IMAGE_REQUEST) {
+            try {
+                onPhotoCapture(data);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    protected void onPhotoCapture(Intent data) throws JSONException {
+        Bitmap image = (Bitmap) data.getExtras().get("data");
+
+        String fieldId = getIntent().getStringExtra("field_id");
+        ((PhotoUploadBox) getPager().findViewWithTag(fieldId)).setImage(image);
     }
 
     protected Spinner getSpinner() {
@@ -109,7 +130,8 @@ public class RegisterChildActivity extends RapidFtrActivity {
                 getPager().setCurrentItem(position);
             }
 
-            public void onNothingSelected(AdapterView<?> parent) { }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
     }
 

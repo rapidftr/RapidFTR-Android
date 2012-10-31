@@ -117,6 +117,13 @@ public class ChildTest {
     }
 
     @Test
+    public void shouldRemoveFromJSONArray() throws JSONException {
+        Child child = new Child("{ 'test1' : ['value1', 'value2', 'value3' ]}");
+        child.removeFromJSONArray("test1", "value1");
+        assertThat(child.getJSONArray("test1").toString(), is(new JSONArray(Arrays.asList("value2", "value3")).toString()));
+    }
+
+    @Test
     public void shouldReturnNamesAsEmptyListInsteadOfNull() {
         Child child = new Child();
         assertThat(child.names().length(), equalTo(0));
