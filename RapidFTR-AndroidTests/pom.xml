@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <sqlcipher.dir>${project.basedir}/../RapidFTR-Android/libs</sqlcipher.dir>
+        <local.repo.dir>${project.basedir}/../repo</local.repo.dir>
     </properties>
 
     <dependencies>
@@ -46,14 +46,17 @@
         <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>sqlcipher</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>guava</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>commons-codec</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

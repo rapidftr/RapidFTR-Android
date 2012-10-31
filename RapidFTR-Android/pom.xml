@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <sqlcipher.dir>${project.basedir}/libs</sqlcipher.dir>
+        <local.repo.dir>${project.basedir}/../repo</local.repo.dir>
         <flurry_logging>true</flurry_logging>
     </properties>
 
@@ -72,7 +72,7 @@
     <build>
         <resources>
             <resource>
-                <directory>${sqlcipher.dir}</directory>
+                <directory>libs</directory>
             </resource>
         </resources>
 
