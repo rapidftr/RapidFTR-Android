@@ -1,11 +1,21 @@
 <resources  xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="links">#0087ef</color>
     <color name="logoBackground">#31353f</color>
-    <style name="AppTheme" parent="android:Theme.Light" />
+    <style name="AppTheme" parent="android:Theme.Light.NoTitleBar" />
 
+    <style name="page_title">
+        <item name="android:background">#30343d</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:padding">3dp</item>
+    </style>
+
+    <style name="save_btn">
+        <item name="android:drawableLeft">@drawable/icon_save</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:padding">3dp</item>
+    </style>
 
     <style name="Theme.RapidFTRtheme" parent="AppTheme">
-        <item name="android:textSize">18dip</item>
         <item name="android:spinnerStyle">@style/Spinner</item>
         <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
         <item name="android:spinnerDropDownItemStyle">@style/DropDownItem</item>
@@ -13,14 +23,14 @@
 
     <style name="Spinner" parent="@android:style/Widget.Spinner">
         <item name="android:background">@drawable/spinner</item>
-        <item name="android:drawSelectorOnTop">true</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:layout_margin">0dp</item>
     </style>
 
     <style name="SpinnerItem" parent="@android:style/Widget.TextView.SpinnerItem">
         <item name="android:textColor">#333333</item>
-        <item name="android:paddingTop">1dp</item>
-        <item name="android:paddingBottom">3dp</item>
-        <item name="android:paddingLeft">3dp</item>
+        <item name="android:padding">5dp</item>
+
     </style>
 
     <style name="DropDownItem" parent="@android:style/Widget.DropDownItem">
@@ -28,7 +38,7 @@
     </style>
 
 
-    <style name="Theme.RapidFTRtheme" parent="@android:style/Theme.Light.NoTitleBar">
+    <style name="Theme.RapidFTRtheme" parent="AppTheme">
         <item name="android:editTextStyle">@style/TextView</item>
     </style>
 
@@ -36,10 +46,7 @@
         <item name="android:background">@drawable/textbox</item>
         <item name="android:textColor">#333333</item>
         <item name="android:typeface">sans</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingBottom">2dp</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingRight">5dp</item>
+        <item name="android:padding">5dp</item>
     </style>
 
     <style name="button">
@@ -55,6 +62,7 @@
         <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">fill_parent</item>
         <item name="android:textSize">16dp</item>
+        <item name="android:drawableLeft">@drawable/icon_save</item>
         <item name="android:drawablePadding">5dp</item>
         <item name="android:textColor">#ffffff</item>
     </style>

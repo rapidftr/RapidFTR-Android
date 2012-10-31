@@ -30,11 +30,15 @@ public final class R {
         public static final int form_spinner=0x7f02000c;
         public static final int ic_action_search=0x7f02000d;
         public static final int icon=0x7f02000e;
-        public static final int logo=0x7f02000f;
-        public static final int spinner=0x7f020010;
-        public static final int textbox=0x7f020011;
-        public static final int textbox_focused=0x7f020012;
-        public static final int textbox_normal=0x7f020013;
+        public static final int icon_save=0x7f02000f;
+        public static final int logo=0x7f020010;
+        public static final int save_normal=0x7f020011;
+        public static final int save_pressed=0x7f020012;
+        public static final int savebtn=0x7f020013;
+        public static final int spinner=0x7f020014;
+        public static final int textbox=0x7f020015;
+        public static final int textbox_focused=0x7f020016;
+        public static final int textbox_normal=0x7f020017;
     }
     public static final class id {
         public static final int buttonClick=0x7f080002;
@@ -112,14 +116,16 @@ public final class R {
     }
     public static final class style {
         public static final int AppTheme=0x7f070000;
-        public static final int DropDownItem=0x7f070004;
-        public static final int Spinner=0x7f070002;
-        public static final int SpinnerItem=0x7f070003;
-        public static final int TextView=0x7f070005;
-        public static final int Theme_RapidFTRtheme=0x7f070001;
-        public static final int button=0x7f070006;
-        public static final int formpanel=0x7f070009;
-        public static final int links=0x7f070008;
-        public static final int save_button=0x7f070007;
+        public static final int DropDownItem=0x7f070006;
+        public static final int Spinner=0x7f070004;
+        public static final int SpinnerItem=0x7f070005;
+        public static final int TextView=0x7f070007;
+        public static final int Theme_RapidFTRtheme=0x7f070003;
+        public static final int button=0x7f070008;
+        public static final int formpanel=0x7f07000b;
+        public static final int links=0x7f07000a;
+        public static final int page_title=0x7f070001;
+        public static final int save_btn=0x7f070002;
+        public static final int save_button=0x7f070009;
     }
 }
