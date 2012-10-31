@@ -14,6 +14,16 @@ import lombok.RequiredArgsConstructor;
  */
 public class ShadowSQLiteHelper extends SQLiteOpenHelper implements DatabaseHelper {
 
+    private static DatabaseHelper instance;
+
+    public static DatabaseHelper getInstance() {
+        return instance == null ? resetDatabase() : instance;
+    }
+
+    public static DatabaseHelper resetDatabase() {
+        return (instance = new ShadowSQLiteHelper());
+    }
+
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     public static class ShadowSQLiteSession implements DatabaseSession {
 

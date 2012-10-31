@@ -16,6 +16,7 @@ public class ApplicationInjector extends AbstractModule {
     @Override
     protected void configure() {
         bind(Context.class).to(RapidFtrApplication.class);
+        bind(DatabaseHelper.class).to(SQLCipherHelper.class);
     }
 
     @Provides @Named("USER_NAME")
@@ -36,11 +37,6 @@ public class ApplicationInjector extends AbstractModule {
     @Provides
     public RapidFtrApplication getRapidFTRApplication() {
         return RapidFtrApplication.getInstance();
-    }
-
-    @Provides
-    public DatabaseHelper getDatabaseHelper(@Named("DB_NAME") String dbName, @Named("DB_KEY") String dbKey, Context context) {
-        return new SQLCipherHelper(dbName, dbKey, context);
     }
 
     @Provides

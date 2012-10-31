@@ -6,10 +6,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.activity.LoginActivity;
 import lombok.Cleanup;
-import net.sqlcipher.database.SQLiteException;
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
@@ -40,7 +36,7 @@ public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestC
     public void testRawQueryCountAs0() {
         @Cleanup Cursor cursor = session.rawQuery("select count(1) from children", new String[]{});
         cursor.moveToNext();
-        assertThat(cursor.getInt(0), equalTo(0));
+        assertEquals(cursor.getInt(0), 0);
     }
 
     public void testInsertNewChildRecord() {
@@ -70,7 +66,7 @@ public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestC
         try {
             helper = new SQLCipherHelper("test_db", "wrong_password", getActivity());
             fail();
-        } catch (SQLiteException e) { }
+        } catch (Exception e) { }
     }
 
 }
