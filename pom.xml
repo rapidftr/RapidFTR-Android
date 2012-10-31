@@ -55,8 +55,16 @@
         <version.name>${version.code} (${environment}) - Built on ${maven.build.timestamp}</version.name>
 
         <environment>dev</environment>
-        <sqlcipher.dir>${project.basedir}/RapidFTR-Android/libs</sqlcipher.dir>
+        <local.repo.dir>${project.basedir}/repo</local.repo.dir>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>local-repo</id>
+            <name>Local Repository</name>
+            <url>file://${local.repo.dir}</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -139,22 +147,16 @@
                 <groupId>sqlcipher</groupId>
                 <artifactId>sqlcipher</artifactId>
                 <version>1.0</version>
-                <scope>system</scope>
-                <systemPath>${sqlcipher.dir}/sqlcipher.jar</systemPath>
             </dependency>
             <dependency>
                 <groupId>sqlcipher</groupId>
                 <artifactId>guava</artifactId>
                 <version>1.0</version>
-                <scope>system</scope>
-                <systemPath>${sqlcipher.dir}/guava-r09.jar</systemPath>
             </dependency>
             <dependency>
                 <groupId>sqlcipher</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>1.0</version>
-                <scope>system</scope>
-                <systemPath>${sqlcipher.dir}/commons-codec.jar</systemPath>
             </dependency>
         </dependencies>
     </dependencyManagement>
