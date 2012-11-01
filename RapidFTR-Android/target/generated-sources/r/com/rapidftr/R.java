@@ -32,13 +32,14 @@ public final class R {
         public static final int icon=0x7f02000e;
         public static final int icon_save=0x7f02000f;
         public static final int logo=0x7f020010;
-        public static final int save_normal=0x7f020011;
-        public static final int save_pressed=0x7f020012;
-        public static final int savebtn=0x7f020013;
-        public static final int spinner=0x7f020014;
-        public static final int textbox=0x7f020015;
-        public static final int textbox_focused=0x7f020016;
-        public static final int textbox_normal=0x7f020017;
+        public static final int no_photo_clip=0x7f020011;
+        public static final int save_normal=0x7f020012;
+        public static final int save_pressed=0x7f020013;
+        public static final int savebtn=0x7f020014;
+        public static final int spinner=0x7f020015;
+        public static final int textbox=0x7f020016;
+        public static final int textbox_focused=0x7f020017;
+        public static final int textbox_normal=0x7f020018;
     }
     public static final class id {
         public static final int buttonClick=0x7f080002;

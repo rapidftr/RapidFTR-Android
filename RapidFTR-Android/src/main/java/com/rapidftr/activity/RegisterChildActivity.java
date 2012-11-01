@@ -66,8 +66,8 @@ public class RegisterChildActivity extends RapidFtrActivity {
                         @Override
                         protected void onSuccess() {
                             Intent intent = new Intent(RegisterChildActivity.this, ViewChildActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.putExtra("id", childId);
+                            finish();
                             startActivity(intent);
                         }
                     };

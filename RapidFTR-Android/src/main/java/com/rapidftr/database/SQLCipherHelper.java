@@ -11,11 +11,6 @@ public class SQLCipherHelper extends SQLiteOpenHelper implements DatabaseHelper 
 
     public static final int DB_VERSION = 1;
 
-    public static final String DB_CHILD_TABLE = "children";
-    public static final String DB_CHILD_ID = "id";
-    public static final String DB_CHILD_CONTENT = "child_json";
-    public static final String DB_CHILD_OWNER = "child_owner";
-
     public static final String DATABASE_CREATE = "create table "
         + DB_CHILD_TABLE + "("
             + DB_CHILD_ID + " text primary key, "
