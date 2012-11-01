@@ -2,37 +2,36 @@ package com.rapidftr.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.dao.ChildDAO;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
-import com.rapidftr.task.SaveChildAsyncTask;
+import com.rapidftr.utils.AsyncTaskWithMessage;
 import com.rapidftr.utils.BitmapUtil;
-import com.rapidftr.view.FormSectionView;
 import com.rapidftr.view.fields.PhotoUploadBox;
+import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.util.List;
 
-public class RegisterChildActivity extends RapidFtrActivity {
+public class RegisterChildActivity extends RapidFtrActivity implements AsyncTaskWithMessage.BackgroundWorker<Child, Boolean> {
 
-    protected List<FormSection> formSections = null;
+    protected List<FormSection> formSections;
 
-    protected Child child = new Child();
+    protected Child child;
+
+    protected boolean editable = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.initialize();
+        initialize();
     }
 
     @Override
@@ -63,6 +62,7 @@ public class RegisterChildActivity extends RapidFtrActivity {
     }
 
     protected void initializeData() {
+        this.child = new Child();
         this.formSections = getContext().getFormSections();
     }
 
@@ -70,32 +70,69 @@ public class RegisterChildActivity extends RapidFtrActivity {
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    if (!child.isValid()) {
-                        makeToast(R.string.save_child_invalid);
-                        return;
-                    }
-
-                    child.setOwner(RapidFtrApplication.getInstance().getUserName());
-                    child.generateUniqueId();
-                    final String childId = child.getId();
-
-                    SaveChildAsyncTask task = new SaveChildAsyncTask(getInjector().getInstance(ChildDAO.class), RegisterChildActivity.this) {
-                        @Override
-                        protected void onSuccess() {
-                            Intent intent = new Intent(RegisterChildActivity.this, ViewChildActivity.class);
-                            intent.putExtra("id", childId);
-                            finish();
-                            startActivity(intent);
-                        }
-                    };
-
-                    task.execute(child);
-                 } catch (Exception e) {
-                    makeToast(R.string.internal_error);
-                }
+                saveChild();
             }
         });
+    }
+
+    protected Spinner getSpinner() {
+        return ((Spinner) findViewById(R.id.spinner));
+    }
+
+    protected ViewPager getPager() {
+        return (ViewPager) findViewById(R.id.pager);
+    }
+
+    protected void initializePager() {
+        getPager().setAdapter(new FormSectionPagerAdapter(formSections, child, editable));
+        getPager().setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                getSpinner().setSelection(position);
+            }
+
+        });
+    }
+
+    protected void initializeSpinner() {
+        getSpinner().setAdapter(new ArrayAdapter<FormSection> (this, android.R.layout.simple_spinner_item, formSections));
+        getSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                getPager().setCurrentItem(position);
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    @Override
+    public Boolean doInBackground(Child... children) throws JSONException {
+        child.setOwner(getContext().getUserName());
+        child.generateUniqueId();
+
+        @Cleanup ChildDAO dao = getInjector().getInstance(ChildDAO.class);
+        dao.create(child);
+        return true;
+    }
+
+    @Override
+    public void onSuccess() throws Exception {
+        Intent intent = new Intent(RegisterChildActivity.this, ViewChildActivity.class);
+        intent.putExtra("id", child.getId());
+        finish();
+        startActivity(intent);
+    }
+
+    protected void saveChild() {
+        if (!child.isValid()) {
+            makeToast(R.string.save_child_invalid);
+        } else {
+            AsyncTaskWithMessage<Child, Boolean, RegisterChildActivity> task =
+                    new AsyncTaskWithMessage<Child, Boolean, RegisterChildActivity> (this, R.string.save_child_progress, R.string.save_child_success, R.string.save_child_failure);
+            task.execute(child);
+        }
     }
 
     @Override
@@ -112,74 +149,6 @@ public class RegisterChildActivity extends RapidFtrActivity {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }
-    }
-
-    protected Spinner getSpinner() {
-        return ((Spinner) findViewById(R.id.spinner));
-    }
-
-    protected ViewPager getPager() {
-        return (ViewPager) findViewById(R.id.pager);
-    }
-
-    protected void initializePager() {
-        FormSectionPagerAdapter formSectionAdapter = new FormSectionPagerAdapter();
-        getPager().setAdapter(formSectionAdapter);
-        getPager().setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            public void onPageScrolled(int i, float v, int i1) { }
-            public void onPageScrollStateChanged(int i) { }
-
-            @Override
-            public void onPageSelected(int position) {
-                getSpinner().setSelection(position);
-            }
-
-        });
-    }
-
-    protected void initializeSpinner() {
-        ArrayAdapter<FormSection> childDetailsFormArrayAdapter = new ArrayAdapter<FormSection>(this, android.R.layout.simple_spinner_item , formSections);
-        getSpinner().setAdapter(childDetailsFormArrayAdapter);
-        getSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                getPager().setCurrentItem(position);
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-    }
-
-    protected FormSectionView createFormSectionView(int position) {
-        FormSectionView view = (FormSectionView) LayoutInflater.from(this).inflate(R.layout.form_section, null);
-        FormSection section = formSections.get(position);
-        view.initialize(section, child);
-        return view;
-    }
-
-    protected class FormSectionPagerAdapter extends PagerAdapter {
-        @Override
-        public int getCount() {
-            return formSections.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return (view == object);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            FormSectionView view = createFormSectionView(position);
-            container.addView(view, 0);
-            return view;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
         }
     }
 

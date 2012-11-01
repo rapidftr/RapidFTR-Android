@@ -9,18 +9,35 @@ import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
 import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.ShadowSQLiteHelper;
+import com.rapidftr.forms.FormField;
+import com.rapidftr.forms.FormSection;
 import com.rapidftr.utils.ApplicationInjector;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
+import lombok.experimental.Accessors;
 import org.junit.runners.model.InitializationError;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class CustomTestRunner extends RobolectricTestRunner {
+
+    public static List<FormSection> formSectionSeed = Arrays.asList(
+        new FormSection("Section 1", 1, true, "Section Help 1", Arrays.asList(
+            new FormField("f1", true, null, true, "text_field", "Field 1", "Help 1", null, null),
+            new FormField("f2", true, null, true, "textarea", "Field 2", "Help 2", null, null),
+            new FormField("f3", true, null, true, "numeric_field", "Field 3", "Help 3", null, null)
+        )),
+        new FormSection("Section 2", 2, true, "Section Help 2", Arrays.asList(
+            new FormField("f4", true, null, true, "radio_button", "Field 4", "Help 4", Arrays.asList("radio1", "radio2", "radio3"), null),
+            new FormField("f5", true, null, true, "check_boxes", "Field 5", "Help 5", Arrays.asList("check1", "check2", "check3"), null),
+            new FormField("f6", true, null, true, "date_field", "Field 6", "Help 6", null, null)
+        ))
+    );
 
     public static class TestInjector extends AbstractModule {
         @Override
         protected void configure() {
-            bindConstant().annotatedWith(Names.named("USER_NAME")).to("user1");
-            bindConstant().annotatedWith(Names.named("DB_KEY")).to("db_key");
         }
 
         @Provides
@@ -38,6 +55,10 @@ public class CustomTestRunner extends RobolectricTestRunner {
 
     @Override
     protected Application createApplication() {
-        return new RapidFtrApplication(INJECTOR);
+        RapidFtrApplication application = new RapidFtrApplication(INJECTOR);
+        application.setUserName("user1");
+        application.setDbKey("db_key");
+        application.setFormSections(formSectionSeed);
+        return application;
     }
 }
