@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import com.rapidftr.R;
+import com.rapidftr.utils.BitmapUtil;
 import org.json.JSONException;
 
 public class PhotoUploadBox extends BaseView {
@@ -22,16 +23,6 @@ public class PhotoUploadBox extends BaseView {
 
     public PhotoUploadBox(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public Button getCaptureButton() {
-        return (Button) findViewById(R.id.capture);
-    }
-
-    public void startCapture() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        ((Activity) getContext()).getIntent().putExtra("field_id", formField.getId());
-        ((Activity) getContext()).startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
     }
 
     @Override
@@ -47,15 +38,17 @@ public class PhotoUploadBox extends BaseView {
         repaint();
     }
 
-    public void setImage(Bitmap image) throws JSONException {
-        Bitmap thumbnail = getThumbnail(image);
-        child.put(formField.getId(), "placeholder image key");
-        child.setThumbnail(formField.getId(), thumbnail);
-        repaint();
+    public View getCaptureButton() {
+        return (View) findViewById(R.id.capture);
     }
 
-    protected Bitmap getThumbnail(Bitmap image) {
-        return Bitmap.createScaledBitmap(image, 96, 96, false);
+    public void startCapture() {
+        Activity context = (Activity) getContext();
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(BitmapUtil.getTempStorageFile()));
+
+        context.getIntent().putExtra("field_id", formField.getId());
+        context.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
     }
 
     protected ImageView getImageView() {

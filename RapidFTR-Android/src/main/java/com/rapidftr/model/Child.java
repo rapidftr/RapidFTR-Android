@@ -1,13 +1,17 @@
 package com.rapidftr.model;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import com.google.common.base.Strings;
 import com.rapidftr.utils.BitmapUtil;
+import lombok.Cleanup;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -131,6 +135,25 @@ public class Child extends JSONObject {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public void setImage(String field, File image) throws IOException, JSONException {
+        Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath());
+        image.delete();
+
+        setImage(field, bitmap);
+    }
+
+    public void setImage(String field, Bitmap image) throws IOException, JSONException {
+        String photoId = UUID.randomUUID().toString();
+        File imageFile = new File(BitmapUtil.getStorageUri(), photoId + ".jpg");
+        imageFile.createNewFile();
+
+        @Cleanup FileOutputStream outputStream = new FileOutputStream(imageFile);
+        image.compress(Bitmap.CompressFormat.JPEG, 85, outputStream);
+        put(field, photoId);
+
+        setThumbnail(field, bitmapUtil.createThumbnail(image));
     }
 
     public void setThumbnail(String key, Bitmap bitmap) throws JSONException {

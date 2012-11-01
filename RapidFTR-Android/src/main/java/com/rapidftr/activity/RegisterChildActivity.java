@@ -1,7 +1,6 @@
 package com.rapidftr.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -17,6 +16,7 @@ import com.rapidftr.dao.ChildDAO;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.task.SaveChildAsyncTask;
+import com.rapidftr.utils.BitmapUtil;
 import com.rapidftr.view.FormSectionView;
 import com.rapidftr.view.fields.PhotoUploadBox;
 import org.json.JSONException;
@@ -33,6 +33,24 @@ public class RegisterChildActivity extends RapidFtrActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.initialize();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState.containsKey("child_state")) {
+            try {
+                child = new Child(savedInstanceState.getString("child_state"));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("child_state", child.toString());
     }
 
     protected void initialize() {
@@ -82,20 +100,19 @@ public class RegisterChildActivity extends RapidFtrActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PhotoUploadBox.CAPTURE_IMAGE_REQUEST) {
+        if (requestCode == PhotoUploadBox.CAPTURE_IMAGE_REQUEST && resultCode == RESULT_OK) {
             try {
-                onPhotoCapture(data);
-            } catch (JSONException e) {
+                String fieldId = getIntent().getStringExtra("field_id");
+                child.setImage(fieldId, BitmapUtil.getTempStorageFile());
+
+                View fieldView = getPager().findViewWithTag(fieldId);
+                if (fieldView != null) {
+                    ((PhotoUploadBox) fieldView).repaint();
+                }
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    protected void onPhotoCapture(Intent data) throws JSONException {
-        Bitmap image = (Bitmap) data.getExtras().get("data");
-
-        String fieldId = getIntent().getStringExtra("field_id");
-        ((PhotoUploadBox) getPager().findViewWithTag(fieldId)).setImage(image);
     }
 
     protected Spinner getSpinner() {
