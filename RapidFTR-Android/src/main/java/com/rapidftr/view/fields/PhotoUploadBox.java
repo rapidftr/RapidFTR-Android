@@ -9,13 +9,20 @@ import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 import com.rapidftr.R;
-import com.rapidftr.utils.BitmapUtil;
+import com.rapidftr.activity.RapidFtrActivity;
+import com.rapidftr.utils.CaptureHelper;
 import org.json.JSONException;
 
-public class PhotoUploadBox extends BaseView {
+import java.io.IOException;
+import java.util.UUID;
+
+public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultListener {
 
     public static final int CAPTURE_IMAGE_REQUEST = 100;
+
+    protected CaptureHelper captureHelper = new CaptureHelper();
 
     public PhotoUploadBox(Context context) {
         super(context);
@@ -34,8 +41,20 @@ public class PhotoUploadBox extends BaseView {
                 startCapture();
             }
         });
+        ((RapidFtrActivity) getContext()).addResultListener(CAPTURE_IMAGE_REQUEST, this);
 
         repaint();
+    }
+
+    @Override
+    public void onActivityResult(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            try {
+                saveCapture();
+            } catch (Exception e) {
+                Toast.makeText(getContext(), R.string.capture_photo_error, Toast.LENGTH_LONG);
+            }
+        }
     }
 
     public View getCaptureButton() {
@@ -45,10 +64,27 @@ public class PhotoUploadBox extends BaseView {
     public void startCapture() {
         Activity context = (Activity) getContext();
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(BitmapUtil.getTempStorageFile()));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(captureHelper.getTempCaptureFile()));
 
-        context.getIntent().putExtra("field_id", formField.getId());
         context.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
+    }
+
+    public void saveCapture() throws IOException, JSONException {
+        Bitmap bitmap = captureHelper.getCaptureBitmap();
+        captureHelper.deleteTempCaptureFile();
+
+        String fileName = createCaptureFileName();
+        captureHelper.save(bitmap, fileName);
+        captureHelper.saveThumbnail(bitmap, fileName);
+        child.put(formField.getId(), fileName);
+
+        repaint();
+
+        // TODO: Delete captures taken in gallery
+    }
+
+    protected String createCaptureFileName() {
+        return UUID.randomUUID().toString();
     }
 
     protected ImageView getImageView() {
@@ -56,7 +92,8 @@ public class PhotoUploadBox extends BaseView {
     }
 
     public void repaint() throws JSONException {
-        Bitmap bitmap = child.getThumbnail(formField.getId());
+        Bitmap bitmap = captureHelper.loadThumbnailOrDefault(child.optString(formField.getId()));
         getImageView().setImageBitmap(bitmap);
     }
+
 }

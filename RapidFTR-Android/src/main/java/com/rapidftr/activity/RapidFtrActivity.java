@@ -2,26 +2,24 @@ package com.rapidftr.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 import com.rapidftr.RapidFtrApplication;
 
 public abstract class RapidFtrActivity extends Activity {
 
-    public static final String SHARED_PREFERENCES_FILE = "RAPIDFTR_PREFERENCES";
+    public interface ResultListener {
+        void onActivityResult(int resultCode, Intent data);
+    }
 
-    public static final String APP_IDENTIFIER = "RapidFTR";
+    protected Multimap<Integer, ResultListener> activityResultListeners = HashMultimap.create();
 
     public RapidFtrApplication getContext() {
         return (RapidFtrApplication) getApplication();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     protected void startActivityOn(int viewResId, final Class<? extends RapidFtrActivity> activityClass) {
@@ -34,13 +32,13 @@ public abstract class RapidFtrActivity extends Activity {
 
     protected void logError(String message) {
         if(message!=null){
-           Log.e(APP_IDENTIFIER, message);
+           Log.e(RapidFtrApplication.APP_IDENTIFIER, message);
         }
 
     }
 
-    protected void logd(String message) {
-        Log.d(APP_IDENTIFIER, message);
+    protected void logDebug(String message) {
+        Log.d(RapidFtrApplication.APP_IDENTIFIER, message);
     }
 
     protected void makeToast(int resId) {
@@ -51,4 +49,16 @@ public abstract class RapidFtrActivity extends Activity {
         return ((RapidFtrApplication) getApplication()).getInjector();
     }
 
+    public void addResultListener(int requestCode, ResultListener listener) {
+        activityResultListeners.put(requestCode, listener);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        for (ResultListener listener : activityResultListeners.get(requestCode)) {
+            listener.onActivityResult(resultCode, data);
+        }
+    }
 }

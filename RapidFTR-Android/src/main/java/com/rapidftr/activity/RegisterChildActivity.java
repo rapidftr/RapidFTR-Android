@@ -13,8 +13,6 @@ import com.rapidftr.dao.ChildDAO;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.utils.AsyncTaskWithMessage;
-import com.rapidftr.utils.BitmapUtil;
-import com.rapidftr.view.fields.PhotoUploadBox;
 import lombok.Cleanup;
 import org.json.JSONException;
 
@@ -31,19 +29,16 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initialize();
-    }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState.containsKey("child_state")) {
+        if (savedInstanceState != null && savedInstanceState.containsKey("child_state")) {
             try {
                 child = new Child(savedInstanceState.getString("child_state"));
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         }
+
+        initialize();
     }
 
     @Override
@@ -62,7 +57,7 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
     }
 
     protected void initializeData() {
-        this.child = new Child();
+        if (child == null) child = new Child();
         this.formSections = getContext().getFormSections();
     }
 
@@ -95,7 +90,7 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
     }
 
     protected void initializeSpinner() {
-        getSpinner().setAdapter(new ArrayAdapter<FormSection> (this, android.R.layout.simple_spinner_item, formSections));
+        getSpinner().setAdapter(new ArrayAdapter<FormSection>(this, android.R.layout.simple_spinner_item, formSections));
         getSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -132,23 +127,6 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
             AsyncTaskWithMessage<Child, Boolean, RegisterChildActivity> task =
                     new AsyncTaskWithMessage<Child, Boolean, RegisterChildActivity> (this, R.string.save_child_progress, R.string.save_child_success, R.string.save_child_failure);
             task.execute(child);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PhotoUploadBox.CAPTURE_IMAGE_REQUEST && resultCode == RESULT_OK) {
-            try {
-                String fieldId = getIntent().getStringExtra("field_id");
-                child.setImage(fieldId, BitmapUtil.getTempStorageFile());
-
-                View fieldView = getPager().findViewWithTag(fieldId);
-                if (fieldView != null) {
-                    ((PhotoUploadBox) fieldView).repaint();
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 

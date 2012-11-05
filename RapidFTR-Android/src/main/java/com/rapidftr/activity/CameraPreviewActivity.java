@@ -32,7 +32,6 @@ public class CameraPreviewActivity extends RapidFtrActivity {
             }
         });
 
-        logd("CameraPreviewActivity - onCreated");
     }
 
     @Override
@@ -65,7 +64,6 @@ public class CameraPreviewActivity extends RapidFtrActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            logd("onPictureTaken - jpeg");
         }
     };
 }

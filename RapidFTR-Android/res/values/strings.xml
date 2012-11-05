@@ -37,5 +37,6 @@
     <string name="save_child_failure">Failed to save child record!</string>
 
     <string name="capture_photo">Capture Photo</string>
+    <string name="capture_photo_error">An error occurred while capturing the photo</string>
 
 </resources>

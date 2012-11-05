@@ -1,12 +1,7 @@
 package com.rapidftr.model;
 
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import com.rapidftr.CustomTestRunner;
-import com.rapidftr.R;
-import com.rapidftr.utils.BitmapUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Test;
@@ -15,14 +10,13 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Calendar;
 
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotSame;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 @RunWith(CustomTestRunner.class)
 public class ChildTest {
@@ -184,45 +178,6 @@ public class ChildTest {
         String guid2 = child.createUniqueId(calendar);
 
         assertNotSame(guid1, guid2);
-    }
-
-    @Test
-    public void testSetThumbnail() throws JSONException {
-        BitmapUtil util = mock(BitmapUtil.class);
-        Child child = new Child();
-        child.bitmapUtil = util;
-
-        Bitmap inputThumbnail = mock(Bitmap.class);
-        String expectedValue = "abcd";
-        when(util.bitmapToBase64(inputThumbnail)).thenReturn(expectedValue);
-
-        child.setThumbnail("some_photo", inputThumbnail);
-        assertThat(child.getString("some_photo_thumbnail"), equalTo(expectedValue));
-    }
-
-    @Test
-    public void testGetThumbnail() throws JSONException {
-        BitmapUtil util = mock(BitmapUtil.class);
-        Bitmap expectedThumbnail = mock(Bitmap.class);
-        String inputValue = "abcd";
-        when(util.bitmapFromBase64(inputValue)).thenReturn(expectedThumbnail);
-
-        Child child = new Child();
-        child.bitmapUtil = util;
-        child.put("some_field_thumbnail", inputValue);
-
-        assertThat(child.getThumbnail("some_field"), equalTo(expectedThumbnail));
-    }
-
-    @Test
-    public void testGetDefaultThumbnail() throws JSONException {
-        BitmapUtil util = mock(BitmapUtil.class);
-        Bitmap expectedImage = mock(Bitmap.class);
-        when(util.getDefaultThumbnail()).thenReturn(expectedImage);
-
-        Child child = new Child();
-        child.bitmapUtil = util;
-        assertThat(child.getThumbnail("some_field"), equalTo(expectedImage));
     }
 
 }

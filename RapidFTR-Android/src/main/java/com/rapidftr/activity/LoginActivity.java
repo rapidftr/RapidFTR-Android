@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import com.google.common.io.CharStreams;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import org.apache.http.HttpResponse;
@@ -103,7 +104,7 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     private String getStringFromSharedPreferences(String key) {
-        SharedPreferences preferences = getApplication().getSharedPreferences(SHARED_PREFERENCES_FILE, 0);
+        SharedPreferences preferences = getApplication().getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, 0);
         return preferences.getString(key, "");
     }
 
@@ -161,7 +162,7 @@ public class LoginActivity extends RapidFtrActivity {
                 getContext().setLoggedIn(true);
                 setDbKey(response);
                 try {
-                    SharedPreferences preferences = getApplication().getSharedPreferences(RapidFtrActivity.SHARED_PREFERENCES_FILE,0);
+                    SharedPreferences preferences = getApplication().getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE,0);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString("SERVER_URL", getBaseUrl());
                     editor.putString("USER_NAME", (getEditText(R.id.username)));

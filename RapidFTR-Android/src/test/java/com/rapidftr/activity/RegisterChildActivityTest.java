@@ -57,7 +57,7 @@ public class RegisterChildActivityTest {
         Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
         bundle.putString("child_state", child.toString());
 
-        activity.onRestoreInstanceState(bundle);
+        activity.onCreate(bundle);
         assertThat(activity.child, equalTo(child));
     }
 
@@ -65,6 +65,15 @@ public class RegisterChildActivityTest {
     public void testInitializeChild() {
         activity.initializeData();
         assertThat(activity.child, equalTo(new Child()));
+    }
+
+    @Test
+    public void testShouldNotInitializeChildIfAlreadyRestored() {
+        Child child = mock(Child.class);
+        activity.child = child;
+
+        activity.initialize();
+        assertThat(activity.child, equalTo(child));
     }
 
     @Test
