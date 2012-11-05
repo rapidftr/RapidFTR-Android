@@ -12,7 +12,6 @@
             />
     <TextView
             android:id="@+id/caption"
-            android:text="@string/capture_photo"
             android:layout_width="96dp"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"

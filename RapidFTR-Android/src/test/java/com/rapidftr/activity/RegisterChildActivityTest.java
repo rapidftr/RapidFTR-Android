@@ -164,9 +164,6 @@ public class RegisterChildActivityTest {
         activity.initialize();
         activity.getSpinner().setSelection(1);
         verify(pager).setCurrentItem(1);
-        // TODO: verify(spinner).setSelection(1);
-        // Can't test this now because pager.setCurrentItem doesn't trigger
-        // onPageChangeListener until it is rendered on screen
     }
 
 }

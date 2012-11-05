@@ -1,14 +1,17 @@
 package com.rapidftr.view.fields;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.utils.CaptureHelper;
 import org.json.JSONException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -34,9 +37,72 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
 
         view = spy((PhotoUploadBox) LayoutInflater.from(new RegisterChildActivity()).inflate(R.layout.form_photo_upload_box, null));
         doReturn(imageView).when(view).getImageView();
-        when(captureHelper.getCaptureBitmap()).thenReturn(bitmap);
+        when(captureHelper.getCapture()).thenReturn(bitmap);
 
         view.captureHelper = captureHelper;
+    }
+
+    @Test
+    public void shouldStartCameraActivityWhenImageClicked() {
+        view.initialize(field, child);
+        doNothing().when(view).startCapture();
+
+        view.getImageContainer().performClick();
+        verify(view).startCapture();
+    }
+
+    @Test @Ignore // Click events on views not triggering onClickListener
+    public void shouldShowPhotoWhenImageClicked() throws Exception {
+        view.initialize(field, child);
+        doNothing().when(view).showFullPhoto();
+
+        child.put(field.getId(), "random_file_name");
+        view.getImageView().performClick();
+
+        verify(view).onImageClick();
+        verify(view).showFullPhoto();
+    }
+
+    @Test
+    public void shouldSaveCaptureWhenCapturingSuccess() throws Exception {
+        view.initialize(field, child);
+        RapidFtrActivity activity = (RapidFtrActivity) view.getContext();
+        doNothing().when(view).saveCapture();
+
+        activity.onActivityResult(PhotoUploadBox.CAPTURE_IMAGE_REQUEST, Activity.RESULT_OK, null);
+        verify(view).saveCapture();
+    }
+
+    @Test
+    public void shouldNotSaveCaptureWhenCapturingCancelled() throws Exception {
+        view.initialize(field, child);
+        RapidFtrActivity activity = (RapidFtrActivity) view.getContext();
+        activity.onActivityResult(PhotoUploadBox.CAPTURE_IMAGE_REQUEST, Activity.RESULT_CANCELED, null);
+        verify(view, never()).saveCapture();
+    }
+
+    @Test
+    public void shouldSetCaptureTimeWhenStartCapture() throws Exception {
+        doCallRealMethod().when(captureHelper).getTempCaptureFile();
+        view.startCapture();
+        verify(captureHelper).setCaptureTime();
+    }
+
+    @Test
+    public void shouldDeleteCapturedImagesWhenRegistrationIsCancelled() throws Exception {
+        view.initialize(field, child);
+        RapidFtrActivity activity = (RapidFtrActivity) view.getContext();
+        doNothing().when(view).deleteCapture();
+
+        activity.onActivityResult(RegisterChildActivity.CLOSE_ACTIVITY, 999, null);
+        verify(view).deleteCapture();
+    }
+
+    @Test
+    public void testSaveCaptureShouldSaveBitmap() throws IOException, JSONException, GeneralSecurityException {
+        view.initialize(field, child);
+        view.saveCapture();
+        verify(captureHelper).savePhoto(eq(bitmap), anyString());
     }
 
     @Test
@@ -44,13 +110,6 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
         view.initialize(field, child);
         view.saveCapture();
         verify(captureHelper).deleteCaptures();
-    }
-
-    @Test
-    public void testSaveCaptureShouldSaveBitmap() throws IOException, JSONException, GeneralSecurityException {
-        view.initialize(field, child);
-        view.saveCapture();
-        verify(captureHelper).save(eq(bitmap), anyString());
     }
 
     @Test
@@ -63,7 +122,6 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     @Test
     public void testSaveCaptureShouldSaveFileNameInChild() throws JSONException, IOException, GeneralSecurityException {
         view.initialize(field, child);
-
         String fileName = "random_file_name";
         doReturn(fileName).when(view).createCaptureFileName();
 
@@ -72,10 +130,17 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     }
 
     @Test
+    public void shouldOverwriteExistingFile() throws Exception {
+        view.initialize(field, child);
+        child.put(field.getId(), "random_file_name");
+        assertThat(view.createCaptureFileName(), equalTo("random_file_name"));
+    }
+
+    @Test
     public void testPaintThumbnail() throws JSONException, IOException {
         view.initialize(field, child);
         child.put(field.getId(), "test_image");
-        when(captureHelper.loadThumbnailOrDefault("test_image")).thenReturn(bitmap);
+        when(captureHelper.getThumbnailOrDefault("test_image")).thenReturn(bitmap);
 
         view.repaint();
         verify(imageView).setImageBitmap(bitmap);

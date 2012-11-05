@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import lombok.Cleanup;
+import lombok.RequiredArgsConstructor;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -26,9 +27,12 @@ import java.util.Calendar;
 
 import static android.graphics.BitmapFactory.decodeResource;
 
+@RequiredArgsConstructor(suppressConstructorProperties = true)
 public class CaptureHelper {
 
-    public File getCaptureDir() {
+    protected final RapidFtrApplication application;
+
+    public File getPhotoDir() {
         File extDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         File appDir = new File(extDir, "rapidftr");
         File picDir = new File(appDir, ".nomedia");
@@ -38,31 +42,25 @@ public class CaptureHelper {
     }
 
     public File getTempCaptureFile() {
-        return new File(getCaptureDir(), "temp.jpg");
-    }
-
-    public void setCaptureTime() {
-        RapidFtrApplication.getInstance().getSharedPreferences().edit().putLong("capture_start_time", Calendar.getInstance().getTimeInMillis()).commit();
+        return new File(getPhotoDir(), "temp.jpg");
     }
 
     public Calendar getCaptureTime() {
         Calendar calendar = Calendar.getInstance();
-        long time = RapidFtrApplication.getInstance().getSharedPreferences().getLong("capture_start_time", Calendar.getInstance().getTimeInMillis());
+        long time = application.getSharedPreferences().getLong("capture_start_time", System.currentTimeMillis());
         calendar.setTimeInMillis(time);
         return calendar;
     }
 
-    public Bitmap getCaptureBitmap() throws IOException {
+    public void setCaptureTime() {
+        application.getSharedPreferences().edit().putLong("capture_start_time", Calendar.getInstance().getTimeInMillis()).commit();
+    }
+
+    public Bitmap getCapture() throws IOException {
         Bitmap bitmap = BitmapFactory.decodeFile(getTempCaptureFile().getAbsolutePath());
         int rotation = getCaptureRotation();
 
         return rotation > 0 ? rotateBitmap(bitmap, rotation) : bitmap;
-    }
-
-    protected Bitmap rotateBitmap(Bitmap bitmap, float degrees) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degrees);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,  true);
     }
 
     protected int getCaptureRotation() throws IOException {
@@ -81,12 +79,18 @@ public class CaptureHelper {
         }
     }
 
+    protected Bitmap rotateBitmap(Bitmap bitmap, float degrees) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degrees);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,  true);
+    }
+
     public void deleteCaptures() {
-        this.deleteTempCaptureFile();
+        this.deleteTempCapture();
         this.deleteGalleryCaptures();
     }
 
-    protected void deleteTempCaptureFile() {
+    protected void deleteTempCapture() {
         File file = getTempCaptureFile();
         if (file.exists())
             file.delete();
@@ -95,56 +99,75 @@ public class CaptureHelper {
     protected void deleteGalleryCaptures() {
         Calendar from = getCaptureTime();
         Calendar capturedDate = Calendar.getInstance();
-        ContentResolver resolver = RapidFtrApplication.getInstance().getContentResolver();
+        ContentResolver resolver = application.getContentResolver();
 
         @Cleanup Cursor cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 new String[] {BaseColumns._ID, MediaStore.Images.ImageColumns.DATE_TAKEN,  MediaStore.Images.ImageColumns.DATA },
                 null, null, null);
 
-        while (cursor.moveToNext()) {
+        while (cursor != null && cursor.moveToNext()) {
             try {
                 capturedDate.setTimeInMillis(cursor.getLong(1));
                 if (capturedDate.after(from)) {
-                    deleteGalleryCapture(cursor.getString(2));
-                    resolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, BaseColumns._ID + "=" + cursor.getString(0), null);
+                    deleteGalleryCapture(cursor.getString(0), cursor.getString(2));
                 }
             } catch (Exception e) {
-                Toast.makeText(RapidFtrApplication.getInstance(), R.string.capture_photo_delete_error, Toast.LENGTH_LONG).show();
+                Toast.makeText(application, R.string.photo_gallery_delete_error, Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    protected void deleteGalleryCapture(String completeFileName) {
+    protected void deleteGalleryCapture(String id, String completeFileName) {
         File image = new File(completeFileName);
         if (image.exists())
             image.delete();
+
+        application.getContentResolver().delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, BaseColumns._ID + "=" + id, null);
     }
 
     public Bitmap getDefaultThumbnail() {
-        return decodeResource(RapidFtrApplication.getInstance().getResources(), R.drawable.no_photo_clip);
+        return decodeResource(application.getResources(), R.drawable.no_photo_clip);
     }
 
-    public Bitmap createThumbnail(Bitmap image) {
+    protected Bitmap createThumbnail(Bitmap image) {
         return Bitmap.createScaledBitmap(image, 96, 96, false);
     }
 
-    public Bitmap save(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        File file = new File(getCaptureDir(), fileNameWithoutExtension + ".jpg");
+    public void savePhoto(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        File file = new File(getPhotoDir(), fileNameWithoutExtension + ".jpg");
         if (!file.exists())
             file.createNewFile();
 
-        @Cleanup FileOutputStream outStream = new FileOutputStream(file);
-        @Cleanup CipherOutputStream cipherOutputStream = new CipherOutputStream(outStream, getCipher(Cipher.ENCRYPT_MODE, fileNameWithoutExtension));
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, cipherOutputStream);
-        return bitmap;
+        @Cleanup OutputStream outputStream = getCipherOutputStream(file);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream);
     }
 
-    public Bitmap saveThumbnail(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        return save(createThumbnail(bitmap), fileNameWithoutExtension + "_thumb");
+    public void saveThumbnail(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        savePhoto(createThumbnail(bitmap), fileNameWithoutExtension + "_thumb");
     }
 
     public Bitmap loadThumbnail(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        return load(fileNameWithoutExtension + "_thumb");
+        return loadPhoto(fileNameWithoutExtension + "_thumb");
+    }
+
+    public Bitmap loadPhoto(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        File file = new File(getPhotoDir(), fileNameWithoutExtension + ".jpg");
+        if (!file.exists())
+            throw new FileNotFoundException();
+
+        @Cleanup InputStream inputStream = getCipherInputStream(file);
+        return BitmapFactory.decodeStream(inputStream);
+    }
+
+    public Bitmap getThumbnailOrDefault(String fileNameWithoutExtension) {
+        Bitmap bitmap = null;
+        try {
+            if (fileNameWithoutExtension != null) {
+                bitmap = loadThumbnail(fileNameWithoutExtension);
+            }
+        } catch (Exception e) { }
+
+        return bitmap != null ? bitmap : getDefaultThumbnail();
     }
 
     /**
@@ -160,7 +183,7 @@ public class CaptureHelper {
      * Reference: http://nelenkov.blogspot.in/2012/04/using-password-based-encryption-on.html
      */
     protected Cipher getCipher(int mode, String fileName) throws GeneralSecurityException {
-        String password = RapidFtrApplication.getInstance().getDbKey();
+        String password = application.getDbKey();
         int iterationCount = 100, saltLength = 8, keyLength = 256;
 
         SecureRandom random = new SecureRandom();
@@ -181,25 +204,12 @@ public class CaptureHelper {
         return cipher;
     }
 
-    public Bitmap load(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        File inFile = new File(getCaptureDir(), fileNameWithoutExtension + ".jpg");
-        if (!inFile.exists())
-            throw new FileNotFoundException();
-
-        @Cleanup FileInputStream inputStream = new FileInputStream(inFile);
-        @Cleanup CipherInputStream cipherInputStream = new CipherInputStream(inputStream, getCipher(Cipher.DECRYPT_MODE, fileNameWithoutExtension));
-        return BitmapFactory.decodeStream(cipherInputStream);
+    protected OutputStream getCipherOutputStream(File file) throws GeneralSecurityException, IOException {
+        return new CipherOutputStream(new FileOutputStream(file), getCipher(Cipher.ENCRYPT_MODE, file.getName()));
     }
 
-    public Bitmap loadThumbnailOrDefault(String fileNameWithoutExtension) {
-        Bitmap bitmap = null;
-        try {
-            if (fileNameWithoutExtension != null) {
-                bitmap = loadThumbnail(fileNameWithoutExtension);
-            }
-        } catch (Exception e) { }
-
-        return bitmap != null ? bitmap : getDefaultThumbnail();
+    protected InputStream getCipherInputStream(File file) throws GeneralSecurityException, IOException {
+        return new CipherInputStream(new FileInputStream(file), getCipher(Cipher.DECRYPT_MODE, file.getName()));
     }
 
 }

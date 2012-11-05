@@ -13,7 +13,7 @@ import com.rapidftr.RapidFtrApplication;
 public abstract class RapidFtrActivity extends Activity {
 
     public interface ResultListener {
-        void onActivityResult(int resultCode, Intent data);
+        void onActivityResult(int requestCode, int resultCode, Intent data);
     }
 
     protected Multimap<Integer, ResultListener> activityResultListeners = HashMultimap.create();
@@ -54,11 +54,16 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         for (ResultListener listener : activityResultListeners.get(requestCode)) {
-            listener.onActivityResult(resultCode, data);
+            listener.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

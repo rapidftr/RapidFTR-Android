@@ -13,54 +13,66 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.activity.RapidFtrActivity;
+import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.activity.ViewPhotoActivity;
 import com.rapidftr.utils.CaptureHelper;
 import org.json.JSONException;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.UUID;
 
 public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultListener {
 
     public static final int CAPTURE_IMAGE_REQUEST = 100;
 
-    protected CaptureHelper captureHelper = new CaptureHelper();
+    protected CaptureHelper captureHelper;
 
     public PhotoUploadBox(Context context) {
         super(context);
+        captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     public PhotoUploadBox(Context context, AttributeSet attrs) {
         super(context, attrs);
+        captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     @Override
     protected void initialize() throws JSONException {
         super.initialize();
-        getCaptureButton().setOnClickListener(new OnClickListener() {
+
+        RapidFtrActivity activity = (RapidFtrActivity) getContext();
+        activity.addResultListener(CAPTURE_IMAGE_REQUEST, this);
+        activity.addResultListener(RegisterChildActivity.CLOSE_ACTIVITY, this);
+
+        getImageContainer().setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 onImageClick();
             }
         });
-        ((RapidFtrActivity) getContext()).addResultListener(CAPTURE_IMAGE_REQUEST, this);
-
         repaint();
     }
 
     @Override
-    public void onActivityResult(int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK) {
-            try {
-                saveCapture();
-            } catch (Exception e) {
-                Toast.makeText(getContext(), R.string.capture_photo_error, Toast.LENGTH_LONG);
-            }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case CAPTURE_IMAGE_REQUEST:
+                if (resultCode == Activity.RESULT_OK)
+                    saveCapture();
+                break;
+            case RegisterChildActivity.CLOSE_ACTIVITY:
+                deleteCapture();
+                break;
         }
     }
 
-    public View getCaptureButton() {
+    protected void deleteCapture() {
+        if (!child.optBoolean("saved", false)) {
+            // TODO: Delete taken image
+        }
+    }
+
+    public View getImageContainer() {
         return (View) findViewById(R.id.capture);
     }
 
@@ -80,7 +92,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
 
             context.startActivity(intent);
         } catch (Exception e) {
-            Toast.makeText(context, R.string.view_photo_error, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.photo_view_error, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -93,21 +105,26 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         context.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
     }
 
-    public void saveCapture() throws IOException, JSONException, GeneralSecurityException {
-        Bitmap bitmap = captureHelper.getCaptureBitmap();
-        captureHelper.deleteCaptures();
+    public void saveCapture() {
+        try {
+            Bitmap bitmap = captureHelper.getCapture();
+            captureHelper.deleteCaptures();
 
-        String fileName = createCaptureFileName();
-        captureHelper.save(bitmap, fileName);
-        captureHelper.saveThumbnail(bitmap, fileName);
-        child.put(formField.getId(), fileName);
+            String fileName = createCaptureFileName();
+            captureHelper.savePhoto(bitmap, fileName);
+            captureHelper.saveThumbnail(bitmap, fileName);
+            child.put(formField.getId(), fileName);
 
-        bitmap.recycle();
-        repaint();
+            bitmap.recycle();
+            repaint();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), R.string.photo_capture_error, Toast.LENGTH_LONG);
+        }
     }
 
     protected String createCaptureFileName() {
-        return UUID.randomUUID().toString();
+        String fileName = child.optString(formField.getId());
+        return fileName != null ? fileName : UUID.randomUUID().toString();
     }
 
     protected ImageView getImageView() {
@@ -119,9 +136,9 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     public void repaint() throws JSONException {
-        Bitmap bitmap = captureHelper.loadThumbnailOrDefault(child.optString(formField.getId()));
+        Bitmap bitmap = captureHelper.getThumbnailOrDefault(child.optString(formField.getId()));
         getImageView().setImageBitmap(bitmap);
-        getImageCaption().setText(child.has(formField.getId()) ? R.string.capture_photo_delete : R.string.capture_photo);
+        getImageCaption().setText(child.has(formField.getId()) ? R.string.photo_view : R.string.photo_capture);
     }
 
 }

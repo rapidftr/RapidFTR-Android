@@ -20,6 +20,8 @@ import java.util.List;
 
 public class RegisterChildActivity extends RapidFtrActivity implements AsyncTaskWithMessage.BackgroundWorker<Child, Boolean> {
 
+    public static final int CLOSE_ACTIVITY = 999;
+
     protected List<FormSection> formSections;
 
     protected Child child;
@@ -116,6 +118,7 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
     public void onSuccess() throws Exception {
         Intent intent = new Intent(RegisterChildActivity.this, ViewChildActivity.class);
         intent.putExtra("id", child.getId());
+        child.put("saved", true);
         finish();
         startActivity(intent);
     }

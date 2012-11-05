@@ -8,10 +8,12 @@ import com.rapidftr.utils.CaptureHelper;
 
 public class ViewPhotoActivity extends RapidFtrActivity {
 
+    protected CaptureHelper captureHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_photo);
+        captureHelper = new CaptureHelper(getContext());
         this.initialize();
     }
 
@@ -20,13 +22,13 @@ public class ViewPhotoActivity extends RapidFtrActivity {
     }
 
     public void initialize() {
-        CaptureHelper helper = new CaptureHelper();
+        setContentView(R.layout.activity_view_photo);
         String fileName = getIntent().getStringExtra("file_name");
 
         try {
-            getImageView().setImageBitmap(helper.load(fileName));
+            getImageView().setImageBitmap(captureHelper.loadPhoto(fileName));
         } catch (Exception e) {
-            Toast.makeText(getContext(), R.string.view_photo_error, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), R.string.photo_view_error, Toast.LENGTH_LONG).show();
         }
     }
 

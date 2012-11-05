@@ -36,10 +36,10 @@
     <string name="save_child_success">Saved child record successfully</string>
     <string name="save_child_failure">Failed to save child record!</string>
 
-    <string name="capture_photo">Capture Photo</string>
-    <string name="capture_photo_delete">Delete Photo</string>
-    <string name="capture_photo_error">An error occurred while capturing the photo</string>
-    <string name="capture_photo_delete_error">Unable to delete photo from gallery, Please delete photo manually from gallery</string>
-    <string name="view_photo_error">An error occurred while loading the photo</string>
+    <string name="photo_capture">Capture Photo</string>
+    <string name="photo_capture_error">An error occurred while capturing the photo</string>
+    <string name="photo_view">View Photo</string>
+    <string name="photo_view_error">An error occurred while loading the photo</string>
+    <string name="photo_gallery_delete_error">Unable to delete photo from Gallery. Please go to Gallery and delete it manually</string>
 
 </resources>
