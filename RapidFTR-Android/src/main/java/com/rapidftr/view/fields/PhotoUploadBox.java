@@ -89,12 +89,13 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(captureHelper.getTempCaptureFile()));
 
         Activity context = (Activity) getContext();
+        captureHelper.setCaptureTime();
         context.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
     }
 
     public void saveCapture() throws IOException, JSONException, GeneralSecurityException {
         Bitmap bitmap = captureHelper.getCaptureBitmap();
-        captureHelper.deleteTempCaptureFile();
+        captureHelper.deleteCaptures();
 
         String fileName = createCaptureFileName();
         captureHelper.save(bitmap, fileName);
@@ -103,8 +104,6 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
 
         bitmap.recycle();
         repaint();
-
-        // TODO: Delete captures taken in gallery
     }
 
     protected String createCaptureFileName() {

@@ -40,10 +40,10 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     }
 
     @Test
-    public void testSaveCaptureShouldDeleteBitmap() throws IOException, JSONException, GeneralSecurityException {
+    public void testSaveShouldDeleteCaptures() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
         view.saveCapture();
-        verify(captureHelper).deleteTempCaptureFile();
+        verify(captureHelper).deleteCaptures();
     }
 
     @Test

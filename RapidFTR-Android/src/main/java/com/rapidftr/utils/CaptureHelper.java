@@ -7,7 +7,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Environment;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import lombok.Cleanup;
@@ -39,10 +41,15 @@ public class CaptureHelper {
         return new File(getCaptureDir(), "temp.jpg");
     }
 
-    public void deleteTempCaptureFile() {
-        File file = getTempCaptureFile();
-        if (file.exists())
-            file.delete();
+    public void setCaptureTime() {
+        RapidFtrApplication.getInstance().getSharedPreferences().edit().putLong("capture_start_time", Calendar.getInstance().getTimeInMillis()).commit();
+    }
+
+    public Calendar getCaptureTime() {
+        Calendar calendar = Calendar.getInstance();
+        long time = RapidFtrApplication.getInstance().getSharedPreferences().getLong("capture_start_time", Calendar.getInstance().getTimeInMillis());
+        calendar.setTimeInMillis(time);
+        return calendar;
     }
 
     public Bitmap getCaptureBitmap() throws IOException {
@@ -74,23 +81,41 @@ public class CaptureHelper {
         }
     }
 
-    public void deleteCapturesAfter(Calendar since) {
-        Calendar date = Calendar.getInstance();
+    public void deleteCaptures() {
+        this.deleteTempCaptureFile();
+        this.deleteGalleryCaptures();
+    }
+
+    protected void deleteTempCaptureFile() {
+        File file = getTempCaptureFile();
+        if (file.exists())
+            file.delete();
+    }
+
+    protected void deleteGalleryCaptures() {
+        Calendar from = getCaptureTime();
+        Calendar capturedDate = Calendar.getInstance();
         ContentResolver resolver = RapidFtrApplication.getInstance().getContentResolver();
 
         @Cleanup Cursor cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[] { MediaStore.Images.ImageColumns.DATE_TAKEN,  MediaStore.Images.ImageColumns.DATA },
+                new String[] {BaseColumns._ID, MediaStore.Images.ImageColumns.DATE_TAKEN,  MediaStore.Images.ImageColumns.DATA },
                 null, null, null);
 
         while (cursor.moveToNext()) {
-            date.setTimeInMillis(cursor.getLong(0));
-            if (date.after(since))
-                deleteCapture(cursor.getString(1));
+            try {
+                capturedDate.setTimeInMillis(cursor.getLong(1));
+                if (capturedDate.after(from)) {
+                    deleteGalleryCapture(cursor.getString(2));
+                    resolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, BaseColumns._ID + "=" + cursor.getString(0), null);
+                }
+            } catch (Exception e) {
+                Toast.makeText(RapidFtrApplication.getInstance(), R.string.capture_photo_delete_error, Toast.LENGTH_LONG).show();
+            }
         }
     }
 
-    protected void deleteCapture(String data) {
-        File image = new File(data);
+    protected void deleteGalleryCapture(String completeFileName) {
+        File image = new File(completeFileName);
         if (image.exists())
             image.delete();
     }

@@ -99,6 +99,7 @@ public final class R {
         public static final int camera_button=0x7f050001;
         public static final int capture_photo=0x7f05001d;
         public static final int capture_photo_delete=0x7f05001e;
+        public static final int capture_photo_delete_error=0x7f050020;
         public static final int capture_photo_error=0x7f05001f;
         public static final int change_url=0x7f050004;
         public static final int internal_error=0x7f050018;
@@ -126,7 +127,7 @@ public final class R {
         public static final int username=0x7f050009;
         public static final int username_required=0x7f05000c;
         public static final int view_all_children=0x7f050006;
-        public static final int view_photo_error=0x7f050020;
+        public static final int view_photo_error=0x7f050021;
     }
     public static final class style {
         public static final int AppTheme=0x7f070000;

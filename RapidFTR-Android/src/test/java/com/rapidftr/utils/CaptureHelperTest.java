@@ -5,8 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Calendar;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -32,11 +30,6 @@ public class CaptureHelperTest {
         String path = helper.getCaptureDir().getAbsolutePath();
         String file = helper.getTempCaptureFile().getAbsolutePath();
         assertThat(file, startsWith(path));
-    }
-
-    @Test
-    public void testDeleteCapturedFiles() {
-        helper.deleteCapturesAfter(Calendar.getInstance());
     }
 
 }

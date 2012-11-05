@@ -39,6 +39,7 @@
     <string name="capture_photo">Capture Photo</string>
     <string name="capture_photo_delete">Delete Photo</string>
     <string name="capture_photo_error">An error occurred while capturing the photo</string>
+    <string name="capture_photo_delete_error">Unable to delete photo from gallery, Please delete photo manually from gallery</string>
     <string name="view_photo_error">An error occurred while loading the photo</string>
 
 </resources>
