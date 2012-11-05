@@ -10,10 +10,12 @@
             <category android:name="android.intent.category.LAUNCHER"/>
         </intent-filter>
         </activity>
+
         <activity android:name=".activity.MainActivity"/>
-        <activity android:name=".activity.CameraPreviewActivity"/>
         <activity android:name=".activity.RegisterChildActivity" />
         <activity android:name=".activity.ViewChildActivity"/>
+        <activity android:name=".activity.ViewPhotoActivity" android:noHistory="true" />
+
         <uses-library android:name="android.test.runner"/>
     </application>
 

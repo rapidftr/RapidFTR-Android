@@ -9,9 +9,11 @@ import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.activity.RapidFtrActivity;
+import com.rapidftr.activity.ViewPhotoActivity;
 import com.rapidftr.utils.CaptureHelper;
 import org.json.JSONException;
 
@@ -38,7 +40,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         getCaptureButton().setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                startCapture();
+                onImageClick();
             }
         });
         ((RapidFtrActivity) getContext()).addResultListener(CAPTURE_IMAGE_REQUEST, this);
@@ -61,11 +63,31 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         return (View) findViewById(R.id.capture);
     }
 
-    public void startCapture() {
+    public void onImageClick() {
+        if (child.has(formField.getId())) {
+            showFullPhoto();
+        } else {
+            startCapture();
+        }
+    }
+
+    protected void showFullPhoto() {
         Activity context = (Activity) getContext();
+        try {
+            Intent intent = new Intent(context, ViewPhotoActivity.class);
+            intent.putExtra("file_name", child.getString(formField.getId()));
+
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(context, R.string.view_photo_error, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void startCapture() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(captureHelper.getTempCaptureFile()));
 
+        Activity context = (Activity) getContext();
         context.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
     }
 
@@ -91,9 +113,14 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         return (ImageView) findViewById(R.id.thumbnail);
     }
 
+    protected TextView getImageCaption() {
+        return (TextView) findViewById(R.id.caption);
+    }
+
     public void repaint() throws JSONException {
         Bitmap bitmap = captureHelper.loadThumbnailOrDefault(child.optString(formField.getId()));
         getImageView().setImageBitmap(bitmap);
+        getImageCaption().setText(child.has(formField.getId()) ? R.string.capture_photo_delete : R.string.capture_photo);
     }
 
 }
