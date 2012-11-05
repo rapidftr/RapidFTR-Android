@@ -1,9 +1,9 @@
 package com.rapidftr.view;
 
-import android.app.Activity;
 import android.view.LayoutInflater;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.activity.LoginActivity;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
@@ -31,7 +31,7 @@ public class FormSectionViewTest {
 
     @Before
     public void setUp() {
-        view = (FormSectionView) LayoutInflater.from(new Activity()).inflate(R.layout.form_section, null);
+        view = (FormSectionView) LayoutInflater.from(new LoginActivity()).inflate(R.layout.form_section, null);
         child = new Child();
 
         section = new FormSection();

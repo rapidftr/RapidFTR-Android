@@ -4,82 +4,141 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
-import android.util.Base64;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.rapidftr.R;
+import com.rapidftr.activity.RapidFtrActivity;
+import com.rapidftr.activity.RegisterChildActivity;
+import com.rapidftr.activity.ViewPhotoActivity;
+import com.rapidftr.utils.CaptureHelper;
 import org.json.JSONException;
 
-import java.io.ByteArrayOutputStream;
+import java.util.UUID;
 
-public class PhotoUploadBox extends BaseView {
+public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultListener {
 
     public static final int CAPTURE_IMAGE_REQUEST = 100;
 
+    protected CaptureHelper captureHelper;
+
     public PhotoUploadBox(Context context) {
         super(context);
+        captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     public PhotoUploadBox(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public Button getCaptureButton() {
-        return (Button) findViewById(R.id.capture);
-    }
-
-    public void startCapture() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        ((Activity) getContext()).getIntent().putExtra("field_id", formField.getId());
-        ((Activity) getContext()).startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
+        captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     @Override
     protected void initialize() throws JSONException {
         super.initialize();
-        getCaptureButton().setOnClickListener(new OnClickListener() {
+
+        RapidFtrActivity activity = (RapidFtrActivity) getContext();
+        activity.addResultListener(CAPTURE_IMAGE_REQUEST, this);
+        activity.addResultListener(RegisterChildActivity.CLOSE_ACTIVITY, this);
+
+        getImageContainer().setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                startCapture();
+                onImageClick();
             }
         });
-
         repaint();
     }
 
-    public void setImage(Bitmap image) throws JSONException {
-        Bitmap thumbnail = getThumbnail(image);
-        child.put(formField.getId(), bitmapToBase64(thumbnail));
-        repaint();
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case CAPTURE_IMAGE_REQUEST:
+                if (resultCode == Activity.RESULT_OK)
+                    saveCapture();
+                break;
+            case RegisterChildActivity.CLOSE_ACTIVITY:
+                deleteCapture();
+                break;
+        }
     }
 
-    protected Bitmap getThumbnail(Bitmap image) {
-        return Bitmap.createScaledBitmap(image, 96, 96, false);
+    protected void deleteCapture() {
+        if (!child.optBoolean("saved", false)) {
+            // TODO: Delete taken image
+        }
     }
 
-    protected String bitmapToBase64(Bitmap image) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 85, out);
-        return Base64.encodeToString(out.toByteArray(), Base64.DEFAULT);
+    public View getImageContainer() {
+        return (View) findViewById(R.id.capture);
     }
 
-    protected Bitmap bitmapFromBase64(String image) {
-        byte[] bitmap = Base64.decode(image, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bitmap, 0, bitmap.length);
+    public void onImageClick() {
+        if (child.has(formField.getId())) {
+            showFullPhoto();
+        } else {
+            startCapture();
+        }
+    }
+
+    protected void showFullPhoto() {
+        Activity context = (Activity) getContext();
+        try {
+            Intent intent = new Intent(context, ViewPhotoActivity.class);
+            intent.putExtra("file_name", child.getString(formField.getId()));
+
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(context, R.string.photo_view_error, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void startCapture() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(captureHelper.getTempCaptureFile()));
+
+        Activity context = (Activity) getContext();
+        captureHelper.setCaptureTime();
+        context.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
+    }
+
+    public void saveCapture() {
+        try {
+            Bitmap bitmap = captureHelper.getCapture();
+            captureHelper.deleteCaptures();
+
+            String fileName = createCaptureFileName();
+            captureHelper.savePhoto(bitmap, fileName);
+            captureHelper.saveThumbnail(bitmap, fileName);
+            child.put(formField.getId(), fileName);
+
+            bitmap.recycle();
+            repaint();
+        } catch (Exception e) {
+            Toast.makeText(getContext(), R.string.photo_capture_error, Toast.LENGTH_LONG);
+        }
+    }
+
+    protected String createCaptureFileName() {
+        String fileName = child.optString(formField.getId());
+        return fileName != null ? fileName : UUID.randomUUID().toString();
     }
 
     protected ImageView getImageView() {
         return (ImageView) findViewById(R.id.thumbnail);
     }
 
-    public void repaint() throws JSONException {
-        if (child.has(formField.getId())) {
-            Bitmap bitmap = bitmapFromBase64(child.getString(formField.getId()));
-            getImageView().setImageBitmap(bitmap);
-        }
+    protected TextView getImageCaption() {
+        return (TextView) findViewById(R.id.caption);
     }
+
+    public void repaint() throws JSONException {
+        Bitmap bitmap = captureHelper.getThumbnailOrDefault(child.optString(formField.getId()));
+        getImageView().setImageBitmap(bitmap);
+        getImageCaption().setText(child.has(formField.getId()) ? R.string.photo_view : R.string.photo_capture);
+    }
+
 }
