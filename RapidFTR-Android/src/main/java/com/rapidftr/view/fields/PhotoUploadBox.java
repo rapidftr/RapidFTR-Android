@@ -18,6 +18,7 @@ import com.rapidftr.utils.CaptureHelper;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.UUID;
 
 public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultListener {
@@ -91,7 +92,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         context.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
     }
 
-    public void saveCapture() throws IOException, JSONException {
+    public void saveCapture() throws IOException, JSONException, GeneralSecurityException {
         Bitmap bitmap = captureHelper.getCaptureBitmap();
         captureHelper.deleteTempCaptureFile();
 
@@ -100,6 +101,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         captureHelper.saveThumbnail(bitmap, fileName);
         child.put(formField.getId(), fileName);
 
+        bitmap.recycle();
         repaint();
 
         // TODO: Delete captures taken in gallery

@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,44 +27,42 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     protected ImageView imageView;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         captureHelper = mock(CaptureHelper.class);
         bitmap = mock(Bitmap.class);
         imageView = mock(ImageView.class);
 
         view = spy((PhotoUploadBox) LayoutInflater.from(new RegisterChildActivity()).inflate(R.layout.form_photo_upload_box, null));
         doReturn(imageView).when(view).getImageView();
+        when(captureHelper.getCaptureBitmap()).thenReturn(bitmap);
 
         view.captureHelper = captureHelper;
     }
 
     @Test
-    public void testSaveCaptureShouldDeleteBitmap() throws IOException, JSONException {
+    public void testSaveCaptureShouldDeleteBitmap() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
         view.saveCapture();
         verify(captureHelper).deleteTempCaptureFile();
     }
 
     @Test
-    public void testSaveCaptureShouldSaveBitmap() throws IOException, JSONException {
+    public void testSaveCaptureShouldSaveBitmap() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
-        when(captureHelper.getCaptureBitmap()).thenReturn(bitmap);
         view.saveCapture();
         verify(captureHelper).save(eq(bitmap), anyString());
     }
 
     @Test
-    public void testSaveCaptureShouldSaveThumbnail() throws IOException, JSONException {
+    public void testSaveCaptureShouldSaveThumbnail() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
-        when(captureHelper.getCaptureBitmap()).thenReturn(bitmap);
         view.saveCapture();
         verify(captureHelper).saveThumbnail(eq(bitmap), anyString());
     }
 
     @Test
-    public void testSaveCaptureShouldSaveFileNameInChild() throws JSONException, IOException {
+    public void testSaveCaptureShouldSaveFileNameInChild() throws JSONException, IOException, GeneralSecurityException {
         view.initialize(field, child);
-        when(captureHelper.getCaptureBitmap()).thenReturn(bitmap);
 
         String fileName = "random_file_name";
         doReturn(fileName).when(view).createCaptureFileName();
