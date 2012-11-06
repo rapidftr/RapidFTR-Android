@@ -12,6 +12,7 @@ import com.xtremelabs.robolectric.shadows.ShadowHandler;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
@@ -33,7 +34,11 @@ public class LoginActivityTest {
     @Before
     public void setUp() throws Exception {
         loginActivity = new LoginActivity();
+        loginActivity.getContext().setUserName(null);
+        loginActivity.getContext().setDbKey(null);
+        loginActivity.getContext().setFormSections(null);
         loginActivity.onCreate(null);
+
         loginButton = (Button) loginActivity.findViewById(R.id.login_button);
         serverUrl = (EditText) loginActivity.findViewById(R.id.url);
         serverUrl.setText("http://dev.rapidftr.com:3000");

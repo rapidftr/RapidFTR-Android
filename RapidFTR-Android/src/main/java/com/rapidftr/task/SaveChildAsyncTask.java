@@ -9,18 +9,25 @@ import com.rapidftr.R;
 import com.rapidftr.dao.ChildDAO;
 import com.rapidftr.model.Child;
 import lombok.Cleanup;
+import lombok.Getter;
+import lombok.Setter;
 
-public abstract class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
+public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
+
+    public interface SaveChildListener {
+        void onSaveChild();
+    }
 
     private final ChildDAO dao;
     private final ProgressDialog dialog;
     private final Toast toast;
+    private final SaveChildListener saveChildListener;
 
-    @Inject
-    public SaveChildAsyncTask(ChildDAO dao, Context context) {
+    public SaveChildAsyncTask(ChildDAO dao, Context context, SaveChildListener saveChildListener) {
         this.dao = dao;
         this.dialog = new ProgressDialog(context);
         this.toast = Toast.makeText(context, null, Toast.LENGTH_LONG);
+        this.saveChildListener = saveChildListener;
     }
 
     @Override
@@ -47,11 +54,9 @@ public abstract class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean>
         toast.setText((result == null || result == false) ? R.string.save_child_failure : R.string.save_child_success);
         toast.show();
 
-        if (result != null && result == true) {
-            onSuccess();
+        if (result != null && result == true && saveChildListener != null) {
+            saveChildListener.onSaveChild();
         }
     }
-
-    protected abstract void onSuccess();
 
 }
