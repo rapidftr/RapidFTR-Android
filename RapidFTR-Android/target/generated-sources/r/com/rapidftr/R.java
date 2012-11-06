@@ -42,30 +42,31 @@ public final class R {
         public static final int textbox_normal=0x7f020018;
     }
     public static final class id {
-        public static final int buttonClick=0x7f080002;
-        public static final int caption=0x7f080013;
-        public static final int capture=0x7f080015;
-        public static final int change_url=0x7f080007;
-        public static final int container=0x7f080016;
-        public static final int field_options=0x7f080017;
-        public static final int gallery=0x7f080014;
-        public static final int help_text=0x7f080010;
-        public static final int label=0x7f080011;
-        public static final int layout=0x7f080000;
-        public static final int login_button=0x7f080006;
-        public static final int pager=0x7f08000c;
-        public static final int password=0x7f080004;
-        public static final int photo=0x7f08000d;
-        public static final int preview=0x7f080001;
-        public static final int register_child_button=0x7f080008;
-        public static final int spinner=0x7f08000b;
-        public static final int submit=0x7f08000a;
-        public static final int thumbnail=0x7f080012;
-        public static final int title=0x7f080009;
-        public static final int url=0x7f080005;
-        public static final int username=0x7f080003;
-        public static final int value=0x7f08000f;
-        public static final int values=0x7f08000e;
+        public static final int buttonClick=0x7f090002;
+        public static final int caption=0x7f090013;
+        public static final int capture=0x7f090015;
+        public static final int change_url=0x7f090007;
+        public static final int container=0x7f090016;
+        public static final int field_options=0x7f090017;
+        public static final int gallery=0x7f090014;
+        public static final int help_text=0x7f090010;
+        public static final int label=0x7f090011;
+        public static final int layout=0x7f090000;
+        public static final int login_button=0x7f090006;
+        public static final int pager=0x7f09000c;
+        public static final int password=0x7f090004;
+        public static final int photo=0x7f09000d;
+        public static final int preview=0x7f090001;
+        public static final int register_child_button=0x7f090008;
+        public static final int spinner=0x7f09000b;
+        public static final int submit=0x7f09000a;
+        public static final int synchronise_data=0x7f090018;
+        public static final int thumbnail=0x7f090012;
+        public static final int title=0x7f090009;
+        public static final int url=0x7f090005;
+        public static final int username=0x7f090003;
+        public static final int value=0x7f09000f;
+        public static final int values=0x7f09000e;
     }
     public static final class integer {
         public static final int http_timeout=0x7f040000;
@@ -93,8 +94,12 @@ public final class R {
         public static final int form_text_field=0x7f030013;
         public static final int form_textarea=0x7f030014;
     }
+    public static final class menu {
+        public static final int options_menu=0x7f080000;
+    }
     public static final class string {
         public static final int RapidFTRLogo=0x7f050017;
+        public static final int Synchronize=0x7f050022;
         public static final int app_name=0x7f050000;
         public static final int camera_button=0x7f050001;
         public static final int change_url=0x7f050004;

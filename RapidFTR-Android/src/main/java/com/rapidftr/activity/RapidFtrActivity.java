@@ -3,11 +3,14 @@ package com.rapidftr.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
+import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 
 public abstract class RapidFtrActivity extends Activity {
@@ -60,6 +63,18 @@ public abstract class RapidFtrActivity extends Activity {
         for (ResultListener listener : activityResultListeners.get(requestCode)) {
             listener.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        return RapidFtrApplication.getInstance().isLoggedIn();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        Toast.makeText(this, "yay it worked", 5).show();
+        return true;
     }
 
     @Override
