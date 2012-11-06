@@ -7,16 +7,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.forms.FormSection;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowHandler;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
+import com.xtremelabs.robolectric.tester.org.apache.http.HttpEntityStub;
+import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.List;
 
+import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -141,4 +148,24 @@ public class LoginActivityTest {
         assertThat(loginActivity.getContext().getDbKey(), is("fa8f5e7599ed5402"));
     }
 
+    @Test
+    public void shouldSyncFormDefinitionsFromServer(){
+        getFakeHttpLayer().setDefaultHttpResponse(201, "happy days");
+        getFakeHttpLayer().addHttpResponseRule(new HttpEntityStub.ResponseRule() {
+            @Override
+            public boolean matches(HttpRequest httpRequest) {
+                return httpRequest.getRequestLine().getUri().contains("/published_form_sections");
+            }
+            @Override
+            public HttpResponse getResponse() throws HttpException, IOException {
+                return new TestHttpResponse(201, "[{\"name\":\"someFormSection\"}]");
+            }
+        });
+
+        loginButton.performClick();
+
+        List<FormSection> formSections = loginActivity.getContext().getFormSections();
+        assertThat(formSections.size(), is(1));
+        assertThat(formSections.get(0).getName(), is("someFormSection"));
+    }
 }
