@@ -105,8 +105,7 @@ public class Child extends JSONObject {
     }
 
     public void generateUniqueId() throws JSONException {
-        if (has(internal_id.getColumnName()))
-            return;
+        if (has(internal_id.getColumnName())){ /*do nothing*/ }
         else if (!has(created_by.getColumnName()))
             throw new IllegalArgumentException("Owner is required for generating ID");
         else
@@ -122,15 +121,18 @@ public class Child extends JSONObject {
 
     protected String getUUIDRandom(int length) {
         String uuid = String.valueOf(UUID.randomUUID());
-        return uuid.substring(uuid.length() - length, uuid.length()); //Fetch last 5 characrters of UUID
+        return uuid.substring(uuid.length() - length, uuid.length());
     }
 
     public boolean isValid() {
-        int count = names().length();
+        int numberOfNonInternalFields = names().length();
+
         for (ChildTableColumn field : ChildTableColumn.internalFields()){
-            count = count - (has(field.getColumnName()) ? 1 : 0);
+            if(has(field.getColumnName())){
+                numberOfNonInternalFields--;
+            }
         }
-        return count > 0;
+        return numberOfNonInternalFields > 0;
     }
 
     public boolean equals(Object other) {
