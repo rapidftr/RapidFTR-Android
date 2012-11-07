@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Child;
 import lombok.Cleanup;
@@ -13,8 +14,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.rapidftr.database.DatabaseHelper.*;
 
 public class ChildRepository implements Closeable {
 
@@ -47,10 +46,10 @@ public class ChildRepository implements Closeable {
             throw new IllegalArgumentException();
 
         ContentValues values = new ContentValues();
-        values.put(DB_CHILD_OWNER, child.getOwner());
-        values.put(DB_CHILD_ID, child.getId());
-        values.put(DB_CHILD_CONTENT, child.toString());
-        values.put(DB_CHILD_SYNCED, child.isSynced());
+        values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
+        values.put(Database.ChildTableColumn.id.getColumnName(), child.getId());
+        values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
+        values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
         long id = session.insert("CHILDREN", null, values);
         if (id <= 0)
             throw new IllegalArgumentException();

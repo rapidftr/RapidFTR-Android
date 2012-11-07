@@ -1,7 +1,6 @@
 package com.rapidftr.model;
 
 import com.google.common.base.Strings;
-import com.rapidftr.database.DatabaseHelper;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,14 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
 
-import static com.rapidftr.database.DatabaseHelper.DB_CHILD_SYNCED;
+import static com.rapidftr.database.Database.ChildTableColumn;
+import static com.rapidftr.database.Database.ChildTableColumn.created_by;
+import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 
 public class Child extends JSONObject {
-
-    public static final String ID_FIELD = "_id";
-    public static final String OWNER_FIELD = "created_by";
-    public static final String THUMBNAIL_FIELD = "_thumbnail";
-    public static final String[] INTERNAL_FIELDS = { ID_FIELD, OWNER_FIELD, THUMBNAIL_FIELD, DatabaseHelper.DB_CHILD_SYNCED};
 
     public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
     public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();
@@ -43,27 +39,27 @@ public class Child extends JSONObject {
     }
 
     public String getId() throws JSONException {
-        return getString(ID_FIELD);
+        return getString(internal_id.getColumnName());
     }
 
     public void setId(String id) throws JSONException {
-        put(ID_FIELD, id);
+        put(internal_id.getColumnName(), id);
     }
 
     public String getOwner() throws JSONException {
-        return getString(OWNER_FIELD);
+        return getString(created_by.getColumnName());
     }
 
     public void setOwner(String owner) throws JSONException {
-        put(OWNER_FIELD, owner);
+        put(created_by.getColumnName(), owner);
     }
 
     public void setSynced(boolean synced) throws JSONException {
-        put(DB_CHILD_SYNCED, synced);
+        put(ChildTableColumn.synced.getColumnName(), synced);
     }
 
     public boolean isSynced() throws JSONException {
-        return Boolean.valueOf(get(DB_CHILD_SYNCED).toString());
+        return Boolean.valueOf(get(ChildTableColumn.synced.getColumnName()).toString());
     }
 
     public void addToJSONArray(String key, Object element) throws JSONException {
@@ -109,16 +105,16 @@ public class Child extends JSONObject {
     }
 
     public void generateUniqueId() throws JSONException {
-        if (has(ID_FIELD))
+        if (has(internal_id.getColumnName()))
             return;
-        else if (!has(OWNER_FIELD))
+        else if (!has(created_by.getColumnName()))
             throw new IllegalArgumentException("Owner is required for generating ID");
         else
             setId(createUniqueId(Calendar.getInstance()));
     }
 
     protected String createUniqueId(Calendar calendar) throws JSONException {
-        StringBuffer uuid = new StringBuffer(getOwner());
+        StringBuilder uuid = new StringBuilder(getOwner());
         uuid.append(UUID_DATE_FORMAT.format(calendar.getTime()));
         uuid.append(getUUIDRandom(5));
         return uuid.toString();
@@ -131,10 +127,9 @@ public class Child extends JSONObject {
 
     public boolean isValid() {
         int count = names().length();
-        for (String field : INTERNAL_FIELDS){
-            count = count - (has(field) ? 1 : 0);
+        for (ChildTableColumn field : ChildTableColumn.internalFields()){
+            count = count - (has(field.getColumnName()) ? 1 : 0);
         }
-
         return count > 0;
     }
 

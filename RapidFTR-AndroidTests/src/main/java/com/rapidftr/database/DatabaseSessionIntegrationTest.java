@@ -8,6 +8,7 @@ import com.rapidftr.activity.LoginActivity;
 import lombok.Cleanup;
 import org.junit.Test;
 
+import static com.rapidftr.database.Database.ChildTableColumn;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -48,10 +49,10 @@ public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestC
     @Test
     public void ShouldBeAbleToDeleteAChildRecord() {
         ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.DB_CHILD_ID, "id1");
-        values.put(DatabaseHelper.DB_CHILD_OWNER, "owner1");
-        values.put(DatabaseHelper.DB_CHILD_CONTENT, "content1");
-        values.put(DatabaseHelper.DB_CHILD_SYNCED, "false");
+        values.put(ChildTableColumn.id.getColumnName(), "id1");
+        values.put(ChildTableColumn.owner.getColumnName(), "owner1");
+        values.put(ChildTableColumn.content.getColumnName(), "content1");
+        values.put(ChildTableColumn.synced.getColumnName(), "false");
 
         long id = session.insert("children", null, values);
         assertThat(id, is(notNullValue()));
