@@ -6,6 +6,11 @@ import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.activity.LoginActivity;
 import lombok.Cleanup;
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
@@ -33,40 +38,31 @@ public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestC
         solo.finishOpenedActivities();
     }
 
-    public void testRawQueryCountAs0() {
+    @Test
+    public void shouldGetCountOFAllChildren() {
         @Cleanup Cursor cursor = session.rawQuery("select count(1) from children", new String[]{});
         cursor.moveToNext();
         assertEquals(cursor.getInt(0), 0);
     }
 
-    public void testInsertNewChildRecord() {
+    @Test
+    public void ShouldBeAbleToDeleteAChildRecord() {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.DB_CHILD_ID, "id1");
         values.put(DatabaseHelper.DB_CHILD_OWNER, "owner1");
         values.put(DatabaseHelper.DB_CHILD_CONTENT, "content1");
+        values.put(DatabaseHelper.DB_CHILD_SYNCED, "false");
 
         long id = session.insert("children", null, values);
-        assertTrue(id > 0);
-    }
-
-    public void testDeleteExistingChildRecord() {
-        testInsertNewChildRecord();
+        assertThat(id, is(notNullValue()));
 
         int deleted = session.delete("children", "id = ?", new String[] { "id1" });
-        assertTrue(deleted == 1);
+        assertThat(deleted, is(1));
     }
 
-    public void testExecSQLDeleteAllFromChildren() {
-        testInsertNewChildRecord();
-        session.execSQL("DELETE FROM children");
-        testRawQueryCountAs0();
-    }
-
-    public void testEncryption() {
-        try {
-            helper = new SQLCipherHelper("test_db", "wrong_password", getActivity());
-            fail();
-        } catch (Exception e) { }
+    @Test(expected = Exception.class)
+    public void shouldNotBeAbleToAccessDatabaseWithIncorrectDecrypitionKey() {
+        helper = new SQLCipherHelper("test_db", "wrong_password", getActivity());
     }
 
 }

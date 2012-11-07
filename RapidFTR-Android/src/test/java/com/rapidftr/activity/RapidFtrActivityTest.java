@@ -34,4 +34,5 @@ public class RapidFtrActivityTest {
 
         assertThat(showMenu, is(true));
     }
+
 }

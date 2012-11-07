@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import com.rapidftr.R;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
-import com.rapidftr.dao.ChildRepoistory;
+import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.utils.AsyncTaskWithMessage;
@@ -109,8 +109,8 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
         child.setOwner(getContext().getUserName());
         child.generateUniqueId();
 
-        @Cleanup ChildRepoistory repoistory = getInjector().getInstance(ChildRepoistory.class);
-        repoistory.create(child);
+        @Cleanup ChildRepository repository = getInjector().getInstance(ChildRepository.class);
+        repository.create(child);
         return true;
     }
 

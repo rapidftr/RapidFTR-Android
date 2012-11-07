@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 import com.rapidftr.R;
-import com.rapidftr.dao.ChildRepoistory;
+import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.model.Child;
 import lombok.Cleanup;
 
@@ -15,13 +15,13 @@ public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
         void onSaveChild();
     }
 
-    private final ChildRepoistory repoistory;
+    private final ChildRepository repository;
     private final ProgressDialog dialog;
     private final Toast toast;
     private final SaveChildListener saveChildListener;
 
-    public SaveChildAsyncTask(ChildRepoistory repoistory, Context context, SaveChildListener saveChildListener) {
-        this.repoistory = repoistory;
+    public SaveChildAsyncTask(ChildRepository repository, Context context, SaveChildListener saveChildListener) {
+        this.repository = repository;
         this.dialog = new ProgressDialog(context);
         this.toast = Toast.makeText(context, null, Toast.LENGTH_LONG);
         this.saveChildListener = saveChildListener;
@@ -37,8 +37,8 @@ public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Child... params) {
         try {
-            @Cleanup ChildRepoistory repoistory = this.repoistory;
-            repoistory.create(params[0]);
+            @Cleanup ChildRepository repository = this.repository;
+            repository.create(params[0]);
             return true;
         } catch (Exception e) {
             return false;

@@ -12,8 +12,8 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.service.FormService;
-import com.rapidftr.task.SyncAllDataAsyncTask;
+import com.rapidftr.service.DataSynchronisationService;
+import org.json.JSONException;
 
 public abstract class RapidFtrActivity extends Activity {
 
@@ -75,8 +75,12 @@ public abstract class RapidFtrActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        new SyncAllDataAsyncTask(new FormService(getContext())).execute();
-        return true;
+        try {
+            getInjector().getInstance(DataSynchronisationService.class).syncAllData();
+            return true;
+        } catch (JSONException e) {
+            return false;
+        }
     }
 
     @Override

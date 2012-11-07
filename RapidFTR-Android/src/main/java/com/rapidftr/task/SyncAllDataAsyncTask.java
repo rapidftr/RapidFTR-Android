@@ -1,11 +1,12 @@
 package com.rapidftr.task;
 
 import android.os.AsyncTask;
+import com.rapidftr.model.Child;
 import com.rapidftr.service.FormService;
 
 import java.io.IOException;
 
-public class SyncAllDataAsyncTask extends AsyncTask<Object, Void, Boolean> {
+public class SyncAllDataAsyncTask extends AsyncTask<Child, Void, Boolean> {
 
     private FormService formService;
 
@@ -14,7 +15,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Object, Void, Boolean> {
     }
 
     @Override
-    protected Boolean doInBackground(Object... objects) {
+    protected Boolean doInBackground(Child... children) {
         try {
             formService.getPublishedFormSections();
         } catch (IOException e) {
@@ -22,4 +23,5 @@ public class SyncAllDataAsyncTask extends AsyncTask<Object, Void, Boolean> {
         }
         return true;
     }
+
 }

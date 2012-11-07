@@ -1,6 +1,7 @@
 package com.rapidftr.model;
 
 import com.google.common.base.Strings;
+import com.rapidftr.database.DatabaseHelper;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +19,7 @@ public class Child extends JSONObject {
     public static final String ID_FIELD = "_id";
     public static final String OWNER_FIELD = "created_by";
     public static final String THUMBNAIL_FIELD = "_thumbnail";
-    public static final String[] INTERNAL_FIELDS = { ID_FIELD, OWNER_FIELD, THUMBNAIL_FIELD };
+    public static final String[] INTERNAL_FIELDS = { ID_FIELD, OWNER_FIELD, THUMBNAIL_FIELD, DatabaseHelper.DB_CHILD_SYNCED};
 
     public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
     public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();
@@ -130,8 +131,9 @@ public class Child extends JSONObject {
 
     public boolean isValid() {
         int count = names().length();
-        for (String field : INTERNAL_FIELDS)
+        for (String field : INTERNAL_FIELDS){
             count = count - (has(field) ? 1 : 0);
+        }
 
         return count > 0;
     }

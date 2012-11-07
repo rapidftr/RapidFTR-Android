@@ -1,4 +1,4 @@
-package com.rapidftr.dao;
+package com.rapidftr.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -16,13 +16,13 @@ import java.util.List;
 
 import static com.rapidftr.database.DatabaseHelper.*;
 
-public class ChildRepoistory implements Closeable {
+public class ChildRepository implements Closeable {
 
     protected final String userName;
     protected final DatabaseSession session;
 
     @Inject
-    public ChildRepoistory(@Named("USER_NAME") String userName, DatabaseSession session) {
+    public ChildRepository(@Named("USER_NAME") String userName, DatabaseSession session) {
         this.userName = userName;
         this.session = session;
     }
