@@ -24,13 +24,6 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest<Lo
 
     }
 
-    public void testSuccessfulLogin() {
-        loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
-//        loginPage.login(USERNAME,PASSWORD,"http://97.107.135.7:5000");
-        assertTrue("Login should be successful", solo.waitForText("Login Successful"));
-        loginPage.logout();
-    }
-
      public void testUserAbleToSeeLastSuccessfulLoginUrl() {
          loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
          solo.waitForText("Login Successful");
@@ -39,6 +32,14 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest<Lo
          loginPage.changeURL();
          loginPage.getUrl().equals(LOGIN_URL);
     }
+
+
+    public void testSuccessfulLogin() {
+        loginPage.login();
+        assertTrue("Login should be successful", solo.waitForText("Login Successful"));
+        loginPage.logout();
+    }
+
 
 //    @Ignore
 //    public void testUserCanChangeUrlAndLoginInAnotherAccount() {
