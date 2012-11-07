@@ -2,11 +2,8 @@ package com.rapidftr;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.utils.ApplicationInjector;
 import lombok.Getter;
@@ -20,6 +17,9 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class RapidFtrApplication extends Application {
+
+    public static final String SHARED_PREFERENCES_FILE = "RAPIDFTR_PREFERENCES";
+    public static final String APP_IDENTIFIER = "RapidFTR";
 
     private @Getter static RapidFtrApplication instance;
 
@@ -39,7 +39,7 @@ public class RapidFtrApplication extends Application {
     }
 
     public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences(RapidFtrActivity.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
+        return getSharedPreferences(SHARED_PREFERENCES_FILE, MODE_PRIVATE);
     }
 
     public String getUserName() {

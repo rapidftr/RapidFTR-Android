@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
+import org.json.JSONException;
 
 public abstract class BaseView extends LinearLayout {
 
@@ -28,7 +29,13 @@ public abstract class BaseView extends LinearLayout {
 
         this.formField = formField;
         this.child = child;
-        this.initialize();
+        this.setTag(formField.getId());
+
+        try {
+            this.initialize();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected TextView getLabel() {
@@ -39,7 +46,7 @@ public abstract class BaseView extends LinearLayout {
         return (TextView) findViewById(R.id.help_text);
     }
 
-    protected void initialize() {
+    protected void initialize() throws JSONException {
         getLabel().setText(formField.getDisplayName());
         getHelpText().setText(formField.getHelpText());
         this.setVisibility(formField.isEnabled() ? VISIBLE : GONE);

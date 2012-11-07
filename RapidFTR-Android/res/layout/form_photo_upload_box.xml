@@ -8,10 +8,14 @@
 
     <include layout="@layout/form_label" />
 
-    <TextView
-            android:text="This is a photo upload box"
+    <HorizontalScrollView
+            android:id="@+id/gallery"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+
+        <include layout="@layout/form_photo_thumbnail" android:id="@+id/capture" />
+
+    </HorizontalScrollView>
 
     <include layout="@layout/form_help_text" />
 

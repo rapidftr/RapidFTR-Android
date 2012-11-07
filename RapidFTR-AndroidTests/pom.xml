@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <sqlcipher.dir>${project.basedir}/../RapidFTR-Android/libs</sqlcipher.dir>
+        <local.repo.dir>${project.basedir}/../repo</local.repo.dir>
     </properties>
 
     <dependencies>
@@ -42,6 +42,22 @@
             <type>apk</type>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>sqlcipher</groupId>
+            <artifactId>sqlcipher</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>sqlcipher</groupId>
+            <artifactId>guava</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>sqlcipher</groupId>
+            <artifactId>commons-codec</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -67,16 +83,6 @@
                         </goals>
                         <configuration>
                             <executable>${basedir}/src/scripts/unlock_keyguard.sh</executable>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>add host alias</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${basedir}/src/scripts/add_host_alias.sh</executable>
                         </configuration>
                     </execution>
                 </executions>

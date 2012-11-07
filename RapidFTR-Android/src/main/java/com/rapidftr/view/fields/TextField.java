@@ -32,7 +32,7 @@ public class TextField extends BaseView {
     }
 
     @Override
-    protected void initialize() {
+    protected void initialize() throws JSONException {
         super.initialize();
         setText(formField.getValue());
 

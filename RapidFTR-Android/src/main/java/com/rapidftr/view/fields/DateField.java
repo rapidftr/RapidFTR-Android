@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.DatePicker;
+import org.json.JSONException;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -24,7 +25,7 @@ public class DateField extends TextField implements DatePickerDialog.OnDateSetLi
     }
 
     @Override
-    protected void initialize() {
+    protected void initialize() throws JSONException {
         super.initialize();
         getEditTextView().setOnTouchListener(this);
     }
