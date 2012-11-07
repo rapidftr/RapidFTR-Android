@@ -29,6 +29,7 @@ public class ChildDAOTest {
     @Before
     public void setupSession() {
         session = new ShadowSQLiteHelper().getSession();
+        dao = new ChildDAO("some_user", session);
     }
 
     @Test

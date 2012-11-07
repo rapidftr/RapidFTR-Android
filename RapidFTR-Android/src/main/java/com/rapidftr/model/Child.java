@@ -15,7 +15,8 @@ public class Child extends JSONObject {
 
     public static final String ID_FIELD = "_id";
     public static final String OWNER_FIELD = "created_by";
-    public static final String[] INTERNAL_FIELDS = { ID_FIELD, OWNER_FIELD };
+    public static final String THUMBNAIL_FIELD = "_thumbnail";
+    public static final String[] INTERNAL_FIELDS = { ID_FIELD, OWNER_FIELD, THUMBNAIL_FIELD };
 
     public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
     public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();

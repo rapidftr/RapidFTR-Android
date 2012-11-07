@@ -3,6 +3,7 @@ package com.rapidftr.utils;
 import android.content.Context;
 import android.net.Uri;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -137,7 +138,7 @@ public class FluentRequest {
 
     public String getBaseUrl(Context context) {
         return context.getApplicationContext()
-              .getSharedPreferences(RapidFtrActivity.SHARED_PREFERENCES_FILE, 0)
+              .getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, 0)
               .getString("SERVER_URL", "");
     }
 

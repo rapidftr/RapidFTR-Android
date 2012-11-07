@@ -36,4 +36,10 @@
     <string name="save_child_success">Saved child record successfully</string>
     <string name="save_child_failure">Failed to save child record!</string>
 
+    <string name="photo_capture">Capture Photo</string>
+    <string name="photo_capture_error">An error occurred while capturing the photo</string>
+    <string name="photo_view">View Photo</string>
+    <string name="photo_view_error">An error occurred while loading the photo</string>
+    <string name="photo_gallery_delete_error">Unable to delete photo from Gallery. Please go to Gallery and delete it manually</string>
+
 </resources>

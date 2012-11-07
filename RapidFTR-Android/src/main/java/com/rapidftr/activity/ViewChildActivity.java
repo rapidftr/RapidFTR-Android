@@ -25,6 +25,7 @@ public class ViewChildActivity extends RegisterChildActivity {
 
     @Override
     protected void initializeData() {
+        editable = false;
         formSections = getContext().getFormSections();
 
         @Cleanup ChildDAO dao = getInjector().getInstance(ChildDAO.class);
@@ -38,13 +39,6 @@ public class ViewChildActivity extends RegisterChildActivity {
         } catch (Exception e) {
             makeToast(R.string.internal_error);
         }
-    }
-
-    @Override
-    protected FormSectionView createFormSectionView(int position) {
-        FormSectionView view = super.createFormSectionView(position);
-        view.setEnabled(false);
-        return view;
     }
 
 }

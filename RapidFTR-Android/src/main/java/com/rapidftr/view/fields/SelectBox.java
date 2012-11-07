@@ -28,7 +28,7 @@ public class SelectBox extends BaseView {
     }
 
     @Override
-    protected void initialize() {
+    protected void initialize() throws JSONException {
         super.initialize();
 
         List<String> selectOptions = new ArrayList<String>( formField.getOptionStrings() );

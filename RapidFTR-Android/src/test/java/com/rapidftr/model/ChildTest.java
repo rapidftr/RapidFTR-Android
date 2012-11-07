@@ -10,12 +10,10 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 import java.util.Calendar;
 
-import static junit.framework.Assert.assertNotSame;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -114,6 +112,13 @@ public class ChildTest {
 
         child.remove("test1");
         assertFalse(child.isValid());
+    }
+
+    @Test
+    public void shouldRemoveFromJSONArray() throws JSONException {
+        Child child = new Child("{ 'test1' : ['value1', 'value2', 'value3' ]}");
+        child.removeFromJSONArray("test1", "value1");
+        assertThat(child.getJSONArray("test1").toString(), is(new JSONArray(Arrays.asList("value2", "value3")).toString()));
     }
 
     @Test
