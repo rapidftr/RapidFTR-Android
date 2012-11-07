@@ -3,8 +3,7 @@ package com.rapidftr.activity;
 import android.os.Bundle;
 import android.widget.TextView;
 import com.rapidftr.R;
-import com.rapidftr.dao.ChildDAO;
-import com.rapidftr.view.FormSectionView;
+import com.rapidftr.repository.ChildRepository;
 import lombok.Cleanup;
 
 public class ViewChildActivity extends RegisterChildActivity {
@@ -28,11 +27,11 @@ public class ViewChildActivity extends RegisterChildActivity {
         editable = false;
         formSections = getContext().getFormSections();
 
-        @Cleanup ChildDAO dao = getInjector().getInstance(ChildDAO.class);
+        @Cleanup ChildRepository repository = getInjector().getInstance(ChildRepository.class);
         String childId = getIntent().getExtras().getString("id");
 
         try {
-            child = dao.get(childId);
+            child = repository.get(childId);
             if (child == null) throw new NullPointerException();
 
             ((TextView) findViewById(R.id.title)).setText(child.getId());

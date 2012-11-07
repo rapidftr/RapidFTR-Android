@@ -105,13 +105,13 @@ public class ChildTest {
     @Test
     public void testAtLeastOneFieldIsFilledExcludingIdAndOwner() throws JSONException {
         Child child = new Child("id1", "owner1", null);
-        assertFalse(child.isValid());
+        assertThat(child.isValid(), is(false));
 
         child.put("test1", "value1");
-        assertTrue(child.isValid());
+        assertThat(child.isValid(), is(true));
 
         child.remove("test1");
-        assertFalse(child.isValid());
+        assertThat(child.isValid(), is(false));
     }
 
     @Test

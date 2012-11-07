@@ -8,6 +8,8 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.SQLCipherHelper;
+import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.service.DataSynchronisationService;
 
 public class ApplicationInjector extends AbstractModule {
 
@@ -17,6 +19,8 @@ public class ApplicationInjector extends AbstractModule {
     protected void configure() {
         bind(Context.class).to(RapidFtrApplication.class);
         bind(DatabaseHelper.class).to(SQLCipherHelper.class);
+        bind(ChildRepository.class);
+        bind(DataSynchronisationService.class);
     }
 
     @Provides @Named("USER_NAME")

@@ -7,15 +7,18 @@ import lombok.Getter;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
+import static com.rapidftr.database.Database.ChildTableColumn;
+
 public class SQLCipherHelper extends SQLiteOpenHelper implements DatabaseHelper {
 
     public static final int DB_VERSION = 1;
 
     public static final String DATABASE_CREATE = "create table "
-        + DB_CHILD_TABLE + "("
-            + DB_CHILD_ID + " text primary key, "
-            + DB_CHILD_CONTENT + " text not null,"
-            + DB_CHILD_OWNER + " text not null"
+        + Database.child.getTableName() + "("
+            + ChildTableColumn.id.getColumnName() + " text primary key, "
+            + ChildTableColumn.content.getColumnName() + " text not null,"
+            + ChildTableColumn.owner.getColumnName() + " text not null,"
+            + ChildTableColumn.synced.getColumnName() + " text not null"
         + ");";
 
     protected @Getter final DatabaseSession session;
