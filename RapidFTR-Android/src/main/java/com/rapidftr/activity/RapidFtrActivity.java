@@ -12,6 +12,8 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.service.FormService;
+import com.rapidftr.task.SyncAllDataAsyncTask;
 
 public abstract class RapidFtrActivity extends Activity {
 
@@ -73,7 +75,7 @@ public abstract class RapidFtrActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        Toast.makeText(this, "yay it worked", 5).show();
+        new SyncAllDataAsyncTask(new FormService(getContext())).execute();
         return true;
     }
 

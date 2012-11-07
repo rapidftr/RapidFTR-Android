@@ -15,7 +15,8 @@ public class SQLCipherHelper extends SQLiteOpenHelper implements DatabaseHelper 
         + DB_CHILD_TABLE + "("
             + DB_CHILD_ID + " text primary key, "
             + DB_CHILD_CONTENT + " text not null,"
-            + DB_CHILD_OWNER + " text not null"
+            + DB_CHILD_OWNER + " text not null,"
+            + DB_CHILD_SYNCED + " text not null"
         + ");";
 
     protected @Getter final DatabaseSession session;

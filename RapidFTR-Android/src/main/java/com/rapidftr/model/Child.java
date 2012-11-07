@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
 
+import static com.rapidftr.database.DatabaseHelper.DB_CHILD_SYNCED;
+
 public class Child extends JSONObject {
 
     public static final String ID_FIELD = "_id";
@@ -29,9 +31,14 @@ public class Child extends JSONObject {
     }
 
     public Child(String id, String owner, String content) throws JSONException {
+        this(id, owner, content, false);
+    }
+
+    public Child(String id, String owner, String content, boolean synced) throws JSONException {
         this(content);
         setId(id);
         setOwner(owner);
+        setSynced(synced);
     }
 
     public String getId() throws JSONException {
@@ -48,6 +55,14 @@ public class Child extends JSONObject {
 
     public void setOwner(String owner) throws JSONException {
         put(OWNER_FIELD, owner);
+    }
+
+    public void setSynced(boolean synced) throws JSONException {
+        put(DB_CHILD_SYNCED, synced);
+    }
+
+    public boolean isSynced() throws JSONException {
+        return Boolean.valueOf(get(DB_CHILD_SYNCED).toString());
     }
 
     public void addToJSONArray(String key, Object element) throws JSONException {
@@ -128,5 +143,4 @@ public class Child extends JSONObject {
             return false;
         }
     }
-
 }

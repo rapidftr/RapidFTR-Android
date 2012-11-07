@@ -16,13 +16,13 @@ import java.util.List;
 
 import static com.rapidftr.database.DatabaseHelper.*;
 
-public class ChildDAO implements Closeable {
+public class ChildRepoistory implements Closeable {
 
     protected final String userName;
     protected final DatabaseSession session;
 
     @Inject
-    public ChildDAO(@Named("USER_NAME") String userName, DatabaseSession session) {
+    public ChildRepoistory(@Named("USER_NAME") String userName, DatabaseSession session) {
         this.userName = userName;
         this.session = session;
     }
@@ -39,13 +39,7 @@ public class ChildDAO implements Closeable {
 
     public List<Child> all() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE child_owner = ? ORDER BY id", new String[]{userName});
-
-        List<Child> children = new ArrayList<Child>();
-        while (cursor.moveToNext()) {
-            children.add(new Child(cursor.getString(0)));
-        }
-
-        return children;
+        return toChildren(cursor);
     }
 
     public void create(Child child) throws JSONException {
@@ -56,10 +50,15 @@ public class ChildDAO implements Closeable {
         values.put(DB_CHILD_OWNER, child.getOwner());
         values.put(DB_CHILD_ID, child.getId());
         values.put(DB_CHILD_CONTENT, child.toString());
-
+        values.put(DB_CHILD_SYNCED, child.isSynced());
         long id = session.insert("CHILDREN", null, values);
         if (id <= 0)
             throw new IllegalArgumentException();
+    }
+
+    public List<Child> toBeSynced() throws JSONException {
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE synced = ?", new String[]{"0"});
+        return toChildren(cursor);
     }
 
     @Override
@@ -69,6 +68,14 @@ public class ChildDAO implements Closeable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private List<Child> toChildren(Cursor cursor) throws JSONException {
+        List<Child> children = new ArrayList<Child>();
+        while (cursor.moveToNext()) {
+            children.add(new Child(cursor.getString(0)));
+        }
+        return children;
     }
 
 }

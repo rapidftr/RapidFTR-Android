@@ -4,13 +4,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
-import com.google.inject.Inject;
 import com.rapidftr.R;
-import com.rapidftr.dao.ChildDAO;
+import com.rapidftr.dao.ChildRepoistory;
 import com.rapidftr.model.Child;
 import lombok.Cleanup;
-import lombok.Getter;
-import lombok.Setter;
 
 public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
 
@@ -18,13 +15,13 @@ public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
         void onSaveChild();
     }
 
-    private final ChildDAO dao;
+    private final ChildRepoistory repoistory;
     private final ProgressDialog dialog;
     private final Toast toast;
     private final SaveChildListener saveChildListener;
 
-    public SaveChildAsyncTask(ChildDAO dao, Context context, SaveChildListener saveChildListener) {
-        this.dao = dao;
+    public SaveChildAsyncTask(ChildRepoistory repoistory, Context context, SaveChildListener saveChildListener) {
+        this.repoistory = repoistory;
         this.dialog = new ProgressDialog(context);
         this.toast = Toast.makeText(context, null, Toast.LENGTH_LONG);
         this.saveChildListener = saveChildListener;
@@ -40,8 +37,8 @@ public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
     @Override
     protected Boolean doInBackground(Child... params) {
         try {
-            @Cleanup ChildDAO dao = this.dao;
-            dao.create(params[0]);
+            @Cleanup ChildRepoistory repoistory = this.repoistory;
+            repoistory.create(params[0]);
             return true;
         } catch (Exception e) {
             return false;
