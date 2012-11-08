@@ -21,11 +21,8 @@ import java.util.List;
 public class RegisterChildActivity extends RapidFtrActivity implements AsyncTaskWithMessage.BackgroundWorker<Child, Boolean> {
 
     public static final int CLOSE_ACTIVITY = 999;
-
     protected List<FormSection> formSections;
-
     protected Child child;
-
     protected boolean editable = true;
 
     @Override

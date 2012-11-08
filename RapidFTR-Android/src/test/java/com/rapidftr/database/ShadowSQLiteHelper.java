@@ -41,7 +41,7 @@ public class ShadowSQLiteHelper extends SQLiteOpenHelper implements DatabaseHelp
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQLCipherHelper.DATABASE_CREATE);
+        db.execSQL(SQLCipherHelper.CREATE_CHILD_TABLE);
     }
 
     @Override

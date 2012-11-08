@@ -13,7 +13,7 @@ public class SQLCipherHelper extends SQLiteOpenHelper implements DatabaseHelper 
 
     public static final int DB_VERSION = 1;
 
-    public static final String DATABASE_CREATE = "create table "
+    public static final String CREATE_CHILD_TABLE = "create table "
         + Database.child.getTableName() + "("
             + ChildTableColumn.id.getColumnName() + " text primary key, "
             + ChildTableColumn.content.getColumnName() + " text not null,"
@@ -33,7 +33,7 @@ public class SQLCipherHelper extends SQLiteOpenHelper implements DatabaseHelper 
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-       database.execSQL(DATABASE_CREATE);
+       database.execSQL(CREATE_CHILD_TABLE);
     }
 
     @Override

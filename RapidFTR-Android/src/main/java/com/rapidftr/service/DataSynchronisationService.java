@@ -1,6 +1,5 @@
 package com.rapidftr.service;
 
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.task.SyncAllDataAsyncTask;
@@ -8,20 +7,23 @@ import org.json.JSONException;
 
 import javax.inject.Inject;
 
+import java.util.List;
+
 import static com.google.common.collect.Iterables.toArray;
 
 public class DataSynchronisationService {
 
-    private RapidFtrApplication context;
     private ChildRepository childRepository;
+    private SyncAllDataAsyncTask syncTask;
 
     @Inject
-    public DataSynchronisationService(RapidFtrApplication context, ChildRepository childRepository) {
-        this.context = context;
+    public DataSynchronisationService(ChildRepository childRepository, SyncAllDataAsyncTask syncTask) {
         this.childRepository = childRepository;
+        this.syncTask = syncTask;
     }
 
     public void syncAllData() throws JSONException {
-        new SyncAllDataAsyncTask(new FormService(context)).execute(toArray(childRepository.toBeSynced(), Child.class));
+        List<Child> childrenToSync = childRepository.toBeSynced();
+        syncTask.execute(toArray(childrenToSync, Child.class));
     }
 }
