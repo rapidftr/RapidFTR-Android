@@ -40,7 +40,10 @@
     <string name="photo_capture_error">An error occurred while capturing the photo</string>
     <string name="photo_view">View Photo</string>
     <string name="photo_view_error">An error occurred while loading the photo</string>
+    <string name="photo_not_captured">No photo captured for the child</string>
     <string name="photo_gallery_delete_error">Unable to delete photo from Gallery. Please go to Gallery and delete it manually</string>
     <string name="Synchronize">Synchronize</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
 
 </resources>
