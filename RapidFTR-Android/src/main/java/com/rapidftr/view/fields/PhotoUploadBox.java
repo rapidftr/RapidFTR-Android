@@ -100,7 +100,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(captureHelper.getTempCaptureFile()));
 
-        Activity context = (Activity) getContext();
+        RapidFtrActivity context = (RapidFtrActivity) getContext();
         captureHelper.setCaptureTime();
         context.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
     }
