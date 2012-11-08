@@ -20,7 +20,12 @@ public class Child extends JSONObject {
     public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
     public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();
 
-    public Child() {
+    public Child()  {
+        try {
+            setSynced(false);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Child(String content) throws JSONException {
@@ -58,8 +63,8 @@ public class Child extends JSONObject {
         put(ChildTableColumn.synced.getColumnName(), synced);
     }
 
-    public boolean isSynced() throws JSONException {
-        return Boolean.valueOf(get(ChildTableColumn.synced.getColumnName()).toString());
+    public boolean isSynced()  {
+        return Boolean.valueOf(opt(ChildTableColumn.synced.getColumnName()).toString());
     }
 
     public void addToJSONArray(String key, Object element) throws JSONException {

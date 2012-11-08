@@ -16,6 +16,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
@@ -121,4 +122,11 @@ public class ChildRepositoryTest {
         assertThat(children, hasItems(child1));
     }
 
+    @Test(expected = JSONException.class)
+    public void shouldRaiseRuntTimeExceptionIfTheRequiredChildPropertiesAreNotPopulated() throws RuntimeException, JSONException {
+        ChildRepository repository = new ChildRepository("user1", session);
+        Child child = new Child();
+        assertFalse(child.isSynced());
+        repository.create(child);
+    }
 }
