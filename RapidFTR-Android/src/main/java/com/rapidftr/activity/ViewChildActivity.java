@@ -49,11 +49,15 @@ public class ViewChildActivity extends RegisterChildActivity {
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent registerChildActivity = new Intent(ViewChildActivity.this, RegisterChildActivity.class);
-                registerChildActivity.putExtra("child", child);
-                startActivity(registerChildActivity);
+                editChild();
             }
         });
+    }
+
+    protected void editChild() {
+        Intent registerChildActivity = new Intent(this, RegisterChildActivity.class);
+        registerChildActivity.putExtra("child", child);
+        startActivity(registerChildActivity);
     }
 
 }

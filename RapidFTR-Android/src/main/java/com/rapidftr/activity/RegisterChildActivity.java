@@ -40,14 +40,18 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
                 throw new RuntimeException(e);
             }
         } else {
-            try {
-                if( getIntent().getParcelableExtra("child") != null)
-                    child = new Child(((Child) getIntent().getParcelableExtra("child")).getJsonString());
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
+            tryPopulatingChildFromParcel();
         }
         initialize();
+    }
+
+    private void tryPopulatingChildFromParcel() {
+        try {
+            if( getIntent().getParcelableExtra("child") != null)
+                child = new Child(((Child) getIntent().getParcelableExtra("child")).getJsonString());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

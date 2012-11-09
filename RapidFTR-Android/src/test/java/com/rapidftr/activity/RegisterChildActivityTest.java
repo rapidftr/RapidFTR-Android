@@ -87,7 +87,10 @@ public class RegisterChildActivityTest {
 
     @Test
     public void testSaveListener() {
+        Intent mockIntent = mock(Intent.class, RETURNS_DEEP_STUBS);
+        activity.setIntent(mockIntent);
         doNothing().when(activity).saveChild();
+        when(activity.getIntent().getParcelableExtra("child")).thenReturn(null);
 
         activity.onCreate(null);
         activity.initializeListeners();
