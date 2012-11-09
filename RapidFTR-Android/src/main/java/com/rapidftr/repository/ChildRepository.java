@@ -31,6 +31,10 @@ public class ChildRepository implements Closeable {
         return cursor.moveToNext() ? new Child(cursor.getString(0)) : null;
     }
 
+    public boolean exists(String s) {
+        throw new RuntimeException("Implement me!");
+    }
+
     public int size() {
         @Cleanup Cursor cursor = session.rawQuery("SELECT COUNT(1) FROM children WHERE child_owner = ?", new String[]{userName});
         return cursor.moveToNext() ? cursor.getInt(0) : 0;
@@ -53,6 +57,10 @@ public class ChildRepository implements Closeable {
         long id = session.insert(Database.child.getTableName(), null, values);
         if (id <= 0)
             throw new IllegalArgumentException();
+    }
+
+    public void update(Child child) {
+        throw new RuntimeException("Implement me!");
     }
 
     public List<Child> toBeSynced() throws JSONException {

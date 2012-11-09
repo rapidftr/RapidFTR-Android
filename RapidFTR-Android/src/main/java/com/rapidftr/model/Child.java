@@ -30,6 +30,7 @@ public class Child extends JSONObject {
 
     public Child(String content) throws JSONException {
         super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
+        setSynced(false);
     }
 
     public Child(String id, String owner, String content) throws JSONException {

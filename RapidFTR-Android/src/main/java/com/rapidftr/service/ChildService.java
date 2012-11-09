@@ -13,6 +13,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
@@ -51,13 +52,14 @@ public class ChildService {
     }
 
     private List<Child> convertToChildRecords(String childrenJson) throws IOException {
-        List<String> childrenJsonData = asList(new ObjectMapper().readValue(childrenJson, String[].class));
+        final ObjectMapper objectMapper = new ObjectMapper();
+        List<Map> childrenJsonData = asList(objectMapper.readValue(childrenJson, Map[].class));
 
-        return newArrayList(transform(childrenJsonData, new Function<String, Child>() {
-            public Child apply(String content) {
+        return newArrayList(transform(childrenJsonData, new Function<Map, Child>() {
+            public Child apply(Map content) {
                 try {
-                    return new Child(content);
-                } catch (JSONException e) {
+                    return new Child(objectMapper.writeValueAsString(content));
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
