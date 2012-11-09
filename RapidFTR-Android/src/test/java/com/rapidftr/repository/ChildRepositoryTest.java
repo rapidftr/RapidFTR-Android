@@ -126,4 +126,16 @@ public class ChildRepositoryTest {
 
         assertThat(repository.exists("iAmARealChild"), is(true));
     }
+
+    @Test
+    public void shouldUpdateAnExstingChild() throws JSONException {
+        Child child = new Child("id1", "user1", "{ \"test1\" : \"value1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
+        repository.create(child);
+        child.put("someNewField", "someNewValue");
+
+        repository.update(child);
+        Child updatedChild = repository.get("id1");
+
+        assertThat(updatedChild.get("someNewField").toString(), is("someNewValue"));
+    }
 }

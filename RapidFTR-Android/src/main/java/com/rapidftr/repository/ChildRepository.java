@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rapidftr.database.Database.ChildTableColumn.id;
+
 public class ChildRepository implements Closeable {
 
     protected final String userName;
@@ -52,7 +54,7 @@ public class ChildRepository implements Closeable {
 
         ContentValues values = new ContentValues();
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
-        values.put(Database.ChildTableColumn.id.getColumnName(), child.getId());
+        values.put(id.getColumnName(), child.getId());
         values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
         values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
         long id = session.insert(Database.child.getTableName(), null, values);
@@ -60,8 +62,12 @@ public class ChildRepository implements Closeable {
             throw new IllegalArgumentException();
     }
 
-    public void update(Child child) {
-        throw new RuntimeException("Implement me!");
+    public void update(Child child) throws JSONException {
+        ContentValues values = new ContentValues();
+        values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
+        values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
+
+        session.update(Database.child.getTableName(), values, String.format("%s=?", id.getColumnName()), new String[]{child.getId()});
     }
 
     public List<Child> toBeSynced() throws JSONException {
