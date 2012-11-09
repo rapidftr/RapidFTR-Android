@@ -13,7 +13,6 @@ import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -92,6 +91,16 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
 
         activity.onActivityResult(PhotoUploadBox.CAPTURE_IMAGE_REQUEST, Activity.RESULT_OK, null);
         verify(view).saveCapture();
+    }
+
+    public void shouldCheckIfSavePhotoIsCalledWhenSaveIsSelected() throws Exception {
+        view.initialize(field, child);
+        RapidFtrActivity activity = (RapidFtrActivity) view.getContext();
+        doCallRealMethod().when(view).saveCapture();
+        doNothing().when(captureHelper).savePhoto(bitmap,"");
+        activity.onActivityResult(PhotoUploadBox.CAPTURE_IMAGE_REQUEST, Activity.RESULT_OK, null);
+        verify(view).saveCapture();
+        verify(captureHelper).savePhoto(bitmap, "name");
     }
 
     @Test

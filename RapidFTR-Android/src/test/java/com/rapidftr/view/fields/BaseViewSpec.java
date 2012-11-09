@@ -3,6 +3,7 @@ package com.rapidftr.view.fields;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
 import junit.framework.TestCase;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
     protected Child child;
 
     @Before
-    public void setUpBefore() {
+    public void setUpBefore() throws JSONException {
         field = new FormField();
         field.setDisplayName("Test Field");
         field.setHelpText("Help Field");
