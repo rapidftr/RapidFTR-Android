@@ -8,6 +8,7 @@ import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.view.fields.*;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +31,7 @@ public class FormSectionViewTest {
     private Child child;
 
     @Before
-    public void setUp() {
+    public void setUp() throws JSONException {
         view = (FormSectionView) LayoutInflater.from(new LoginActivity()).inflate(R.layout.form_section, null);
         child = new Child();
 
