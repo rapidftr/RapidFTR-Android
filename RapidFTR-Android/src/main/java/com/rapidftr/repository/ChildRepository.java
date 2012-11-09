@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rapidftr.database.Database.BooleanColumn;
+import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.id;
 
 public class ChildRepository implements Closeable {
@@ -29,8 +31,8 @@ public class ChildRepository implements Closeable {
     }
 
     public Child get(String id) throws JSONException {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE id = ? AND child_owner = ?", new String[]{id, userName});
-        return cursor.moveToNext() ? new Child(cursor.getString(0)) : null;
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ? AND child_owner = ?", new String[]{id, userName});
+        return cursor.moveToNext() ? new Child(cursor.getString(0), BooleanColumn.from(cursor.getString(1)).toBoolean()) : null;
     }
 
     public boolean exists(String childId) {
@@ -71,7 +73,7 @@ public class ChildRepository implements Closeable {
     }
 
     public List<Child> toBeSynced() throws JSONException {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE synced = ?", new String[]{"0"});
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE synced = ?", new String[]{falseValue.getColumnValue()});
         return toChildren(cursor);
     }
 

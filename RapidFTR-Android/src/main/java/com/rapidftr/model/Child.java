@@ -29,9 +29,14 @@ public class Child extends JSONObject {
     }
 
     public Child(String content) throws JSONException {
-        super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
-        setSynced(false);
+        this(content, false);
     }
+
+    public Child(String content, boolean synced) throws JSONException {
+        super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
+        setSynced(synced);
+    }
+
 
     public Child(String id, String owner, String content) throws JSONException {
         this(id, owner, content, false);

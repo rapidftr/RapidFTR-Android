@@ -59,6 +59,17 @@ public class ChildRepositoryTest {
     }
 
     @Test
+    public void shouldCorrectlyGetSyncedState() throws JSONException, IOException {
+        Child syncedChild = new Child("syncedID", "user1", null, true);
+        Child unsyncedChild = new Child("unsyncedID", "user1", null, false);
+        repository.create(syncedChild);
+        repository.create(unsyncedChild);
+
+        assertThat(repository.get("syncedID").isSynced(), is(true));
+        assertThat(repository.get("unsyncedID").isSynced(), is(false));
+    }
+
+    @Test
     public void shouldOnlyReturnsOwnRecords() throws JSONException {
         repository.create(new Child("id1", "user1", null));
 

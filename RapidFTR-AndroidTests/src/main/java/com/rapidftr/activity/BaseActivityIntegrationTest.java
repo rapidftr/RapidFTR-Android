@@ -1,7 +1,6 @@
 package com.rapidftr.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.activity.pages.LoginPage;
@@ -12,7 +11,6 @@ public abstract class BaseActivityIntegrationTest<T extends Activity> extends Ac
     public Solo solo;
     public LoginPage loginPage;
     public RegisterChildPage registerChildPage;
-    public Context context;
 
     public BaseActivityIntegrationTest(Class<T> activityClass) {
         super(activityClass);

@@ -21,6 +21,35 @@ public enum Database {
         return tableName;
     }
 
+    public enum BooleanColumn {
+        trueValue("1", true),
+        falseValue("0", false);
+        private String columnValue;
+        private boolean booleanValue;
+
+        BooleanColumn(String columnValue, boolean booleanValue) {
+            this.columnValue = columnValue;
+            this.booleanValue = booleanValue;
+        }
+
+        public String getColumnValue() {
+            return columnValue;
+        }
+
+        public static BooleanColumn from(String booleanValue) {
+            for (BooleanColumn booleanColumn : values()) {
+                if(booleanColumn.getColumnValue().equals(booleanValue)){
+                    return booleanColumn;
+                }
+            }
+            return null;
+        }
+
+        public boolean toBoolean() {
+            return booleanValue;
+        }
+    }
+
     public enum ChildTableColumn {
         id("id"),
         content("child_json"),
