@@ -6,14 +6,11 @@ import com.google.common.io.Files;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -93,21 +90,31 @@ public class CaptureHelperTest {
     @Test
     public void testSaveThumbnailShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
-        doReturn(expected).when(captureHelper).createThumbnail(original);
-        doNothing().when(captureHelper).savePhoto(expected, "random_file_thumb");
+        doReturn(expected).when(captureHelper).scaleImageTo(original, 96, 96);
+        doNothing().when(captureHelper).save(expected, "random_file_thumb");
 
         captureHelper.saveThumbnail(original, "random_file");
-        verify(captureHelper).savePhoto(expected, "random_file_thumb");
+        verify(captureHelper).save(expected, "random_file_thumb");
     }
 
     @Test
-    public void testSavePhoto() throws Exception {
+    public void testSaveActualImageShouldResizeAndSave() throws Exception {
+        Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
+        doReturn(expected).when(captureHelper).scaleImageTo(original, 300, 300);
+        doNothing().when(captureHelper).save(expected, "random_file");
+
+        captureHelper.savePhoto(original, "random_file");
+        verify(captureHelper).save(expected, "random_file");
+    }
+
+    @Test
+    public void testSavePhotoAndCompress() throws Exception {
         Bitmap bitmap = mock(Bitmap.class);
         File file = new File(captureHelper.getPhotoDir(), "random_file.jpg");
         OutputStream out = mock(OutputStream.class);
 
         doReturn(out).when(captureHelper).getCipherOutputStream(eq(file));
-        captureHelper.savePhoto(bitmap, "random_file");
+        captureHelper.save(bitmap, "random_file");
         verify(bitmap).compress(Bitmap.CompressFormat.JPEG, 85, out);
         verify(out).close();
     }

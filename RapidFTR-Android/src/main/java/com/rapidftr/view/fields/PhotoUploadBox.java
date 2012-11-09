@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import com.rapidftr.R;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.activity.ViewPhotoActivity;
+import com.rapidftr.task.EncryptImageAsyncTask;
 import com.rapidftr.utils.CaptureHelper;
 import org.json.JSONException;
 
@@ -54,8 +56,11 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         repaint();
     }
 
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         switch (requestCode) {
             case CAPTURE_IMAGE_REQUEST:
                 if (resultCode == Activity.RESULT_OK)
@@ -119,14 +124,12 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         try {
             Bitmap bitmap = captureHelper.getCapture();
             captureHelper.deleteCaptures();
-
             String fileName = createCaptureFileName();
-            captureHelper.savePhoto(bitmap, fileName);
-            captureHelper.saveThumbnail(bitmap, fileName);
+//            captureHelper.saveThumbnail(bitmap, fileName);
+            Log.e("REGISTER", "start of async task ");
+            new EncryptImageAsyncTask(getContext(), captureHelper, bitmap, fileName, this).execute();
             child.put(formField.getId(), fileName);
-
-            bitmap.recycle();
-            repaint();
+//            repaint();
         } catch (Exception e) {
             Toast.makeText(getContext(), R.string.photo_capture_error, Toast.LENGTH_LONG);
         }

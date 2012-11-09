@@ -16,6 +16,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
@@ -47,6 +48,18 @@ public class ChildRepositoryTest {
     public void shouldNotCreateChildRecordIfIDExists() throws Exception {
         repository.create(new Child("id1", "user1", null));
         repository.create(new Child("id1", "user1", null));
+    }
+
+    @Test
+    public void shouldUpdateChildRecordIfIdAlreadyExists() throws Exception {
+        ChildRepository repository = new ChildRepository("user1", session);
+        repository.create(new Child("id1", "user1", "{ \"test1\" : \"value1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }"));
+        String updateString = "{ \"test1\" : \"value1\" }";
+        String expectedString = "{\"created_by\":\"user1\",\"test1\":\"value1\",\"synced\":false,\"_id\":\"id1\"}";
+        repository.create(new Child("id1", "user1", updateString));
+        Child child = repository.get("id1");
+        assertEquals(child.getId(), "id1");
+        assertEquals(child.toString(), expectedString);
     }
 
     @Test

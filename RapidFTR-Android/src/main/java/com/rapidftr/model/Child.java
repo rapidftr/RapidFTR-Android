@@ -1,5 +1,7 @@
 package com.rapidftr.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.google.common.base.Strings;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
@@ -15,10 +17,12 @@ import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.created_by;
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 
-public class Child extends JSONObject {
+public class Child extends JSONObject implements Parcelable {
 
     public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
     public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();
+
+    private String jsonString;
 
     public Child()  {
         try {
@@ -28,6 +32,10 @@ public class Child extends JSONObject {
         }
     }
 
+    public Child(Parcel parcel){
+        jsonString = parcel.readString();
+    }
+
     public Child(String content) throws JSONException {
         this(content, false);
     }
@@ -35,6 +43,7 @@ public class Child extends JSONObject {
     public Child(String content, boolean synced) throws JSONException {
         super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
         setSynced(synced);
+        jsonString = content;
     }
 
 
@@ -47,6 +56,33 @@ public class Child extends JSONObject {
         setId(id);
         setOwner(owner);
         setSynced(synced);
+    }
+
+    @Override
+    public JSONArray names() {
+        JSONArray names = super.names();
+        return names == null ? new JSONArray() : names;
+    }
+
+    @Override
+    public JSONObject put(String key, Object value) throws JSONException {
+        if (value != null && value instanceof String) {
+            value = Strings.emptyToNull(((String) value).trim());
+        } else if (value != null && value instanceof JSONArray && ((JSONArray) value).length() == 0) {
+            value = null;
+        }
+        return super.put(key, value);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        setJsonString(this.toString());
+        parcel.writeString(jsonString);
     }
 
     public String getId() throws JSONException {
@@ -98,21 +134,12 @@ public class Child extends JSONObject {
         put(key, newArray);
     }
 
-    @Override
-    public JSONArray names() {
-        JSONArray names = super.names();
-        return names == null ? new JSONArray() : names;
+    public void setJsonString(String childJson){
+        this.jsonString = childJson;
     }
 
-    @Override
-    public JSONObject put(String key, Object value) throws JSONException {
-        if (value != null && value instanceof String) {
-            value = Strings.emptyToNull(((String) value).trim());
-        } else if (value != null && value instanceof JSONArray && ((JSONArray) value).length() == 0) {
-            value = null;
-        }
-
-        return super.put(key, value);
+    public String getJsonString() {
+        return jsonString;
     }
 
     public void generateUniqueId() throws JSONException {
@@ -153,4 +180,14 @@ public class Child extends JSONObject {
             return false;
         }
     }
+
+    /** Static field used to regenerate object, individually or as arrays */
+    public static final Parcelable.Creator<Child> CREATOR = new Parcelable.Creator<Child>() {
+        public Child createFromParcel(Parcel pc) {
+            return new Child(pc);
+        }
+        public Child[] newArray(int size) {
+            return new Child[size];
+        }
+    };
 }

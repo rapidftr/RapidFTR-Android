@@ -4,8 +4,6 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
@@ -28,7 +26,7 @@ import java.util.Calendar;
 import static android.graphics.BitmapFactory.decodeResource;
 
 @RequiredArgsConstructor(suppressConstructorProperties = true)
-public class CaptureHelper {
+public class CaptureHelper{
 
     protected final RapidFtrApplication application;
 
@@ -57,32 +55,7 @@ public class CaptureHelper {
     }
 
     public Bitmap getCapture() throws IOException {
-        Bitmap bitmap = BitmapFactory.decodeFile(getTempCaptureFile().getAbsolutePath());
-        int rotation = getCaptureRotation();
-
-        return rotation > 0 ? rotateBitmap(bitmap, rotation) : bitmap;
-    }
-
-    protected int getCaptureRotation() throws IOException {
-        ExifInterface exif = new ExifInterface(getTempCaptureFile().getAbsolutePath());
-        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
-
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                return 90;
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                return 180;
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                return 270;
-            default:
-                return 0;
-        }
-    }
-
-    protected Bitmap rotateBitmap(Bitmap bitmap, float degrees) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degrees);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,  true);
+         return BitmapFactory.decodeFile(getTempCaptureFile().getAbsolutePath());
     }
 
     public void deleteCaptures() {
@@ -129,21 +102,23 @@ public class CaptureHelper {
         return decodeResource(application.getResources(), R.drawable.no_photo_clip);
     }
 
-    protected Bitmap createThumbnail(Bitmap image) {
-        return Bitmap.createScaledBitmap(image, 96, 96, false);
+    public void savePhoto(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        save(scaleImageTo(bitmap, 300, 300), fileNameWithoutExtension);
     }
 
-    public void savePhoto(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+    protected Bitmap scaleImageTo(Bitmap image, int width, int height) {
+        return Bitmap.createScaledBitmap(image, width, height, false);
+    }
+
+    protected void save(Bitmap bitmap, String fileNameWithoutExtension)  throws IOException, GeneralSecurityException {
         File file = new File(getPhotoDir(), fileNameWithoutExtension + ".jpg");
         if (!file.exists())
             file.createNewFile();
-
         @Cleanup OutputStream outputStream = getCipherOutputStream(file);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream);
     }
-
     public void saveThumbnail(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        savePhoto(createThumbnail(bitmap), fileNameWithoutExtension + "_thumb");
+        save(scaleImageTo(bitmap, 96, 96), fileNameWithoutExtension + "_thumb");
     }
 
     public Bitmap loadThumbnail(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {

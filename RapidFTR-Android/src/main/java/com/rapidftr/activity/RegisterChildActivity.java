@@ -6,12 +6,13 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import com.rapidftr.R;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
-import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
+import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.AsyncTaskWithMessage;
 import lombok.Cleanup;
 import org.json.JSONException;
@@ -35,9 +36,19 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            tryPopulatingChildFromParcel();
         }
-
         initialize();
+    }
+
+    private void tryPopulatingChildFromParcel() {
+        try {
+            if( getIntent().getParcelableExtra("child") != null)
+                child = new Child(((Child) getIntent().getParcelableExtra("child")).getJsonString());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -48,11 +59,15 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
 
     protected void initialize() {
         setContentView(R.layout.activity_register_child);
-
+        setLabel(R.string.save);
         initializeData();
         initializePager();
         initializeSpinner();
         initializeListeners();
+    }
+
+    protected void setLabel(int label) {
+        ((Button) findViewById(R.id.submit)).setText(label);
     }
 
     protected void initializeData() {
@@ -125,7 +140,7 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
             makeToast(R.string.save_child_invalid);
         } else {
             AsyncTaskWithMessage<Child, Boolean, RegisterChildActivity> task =
-                    new AsyncTaskWithMessage<Child, Boolean, RegisterChildActivity> (this, R.string.save_child_progress, R.string.save_child_success, R.string.save_child_failure);
+                    new AsyncTaskWithMessage<Child, Boolean, RegisterChildActivity>(this, R.string.save_child_progress, R.string.save_child_success, R.string.save_child_failure);
             task.execute(child);
         }
     }
