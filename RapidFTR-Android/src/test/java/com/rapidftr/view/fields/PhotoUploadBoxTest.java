@@ -9,7 +9,9 @@ import com.rapidftr.R;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.utils.CaptureHelper;
+import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -43,24 +45,43 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     }
 
     @Test
-    public void shouldStartCameraActivityWhenImageClicked() {
+    public void shouldStartCameraActivityWhenImageClickedAndViewIsEnabled() {
         view.initialize(field, child);
         doNothing().when(view).startCapture();
 
+        view.setEnabled(true);
         view.getImageContainer().performClick();
         verify(view).startCapture();
     }
 
-    @Test @Ignore // Click events on views not triggering onClickListener
+    @Test
+    public void shouldShowFullPhotoWhenImageClickedAndViewIsDisabled(){
+        view.initialize(field, child);
+        doNothing().when(view).startCapture();
+
+        view.setEnabled(false);
+        view.getImageContainer().performClick();
+        verify(view).showFullPhoto();
+
+    }
+    @Test
     public void shouldShowPhotoWhenImageClicked() throws Exception {
         view.initialize(field, child);
         doNothing().when(view).showFullPhoto();
 
         child.put(field.getId(), "random_file_name");
-        view.getImageView().performClick();
+        view.getImageContainer().performClick();
 
         verify(view).onImageClick();
         verify(view).showFullPhoto();
+    }
+
+    @Test
+    public void shouldShowImageNotAvailableToastIfViewIsDisabledAndTheImageIsNotAvailable(){
+        view.initialize(field, child);
+        view.setEnabled(false);
+        view.getImageContainer().performClick();
+        Assert.assertThat(ShadowToast.getTextOfLatestToast(), equalTo(view.getContext().getString(R.string.photo_not_captured)));
     }
 
     @Test

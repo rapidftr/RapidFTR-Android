@@ -2,8 +2,7 @@ package com.rapidftr.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.test.ActivityInstrumentationTestCase2;
-import com.jayway.android.robotium.solo.Solo;
+import com.rapidftr.activity.BaseActivityIntegrationTest;
 import com.rapidftr.activity.LoginActivity;
 import lombok.Cleanup;
 import org.junit.Test;
@@ -13,9 +12,9 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
-    public Solo solo;
+public class DatabaseSessionIntegrationTest extends BaseActivityIntegrationTest<LoginActivity> {
+
     public DatabaseHelper helper;
     public DatabaseSession session;
 
@@ -25,10 +24,10 @@ public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestC
 
     @Override
     public void setUp() throws Exception {
-        solo = new Solo(getInstrumentation(), getActivity());
+        super.setUp();
+
         helper = new SQLCipherHelper("test_db", "test_key", getActivity());
         session = helper.getSession();
-
         session.execSQL("DELETE FROM children");
     }
 
@@ -36,7 +35,7 @@ public class DatabaseSessionIntegrationTest extends ActivityInstrumentationTestC
     public void tearDown() throws Exception {
         session.close();
         helper.close();
-        solo.finishOpenedActivities();
+        super.tearDown();
     }
 
     @Test

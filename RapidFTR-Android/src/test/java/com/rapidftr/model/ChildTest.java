@@ -122,40 +122,46 @@ public class ChildTest {
     }
 
     @Test
-    public void shouldReturnNamesAsEmptyListInsteadOfNull() {
+    public void shouldReturnNamesWithLengthOneInsteadOfNull() {
         Child child = new Child();
-        assertThat(child.names().length(), equalTo(0));
+        assertThat(child.names().length(), equalTo(1));
     }
 
     @Test
     public void shouldRemoveFieldIfBlank() throws JSONException {
         Child child = new Child();
         child.put("name", "test");
-        assertThat(child.names().length(), equalTo(1));
+        assertThat(child.names().length(), equalTo(2));
 
         child.put("name", "\r  \n  \r  \n");
-        assertThat(child.names().length(), equalTo(0));
+        assertThat(child.names().length(), equalTo(1));
     }
 
+    @Test
+    public void shouldHaveFalseSyncStatusIfTheChildObjectIsCreated(){
+        Child child = new Child();
+        assertFalse(child.isSynced());
+    }
     @Test
     public void shouldRemoveFieldIfNull() throws JSONException {
         Child child = new Child();
         child.put("name", "test");
-        assertThat(child.names().length(), equalTo(1));
+
+        assertEquals(child.get("name"), "test");
 
         Object value = null;
         child.put("name", value);
-        assertThat(child.names().length(), equalTo(0));
+        assertNull(child.opt("name"));
     }
 
     @Test
     public void shouldRemoveFieldIfJSONArrayIsEmtpy() throws JSONException {
         Child child = new Child();
         child.put("name", new JSONArray(Arrays.asList("one")));
-        assertThat(child.names().length(), equalTo(1));
+        assertThat(child.names().length(), equalTo(2));
 
         child.put("name", new JSONArray());
-        assertThat(child.names().length(), equalTo(0));
+        assertThat(child.names().length(), equalTo(1));
     }
 
     @Test

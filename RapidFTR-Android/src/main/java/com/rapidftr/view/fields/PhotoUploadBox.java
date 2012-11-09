@@ -25,6 +25,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     public static final int CAPTURE_IMAGE_REQUEST = 100;
 
     protected CaptureHelper captureHelper;
+    private boolean enabled;
 
     public PhotoUploadBox(Context context) {
         super(context);
@@ -66,6 +67,11 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         }
     }
 
+    @Override
+    public void setEnabled(boolean isEnabled){
+       this.enabled = isEnabled ;
+    }
+
     protected void deleteCapture() {
         if (!child.optBoolean("saved", false)) {
             // TODO: Delete taken image
@@ -77,20 +83,24 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     public void onImageClick() {
-        if (child.has(formField.getId())) {
-            showFullPhoto();
-        } else {
+        if (enabled) {
             startCapture();
+        } else {
+            showFullPhoto();
         }
     }
 
     protected void showFullPhoto() {
         Activity context = (Activity) getContext();
         try {
-            Intent intent = new Intent(context, ViewPhotoActivity.class);
-            intent.putExtra("file_name", child.getString(formField.getId()));
-
-            context.startActivity(intent);
+            String fileName = (String) child.opt(formField.getId());
+            if (fileName == null) {
+                Toast.makeText(context, R.string.photo_not_captured, Toast.LENGTH_LONG).show();
+            } else {
+                Intent intent = new Intent(context, ViewPhotoActivity.class);
+                intent.putExtra("file_name", fileName);
+                context.startActivity(intent);
+            }
         } catch (Exception e) {
             Toast.makeText(context, R.string.photo_view_error, Toast.LENGTH_LONG).show();
         }
@@ -100,7 +110,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(captureHelper.getTempCaptureFile()));
 
-        Activity context = (Activity) getContext();
+        RapidFtrActivity context = (RapidFtrActivity) getContext();
         captureHelper.setCaptureTime();
         context.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
     }

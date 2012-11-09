@@ -1,6 +1,7 @@
 package com.rapidftr.activity;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.repository.ChildRepository;
@@ -15,11 +16,15 @@ public class ViewChildActivity extends RegisterChildActivity {
 
     @Override
     protected void initialize() {
-        setContentView(R.layout.activity_view_child);
-
+        setContentView(R.layout.activity_register_child);
+        setLabels();
         initializeData();
         initializePager();
         initializeSpinner();
+    }
+
+    private void setLabels() {
+      ((Button)findViewById(R.id.submit)).setText(R.string.edit);
     }
 
     @Override
