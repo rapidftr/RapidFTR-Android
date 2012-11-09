@@ -31,8 +31,9 @@ public class ChildRepository implements Closeable {
         return cursor.moveToNext() ? new Child(cursor.getString(0)) : null;
     }
 
-    public boolean exists(String s) {
-        throw new RuntimeException("Implement me!");
+    public boolean exists(String childId) {
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE id = ?", new String[]{childId});
+        return cursor.getCount() > 0;
     }
 
     public int size() {

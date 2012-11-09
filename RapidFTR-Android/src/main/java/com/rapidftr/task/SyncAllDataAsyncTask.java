@@ -43,7 +43,6 @@ public class SyncAllDataAsyncTask extends AsyncTask<Child, Void, Boolean> {
 
     private void saveIncomingChildren() throws IOException, JSONException {
         for (Child incomingChild : childService.getAllChildren()) {
-
             if(childRepository.exists(incomingChild.getId())){
                 childRepository.update(incomingChild);
             }else{
@@ -51,5 +50,4 @@ public class SyncAllDataAsyncTask extends AsyncTask<Child, Void, Boolean> {
             }
         }
     }
-
 }

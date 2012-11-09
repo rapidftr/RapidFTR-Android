@@ -37,8 +37,6 @@ public class ViewChildActivity extends RegisterChildActivity {
 
         try {
             child = repository.get(childId);
-            if (child == null) throw new NullPointerException();
-
             ((TextView) findViewById(R.id.title)).setText(child.getId());
         } catch (Exception e) {
             makeToast(R.string.internal_error);
