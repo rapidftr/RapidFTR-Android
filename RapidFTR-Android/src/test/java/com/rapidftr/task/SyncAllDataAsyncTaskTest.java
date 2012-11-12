@@ -32,7 +32,8 @@ public class SyncAllDataAsyncTaskTest {
     public void shouldSyncFormsAndChildren() throws Exception {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
-        new SyncAllDataAsyncTask(formService, childService, childRepository).execute(child1, child2);
+        given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
+        new SyncAllDataAsyncTask(formService, childService, childRepository).execute();
 
         verify(formService).getPublishedFormSections();
         verify(childService).sync(child1);
@@ -44,7 +45,7 @@ public class SyncAllDataAsyncTaskTest {
         Child child = mock(Child.class);
         given(childService.getAllChildren()).willReturn(newArrayList(child));
 
-        new SyncAllDataAsyncTask(formService, childService, childRepository).execute(mock(Child.class));
+        new SyncAllDataAsyncTask(formService, childService, childRepository).execute();
 
         verify(childService).getAllChildren();
         verify(childRepository).create(child);
@@ -57,7 +58,7 @@ public class SyncAllDataAsyncTaskTest {
         given(childService.getAllChildren()).willReturn(newArrayList(child));
         given(childRepository.exists("1234")).willReturn(true);
 
-        new SyncAllDataAsyncTask(formService, childService, childRepository).execute(mock(Child.class));
+        new SyncAllDataAsyncTask(formService, childService, childRepository).execute();
 
         verify(childService).getAllChildren();
         verify(childRepository).update(child);
