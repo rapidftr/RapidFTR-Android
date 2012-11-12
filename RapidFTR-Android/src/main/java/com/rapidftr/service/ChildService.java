@@ -5,6 +5,7 @@ import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
+import com.rapidftr.repository.ChildRepository;
 import org.apache.http.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
@@ -22,18 +23,22 @@ import static java.util.Arrays.asList;
 public class ChildService {
 
     private RapidFtrApplication context;
+    private ChildRepository repository;
 
     @Inject
-    public ChildService(RapidFtrApplication context) {
+    public ChildService(RapidFtrApplication context, ChildRepository repository) {
         this.context = context;
+        this.repository = repository;
     }
 
     public void sync(Child child) throws IOException, JSONException {
+        child.setSynced(true);
         http()
             .path(String.format("/children/%s", child.getId()))
             .context(context)
             .param("child", child.toString())
             .put();
+        repository.update(child);
     }
 
     public List<Child> getAllChildren() throws IOException {
