@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.database.Database;
 import com.rapidftr.model.Child;
 import org.apache.http.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -29,16 +28,12 @@ public class ChildService {
         this.context = context;
     }
 
-    public void post(Child child) throws IOException, JSONException {
-        HttpResponse formSectionsResponse = http()
-                .path("/children")
-                .context(context)
-                .param("id", child.getId())
-                .param("child", child.get(Database.ChildTableColumn.content.getColumnName()).toString())
-                .put();
-
-        String formSectionsTemplate = CharStreams.toString(new InputStreamReader(formSectionsResponse.getEntity().getContent()));
-        context.setFormSectionsTemplate(formSectionsTemplate);
+    public void sync(Child child) throws IOException, JSONException {
+        http()
+            .path(String.format("/children/%s", child.getId()))
+            .context(context)
+            .param("child", child.toString())
+            .put();
     }
 
     public List<Child> getAllChildren() throws IOException {

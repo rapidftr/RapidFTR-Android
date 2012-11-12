@@ -37,7 +37,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Child, Void, Boolean> {
 
     private void sendChildrenToServer(Child[] childrenToSyncWithServer) throws IOException, JSONException {
         for (Child child : childrenToSyncWithServer) {
-            childService.post(child);
+            childService.sync(child);
         }
     }
 

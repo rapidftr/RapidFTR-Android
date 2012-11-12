@@ -44,12 +44,6 @@ public class ChildRepositoryTest {
         repository.create(new Child("id1", "user2", null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotCreateChildRecordIfIDExists() throws Exception {
-        repository.create(new Child("id1", "user1", null));
-        repository.create(new Child("id1", "user1", null));
-    }
-
     @Test
     public void shouldUpdateChildRecordIfIdAlreadyExists() throws Exception {
         ChildRepository repository = new ChildRepository("user1", session);
@@ -80,6 +74,18 @@ public class ChildRepositoryTest {
 
         assertThat(repository.get("syncedID").isSynced(), is(true));
         assertThat(repository.get("unsyncedID").isSynced(), is(false));
+    }
+
+    @Test
+    public void shouldCorrectlyGetSyncedStateWhenGettingAllRecords() throws JSONException, IOException {
+        Child syncedChild = new Child("syncedID", "user1", null, true);
+        Child unsyncedChild = new Child("unsyncedID", "user1", null, false);
+        repository.create(syncedChild);
+        repository.create(unsyncedChild);
+
+        List<Child> all = repository.all();
+        assertThat(all.get(0).isSynced(), is(true));
+        assertThat(all.get(1).isSynced(), is(false));
     }
 
     @Test
