@@ -1,6 +1,7 @@
 package com.rapidftr.service;
 
 import com.google.common.io.CharStreams;
+import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import org.apache.http.HttpResponse;
 
@@ -13,6 +14,7 @@ public class FormService {
 
     private RapidFtrApplication context;
 
+    @Inject
     public FormService(RapidFtrApplication context) {
         this.context = context;
     }

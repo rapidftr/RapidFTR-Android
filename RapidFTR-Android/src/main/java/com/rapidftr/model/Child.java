@@ -3,6 +3,7 @@ package com.rapidftr.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.google.common.base.Strings;
+import com.rapidftr.utils.RapidFtrDateTime;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,8 +15,7 @@ import java.util.Calendar;
 import java.util.UUID;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
-import static com.rapidftr.database.Database.ChildTableColumn.created_by;
-import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
+import static com.rapidftr.database.Database.ChildTableColumn.*;
 
 public class Child extends JSONObject implements Parcelable {
 
@@ -23,10 +23,12 @@ public class Child extends JSONObject implements Parcelable {
     public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();
 
     private String jsonString;
+    private String createdAt;
 
     public Child()  {
         try {
             setSynced(false);
+            this.createdAt = (has(created_at.getColumnName()) ? getString(created_at.getColumnName()) : RapidFtrDateTime.now().defaultFormat());
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -34,11 +36,6 @@ public class Child extends JSONObject implements Parcelable {
 
     public Child(Parcel parcel){
         jsonString = parcel.readString();
-    }
-
-    public Child(String content) throws JSONException {
-        super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
-        jsonString = content;
     }
 
     public Child(String id, String owner, String content) throws JSONException {
@@ -50,6 +47,17 @@ public class Child extends JSONObject implements Parcelable {
         setId(id);
         setOwner(owner);
         setSynced(synced);
+    }
+
+    public Child(String content) throws JSONException {
+        this(content, false);
+    }
+
+    public Child(String content, boolean synced) throws JSONException {
+        super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
+        this.createdAt = (has(created_at.getColumnName()) ? getString(created_at.getColumnName()) : RapidFtrDateTime.now().defaultFormat());
+        setSynced(synced);
+        jsonString = content;
     }
 
     @Override
@@ -101,6 +109,10 @@ public class Child extends JSONObject implements Parcelable {
 
     public boolean isSynced()  {
         return Boolean.valueOf(opt(ChildTableColumn.synced.getColumnName()).toString());
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
     }
 
     public void addToJSONArray(String key, Object element) throws JSONException {

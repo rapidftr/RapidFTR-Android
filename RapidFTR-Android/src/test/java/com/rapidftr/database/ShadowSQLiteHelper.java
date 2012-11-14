@@ -4,6 +4,7 @@ package com.rapidftr.database;
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.rapidftr.database.migration.Migrations;
 import lombok.Delegate;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,13 +36,15 @@ public class ShadowSQLiteHelper extends SQLiteOpenHelper implements DatabaseHelp
     private @Getter DatabaseSession session;
 
     public ShadowSQLiteHelper() {
-        super(new Activity(), "test_database", null, 1);
+        super(new Activity(), "test_database", null, 2);
         session = new ShadowSQLiteSession(getWritableDatabase());
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQLCipherHelper.DATABASE_CREATE);
+    public void onCreate(SQLiteDatabase database) {
+        for (Migrations migration : Migrations.values()) {
+            database.execSQL(migration.getSql());
+        }
     }
 
     @Override

@@ -9,7 +9,9 @@ import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.SQLCipherHelper;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.DataSynchronisationService;
+import com.rapidftr.service.ChildService;
+import com.rapidftr.service.FormService;
+import com.rapidftr.task.SyncAllDataAsyncTask;
 
 public class ApplicationInjector extends AbstractModule {
 
@@ -20,7 +22,9 @@ public class ApplicationInjector extends AbstractModule {
         bind(Context.class).to(RapidFtrApplication.class);
         bind(DatabaseHelper.class).to(SQLCipherHelper.class);
         bind(ChildRepository.class);
-        bind(DataSynchronisationService.class);
+        bind(FormService.class);
+        bind(SyncAllDataAsyncTask.class);
+        bind(ChildService.class);
     }
 
     @Provides @Named("USER_NAME")

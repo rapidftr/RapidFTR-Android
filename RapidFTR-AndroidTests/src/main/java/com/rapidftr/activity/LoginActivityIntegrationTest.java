@@ -10,18 +10,16 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest<Lo
 
     public void testIncorrectLoginCredentials(){
         loginPage.login("wrongUsername", "wrongPassword", LOGIN_URL);
-        assertTrue("Incorrect Username Or Password", solo.waitForText("Incorrect username or password"));
+        assertTrue("Expected to see Incorrect Username Or Password message", solo.waitForText("Incorrect username or password"));
         loginPage.login(USERNAME, PASSWORD,"http://dev.rapidftr.com:abc");
         assertTrue(solo.waitForText("Unable to connect to the server, please contact your system administrator"));
     }
 
-
     public void testNoLoginDetailsErrorMessages(){
           loginPage.login("","","");
-          loginPage.getUserNameRequiredMessage().equals("Username is required");
-          loginPage.getPasswordRequiredMEssage().equals("Password is required");
-          loginPage.getURLRequiredMessage().equals("Server URL is required");
-
+          assertTrue(loginPage.getUserNameRequiredMessage().equals("Username is required"));
+          assertTrue(loginPage.getPasswordRequiredMEssage().equals("Password is required"));
+          assertTrue(loginPage.getURLRequiredMessage().equals("Server URL is required"));
     }
 
      public void testUserAbleToSeeLastSuccessfulLoginUrl() {
@@ -30,7 +28,7 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest<Lo
          loginPage.logout();
          loginPage.clickLoginButton();
          loginPage.changeURL();
-         loginPage.getUrl().equals(LOGIN_URL);
+         assertTrue(loginPage.getUrl().equals(LOGIN_URL));
     }
 
 
@@ -39,11 +37,5 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest<Lo
         assertTrue("Login should be successful", solo.waitForText("Login Successful"));
         loginPage.logout();
     }
-
-
-//    @Ignore
-//    public void testUserCanChangeUrlAndLoginInAnotherAccount() {
-//
-//    }
 
 }
