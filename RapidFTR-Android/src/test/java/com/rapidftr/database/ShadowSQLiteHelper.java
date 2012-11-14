@@ -4,6 +4,7 @@ package com.rapidftr.database;
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Delegate;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,13 +36,27 @@ public class ShadowSQLiteHelper extends SQLiteOpenHelper implements DatabaseHelp
     private @Getter DatabaseSession session;
 
     public ShadowSQLiteHelper() {
-        super(new Activity(), "test_database", null, 1);
+        super(new Activity(), "test_database", null, 2);
         session = new ShadowSQLiteSession(getWritableDatabase());
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQLCipherHelper.CREATE_CHILD_TABLE);
+        String now = RapidFtrDateTime.now().defaultFormat();
+        String addCreatedAtColumn = "ALTER TABLE "
+                + Database.child.getTableName()
+                + " ADD COLUMN "
+                + Database.ChildTableColumn.created_at.getColumnName()
+                + " text not null default '"+ now +"'";
+        String addUpdatedAtColumn = "ALTER TABLE "
+                + Database.child.getTableName()
+                + " ADD COLUMN "
+                + Database.ChildTableColumn.updated_at.getColumnName()
+                + " text";
+        db.execSQL(addCreatedAtColumn);
+        db.execSQL(addUpdatedAtColumn);
+
     }
 
     @Override

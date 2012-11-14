@@ -39,11 +39,6 @@ public class ChildRepositoryTest {
         assertThat(repository.size(), equalTo(1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotSaveOtherUserRecords() throws Exception {
-        repository.create(new Child("id1", "user2", null));
-    }
-
     @Test
     public void shouldUpdateChildRecordIfIdAlreadyExists() throws Exception {
         ChildRepository repository = new ChildRepository("user1", session);
@@ -137,7 +132,7 @@ public class ChildRepositoryTest {
     }
 
     @Test(expected = JSONException.class)
-    public void shouldRaiseRuntTimeExceptionIfTheRequiredChildPropertiesAreNotPopulated() throws RuntimeException, JSONException {
+    public void shouldRaiseRuntimeExceptionIfTheRequiredChildPropertiesAreNotPopulated() throws RuntimeException, JSONException {
         Child child = new Child();
         assertThat(child.isSynced(), is(false));
         repository.create(child);

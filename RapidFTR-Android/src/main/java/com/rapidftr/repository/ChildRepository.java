@@ -51,14 +51,12 @@ public class ChildRepository implements Closeable {
     }
 
     public void create(Child child) throws JSONException {
-        if (!userName.equals(child.getOwner()))
-            throw new IllegalArgumentException();
-
         ContentValues values = new ContentValues();
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
         values.put(id.getColumnName(), child.getId());
         values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
         values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
+        values.put(Database.ChildTableColumn.created_at.getColumnName(), child.getCreatedAt());
         long id = session.replace(Database.child.getTableName(), null, values);
         if (id <= 0)
             throw new IllegalArgumentException();

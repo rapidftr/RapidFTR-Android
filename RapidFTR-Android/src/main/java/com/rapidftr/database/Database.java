@@ -58,7 +58,8 @@ public enum Database {
         internal_id("_id", true),
         created_by("created_by", true),
         thumbnail("_thumbnail", true),
-        ;
+        created_at("created_at", true),
+        updated_at("updated_at", true);
 
         private String columnName;
         private boolean isInternal;
