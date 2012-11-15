@@ -75,7 +75,9 @@ public abstract class RapidFtrActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         try {
-            getInjector().getInstance(SyncAllDataAsyncTask.class).execute();
+            SyncAllDataAsyncTask task = getInjector().getInstance(SyncAllDataAsyncTask.class);
+            task.setContext(this);
+            task.execute();
             return true;
         } catch (Exception e) {
             return false;
