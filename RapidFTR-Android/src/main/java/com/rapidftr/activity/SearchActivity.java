@@ -1,16 +1,13 @@
 package com.rapidftr.activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.adapter.ChildViewAdapter;
 import com.rapidftr.model.Child;
-import com.rapidftr.repository.ChildRepository;
-import lombok.Cleanup;
-import org.json.JSONException;
+import com.rapidftr.service.ChildService;
 
 import java.util.List;
 
@@ -28,7 +25,7 @@ public class SearchActivity extends RapidFtrActivity {
     private void listView(List<Child> children) {
         childViewAdapter = new ChildViewAdapter(this, R.layout.row_child, children);
         ListView childListView = (ListView) findViewById(R.id.child_list);
-        if(children.isEmpty()){
+        if (children.isEmpty()) {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
         }
         childListView.setAdapter(childViewAdapter);
@@ -39,12 +36,8 @@ public class SearchActivity extends RapidFtrActivity {
             @Override
             public void onClick(View v) {
                 TextView searchTextView = (TextView) findViewById(R.id.search_text);
-                try {
-                    @Cleanup ChildRepository repository = getInjector().getInstance(ChildRepository.class);
-                    listView(repository.findBy(searchTextView.getText().toString()));
-                } catch (JSONException e) {
-                    Log.e("SearchActivity", "Error while searching Child records" + e.getMessage());
-                }
+                ChildService childService = getInjector().getInstance(ChildService.class);
+                listView(childService.searchChildrenInDB(searchTextView.getText().toString()));
             }
         };
     }

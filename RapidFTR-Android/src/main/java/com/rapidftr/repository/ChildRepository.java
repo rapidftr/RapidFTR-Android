@@ -46,10 +46,16 @@ public class ChildRepository implements Closeable {
         return cursor.moveToNext() ? cursor.getInt(0) : 0;
     }
 
-    public List<Child> all() throws JSONException {
+    public List<Child> getChildrenByOwner() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE child_owner = ? ORDER BY id", new String[]{userName});
         return toChildren(cursor);
     }
+
+    public List<Child> getAllChildren() throws JSONException {
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children",new String[]{});
+        return toChildren(cursor);
+    }
+
 
     public void create(Child child) throws JSONException {
         ContentValues values = new ContentValues();
@@ -95,15 +101,5 @@ public class ChildRepository implements Closeable {
 
     private Child childFrom(Cursor cursor) throws JSONException {
         return new Child(cursor.getString(0), BooleanColumn.from(cursor.getString(1)).toBoolean());
-    }
-
-    public List<Child> findBy(String searchString) throws JSONException {
-        //TODO: Have to Use GLOBs in SQLite and USE RegEX
-        String namePattern = format("%%\"name\":\"%%%s%%", searchString);
-        String idPattern = format("%%\"_id\":\"%%%s%%", searchString);
-
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json,synced FROM children WHERE child_json LIKE ? OR child_json LIKE ?",
-                new String[]{namePattern,idPattern});
-        return toChildren(cursor);
     }
 }
