@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.rapidftr.R;
+import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.ViewChildActivity;
 import com.rapidftr.model.Child;
+import com.rapidftr.utils.CaptureHelper;
 import org.json.JSONException;
 
 import java.util.List;
@@ -22,12 +25,14 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
     private Context context;
     private int textViewResourceId;
     private List<Child> children;
+    private CaptureHelper captureHelper;
 
     public ChildViewAdapter(Context context, int textViewResourceId, List<Child> children) {
         super(context, textViewResourceId, children);
         this.context = context;
         this.textViewResourceId = textViewResourceId;
         this.children = children;
+        this.captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     @Override
@@ -41,9 +46,11 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
         if (child != null) {
             TextView uniqueIdView = (TextView) view.findViewById(R.id.row_child_unique_id);
             TextView nameView = (TextView) view.findViewById(R.id.row_child_name);
+            ImageView imageView = (ImageView) view.findViewById(R.id.thumbnail);
             try {
                 setFields(String.valueOf(child.getId()), uniqueIdView);
-                setFields(String.valueOf(child.getString("name")), nameView);
+                setFields(String.valueOf(child.getFromJSON("name")), nameView);
+                imageView.setImageBitmap(captureHelper.getThumbnailOrDefault(child.getFromJSON("current_photo_key")));
                 view.setOnClickListener(clickListener(child));
             } catch (JSONException e) {
                 Log.e("ChildViewAdapter", "Error while creating the list" + e.getMessage());

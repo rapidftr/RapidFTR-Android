@@ -57,9 +57,13 @@ public class ChildService {
         List<Child> filteredList = new ArrayList<Child>();
         try {
             for (Child child : repository.getAllChildren()) {
-                if (containsIgnoreCase(child.getId(), subString) ||
-                        containsIgnoreCase((String) child.get("name"), subString)) {
-                    filteredList.add(child);
+                try {
+                    if (containsIgnoreCase(child.getId(), subString) ||
+                            containsIgnoreCase((String) child.get("name"), subString)) {
+                        filteredList.add(child);
+                    }
+                } catch (JSONException e) {
+                    Log.e("ChildService", "Error while Searching Children");
                 }
             }
         } catch (JSONException e) {
