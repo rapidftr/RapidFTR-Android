@@ -1,5 +1,6 @@
 package com.rapidftr.service;
 
+import android.util.Log;
 import com.google.common.base.Function;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
@@ -12,6 +13,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -34,10 +36,10 @@ public class ChildService {
     public void sync(Child child) throws IOException, JSONException {
         child.setSynced(true);
         http()
-            .path(String.format("/children/%s", child.getId()))
-            .context(context)
-            .param("child", child.toString())
-            .put();
+                .path(String.format("/children/%s", child.getId()))
+                .context(context)
+                .param("child", child.toString())
+                .put();
         repository.update(child);
     }
 
@@ -49,6 +51,25 @@ public class ChildService {
 
         String childrenJson = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
         return convertToChildRecords(childrenJson);
+    }
+
+    public List<Child> searchChildrenInDB(String subString) {
+        List<Child> filteredList = new ArrayList<Child>();
+        try {
+            for (Child child : repository.getAllChildren()) {
+                if (containsIgnoreCase(child.getId(), subString) ||
+                        containsIgnoreCase((String) child.get("name"), subString)) {
+                    filteredList.add(child);
+                }
+            }
+        } catch (JSONException e) {
+            Log.e("ChildService", "Error while Searching Children");
+        }
+        return filteredList;
+    }
+
+    private boolean containsIgnoreCase(String completeString, String subString) {
+        return completeString.toLowerCase().contains(subString.toLowerCase());
     }
 
     private List<Child> convertToChildRecords(String childrenJson) throws IOException {
