@@ -63,9 +63,9 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
                 } catch (JSONException e) {
                     Log.e("ChildViewAdapter", "Error while creating the list" + e.getMessage());
                 }
-                Activity context1 = (Activity) context;
-                context1.finish();
-                context1.startActivity(intent);
+                Activity activity = (Activity) context;
+                activity.finish();
+                activity.startActivity(intent);
             }
         };
     }

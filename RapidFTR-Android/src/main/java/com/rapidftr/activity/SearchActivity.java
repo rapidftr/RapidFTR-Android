@@ -19,7 +19,7 @@ public class SearchActivity extends RapidFtrActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_child);
-        findViewById(R.id.search_btn).setOnClickListener(search());
+        findViewById(R.id.search_btn).setOnClickListener(searchListener());
     }
 
     private void listView(List<Child> children) {
@@ -31,14 +31,16 @@ public class SearchActivity extends RapidFtrActivity {
         childListView.setAdapter(childViewAdapter);
     }
 
-    private View.OnClickListener search() {
+    private View.OnClickListener searchListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TextView searchTextView = (TextView) findViewById(R.id.search_text);
                 ChildService childService = getInjector().getInstance(ChildService.class);
-                listView(childService.searchChildrenInDB(searchTextView.getText().toString()));
+                String subString = searchTextView.getText().toString();
+                listView(childService.searchChildrenInDB(subString));
             }
         };
     }
+
 }
