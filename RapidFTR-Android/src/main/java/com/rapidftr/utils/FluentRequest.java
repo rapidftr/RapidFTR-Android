@@ -4,17 +4,33 @@ import android.content.Context;
 import android.net.Uri;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import lombok.Cleanup;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnManagerPNames;
+import org.apache.http.conn.params.ConnPerRouteBean;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +38,8 @@ import java.util.Map;
 
 public class FluentRequest {
 
-    private static final HttpClient HTTP_CLIENT = new DefaultHttpClient(); // TODO: Change this to use AndroidHTTPClient to avoid UI thread locks
+    private static HttpClient HTTP_CLIENT = new DefaultHttpClient(); // TODO: Change this to use AndroidHTTPClient to avoid UI thread locks
+//    private HttpContext context = new BasicHttpContext();
 
     private final Map<String, String> headers = new HashMap<String, String>();
     private final Map<String, String> params  = new HashMap<String, String>();
@@ -38,15 +55,43 @@ public class FluentRequest {
         scheme("http"); // TODO: Default scheme should be https, but how to specify URL in Login Screen?
         path("/");
     }
+
     public FluentRequest host(String host) {
         if (host.startsWith("https://") || host.startsWith("http://")) {
             String[] parts = host.split("\\:\\/\\/");
-            scheme(parts[0]);
+            String scheme = parts[0];
+            scheme(scheme);
             host = parts[1];
+            if(scheme.equals("https")){
+                try {
+                    setUpSSL();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
         uri.encodedAuthority(host);
         return this;
+    }
+
+    private void setUpSSL() throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, UnrecoverableKeyException {
+        KeyStore trustStore = KeyStore.getInstance("BKS");
+        @Cleanup InputStream in = RapidFtrApplication.getInstance().getResources().openRawResource(R.raw.truststore);
+        trustStore.load(in, "rapidftr".toCharArray());
+
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+        schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+        schemeRegistry.register(new Scheme("https", new SSLSocketFactory(trustStore), 443));
+        HttpParams params = new BasicHttpParams();
+        params.setParameter(ConnManagerPNames.MAX_TOTAL_CONNECTIONS, 1);
+        params.setParameter(ConnManagerPNames.MAX_CONNECTIONS_PER_ROUTE, new ConnPerRouteBean(1));
+        params.setParameter(HttpProtocolParams.USE_EXPECT_CONTINUE, false);
+        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+        HttpProtocolParams.setContentCharset(params, "utf8");
+
+        ClientConnectionManager clientConnectionManager = new ThreadSafeClientConnManager(params, schemeRegistry);
+        HTTP_CLIENT = new DefaultHttpClient(clientConnectionManager, params);
     }
 
     public FluentRequest scheme(String scheme) {
@@ -103,7 +148,6 @@ public class FluentRequest {
 
             request.setURI(URI.create(uri.build().toString()));
         }
-
         return execute(request);
     }
 
@@ -120,7 +164,6 @@ public class FluentRequest {
                 throw (IOException) new IOException().initCause(e);
             }
         }
-
         return execute(request);
     }
 
@@ -143,5 +186,4 @@ public class FluentRequest {
     public int getConnectionTimeout(Context context) {
         return context.getResources().getInteger(R.integer.http_timeout);
     }
-
 }
