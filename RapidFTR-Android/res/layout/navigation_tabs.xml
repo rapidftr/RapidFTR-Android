@@ -14,6 +14,7 @@
         style="@style/tab_sel"
         android:drawableLeft="@drawable/icon_register_sel"
         android:background="@drawable/tab_active"
+        android:onClick="registerTabListener"
         />
     <View android:background="#333333"
           android:layout_height="30dp"
@@ -31,6 +32,7 @@
           android:layout_height="30dp"
           android:layout_width="1dp" />
     <Button
+            android:id="@+id/search_tab"
             android:text="Search"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -38,6 +40,7 @@
             android:layout_weight="1"
             android:background="@drawable/tab"
             android:drawableLeft="@drawable/icon_search"
+            android:onClick="searchTabListener"
             />
 
 

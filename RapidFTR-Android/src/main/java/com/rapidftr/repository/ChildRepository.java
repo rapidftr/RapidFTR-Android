@@ -18,6 +18,7 @@ import java.util.List;
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.id;
+import static java.lang.String.format;
 
 public class ChildRepository implements Closeable {
 
@@ -67,7 +68,7 @@ public class ChildRepository implements Closeable {
         values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
         values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
 
-        session.update(Database.child.getTableName(), values, String.format("%s=?", id.getColumnName()), new String[]{child.getId()});
+        session.update(Database.child.getTableName(), values, format("%s=?", id.getColumnName()), new String[]{child.getId()});
     }
 
     public List<Child> toBeSynced() throws JSONException {
@@ -96,4 +97,13 @@ public class ChildRepository implements Closeable {
         return new Child(cursor.getString(0), BooleanColumn.from(cursor.getString(1)).toBoolean());
     }
 
+    public List<Child> findBy(String searchString) throws JSONException {
+        //TODO: Have to Use GLOBs in SQLite and USE RegEX
+        String namePattern = format("%%\"name\":\"%%%s%%", searchString);
+        String idPattern = format("%%\"_id\":\"%%%s%%", searchString);
+
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json,synced FROM children WHERE child_json LIKE ? OR child_json LIKE ?",
+                new String[]{namePattern,idPattern});
+        return toChildren(cursor);
+    }
 }

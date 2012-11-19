@@ -61,6 +61,24 @@ public class ChildRepositoryTest {
     }
 
     @Test
+    public void shouldReturnMatchedChildRecords() throws JSONException, IOException {
+        Child child1 = new Child("id1", "user1", "{ \"name\" : \"child1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
+        Child child2 = new Child("id2", "user2", "{ \"name\" : \"child2\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
+        Child child3 = new Child("id3", "user3", "{ \"name\" : \"child3\", \"test2\" :  \"child01\", \"test3\" : [ \"1\", 2, \"3\" ] }");
+        Child child4 = new Child("child1", "user4", "{ \"name\" : \"child4\", \"test2\" :  \"test2\", \"test3\" : [ \"1\", 2, \"3\" ] }");
+        repository.create(child1);
+        repository.create(child2);
+        repository.create(child3);
+        repository.create(child4);
+
+        List<Child> children = repository.findBy("HIld1");
+        assertEquals(2, children.size());
+
+        assertThat(child1, equalTo(children.get(0)));
+        assertThat(child4, equalTo(children.get(1)));
+    }
+
+    @Test
     public void shouldCorrectlyGetSyncedState() throws JSONException, IOException {
         Child syncedChild = new Child("syncedID", "user1", null, true);
         Child unsyncedChild = new Child("unsyncedID", "user1", null, false);
@@ -139,7 +157,7 @@ public class ChildRepositoryTest {
     }
 
     @Test
-    public void shouldReturnTrueWhenAChildWithTheGivenIdExistsInTheDatabase(){
+    public void shouldReturnTrueWhenAChildWithTheGivenIdExistsInTheDatabase() {
         assertThat(repository.exists("1234"), is(false));
     }
 
