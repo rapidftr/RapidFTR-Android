@@ -34,6 +34,14 @@ public abstract class RapidFtrActivity extends Activity {
         });
     }
 
+    public void searchTabListener(View view) {
+        startActivity(new Intent(RapidFtrActivity.this, SearchActivity.class));
+    }
+
+    public void registerTabListener(View view) {
+        startActivity(new Intent(RapidFtrActivity.this, RegisterChildActivity.class));
+    }
+
     protected void logError(String message) {
         if(message!=null){
            Log.e(RapidFtrApplication.APP_IDENTIFIER, message);
