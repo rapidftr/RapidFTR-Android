@@ -9,6 +9,7 @@ import com.rapidftr.adapter.ChildViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.service.ChildService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchActivity extends RapidFtrActivity {
@@ -36,11 +37,19 @@ public class SearchActivity extends RapidFtrActivity {
             @Override
             public void onClick(View v) {
                 TextView searchTextView = (TextView) findViewById(R.id.search_text);
-                ChildService childService = getInjector().getInstance(ChildService.class);
                 String subString = searchTextView.getText().toString();
-                listView(childService.searchChildrenInDB(subString));
+                listView(search(subString));
             }
         };
+    }
+
+    private List<Child> search(String subString) {
+        ChildService childService = getInjector().getInstance(ChildService.class);
+        subString = subString.trim();
+        if ("".equals(subString)) {
+            return new ArrayList<Child>();
+        }
+        return childService.searchChildrenInDB(subString);
     }
 
 }

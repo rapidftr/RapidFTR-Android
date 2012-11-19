@@ -191,5 +191,12 @@ public class ChildTest {
 
         assertNotSame(guid1, guid2);
     }
+    
+    @Test
+    public void shouldReturnValueFromJSON() throws JSONException {
+        Child child = new Child("{ 'created_by' : 'test1' }");
+        assertEquals("test1",child.getFromJSON("created_by"));
+        assertNull("test1",child.getFromJSON("unknown_key"));
+    }
 
 }
