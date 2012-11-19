@@ -149,6 +149,8 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     public void repaint() throws JSONException {
+        Log.e("PhotoUploadBox",child.toString());
+        Log.e("PhotoUploadBox-ID",child.optString(formField.getId()));
         Bitmap bitmap = captureHelper.getThumbnailOrDefault(child.optString(formField.getId()));
         getImageView().setImageBitmap(bitmap);
         getImageCaption().setText(child.has(formField.getId()) ? R.string.photo_view : R.string.photo_capture);

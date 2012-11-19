@@ -2,6 +2,7 @@ package com.rapidftr.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
@@ -58,6 +59,7 @@ public class ChildRepository implements Closeable {
 
 
     public void create(Child child) throws JSONException {
+        Log.e("ChildRepository", child.toString());
         ContentValues values = new ContentValues();
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
         values.put(id.getColumnName(), child.getId());

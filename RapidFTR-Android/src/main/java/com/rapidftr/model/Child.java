@@ -2,6 +2,7 @@ package com.rapidftr.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import com.google.common.base.Strings;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -196,4 +197,14 @@ public class Child extends JSONObject implements Parcelable {
             return new Child[size];
         }
     };
+
+    public String getFromJSON(String key) {
+        String result = null;
+        try {
+            result = (String) get(key);
+        } catch (JSONException e) {
+            Log.e("ChildJSON", "Doesn't Contains Key : " + key);
+        }
+        return result;
+    }
 }

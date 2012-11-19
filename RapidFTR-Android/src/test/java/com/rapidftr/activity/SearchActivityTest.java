@@ -68,4 +68,16 @@ public class SearchActivityTest {
         assertNotNull(listView.getEmptyView());
     }
 
+    @Test
+    public void shouldReturnEmptyListForNoSearchString() throws JSONException {
+        String searchString = " ";
+        activity.onCreate(null);
+        TextView textView = (TextView) activity.findViewById(R.id.search_text);
+        textView.setText(searchString);
+        activity.findViewById(R.id.search_btn).performClick();
+        ListView listView = (ListView) activity.findViewById(R.id.child_list);
+        verify(childService,never()).searchChildrenInDB(searchString);
+        assertNotNull(listView.getEmptyView());
+    }
+
 }
