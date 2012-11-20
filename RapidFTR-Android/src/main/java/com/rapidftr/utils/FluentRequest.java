@@ -54,7 +54,6 @@ public class FluentRequest {
         scheme("http"); // TODO: Default scheme should be https, but how to specify URL in Login Screen?
         path("/");
     }
-
     public FluentRequest host(String host) {
         if (host.startsWith("https://") || host.startsWith("http://")) {
             String[] parts = host.split("\\:\\/\\/");

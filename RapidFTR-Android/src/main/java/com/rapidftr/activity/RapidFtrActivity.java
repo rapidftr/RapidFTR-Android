@@ -12,8 +12,7 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.service.DataSynchronisationService;
-import org.json.JSONException;
+import com.rapidftr.task.SyncAllDataAsyncTask;
 
 public abstract class RapidFtrActivity extends Activity {
 
@@ -33,6 +32,14 @@ public abstract class RapidFtrActivity extends Activity {
                 startActivity(new Intent(RapidFtrActivity.this, activityClass));
             }
         });
+    }
+
+    public void searchTabListener(View view) {
+        startActivity(new Intent(RapidFtrActivity.this, SearchActivity.class));
+    }
+
+    public void registerTabListener(View view) {
+        startActivity(new Intent(RapidFtrActivity.this, RegisterChildActivity.class));
     }
 
     protected void logError(String message) {
@@ -76,9 +83,11 @@ public abstract class RapidFtrActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         try {
-            getInjector().getInstance(DataSynchronisationService.class).syncAllData();
+            SyncAllDataAsyncTask task = getInjector().getInstance(SyncAllDataAsyncTask.class);
+            task.setContext(this);
+            task.execute();
             return true;
-        } catch (JSONException e) {
+        } catch (Exception e) {
             return false;
         }
     }

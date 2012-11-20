@@ -2,6 +2,7 @@ package com.rapidftr.model;
 
 
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Test;
@@ -11,8 +12,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 
 import static junit.framework.Assert.*;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -62,6 +62,12 @@ public class ChildTest {
         assertThat(child.getId(), is("id1"));
         assertThat(child.getOwner(), is("owner1"));
         assertThat(child.getString("test1"), is("value1"));
+    }
+
+    @Test
+    public void shouldNotOverwriteCreatedAtIfGiven() throws JSONException {
+        Child child = new Child(String.format("{ 'created_at' :  '%s' }", new RapidFtrDateTime(10, 2, 2012).defaultFormat()));
+        assertThat(child.getCreatedAt(), is("2012-02-10 00:00:00"));
     }
 
     @Test
@@ -184,6 +190,13 @@ public class ChildTest {
         String guid2 = child.createUniqueId(calendar);
 
         assertNotSame(guid1, guid2);
+    }
+    
+    @Test
+    public void shouldReturnValueFromJSON() throws JSONException {
+        Child child = new Child("{ 'created_by' : 'test1' }");
+        assertEquals("test1",child.getFromJSON("created_by"));
+        assertNull("test1",child.getFromJSON("unknown_key"));
     }
 
 }

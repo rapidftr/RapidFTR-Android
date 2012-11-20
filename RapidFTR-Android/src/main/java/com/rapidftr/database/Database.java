@@ -21,6 +21,35 @@ public enum Database {
         return tableName;
     }
 
+    public enum BooleanColumn {
+        trueValue("1", true),
+        falseValue("0", false);
+        private String columnValue;
+        private boolean booleanValue;
+
+        BooleanColumn(String columnValue, boolean booleanValue) {
+            this.columnValue = columnValue;
+            this.booleanValue = booleanValue;
+        }
+
+        public String getColumnValue() {
+            return columnValue;
+        }
+
+        public static BooleanColumn from(String booleanValue) {
+            for (BooleanColumn booleanColumn : values()) {
+                if(booleanColumn.getColumnValue().equals(booleanValue)){
+                    return booleanColumn;
+                }
+            }
+            return null;
+        }
+
+        public boolean toBoolean() {
+            return booleanValue;
+        }
+    }
+
     public enum ChildTableColumn {
         id("id"),
         content("child_json"),
@@ -29,7 +58,8 @@ public enum Database {
         internal_id("_id", true),
         created_by("created_by", true),
         thumbnail("_thumbnail", true),
-        ;
+        created_at("created_at", true),
+        updated_at("updated_at", true);
 
         private String columnName;
         private boolean isInternal;

@@ -9,5 +9,4 @@ public class SQLCipherSession implements DatabaseSession {
 
     @Delegate(types = DatabaseSession.class)
     protected final SQLiteDatabase database;
-
 }
