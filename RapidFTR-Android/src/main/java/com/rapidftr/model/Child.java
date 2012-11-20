@@ -23,7 +23,6 @@ public class Child extends JSONObject implements Parcelable {
     public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
     public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();
 
-    private String jsonString;
     private String createdAt;
 
     public Child()  {
@@ -35,8 +34,8 @@ public class Child extends JSONObject implements Parcelable {
         }
     }
 
-    public Child(Parcel parcel){
-        jsonString = parcel.readString();
+    public Child(Parcel parcel) throws JSONException {
+        this(parcel.readString());
     }
 
     public Child(String id, String owner, String content) throws JSONException {
@@ -58,7 +57,6 @@ public class Child extends JSONObject implements Parcelable {
         super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
         this.createdAt = (has(created_at.getColumnName()) ? getString(created_at.getColumnName()) : RapidFtrDateTime.now().defaultFormat());
         setSynced(synced);
-        jsonString = content;
     }
 
     @Override
@@ -84,8 +82,7 @@ public class Child extends JSONObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        setJsonString(this.toString());
-        parcel.writeString(jsonString);
+        parcel.writeString(getJsonString());
     }
 
     public String getId() throws JSONException {
@@ -141,12 +138,8 @@ public class Child extends JSONObject implements Parcelable {
         put(key, newArray);
     }
 
-    public void setJsonString(String childJson){
-        this.jsonString = childJson;
-    }
-
     public String getJsonString() {
-        return jsonString;
+        return toString();
     }
 
     public void generateUniqueId() throws JSONException {
@@ -191,8 +184,13 @@ public class Child extends JSONObject implements Parcelable {
     /** Static field used to regenerate object, individually or as arrays */
     public static final Parcelable.Creator<Child> CREATOR = new Parcelable.Creator<Child>() {
         public Child createFromParcel(Parcel pc) {
-            return new Child(pc);
+            try {
+                return new Child(pc);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
         }
+
         public Child[] newArray(int size) {
             return new Child[size];
         }
