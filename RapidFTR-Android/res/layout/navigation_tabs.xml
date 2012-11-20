@@ -27,6 +27,7 @@
             android:layout_weight="1"
             android:background="@drawable/tab"
             android:drawableLeft="@drawable/icon_viewall"
+            android:onClick="viewAllChildrenListener"
             />
     <View android:background="#333333"
           android:layout_height="30dp"

@@ -8,11 +8,11 @@ import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Arrays;
-import java.util.Calendar;
+import java.util.*;
 
 import static junit.framework.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -196,7 +196,15 @@ public class ChildTest {
     public void shouldReturnValueFromJSON() throws JSONException {
         Child child = new Child("{ 'created_by' : 'test1' }");
         assertEquals("test1",child.getFromJSON("created_by"));
-        assertNull("test1",child.getFromJSON("unknown_key"));
+        assertEquals("",child.getFromJSON("unknown_key"));
     }
 
+    @Test
+    public void shouldSortChildrenByNameAlphabetically() throws Exception {
+        Child child1 = new Child("id1", "user1", "{ \"name\" : \"abc\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
+        Child child2 = new Child("id2", "user2", "{ \"name\" : \"def\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
+        List<Child> children = Arrays.asList(child1,child2);
+        Collections.sort(children);
+        assertEquals(child1, children.get(0));
+    }
 }
