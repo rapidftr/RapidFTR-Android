@@ -98,7 +98,7 @@
                             <goal>clean</goal>
                             <goal>import</goal>
                         </goals>
-                        <phase>generate-resources</phase>
+                        <phase>initialize</phase>
                     </execution>
                 </executions>
                 <configuration>
