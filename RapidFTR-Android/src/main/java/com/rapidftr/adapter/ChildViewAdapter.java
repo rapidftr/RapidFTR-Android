@@ -81,5 +81,6 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
         if (textView != null) {
             textView.setText(text);
         }
+        
     }
 }
