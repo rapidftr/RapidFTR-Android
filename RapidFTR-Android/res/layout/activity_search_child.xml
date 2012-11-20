@@ -11,6 +11,7 @@
         <include layout="@layout/navigation_tabs"/>
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/search_bar"
                   android:layout_width="fill_parent"
                   android:orientation="horizontal"
                   android:layout_below="@id/nav_bar"
@@ -44,7 +45,7 @@
                   android:layout_width="fill_parent"
                   android:layout_height="0dip"
                   android:visibility="gone"
-                  android:gravity="center">
+                  android:layout_below="@id/search_bar">
 
         <TextView android:text="No Child Found"
                   android:layout_width="wrap_content"
