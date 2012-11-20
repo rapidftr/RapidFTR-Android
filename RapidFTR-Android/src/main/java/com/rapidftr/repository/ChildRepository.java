@@ -58,7 +58,7 @@ public class ChildRepository implements Closeable {
     }
 
 
-    public void create(Child child) throws JSONException {
+    public void createOrUpdate(Child child) throws JSONException {
         Log.e("ChildRepository", child.toString());
         ContentValues values = new ContentValues();
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
@@ -66,9 +66,25 @@ public class ChildRepository implements Closeable {
         values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
         values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
         values.put(Database.ChildTableColumn.created_at.getColumnName(), child.getCreatedAt());
+        addHistory(child);
         long id = session.replace(Database.child.getTableName(), null, values);
         if (id <= 0)
             throw new IllegalArgumentException();
+    }
+
+    private void addHistory(Child child) throws JSONException {
+        Child existingChild = get(child.getId());
+        if(existingChild == null)
+            return;
+        child.put("histories", convertToString(child.changeLogs(existingChild)));
+    }
+
+    private String convertToString(List<Child.History> histories) {
+        StringBuffer json = new StringBuffer("[");
+        for (Child.History history : histories) {
+            json.append(history.toString());
+        }
+        return json.append("]").toString();
     }
 
     public void update(Child child) throws JSONException {
