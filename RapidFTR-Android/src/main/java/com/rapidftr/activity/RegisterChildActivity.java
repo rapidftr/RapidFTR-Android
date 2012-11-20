@@ -122,7 +122,7 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
         child.generateUniqueId();
 
         @Cleanup ChildRepository repository = getInjector().getInstance(ChildRepository.class);
-        repository.create(child);
+        repository.createOrUpdate(child);
         return true;
     }
 

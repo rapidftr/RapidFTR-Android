@@ -38,7 +38,7 @@ public class SaveChildAsyncTask extends AsyncTask<Child, Void, Boolean> {
     protected Boolean doInBackground(Child... params) {
         try {
             @Cleanup ChildRepository repository = this.repository;
-            repository.create(params[0]);
+            repository.createOrUpdate(params[0]);
             return true;
         } catch (Exception e) {
             return false;
