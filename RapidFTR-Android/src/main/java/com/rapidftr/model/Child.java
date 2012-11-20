@@ -18,7 +18,7 @@ import java.util.UUID;
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
 
-public class Child extends JSONObject implements Parcelable {
+public class Child extends JSONObject implements Parcelable, Comparable {
 
     public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
     public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();
@@ -197,12 +197,17 @@ public class Child extends JSONObject implements Parcelable {
     };
 
     public String getFromJSON(String key) {
-        String result = null;
+        String result = "";
         try {
             result = (String) get(key);
         } catch (JSONException e) {
             Log.e("ChildJSON", "Doesn't Contains Key : " + key);
         }
         return result;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.getFromJSON("name").compareTo(((Child) o).getFromJSON("name"));
     }
 }

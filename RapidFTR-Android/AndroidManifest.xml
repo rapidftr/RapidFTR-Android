@@ -15,6 +15,7 @@
         <activity android:name=".activity.RegisterChildActivity" android:configChanges="orientation"/>
         <activity android:name=".activity.ViewChildActivity"/>
         <activity android:name=".activity.SearchActivity"/>
+        <activity android:name=".activity.ViewAllChildrenActivity"/>
         <activity android:name=".activity.ViewPhotoActivity" android:noHistory="true" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
 
         <uses-library android:name="android.test.runner"/>

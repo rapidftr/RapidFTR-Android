@@ -42,6 +42,10 @@ public abstract class RapidFtrActivity extends Activity {
         startActivity(new Intent(RapidFtrActivity.this, RegisterChildActivity.class));
     }
 
+    public void viewAllChildrenListener(View view) {
+        startActivity(new Intent(RapidFtrActivity.this, ViewAllChildrenActivity.class));
+    }
+
     protected void logError(String message) {
         if(message!=null){
            Log.e(RapidFtrApplication.APP_IDENTIFIER, message);

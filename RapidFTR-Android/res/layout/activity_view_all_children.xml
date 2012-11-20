@@ -10,31 +10,9 @@
                   android:orientation="horizontal">
         <include layout="@layout/navigation_tabs"/>
     </LinearLayout>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:id="@+id/search_bar"
-                  android:layout_width="fill_parent"
-                  android:orientation="horizontal"
-                  android:layout_below="@id/nav_bar"
-                  android:weightSum="5"
-                  android:layout_height="wrap_content">
-        <EditText
-                android:id="@+id/search_text"
-                android:hint="Search Children"
-                android:layout_weight="4"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content">
-        </EditText>
-        <Button android:id="@+id/search_btn"
-                android:text="Go"
-                android:layout_weight="1"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content">
-        </Button>
-
-    </LinearLayout>
 
     <ListView
-            android:layout_below="@id/search_text"
+            android:layout_below="@id/nav_bar"
             android:id="@+id/child_list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
@@ -53,4 +31,5 @@
         </TextView>
 
     </LinearLayout>
+
 </LinearLayout>
