@@ -6,11 +6,14 @@ import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.tester.org.apache.http.FakeHttpLayer;
 import com.xtremelabs.robolectric.tester.org.apache.http.RequestMatcher;
 import org.apache.http.HttpResponse;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.security.Security;
 
 import static com.rapidftr.utils.FluentRequest.http;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -24,6 +27,7 @@ public class FluentRequestTest {
 
     @Before
     public void setUp() {
+        Security.addProvider(new BouncyCastleProvider());
         response = mock(HttpResponse.class, RETURNS_DEEP_STUBS);
     }
 
@@ -95,6 +99,13 @@ public class FluentRequestTest {
 
         Robolectric.getFakeHttpLayer().addHttpResponseRule("http://example.com/test", response);
         assertThat(http.path("/test").context(context).get(), equalTo(response));
+    }
+
+    @Test @Ignore // This test alone does a *real* connection to test SSL
+    public void testSSL() throws IOException {
+        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        HttpResponse httpResponse = http().host("https://dev.rapidftr.com:5443/login").header("Accept", "text/html").get();
+        System.out.println(httpResponse.getStatusLine());
     }
 
 }

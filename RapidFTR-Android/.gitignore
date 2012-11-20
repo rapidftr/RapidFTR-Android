@@ -1,6 +1,7 @@
 *.iml
 *.ipr
 *.iws
+res/raw/*.bks
 .idea/
 classes/
 gen/
