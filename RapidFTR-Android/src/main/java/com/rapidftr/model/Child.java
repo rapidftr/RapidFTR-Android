@@ -199,7 +199,7 @@ public class Child extends JSONObject implements Parcelable {
     };
 
     public String getFromJSON(String key) {
-        String result = null;
+        String result = "";
         try {
             result = (String) get(key);
         } catch (JSONException e) {
