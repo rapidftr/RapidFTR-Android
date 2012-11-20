@@ -56,6 +56,10 @@
         </dependency>
 
         <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk16</artifactId>
+        </dependency>
+        <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>sqlcipher</artifactId>
         </dependency>
@@ -79,15 +83,39 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-resources-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>keytool-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>clean</goal>
+                            <goal>import</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <workingDirectory>${project.basedir}/res/raw</workingDirectory>
+                    <noprompt />
+                    <trustcacerts />
+                    <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
+                    <storetype>bks</storetype>
+                    <storepass>rapidftr</storepass>
+                    <file>rapid_ftr_ca.der</file>
+                    <arguments>
+                        <argument>-provider</argument>
+                        <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
+                        <argument>-providerpath</argument>
+                        <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
+                    </arguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>
