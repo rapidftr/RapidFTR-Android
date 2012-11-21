@@ -82,7 +82,7 @@ public class ChildRepository implements Closeable {
 
     private String convertToString(JSONArray existingHistories, List<Child.History> histories) throws JSONException {
         StringBuffer json = new StringBuffer("[");
-        for(int i = 0; i < existingHistories.length(); i++){
+        for(int i = 0; existingHistories != null && (i < existingHistories.length()); i++){
             json.append(existingHistories.get(i)+",");
         }
         for (Child.History history : histories) {
