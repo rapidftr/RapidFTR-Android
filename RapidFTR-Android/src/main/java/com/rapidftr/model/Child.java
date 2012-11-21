@@ -16,7 +16,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -221,8 +220,8 @@ public class Child extends JSONObject implements Parcelable, Comparable {
             String oldValue = child.optString(names.getString(i), "");
             if(!oldValue.equals(newValue)){
                 History history = new History();
-                HashMap changes = new HashMap();
-                HashMap fromTo = new HashMap();
+                JSONObject changes = new JSONObject();
+                JSONObject fromTo = new JSONObject();
                 fromTo.put(FROM, oldValue);
                 fromTo.put(TO, newValue);
                 changes.put(names.getString(i), fromTo);
