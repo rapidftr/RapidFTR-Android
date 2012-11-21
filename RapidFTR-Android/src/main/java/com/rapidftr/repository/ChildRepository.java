@@ -9,6 +9,7 @@ import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Child;
 import lombok.Cleanup;
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.Closeable;
@@ -76,14 +77,18 @@ public class ChildRepository implements Closeable {
         Child existingChild = get(child.getId());
         if(existingChild == null)
             return;
-        child.put("histories", convertToString(child.changeLogs(existingChild)));
+        child.put("histories", convertToString((JSONArray) existingChild.opt("histories"), child.changeLogs(existingChild)));
     }
 
-    private String convertToString(List<Child.History> histories) {
+    private String convertToString(JSONArray existingHistories, List<Child.History> histories) throws JSONException {
         StringBuffer json = new StringBuffer("[");
-        for (Child.History history : histories) {
-            json.append(history.toString());
+        for(int i = 0; i < existingHistories.length(); i++){
+            json.append(existingHistories.get(i)+",");
         }
+        for (Child.History history : histories) {
+            json.append(history.toString()+",");
+        }
+        json.setLength(json.length() - 1);
         return json.append("]").toString();
     }
 
