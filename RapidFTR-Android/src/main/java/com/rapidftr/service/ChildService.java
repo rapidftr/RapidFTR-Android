@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.utils.FluentRequest;
 import org.apache.http.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
@@ -35,11 +36,15 @@ public class ChildService {
 
     public void sync(Child child) throws IOException, JSONException {
         child.setSynced(true);
-        http()
+        FluentRequest request = http()
                 .path(String.format("/children/%s", child.getId()))
                 .context(context)
-                .param("child", child.toString())
-                .put();
+                .param("child", child.toString());
+        request.setContext(context);
+        if(child.opt("current_photo_key") != null && !child.opt("current_photo_key").equals("")){
+            request.param("current_photo_key", child.opt("current_photo_key").toString());
+        }
+         request.put();
         repository.update(child);
     }
 

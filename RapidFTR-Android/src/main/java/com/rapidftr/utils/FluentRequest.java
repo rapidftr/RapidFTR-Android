@@ -7,7 +7,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import lombok.Cleanup;
 import lombok.Getter;
-
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -17,6 +17,10 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -34,7 +38,10 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.security.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FluentRequest {
 
@@ -44,6 +51,7 @@ public class FluentRequest {
     private final Map<String, String> params  = new HashMap<String, String>();
     private final Map<String, Object> configs = new HashMap<String, Object>();
     private final Uri.Builder uri = new Uri.Builder();
+    private RapidFtrApplication context;
 
     public static FluentRequest http() {
         return new FluentRequest();
@@ -105,11 +113,35 @@ public class FluentRequest {
     }
 
     public HttpResponse put() throws IOException {
-        return executeEnclosed(new HttpPut(uri.build().toString()));
+        return executeMultiPart(new HttpPut(uri.build().toString()));
     }
 
     public HttpResponse delete() throws IOException {
         return executeUnenclosed(new HttpDelete(uri.build().toString()));
+    }
+
+    private HttpResponse executeMultiPart(HttpEntityEnclosingRequestBase request) throws IOException{
+
+        MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+        if (params.size() > 0) {
+            for (Map.Entry<String, String> param : params.entrySet()){
+                if(param.getKey().equals("current_photo_key")){
+                    try {
+                        multipartEntity.addPart(param.getKey(),
+                                new ByteArrayBody(IOUtils.toByteArray(new CaptureHelper(context).getDecodedImageStream(param.getValue())),
+                                        "image/jpg", param.getValue()+".jpg"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    multipartEntity.addPart(param.getKey(), new StringBody(param.getValue()));
+                }
+            }
+
+
+        }
+        request.setEntity(multipartEntity);
+        return execute(request);
     }
 
     private HttpResponse executeUnenclosed(HttpRequestBase request) throws IOException {
@@ -119,7 +151,6 @@ public class FluentRequest {
 
             request.setURI(URI.create(uri.build().toString()));
         }
-
         return execute(request);
     }
 
@@ -177,6 +208,10 @@ public class FluentRequest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setContext(RapidFtrApplication context) {
+        this.context = context;
     }
 
     protected static class SelfSignedSSLSocketFactory extends SSLSocketFactory {

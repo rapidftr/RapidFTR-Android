@@ -126,12 +126,16 @@ public class CaptureHelper{
     }
 
     public Bitmap loadPhoto(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        @Cleanup InputStream inputStream = getDecodedImageStream(fileNameWithoutExtension);
+        return BitmapFactory.decodeStream(inputStream);
+    }
+
+    public InputStream getDecodedImageStream(String fileNameWithoutExtension) throws GeneralSecurityException, IOException {
         File file = new File(getPhotoDir(), fileNameWithoutExtension + ".jpg");
         if (!file.exists())
             throw new FileNotFoundException();
 
-        @Cleanup InputStream inputStream = getCipherInputStream(file);
-        return BitmapFactory.decodeStream(inputStream);
+        return getCipherInputStream(file);
     }
 
     public Bitmap getThumbnailOrDefault(String fileNameWithoutExtension) {
