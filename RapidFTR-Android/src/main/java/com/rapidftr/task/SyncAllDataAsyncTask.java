@@ -77,7 +77,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
             if(childRepository.exists(incomingChild.getId())){
                 childRepository.update(incomingChild);
             }else{
-                childRepository.create(incomingChild);
+                childRepository.createOrUpdate(incomingChild);
             }
         }
     }

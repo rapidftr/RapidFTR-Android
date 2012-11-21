@@ -48,7 +48,7 @@ public class SyncAllDataAsyncTaskTest {
         new SyncAllDataAsyncTask(formService, childService, childRepository).execute();
 
         verify(childService).getAllChildren();
-        verify(childRepository).create(child);
+        verify(childRepository).createOrUpdate(child);
     }
 
     @Test
