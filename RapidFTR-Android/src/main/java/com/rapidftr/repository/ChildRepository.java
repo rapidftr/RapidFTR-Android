@@ -75,9 +75,13 @@ public class ChildRepository implements Closeable {
 
     private void addHistory(Child child) throws JSONException {
         Child existingChild = get(child.getUniqueId());
-        if(existingChild == null)
-            return;
-        child.put("histories", convertToString((JSONArray) existingChild.opt("histories"), child.changeLogs(existingChild)));
+        if(existingChild != null){
+            JSONArray existingHistories = (JSONArray) existingChild.opt("histories");
+            List<Child.History> histories = child.changeLogs(existingChild);
+            if(histories.size() > 0 || (existingHistories != null && existingHistories.length() > 1))
+                child.put("histories", convertToString(existingHistories, histories));
+        }
+
     }
 
     private String convertToString(JSONArray existingHistories, List<Child.History> histories) throws JSONException {
