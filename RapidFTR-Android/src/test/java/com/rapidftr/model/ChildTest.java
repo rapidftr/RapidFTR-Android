@@ -13,12 +13,11 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
-import java.util.*;
-
 import static com.rapidftr.model.Child.History.*;
+import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -215,7 +214,7 @@ public class ChildTest {
         List<Child.History> histories = updatedChild.changeLogs(oldChild);
 
         JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
-        HashMap fromTo = (HashMap) changesMap.get("nationality");
+        JSONObject fromTo = (JSONObject) changesMap.get("nationality");
 
         assertThat(histories.size(),is(2));
         assertThat(changesMap.names().get(0).toString(), is("nationality"));
@@ -223,7 +222,7 @@ public class ChildTest {
         assertThat(fromTo.get(TO).toString(), is("Indian"));
 
         changesMap = (JSONObject) histories.get(1).get(CHANGES);
-        fromTo = (HashMap) changesMap.get("name");
+        fromTo = (JSONObject) changesMap.get("name");
 
         assertThat(changesMap.names().get(0).toString(), is("name"));
         assertThat(fromTo.get(FROM).toString(),is("old-name"));
