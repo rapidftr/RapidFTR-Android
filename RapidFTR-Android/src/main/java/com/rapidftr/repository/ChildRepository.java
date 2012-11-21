@@ -63,7 +63,7 @@ public class ChildRepository implements Closeable {
         Log.e("ChildRepository", child.toString());
         ContentValues values = new ContentValues();
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
-        values.put(id.getColumnName(), child.getId());
+        values.put(id.getColumnName(), child.getUniqueId());
         values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
         values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
         values.put(Database.ChildTableColumn.created_at.getColumnName(), child.getCreatedAt());
@@ -74,10 +74,14 @@ public class ChildRepository implements Closeable {
     }
 
     private void addHistory(Child child) throws JSONException {
-        Child existingChild = get(child.getId());
-        if(existingChild == null)
-            return;
-        child.put("histories", convertToString((JSONArray) existingChild.opt("histories"), child.changeLogs(existingChild)));
+        Child existingChild = get(child.getUniqueId());
+        if(existingChild != null){
+            JSONArray existingHistories = (JSONArray) existingChild.opt("histories");
+            List<Child.History> histories = child.changeLogs(existingChild);
+            if(histories.size() > 0 || (existingHistories != null && existingHistories.length() > 1))
+                child.put("histories", convertToString(existingHistories, histories));
+        }
+
     }
 
     private String convertToString(JSONArray existingHistories, List<Child.History> histories) throws JSONException {
@@ -97,7 +101,7 @@ public class ChildRepository implements Closeable {
         values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
         values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
 
-        session.update(Database.child.getTableName(), values, format("%s=?", id.getColumnName()), new String[]{child.getId()});
+        session.update(Database.child.getTableName(), values, format("%s=?", id.getColumnName()), new String[]{child.getUniqueId()});
     }
 
     public List<Child> toBeSynced() throws JSONException {

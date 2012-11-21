@@ -37,7 +37,7 @@ public class ChildService {
     public void sync(Child child) throws IOException, JSONException {
         child.setSynced(true);
         FluentRequest request = http()
-                .path(String.format("/children/%s", child.getId()))
+                .path(String.format("/children/%s", child.getUniqueId()))
                 .context(context)
                 .param("child", child.toString());
         request.setContext(context);
@@ -63,7 +63,7 @@ public class ChildService {
         try {
             for (Child child : repository.getAllChildren()) {
                 try {
-                    if (containsIgnoreCase(child.getId(), subString) ||
+                    if (containsIgnoreCase(child.getUniqueId(), subString) ||
                             containsIgnoreCase((String) child.get("name"), subString)) {
                         filteredList.add(child);
                     }

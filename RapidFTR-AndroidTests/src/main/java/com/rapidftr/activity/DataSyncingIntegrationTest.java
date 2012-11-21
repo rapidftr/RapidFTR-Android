@@ -24,7 +24,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest<Logi
         loginPage.login();
     }
 
-    public void workInProgressRpecordIsSuccessfullySyncedAndIdPopulatedWithCouchIdFromServer() throws JSONException, IOException {
+    public void workInProgressRecordIsSuccessfullySyncedAndIdPopulatedWithCouchIdFromServer() throws JSONException, IOException {
         String timeStamp = now().defaultFormat();
         seed(new Child(String.format("{ '_id' : '123', 'timeStamp' : '%s', 'test2' : 'value2' }", timeStamp)));
         solo.clickOnMenuItem("Synchronize");
