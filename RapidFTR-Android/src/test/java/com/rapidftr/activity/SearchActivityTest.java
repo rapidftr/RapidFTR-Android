@@ -35,7 +35,6 @@ public class SearchActivityTest {
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
         doReturn(childService).when(mockInjector).getInstance(ChildService.class);
-
     }
 
     @Test
