@@ -12,6 +12,8 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.util.List;
 
+import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
+import static com.rapidftr.utils.JSONMatcher.hasJSONObjects;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
@@ -42,22 +44,24 @@ public class ChildRepositoryTest {
     @Test
     public void shouldUpdateChildRecordIfIdAlreadyExists() throws Exception {
         ChildRepository repository = new ChildRepository("user1", session);
-        repository.create(new Child("id1", "user1", "{ \"test1\" : \"value1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }"));
-        String updateString = "{ \"test1\" : \"value1\" }";
-        String expectedString = "{\"created_by\":\"user1\",\"test1\":\"value1\",\"synced\":false,\"_id\":\"id1\"}";
+        repository.create(new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
+
+        String updateString = "{ 'test1' : 'value1', 'created_at' : 'today' }";
+        String expectedString = "{'created_by':'user1','test1':'value1','created_at':'today','unique_identifier':'id1'}".replace('\'', '"');
         repository.create(new Child("id1", "user1", updateString));
+
         Child child = repository.get("id1");
-        assertEquals(child.getId(), "id1");
-        assertEquals(child.toString(), expectedString);
+        assertThat(child.getUniqueId(), equalTo("id1"));
+        assertThat(child, equalJSONIgnoreOrder(expectedString));
     }
 
     @Test
     public void shouldGetCorrectlyDeserializesData() throws JSONException, IOException {
-        Child child1 = new Child("id1", "user1", "{ \"test1\" : \"value1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
+        Child child1 = new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         repository.create(child1);
 
         Child child2 = repository.get("id1");
-        assertThat(child1, equalTo(child2));
+        assertThat(child1.values(), equalJSONIgnoreOrder(child2.values()));
     }
 
     @Test
@@ -73,10 +77,10 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldReturnMatchedChildRecords() throws JSONException, IOException {
-        Child child1 = new Child("id1", "user1", "{ \"name\" : \"child1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
-        Child child2 = new Child("id2", "user2", "{ \"name\" : \"child2\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
-        Child child3 = new Child("id3", "user3", "{ \"name\" : \"child3\", \"test2\" :  \"child01\", \"test3\" : [ \"1\", 2, \"3\" ] }");
-        Child child4 = new Child("child1", "user4", "{ \"name\" : \"child4\", \"test2\" :  \"test2\", \"test3\" : [ \"1\", 2, \"3\" ] }");
+        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child01', 'test3' : [ '1', 2, '3' ] }");
+        Child child4 = new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
         repository.create(child1);
         repository.create(child2);
         repository.create(child3);
@@ -111,7 +115,7 @@ public class ChildRepositoryTest {
     }
 
     @Test
-    public void shouldReturnsAllRecords() throws JSONException {
+    public void shouldReturnsAllRecords() throws JSONException, IOException {
         Child child1 = new Child("id1", "user1", null);
         Child child2 = new Child("id2", "user1", null);
         repository.create(child1);
@@ -119,7 +123,7 @@ public class ChildRepositoryTest {
 
         List<Child> children = repository.getChildrenByOwner();
         assertThat(children.size(), equalTo(2));
-        assertThat(children, hasItems(child1, child2));
+        assertThat(children, hasJSONObjects(child1, child2));
     }
 
     @Test
@@ -170,7 +174,7 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldUpdateAnExstingChild() throws JSONException {
-        Child child = new Child("id1", "user1", "{ \"test1\" : \"value1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
+        Child child = new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         repository.create(child);
         child.put("someNewField", "someNewValue");
 

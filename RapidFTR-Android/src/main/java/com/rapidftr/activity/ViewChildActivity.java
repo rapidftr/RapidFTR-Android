@@ -3,7 +3,6 @@ package com.rapidftr.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.repository.ChildRepository;
@@ -19,11 +18,12 @@ public class ViewChildActivity extends RegisterChildActivity {
     @Override
     protected void initialize() {
         setContentView(R.layout.activity_register_child);
-        setLabel(R.string.edit);
         initializeData();
         initializePager();
         initializeSpinner();
         initializeListeners();
+        setLabel(R.string.edit);
+        setTitle();
     }
 
     @Override
@@ -36,7 +36,7 @@ public class ViewChildActivity extends RegisterChildActivity {
 
         try {
             child = repository.get(childId);
-            ((TextView) findViewById(R.id.title)).setText(child.getId());
+            ((TextView) findViewById(R.id.title)).setText(child.getUniqueId());
         } catch (Exception e) {
             makeToast(R.string.internal_error);
         }

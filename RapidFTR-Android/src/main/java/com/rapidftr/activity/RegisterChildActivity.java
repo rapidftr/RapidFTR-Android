@@ -4,10 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.*;
 import com.rapidftr.R;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.forms.FormSection;
@@ -42,7 +39,7 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
         initialize();
     }
 
-    private void tryPopulatingChildFromParcel() {
+    protected void tryPopulatingChildFromParcel() {
         try {
             if( getIntent().getParcelableExtra("child") != null)
                 child = new Child(((Child) getIntent().getParcelableExtra("child")).getJsonString());
@@ -59,15 +56,25 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
 
     protected void initialize() {
         setContentView(R.layout.activity_register_child);
-        setLabel(R.string.save);
         initializeData();
         initializePager();
         initializeSpinner();
         initializeListeners();
+        setLabel(R.string.save);
+        setTitle();
     }
 
     protected void setLabel(int label) {
         ((Button) findViewById(R.id.submit)).setText(label);
+    }
+
+    protected void setTitle() {
+        try {
+            String title = child == null || child.getShortId() == null ? getString(R.string.new_registration) : child.getShortId();
+            ((TextView) findViewById(R.id.title)).setText(title);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     protected void initializeData() {
@@ -129,7 +136,7 @@ public class RegisterChildActivity extends RapidFtrActivity implements AsyncTask
     @Override
     public void onSuccess() throws Exception {
         Intent intent = new Intent(RegisterChildActivity.this, ViewChildActivity.class);
-        intent.putExtra("id", child.getId());
+        intent.putExtra("id", child.getUniqueId());
         child.put("saved", true);
         finish();
         startActivity(intent);

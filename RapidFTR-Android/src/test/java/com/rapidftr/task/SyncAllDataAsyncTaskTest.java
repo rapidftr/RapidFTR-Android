@@ -54,7 +54,7 @@ public class SyncAllDataAsyncTaskTest {
     @Test
     public void shouldUpdateExistingChildIfTheyAlreadyExistInDatabase() throws Exception {
         Child child = mock(Child.class);
-        given(child.getId()).willReturn("1234");
+        given(child.getUniqueId()).willReturn("1234");
         given(childService.getAllChildren()).willReturn(newArrayList(child));
         given(childRepository.exists("1234")).willReturn(true);
 

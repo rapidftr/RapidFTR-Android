@@ -14,9 +14,11 @@ import com.rapidftr.forms.FormSection;
 import com.rapidftr.utils.ApplicationInjector;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 import lombok.experimental.Accessors;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.runners.model.InitializationError;
 import org.mockito.MockitoAnnotations;
 
+import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,6 +53,7 @@ public class CustomTestRunner extends RobolectricTestRunner {
     public CustomTestRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
         MockitoAnnotations.initMocks(testClass);
+        Security.addProvider(new BouncyCastleProvider());
     }
 
     @Override

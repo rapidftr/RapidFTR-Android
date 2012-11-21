@@ -48,9 +48,9 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
             TextView nameView = (TextView) view.findViewById(R.id.row_child_name);
             ImageView imageView = (ImageView) view.findViewById(R.id.thumbnail);
             try {
-                setFields(String.valueOf(child.getId()), uniqueIdView);
-                setFields(String.valueOf(child.getFromJSON("name")), nameView);
-                imageView.setImageBitmap(captureHelper.getThumbnailOrDefault(child.getFromJSON("current_photo_key")));
+                setFields(String.valueOf(child.getShortId()), uniqueIdView);
+                setFields(String.valueOf(child.optString("name")), nameView);
+                imageView.setImageBitmap(captureHelper.getThumbnailOrDefault(child.optString("current_photo_key")));
                 view.setOnClickListener(clickListener(child));
             } catch (JSONException e) {
                 Log.e("ChildViewAdapter", "Error while creating the list" + e.getMessage());
@@ -66,7 +66,7 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
             public void onClick(View v) {
                 Intent intent = new Intent(context, ViewChildActivity.class);
                 try {
-                    intent.putExtra("id", child.getId());
+                    intent.putExtra("id", child.getUniqueId());
                 } catch (JSONException e) {
                     Log.e("ChildViewAdapter", "Error while creating the list" + e.getMessage());
                 }
