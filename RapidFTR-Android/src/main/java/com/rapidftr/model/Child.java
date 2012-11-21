@@ -12,10 +12,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
@@ -219,11 +216,14 @@ public class Child extends JSONObject implements Parcelable, Comparable {
             String oldValue = child.optString(names.getString(i), "");
             if(!oldValue.equals(newValue)){
                 History history = new History();
+                HashMap changes = new HashMap();
+                HashMap fromTo = new HashMap();
+                fromTo.put(FROM, oldValue);
+                fromTo.put(TO, newValue);
+                changes.put(names.getString(i), fromTo);
                 history.put(USER_NAME, child.getOwner());
-                history.put(TIMESTAMP, child.getCreatedAt());
-                history.put(FIELD_NAME, names.getString(i));
-                history.put(FROM, oldValue);
-                history.put(TO, newValue);
+                history.put(DATETIME, child.getCreatedAt());
+                history.put(CHANGES, changes);
                 histories.add(history);
             }
         }
@@ -232,8 +232,8 @@ public class Child extends JSONObject implements Parcelable, Comparable {
 
     public class History extends JSONObject implements Parcelable{
         public static final String USER_NAME = "user_name";
-        public static final String TIMESTAMP = "timestamp";
-        public static final String FIELD_NAME = "field_name";
+        public static final String DATETIME = "datetime";
+        public static final String CHANGES = "changes";
         public static final String FROM = "from";
         public static final String TO = "to";
 

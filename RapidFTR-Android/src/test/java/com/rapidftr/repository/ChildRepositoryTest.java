@@ -11,6 +11,8 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.rapidftr.model.Child.History.*;
@@ -192,15 +194,19 @@ public class ChildRepositoryTest {
         Child spyUpdatedChild = spy(updatedChild);
         List<Child.History> histories = new ArrayList<Child.History>();
         Child.History history = existingChild.new History();
+        HashMap changes = new HashMap();
+        HashMap fromTo = new LinkedHashMap();
+        fromTo.put(FROM, "old-name");
+        fromTo.put(TO, "new-name");
+        changes.put("name", fromTo);
         history.put(USER_NAME, "user");
-        history.put(TIMESTAMP, "timestamp");
-        history.put(FIELD_NAME, "name");
-        history.put(FROM, "old-name");
-        history.put(TO, "new-name");
+        history.put(DATETIME, "timestamp");
+        history.put(CHANGES, changes);
         histories.add(history);
+
         doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild);
         repository.createOrUpdate(spyUpdatedChild);
 
-        verify(spyUpdatedChild).put("histories", "[{\"to\":\"new-name\",\"field_name\":\"name\",\"timestamp\":\"timestamp\",\"user_name\":\"user\",\"from\":\"old-name\"}]");
+        verify(spyUpdatedChild).put("histories", "[{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
     }
 }

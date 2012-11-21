@@ -5,16 +5,15 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-<<<<<<< HEAD
+
 import java.util.*;
-=======
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
->>>>>>> ashok/master
 
 import static com.rapidftr.model.Child.History.*;
 import static junit.framework.Assert.*;
@@ -221,11 +220,14 @@ public class ChildTest {
         Child updatedChild = new Child("id", "user", "{'name' : 'updated-name'}");
         List<Child.History> histories = updatedChild.changeLogs(oldChild);
 
+        JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
+        HashMap fromTo = (HashMap) changesMap.get("name");
+
         assertThat(histories.size() ,is(1));
         assertThat(histories.get(0).get(USER_NAME).toString(), is(updatedChild.getOwner()));
-        assertThat(histories.get(0).get(FIELD_NAME).toString(), is("name"));
-        assertThat(histories.get(0).get(FROM).toString(), is("old-name"));
-        assertThat(histories.get(0).get(TO).toString(), is("updated-name"));
+        assertThat(changesMap.names().get(0).toString(), is("name"));
+        assertThat(fromTo.get(FROM).toString(), is("old-name"));
+        assertThat(fromTo.get(TO).toString(), is("updated-name"));
     }
 
     @Test
@@ -234,13 +236,20 @@ public class ChildTest {
         Child updatedChild = new Child("id", "user", "{'gender' : 'male','nationality' : 'Indian', 'name' : 'new-name'}");
         List<Child.History> histories = updatedChild.changeLogs(oldChild);
 
-        assertThat(histories.size(),is(2));
-        assertThat(histories.get(0).get(FIELD_NAME).toString(), is("nationality"));
-        assertThat(histories.get(0).get(FROM).toString(),is(""));
-        assertThat(histories.get(0).get(TO).toString(), is("Indian"));
+        JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
+        HashMap fromTo = (HashMap) changesMap.get("nationality");
 
-        assertThat(histories.get(1).get(FIELD_NAME).toString(), is("name"));
-        assertThat(histories.get(1).get(FROM).toString(), is("old-name"));
-        assertThat(histories.get(1).get(TO).toString(), is("new-name"));
+        assertThat(histories.size(),is(2));
+        assertThat(changesMap.names().get(0).toString(), is("nationality"));
+        assertThat(fromTo.get(FROM).toString(),is(""));
+        assertThat(fromTo.get(TO).toString(), is("Indian"));
+
+        changesMap = (JSONObject) histories.get(1).get(CHANGES);
+        fromTo = (HashMap) changesMap.get("name");
+
+        assertThat(changesMap.names().get(0).toString(), is("name"));
+        assertThat(fromTo.get(FROM).toString(),is("old-name"));
+        assertThat(fromTo.get(TO).toString(), is("new-name"));
+
     }
 }
