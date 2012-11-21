@@ -92,4 +92,28 @@
         <item name="android:textColor">#ffffff</item>
         <item name="android:padding">5dp</item>
     </style>
+
+    <style name="childrow">
+        <item name="android:padding">2dp</item>
+        <item name="android:layout_marginBottom">1dp</item>
+        <item name="android:textSize">12dp</item>
+    </style>
+
+    <style name="childid">
+        <item name="android:color">#666666</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingBottom">3dp</item>
+    </style>
+
+    <style name="childname">
+        <item name="android:color">#333333</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+
+    <style name="childphoto">
+        <item name="android:padding">1dp</item>
+    </style>
 </resources>
