@@ -2,6 +2,8 @@ package com.rapidftr;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.util.Log;
+import android.widget.Toast;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
@@ -16,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-public class RapidFtrApplication extends Application {
+public class RapidFtrApplication extends Application implements Thread.UncaughtExceptionHandler {
 
     public static final String SHARED_PREFERENCES_FILE = "RAPIDFTR_PREFERENCES";
     public static final String APP_IDENTIFIER = "RapidFTR";
@@ -60,4 +62,15 @@ public class RapidFtrApplication extends Application {
                 iterator.remove();
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Thread.setDefaultUncaughtExceptionHandler(this);
+    }
+
+    @Override
+    public void uncaughtException(Thread thread, Throwable throwable) {
+        Log.e(APP_IDENTIFIER, throwable.getMessage(), throwable);
+        Toast.makeText(this, getString(R.string.internal_error), Toast.LENGTH_LONG).show();
+    }
 }
