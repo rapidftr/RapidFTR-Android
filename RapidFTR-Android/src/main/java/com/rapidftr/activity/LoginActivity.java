@@ -67,8 +67,6 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     private void initializeCrittercismAPM() {
-        boolean optOut = !getBaseUrl().contains("dev.rapidftr.com");
-        Crittercism.setOptOutStatus(optOut);
         Crittercism.init(getApplicationContext(), "50ab25407e69a34895000003");
     }
 

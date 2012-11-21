@@ -8,13 +8,10 @@ import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-<<<<<<< HEAD
-import java.util.*;
-=======
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
->>>>>>> ashok/master
 
 import static com.rapidftr.model.Child.History.*;
 import static junit.framework.Assert.*;
