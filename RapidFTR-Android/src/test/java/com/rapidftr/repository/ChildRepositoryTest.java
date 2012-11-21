@@ -209,4 +209,29 @@ public class ChildRepositoryTest {
 
         verify(spyUpdatedChild).put("histories", "[{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
     }
+
+    @Test
+    public void shouldAppendHistoryIfHistoriesAlreadyExist() throws JSONException {
+        Child existingChild = new Child("id","user1","{\"name\":\"old-name\",\"histories\":[{\"changes\":{\"name\":{}}}, {\"changes\":{\"sex\":{}}}]}");
+        repository.createOrUpdate(existingChild);
+
+        Child updatedChild = new Child("id", "user1", "{'name' : 'updated-name'}");
+        Child spyUpdatedChild = spy(updatedChild);
+        List<Child.History> histories = new ArrayList<Child.History>();
+        Child.History history = existingChild.new History();
+        HashMap changes = new HashMap();
+        HashMap fromTo = new LinkedHashMap();
+        fromTo.put(FROM, "old-name");
+        fromTo.put(TO, "new-name");
+        changes.put("name", fromTo);
+        history.put(USER_NAME, "user");
+        history.put(DATETIME, "timestamp");
+        history.put(CHANGES, changes);
+        histories.add(history);
+
+        doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild);
+        repository.createOrUpdate(spyUpdatedChild);
+
+        verify(spyUpdatedChild).put("histories", "[{\"changes\":{\"name\":{}}},{\"changes\":{\"sex\":{}}},{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
+    }
 }
