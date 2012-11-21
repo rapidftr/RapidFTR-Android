@@ -152,8 +152,8 @@ public class FluentRequest {
 
     public String getBaseUrl(Context context) {
         return context.getApplicationContext()
-              .getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, 0)
-              .getString("SERVER_URL", "");
+                .getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, 0)
+                .getString("SERVER_URL", "");
     }
 
     public int getConnectionTimeout(Context context) {
@@ -171,10 +171,9 @@ public class FluentRequest {
             registry.register(new Scheme("https", new SelfSignedSSLSocketFactory(trusted), 443));
 
             HttpParams params = new BasicHttpParams();
-            ClientConnectionManager cm = new ThreadSafeClientConnManager(params, registry);
-            HttpClient client = new DefaultHttpClient(cm, params);
+            ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(params, registry);
 
-            return client;
+            return new DefaultHttpClient(connectionManager, params);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

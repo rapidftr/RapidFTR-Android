@@ -91,6 +91,12 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>crittercism</groupId>
+                <artifactId>crittercism</artifactId>
+                <version>3.0.3</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.google.android</groupId>
                 <artifactId>support-v4</artifactId>
                 <version>r6</version>
