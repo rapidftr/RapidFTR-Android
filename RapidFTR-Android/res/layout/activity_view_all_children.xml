@@ -8,7 +8,7 @@
                   android:id="@+id/nav_bar"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal">
-        <include layout="@layout/navigation_tabs"/>
+        <include layout="@layout/view_all_tab"/>
     </LinearLayout>
 
     <ListView
@@ -21,6 +21,8 @@
     <LinearLayout android:id="@+id/no_child_view"
                   android:layout_weight="4"
                   android:layout_width="fill_parent"
+                  style="@style/no_child_text"
+                  android:gravity="center_horizontal"
                   android:layout_height="0dip"
                   android:visibility="gone"
                   android:layout_below="@id/search_bar">
