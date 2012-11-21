@@ -14,7 +14,7 @@ public class LoginPage {
 
     public final Solo solo;
 
-    public LoginPage(Solo solo) {
+    public LoginPage(Solo solo){
         this.solo = solo;
     }
 

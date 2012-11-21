@@ -15,7 +15,7 @@ public class JSONMatcher {
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     public static Matcher<JSONObject> equalJSONIgnoreOrder(final Object value) throws IOException {
-        final String content = value.toString();
+        final String content = value.toString().replace('\'', '\"');
         final JsonNode expectedValue = JSON_MAPPER.readTree(content);
 
         return new CustomMatcher<JSONObject>(content) {

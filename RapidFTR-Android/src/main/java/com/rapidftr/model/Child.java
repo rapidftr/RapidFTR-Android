@@ -15,11 +15,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
+import static com.rapidftr.model.Child.History.*;
 import static com.rapidftr.utils.JSONArrays.asJSONArray;
 import static com.rapidftr.utils.JSONArrays.asList;
 
@@ -89,6 +92,10 @@ public class Child extends JSONObject implements Parcelable, Comparable {
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(getJsonString());
+    }
+
+    public String getId() throws JSONException {
+        return getString(internal_id.getColumnName());
     }
 
     public String getUniqueId() throws JSONException {
@@ -204,6 +211,51 @@ public class Child extends JSONObject implements Parcelable, Comparable {
             return new Child[size];
         }
     };
+
+
+    public List<History> changeLogs(Child child) throws JSONException {
+        JSONArray names = this.names();
+        List<History> histories = new ArrayList<History>();
+        for(int i=0; i < names.length(); i++){
+            String newValue = this.optString(names.getString(i), "");
+            String oldValue = child.optString(names.getString(i), "");
+            if(!oldValue.equals(newValue)){
+                History history = new History();
+                HashMap changes = new HashMap();
+                HashMap fromTo = new HashMap();
+                fromTo.put(FROM, oldValue);
+                fromTo.put(TO, newValue);
+                changes.put(names.getString(i), fromTo);
+                history.put(USER_NAME, child.getOwner());
+                history.put(DATETIME, child.getCreatedAt());
+                history.put(CHANGES, changes);
+                histories.add(history);
+            }
+        }
+        return histories;
+    }
+
+    public class History extends JSONObject implements Parcelable{
+        public static final String USER_NAME = "user_name";
+        public static final String DATETIME = "datetime";
+        public static final String CHANGES = "changes";
+        public static final String FROM = "from";
+        public static final String TO = "to";
+
+        public History(){
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int flags) {
+            parcel.writeString(this.toString());
+        }
+
+    }
 
     @Override
     public int compareTo(Object that) {
