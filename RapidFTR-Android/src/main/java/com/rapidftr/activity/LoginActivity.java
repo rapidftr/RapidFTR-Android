@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import com.crittercism.app.Crittercism;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.FormService;
@@ -33,6 +34,7 @@ public class LoginActivity extends RapidFtrActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializeCrittercismAPM();
         context = this;
         loginService = new LoginService();
         if (getContext().isLoggedIn()) {
@@ -62,6 +64,12 @@ public class LoginActivity extends RapidFtrActivity {
                 }
             }
         });
+    }
+
+    private void initializeCrittercismAPM() {
+        boolean optOut = !getBaseUrl().contains("dev.rapidftr.com");
+        Crittercism.setOptOutStatus(optOut);
+        Crittercism.init(getApplicationContext(), "50ab25407e69a34895000003");
     }
 
     @Override

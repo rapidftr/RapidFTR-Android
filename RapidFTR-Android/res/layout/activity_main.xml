@@ -13,11 +13,11 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
     <Button android:text="@string/view_all_children"
-            android:enabled="false"
+            android:id="@+id/view_all_children"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
     <Button android:text="@string/search_for_a_child"
-            android:enabled="false"
+            android:id="@+id/search_child"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
     <Button android:text="@string/synchronize"

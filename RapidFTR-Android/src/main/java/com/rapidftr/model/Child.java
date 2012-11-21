@@ -2,6 +2,7 @@ package com.rapidftr.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import com.google.common.base.Strings;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -11,13 +12,16 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
+import static com.rapidftr.model.Child.History.*;
 
-public class Child extends JSONObject implements Parcelable {
+public class Child extends JSONObject implements Parcelable, Comparable {
 
     public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
     public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();
@@ -196,4 +200,60 @@ public class Child extends JSONObject implements Parcelable {
             return new Child[size];
         }
     };
+
+    public String getFromJSON(String key) {
+        String result = "";
+        try {
+            result = (String) get(key);
+        } catch (JSONException e) {
+            Log.e("ChildJSON", "Doesn't Contains Key : " + key);
+        }
+        return result;
+    }
+
+    public List<History> changeLogs(Child child) throws JSONException {
+        JSONArray names = this.names();
+        List<History> histories = new ArrayList<History>();
+        for(int i=0; i < names.length(); i++){
+            String newValue = this.optString(names.getString(i), "");
+            String oldValue = child.optString(names.getString(i), "");
+            if(!oldValue.equals(newValue)){
+                History history = new History();
+                history.put(USER_NAME, child.getOwner());
+                history.put(TIMESTAMP, child.getCreatedAt());
+                history.put(FIELD_NAME, names.getString(i));
+                history.put(FROM, oldValue);
+                history.put(TO, newValue);
+                histories.add(history);
+            }
+        }
+        return histories;
+    }
+
+    public class History extends JSONObject implements Parcelable{
+        public static final String USER_NAME = "user_name";
+        public static final String TIMESTAMP = "timestamp";
+        public static final String FIELD_NAME = "field_name";
+        public static final String FROM = "from";
+        public static final String TO = "to";
+
+        public History(){
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int flags) {
+            parcel.writeString(this.toString());
+        }
+
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.getFromJSON("name").compareTo(((Child) o).getFromJSON("name"));
+    }
 }

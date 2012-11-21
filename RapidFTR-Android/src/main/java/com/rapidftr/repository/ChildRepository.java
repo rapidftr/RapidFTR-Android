@@ -2,6 +2,7 @@ package com.rapidftr.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
@@ -18,6 +19,7 @@ import java.util.List;
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.id;
+import static java.lang.String.format;
 
 public class ChildRepository implements Closeable {
 
@@ -45,21 +47,44 @@ public class ChildRepository implements Closeable {
         return cursor.moveToNext() ? cursor.getInt(0) : 0;
     }
 
-    public List<Child> all() throws JSONException {
+    public List<Child> getChildrenByOwner() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE child_owner = ? ORDER BY id", new String[]{userName});
         return toChildren(cursor);
     }
 
-    public void create(Child child) throws JSONException {
+    public List<Child> getAllChildren() throws JSONException {
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children",new String[]{});
+        return toChildren(cursor);
+    }
+
+
+    public void createOrUpdate(Child child) throws JSONException {
+        Log.e("ChildRepository", child.toString());
         ContentValues values = new ContentValues();
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
         values.put(id.getColumnName(), child.getId());
         values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
         values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
         values.put(Database.ChildTableColumn.created_at.getColumnName(), child.getCreatedAt());
+        addHistory(child);
         long id = session.replace(Database.child.getTableName(), null, values);
         if (id <= 0)
             throw new IllegalArgumentException();
+    }
+
+    private void addHistory(Child child) throws JSONException {
+        Child existingChild = get(child.getId());
+        if(existingChild == null)
+            return;
+        child.put("histories", convertToString(child.changeLogs(existingChild)));
+    }
+
+    private String convertToString(List<Child.History> histories) {
+        StringBuffer json = new StringBuffer("[");
+        for (Child.History history : histories) {
+            json.append(history.toString());
+        }
+        return json.append("]").toString();
     }
 
     public void update(Child child) throws JSONException {
@@ -67,7 +92,7 @@ public class ChildRepository implements Closeable {
         values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
         values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
 
-        session.update(Database.child.getTableName(), values, String.format("%s=?", id.getColumnName()), new String[]{child.getId()});
+        session.update(Database.child.getTableName(), values, format("%s=?", id.getColumnName()), new String[]{child.getId()});
     }
 
     public List<Child> toBeSynced() throws JSONException {
@@ -95,5 +120,4 @@ public class ChildRepository implements Closeable {
     private Child childFrom(Cursor cursor) throws JSONException {
         return new Child(cursor.getString(0), BooleanColumn.from(cursor.getString(1)).toBoolean());
     }
-
 }

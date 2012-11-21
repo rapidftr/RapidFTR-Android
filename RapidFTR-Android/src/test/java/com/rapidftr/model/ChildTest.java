@@ -8,11 +8,18 @@ import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+<<<<<<< HEAD
+import java.util.*;
+=======
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
+>>>>>>> ashok/master
 
+import static com.rapidftr.model.Child.History.*;
 import static junit.framework.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -191,5 +198,49 @@ public class ChildTest {
 
         assertNotSame(guid1, guid2);
     }
+    
+    @Test
+    public void shouldReturnValueFromJSON() throws JSONException {
+        Child child = new Child("{ 'created_by' : 'test1' }");
+        assertEquals("test1",child.getFromJSON("created_by"));
+        assertEquals("",child.getFromJSON("unknown_key"));
+    }
 
+    @Test
+    public void shouldSortChildrenByNameAlphabetically() throws Exception {
+        Child child1 = new Child("id1", "user1", "{ \"name\" : \"abc\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
+        Child child2 = new Child("id2", "user2", "{ \"name\" : \"def\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
+        List<Child> children = Arrays.asList(child1,child2);
+        Collections.sort(children);
+        assertEquals(child1, children.get(0));
+    }
+
+    @Test
+    public void shouldReturnListOfChangeLogsBasedOnChanges() throws JSONException {
+        Child oldChild = new Child("id", "user", "{'name' : 'old-name'}");
+        Child updatedChild = new Child("id", "user", "{'name' : 'updated-name'}");
+        List<Child.History> histories = updatedChild.changeLogs(oldChild);
+
+        assertThat(histories.size() ,is(1));
+        assertThat(histories.get(0).get(USER_NAME).toString(), is(updatedChild.getOwner()));
+        assertThat(histories.get(0).get(FIELD_NAME).toString(), is("name"));
+        assertThat(histories.get(0).get(FROM).toString(), is("old-name"));
+        assertThat(histories.get(0).get(TO).toString(), is("updated-name"));
+    }
+
+    @Test
+    public void shouldReturnListOfChangeLogsForNewFieldValueToExistingChild() throws JSONException {
+        Child oldChild = new Child("id", "user", "{'gender' : 'male', 'name' : 'old-name'}");
+        Child updatedChild = new Child("id", "user", "{'gender' : 'male','nationality' : 'Indian', 'name' : 'new-name'}");
+        List<Child.History> histories = updatedChild.changeLogs(oldChild);
+
+        assertThat(histories.size(),is(2));
+        assertThat(histories.get(0).get(FIELD_NAME).toString(), is("nationality"));
+        assertThat(histories.get(0).get(FROM).toString(),is(""));
+        assertThat(histories.get(0).get(TO).toString(), is("Indian"));
+
+        assertThat(histories.get(1).get(FIELD_NAME).toString(), is("name"));
+        assertThat(histories.get(1).get(FROM).toString(), is("old-name"));
+        assertThat(histories.get(1).get(TO).toString(), is("new-name"));
+    }
 }
