@@ -53,7 +53,7 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
                 imageView.setImageBitmap(captureHelper.getThumbnailOrDefault(child.optString("current_photo_key")));
                 view.setOnClickListener(clickListener(child));
             } catch (JSONException e) {
-                Log.e("ChildViewAdapter", "Error while creating the list" + e.getMessage());
+                throw new RuntimeException(e);
             }
 
         }
@@ -68,7 +68,7 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
                 try {
                     intent.putExtra("id", child.getUniqueId());
                 } catch (JSONException e) {
-                    Log.e("ChildViewAdapter", "Error while creating the list" + e.getMessage());
+                    throw new RuntimeException(e);
                 }
                 Activity activity = (Activity) context;
                 activity.finish();

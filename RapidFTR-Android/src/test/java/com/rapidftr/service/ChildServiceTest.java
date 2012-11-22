@@ -4,9 +4,10 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.Database;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.utils.FluentRequest;
+import com.rapidftr.utils.http.FluentRequest;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,12 +55,38 @@ public class ChildServiceTest {
 
     @Test
     public void shouldMarkChildAsSyncedWhenSyncing() throws IOException, JSONException {
-        Child child = mock(Child.class);
-        getFakeHttpLayer().setDefaultHttpResponse(201, "ok");
+        Child child = new Child();
+        getFakeHttpLayer().setDefaultHttpResponse(201, "{}");
+
+        child = new ChildService(mockContext(), repository, fluentRequest).sync(child);
+        assertThat(child.isSynced(), is(true));
+        verify(repository).update(child);
+    }
+
+    @Test(expected = SyncFailedException.class)
+    public void shouldRaiseExceptionUponSyncFailure() throws Exception {
+        Child child = new Child();
+        getFakeHttpLayer().setDefaultHttpResponse(503, "error");
 
         new ChildService(mockContext(), repository, fluentRequest).sync(child);
+    }
 
-        verify(child).setSynced(true);
+    @Test
+    public void shouldCallServerURLWithCouchID() throws Exception {
+        Child child = new Child();
+        child.put(Database.ChildTableColumn.internal_id.getColumnName(), "xyz");
+
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/children/xyz", "{}");
+        new ChildService(mockContext(), repository, fluentRequest).sync(child);
+    }
+
+    @Test
+    public void shouldCreateNewChildIfThereIsNoID() throws Exception {
+        Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/children", "{ 'test1' : 'value2' }");
+
+        child = new ChildService(mockContext(), repository, fluentRequest).sync(child);
+        assertThat(child.getString("test1"), is("value2"));
         verify(repository).update(child);
     }
 
@@ -72,25 +100,19 @@ public class ChildServiceTest {
         when(repository.getAllChildren()).thenReturn(fullChildrenList);
         List<Child> searchResults = new ChildService(mockContext(), repository, fluentRequest).searchChildrenInDB("Hild1");
         assertEquals(2,searchResults.size());
-        assertEquals("id1",searchResults.get(0).getUniqueId());
-        assertEquals("child1",searchResults.get(1).getUniqueId());
+        assertEquals("id1", searchResults.get(0).getUniqueId());
+        assertEquals("child1", searchResults.get(1).getUniqueId());
     }
 
-    @Test
+    @Test(expected = SyncFailedException.class)
     public void shouldAddPhotoParamIfPhotoIsCapturedAsPartOfChild() throws JSONException, IOException {
-        FluentRequest mockFluentRequest = mock(FluentRequest.class);
+        FluentRequest mockFluentRequest = spy(new FluentRequest());
         Child child = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'current_photo_key' : '1234ABC'}");
         RapidFtrApplication context = mockContext();
-
-        when(mockFluentRequest.path("/children/id1")).thenReturn(mockFluentRequest);
-        when(mockFluentRequest.context(context)).thenReturn(mockFluentRequest);
-        when(mockFluentRequest.param("child", child.toString())).thenReturn(mockFluentRequest);
-        when(mockFluentRequest.param("current_photo_key", "1234ABC")).thenReturn(mockFluentRequest);
-        when(mockFluentRequest.put()).thenReturn(null);
+        doReturn(null).when(mockFluentRequest).post();
 
         new ChildService(context, repository, mockFluentRequest).sync(child);
-
-        verify(mockFluentRequest).param("current_photo_key","1234ABC");
+        verify(mockFluentRequest).param("current_photo_key", "1234ABC");
     }
 
     private RapidFtrApplication mockContext() {

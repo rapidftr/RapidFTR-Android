@@ -44,7 +44,7 @@ public class SearchActivity extends RapidFtrActivity {
     }
 
     private List<Child> search(String subString) {
-        ChildService childService = getInjector().getInstance(ChildService.class);
+        ChildService childService = inject(ChildService.class);
         subString = subString.trim();
         if ("".equals(subString)) {
             return new ArrayList<Child>();
