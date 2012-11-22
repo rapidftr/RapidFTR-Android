@@ -4,8 +4,10 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.Database;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import org.apache.http.HttpException;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,12 +52,38 @@ public class ChildServiceTest {
 
     @Test
     public void shouldMarkChildAsSyncedWhenSyncing() throws IOException, JSONException {
-        Child child = mock(Child.class);
-        getFakeHttpLayer().setDefaultHttpResponse(201, "ok");
+        Child child = new Child();
+        getFakeHttpLayer().setDefaultHttpResponse(201, "{}");
+
+        child = new ChildService(mockContext(), repository).sync(child);
+        assertThat(child.isSynced(), is(true));
+        verify(repository).update(child);
+    }
+
+    @Test(expected = SyncFailedException.class)
+    public void shouldRaiseExceptionUponSyncFailure() throws Exception {
+        Child child = new Child();
+        getFakeHttpLayer().setDefaultHttpResponse(503, "error");
 
         new ChildService(mockContext(), repository).sync(child);
+    }
 
-        verify(child).setSynced(true);
+    @Test
+    public void shouldCallServerURLWithCouchID() throws Exception {
+        Child child = new Child();
+        child.put(Database.ChildTableColumn.internal_id.getColumnName(), "xyz");
+
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/children/xyz", "{}");
+        new ChildService(mockContext(), repository).sync(child);
+    }
+
+    @Test
+    public void shouldCreateNewChildIfThereIsNoID() throws Exception {
+        Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/children", "{ 'test1' : 'value2' }");
+
+        child = new ChildService(mockContext(), repository).sync(child);
+        assertThat(child.getString("test1"), is("value2"));
         verify(repository).update(child);
     }
 

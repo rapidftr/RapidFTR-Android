@@ -1,13 +1,11 @@
-package com.rapidftr.utils;
+package com.rapidftr.utils.http;
 
 import android.content.Context;
 import android.net.Uri;
-import com.google.common.collect.ObjectArrays;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import lombok.Cleanup;
 import lombok.Getter;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -16,7 +14,6 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -24,17 +21,15 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.Socket;
 import java.net.URI;
-import java.net.UnknownHostException;
-import java.security.*;
-import java.util.*;
+import java.security.KeyStore;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FluentRequest {
 
@@ -96,23 +91,23 @@ public class FluentRequest {
         return this;
     }
 
-    public HttpResponse get() throws IOException {
+    public FluentResponse get() throws IOException {
         return executeUnenclosed(new HttpGet(uri.build().toString()));
     }
 
-    public HttpResponse post() throws IOException {
+    public FluentResponse post() throws IOException {
         return executeEnclosed(new HttpPost(uri.build().toString()));
     }
 
-    public HttpResponse put() throws IOException {
+    public FluentResponse put() throws IOException {
         return executeEnclosed(new HttpPut(uri.build().toString()));
     }
 
-    public HttpResponse delete() throws IOException {
+    public FluentResponse delete() throws IOException {
         return executeUnenclosed(new HttpDelete(uri.build().toString()));
     }
 
-    private HttpResponse executeUnenclosed(HttpRequestBase request) throws IOException {
+    private FluentResponse executeUnenclosed(HttpRequestBase request) throws IOException {
         if (params.size() > 0) {
             for (Map.Entry<String, String> param : params.entrySet())
                 uri.appendQueryParameter(param.getKey(), param.getValue());
@@ -123,7 +118,7 @@ public class FluentRequest {
         return execute(request);
     }
 
-    private HttpResponse executeEnclosed(HttpEntityEnclosingRequestBase request) throws IOException {
+    private FluentResponse executeEnclosed(HttpEntityEnclosingRequestBase request) throws IOException {
         if (params.size() > 0) {
             List<BasicNameValuePair> entities = new ArrayList<BasicNameValuePair>();
             for (Map.Entry<String, String> param : params.entrySet())
@@ -140,14 +135,14 @@ public class FluentRequest {
         return execute(request);
     }
 
-    private HttpResponse execute(HttpRequestBase request) throws IOException {
+    private FluentResponse execute(HttpRequestBase request) throws IOException {
         for (Map.Entry<String, Object> config : configs.entrySet())
             request.getParams().setParameter(config.getKey(), config.getValue());
 
         for (Map.Entry<String, String> header : headers.entrySet())
             request.setHeader(header.getKey(), header.getValue());
 
-        return getHttpClient().execute(request);
+        return new FluentResponse(getHttpClient().execute(request));
     }
 
     public String getBaseUrl(Context context) {
@@ -176,36 +171,6 @@ public class FluentRequest {
             return new DefaultHttpClient(connectionManager, params);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    protected static class SelfSignedSSLSocketFactory extends SSLSocketFactory {
-
-        protected final javax.net.ssl.SSLSocketFactory socketFactory;
-
-        public SelfSignedSSLSocketFactory(KeyStore keyStore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
-            super(null, null, null, null, null, null);
-            this.setHostnameVerifier(BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
-
-            TrustManagerFactory originalCAs = TrustManagerFactory.getInstance("X509");
-            originalCAs.init((KeyStore) null);
-
-            TrustManagerFactory customCAs = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            customCAs.init(keyStore);
-
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, ObjectArrays.concat(customCAs.getTrustManagers(), originalCAs.getTrustManagers(), TrustManager.class), null);
-            socketFactory = sslContext.getSocketFactory();
-        }
-
-        @Override
-        public Socket createSocket() throws IOException {
-            return socketFactory.createSocket();
-        }
-
-        @Override
-        public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
-            return socketFactory.createSocket(socket, host, port, autoClose);
         }
     }
 

@@ -16,9 +16,10 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
+import static com.rapidftr.database.Database.ChildTableColumn.*;
 import java.util.*;
 
-import static com.rapidftr.model.Child.History.*;
+import static com.rapidftr.model.Child.ChildHistory.*;
 import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -124,7 +125,7 @@ public class ChildTest {
     }
 
     @Test
-    public void shouldReturnNamesWithLengthOneInsteadOfNull() {
+    public void shouldReturnNamesWithLengthOneInsteadOfNull() throws JSONException {
         Child child = new Child();
         assertThat(child.names().length(), equalTo(1));
     }
@@ -140,7 +141,7 @@ public class ChildTest {
     }
 
     @Test
-    public void shouldHaveFalseSyncStatusIfTheChildObjectIsCreated(){
+    public void shouldHaveFalseSyncStatusIfTheChildObjectIsCreated() throws JSONException {
         Child child = new Child();
         assertFalse(child.isSynced());
     }
@@ -196,7 +197,7 @@ public class ChildTest {
     public void shouldReturnListOfChangeLogsBasedOnChanges() throws JSONException {
         Child oldChild = new Child("id", "user", "{'name' : 'old-name'}");
         Child updatedChild = new Child("id", "user", "{'name' : 'updated-name'}");
-        List<Child.History> histories = updatedChild.changeLogs(oldChild);
+        List<Child.ChildHistory> histories = updatedChild.changeLogs(oldChild);
 
         JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
         HashMap fromTo = (HashMap) changesMap.get("name");
@@ -212,7 +213,7 @@ public class ChildTest {
     public void shouldReturnListOfChangeLogsForNewFieldValueToExistingChild() throws JSONException {
         Child oldChild = new Child("id", "user", "{'gender' : 'male', 'name' : 'old-name'}");
         Child updatedChild = new Child("id", "user", "{'gender' : 'male','nationality' : 'Indian', 'name' : 'new-name'}");
-        List<Child.History> histories = updatedChild.changeLogs(oldChild);
+        List<Child.ChildHistory> histories = updatedChild.changeLogs(oldChild);
 
         JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
         HashMap fromTo = (HashMap) changesMap.get("nationality");
@@ -228,6 +229,19 @@ public class ChildTest {
         assertThat(changesMap.names().get(0).toString(), is("name"));
         assertThat(fromTo.get(FROM).toString(),is("old-name"));
         assertThat(fromTo.get(TO).toString(), is("new-name"));
-
     }
+
+    @Test
+    public void shouldBeNewIfThereIsNoID() throws JSONException {
+        Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
+        assertThat(child.isNew(), is(true));
+    }
+
+    @Test
+    public void shouldNotBeNewIfThereIsID() throws JSONException {
+        Child child = new Child();
+        child.put(internal_id.getColumnName(), "xyz");
+        assertThat(child.isNew(), is(false));
+    }
+
 }

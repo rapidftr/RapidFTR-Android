@@ -6,7 +6,7 @@ import org.apache.http.HttpResponse;
 
 import java.io.IOException;
 
-import static com.rapidftr.utils.FluentRequest.http;
+import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class LoginService {
 

@@ -35,7 +35,11 @@ public class ChildRepository implements Closeable {
 
     public Child get(String id) throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ? AND child_owner = ?", new String[]{id, userName});
-        return cursor.moveToNext() ? childFrom(cursor) : null;
+        if (cursor.moveToNext()) {
+            return childFrom(cursor);
+        } else {
+            throw new NullPointerException(id);
+        }
     }
 
     public boolean exists(String childId) {
@@ -74,18 +78,18 @@ public class ChildRepository implements Closeable {
     }
 
     private void addHistory(Child child) throws JSONException {
-        Child existingChild = get(child.getUniqueId());
-        if(existingChild == null)
-            return;
-        child.put("histories", convertToString((JSONArray) existingChild.opt("histories"), child.changeLogs(existingChild)));
+        if (exists(child.getUniqueId())) {
+            Child existingChild = get(child.getUniqueId());
+            child.put("histories", convertToString((JSONArray) existingChild.opt("histories"), child.changeLogs(existingChild)));
+        }
     }
 
-    private String convertToString(JSONArray existingHistories, List<Child.History> histories) throws JSONException {
+    private String convertToString(JSONArray existingHistories, List<Child.ChildHistory> histories) throws JSONException {
         StringBuffer json = new StringBuffer("[");
         for(int i = 0; existingHistories != null && (i < existingHistories.length()); i++){
             json.append(existingHistories.get(i)+",");
         }
-        for (Child.History history : histories) {
+        for (Child.ChildHistory history : histories) {
             json.append(history.toString()+",");
         }
         json.setLength(json.length() - 1);

@@ -6,7 +6,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormSection;
 import com.xtremelabs.robolectric.Robolectric;
-import com.xtremelabs.robolectric.shadows.ShadowToast;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,30 +30,28 @@ public class ViewChildActivityTest {
         Robolectric.shadowOf(activity).setIntent(new Intent().putExtra("id", "id1"));
     }
 
-    @Test
-    public void testShouldSetFormSectionFromContext() {
+    @Test(expected = NullPointerException.class)
+    public void testShouldSetFormSectionFromContext() throws JSONException {
         List<FormSection> formSections = new ArrayList<FormSection>();
         RapidFtrApplication.getInstance().setFormSections(formSections);
 
-        activity.initializeData();
+        activity.initializeData(null);
         assertThat(activity.formSections, equalTo(formSections));
     }
 
-    @Test
-    public void shouldShowErrorMessageWhenChildRecordIsNull() throws Exception {
-        activity.initializeData();
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(activity.getString(R.string.internal_error)));
+    @Test(expected = Exception.class)
+    public void shouldThrowErrorIfChildIsNotFound() throws Exception {
+        activity.initializeData(null);
     }
 
     @Test
-    public void testEditListener() {
-        doNothing().when(activity).editChild();
+    public void testEditListener() throws JSONException {
+        doNothing().when(activity).edit();
 
-        activity.onCreate(null);
-        activity.initializeListeners();
+        activity.initializeView();
 
         activity.findViewById(R.id.submit).performClick();
-        verify(activity).editChild();
+        verify(activity).edit();
     }
 
 

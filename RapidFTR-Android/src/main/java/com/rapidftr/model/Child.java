@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
-import static com.rapidftr.model.Child.History.*;
+import static com.rapidftr.model.Child.ChildHistory.*;
 import static com.rapidftr.utils.JSONArrays.asJSONArray;
 import static com.rapidftr.utils.JSONArrays.asList;
 
@@ -197,30 +197,14 @@ public class Child extends JSONObject implements Parcelable, Comparable {
         return new JSONObject(this, names.toArray(new String[names.size()]));
     }
 
-    /** Static field used to regenerate object, individually or as arrays */
-    public static final Parcelable.Creator<Child> CREATOR = new Parcelable.Creator<Child>() {
-        public Child createFromParcel(Parcel pc) {
-            try {
-                return new Child(pc);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        public Child[] newArray(int size) {
-            return new Child[size];
-        }
-    };
-
-
-    public List<History> changeLogs(Child child) throws JSONException {
+    public List<ChildHistory> changeLogs(Child child) throws JSONException {
         JSONArray names = this.names();
-        List<History> histories = new ArrayList<History>();
+        List<ChildHistory> histories = new ArrayList<ChildHistory>();
         for(int i=0; i < names.length(); i++){
             String newValue = this.optString(names.getString(i), "");
             String oldValue = child.optString(names.getString(i), "");
             if(!oldValue.equals(newValue)){
-                History history = new History();
+                ChildHistory history = new ChildHistory();
                 HashMap changes = new HashMap();
                 HashMap fromTo = new HashMap();
                 fromTo.put(FROM, oldValue);
@@ -235,15 +219,21 @@ public class Child extends JSONObject implements Parcelable, Comparable {
         return histories;
     }
 
-    public class History extends JSONObject implements Parcelable{
+    public boolean isNew() {
+        return !has(internal_id.getColumnName());
+    }
+
+    @Override
+    public int compareTo(Object that) {
+        return this.optString("name").compareTo(((Child) that).optString("name"));
+    }
+
+    public class ChildHistory extends JSONObject implements Parcelable {
         public static final String USER_NAME = "user_name";
         public static final String DATETIME = "datetime";
         public static final String CHANGES = "changes";
         public static final String FROM = "from";
         public static final String TO = "to";
-
-        public History(){
-        }
 
         @Override
         public int describeContents() {
@@ -255,10 +245,5 @@ public class Child extends JSONObject implements Parcelable, Comparable {
             parcel.writeString(this.toString());
         }
 
-    }
-
-    @Override
-    public int compareTo(Object that) {
-        return this.optString("name").compareTo(((Child) that).optString("name"));
     }
 }

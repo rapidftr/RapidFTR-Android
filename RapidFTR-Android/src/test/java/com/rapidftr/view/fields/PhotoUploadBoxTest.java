@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.widget.ImageView;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.activity.BaseChildActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.utils.CaptureHelper;
@@ -124,7 +125,7 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
         RapidFtrActivity activity = (RapidFtrActivity) view.getContext();
         doNothing().when(view).deleteCapture();
 
-        activity.onActivityResult(RegisterChildActivity.CLOSE_ACTIVITY, 999, null);
+        activity.onActivityResult(BaseChildActivity.CLOSE_ACTIVITY, 999, null);
         verify(view).deleteCapture();
     }
 

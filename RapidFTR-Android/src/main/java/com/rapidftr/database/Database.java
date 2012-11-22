@@ -1,6 +1,7 @@
 package com.rapidftr.database;
 
 import com.google.common.base.Predicate;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
@@ -56,27 +57,23 @@ public enum Database {
         id("id"),
         content("child_json"),
         owner("child_owner"),
+        synced("synced"),
 
-        internal_id("_id", true, true),
-        synced("synced", true, true),
-
+        internal_id("_id", true, false),
         unique_identifier("unique_identifier", true, false),
-
         created_by("created_by", true, false),
+
+        revision("_rev", true, true),
         thumbnail("_thumbnail", true, true),
         created_at("created_at", true, true),
         updated_at("updated_at", true, true);
 
-        private final String columnName;
+        private @Getter final String columnName;
         private final boolean isInternal;
         private final boolean isSystem;
 
         ChildTableColumn(String columnName) {
             this(columnName, false, false);
-        }
-
-        public String getColumnName() {
-            return columnName;
         }
 
         public static Iterable<ChildTableColumn> internalFields() {
