@@ -3,11 +3,11 @@ package com.rapidftr.utils;
 import android.content.Context;
 import android.net.Uri;
 import com.google.common.collect.ObjectArrays;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import lombok.Cleanup;
 import lombok.Getter;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -51,12 +51,13 @@ public class FluentRequest {
     private final Map<String, String> params  = new HashMap<String, String>();
     private final Map<String, Object> configs = new HashMap<String, Object>();
     private final Uri.Builder uri = new Uri.Builder();
-    private RapidFtrApplication context;
+    private Context context;
 
     public static FluentRequest http() {
         return new FluentRequest();
     }
 
+    @Inject
     public FluentRequest() {
         header("Accept", "application/json");
         scheme("http"); // TODO: Default scheme should be https, but how to specify URL in Login Screen?
@@ -99,6 +100,7 @@ public class FluentRequest {
     }
 
     public FluentRequest context(Context context) {
+        this.context = context;
         host(getBaseUrl(context));
         config(HttpConnectionParams.CONNECTION_TIMEOUT, getConnectionTimeout(context));
         return this;
@@ -121,14 +123,13 @@ public class FluentRequest {
     }
 
     private HttpResponse executeMultiPart(HttpEntityEnclosingRequestBase request) throws IOException{
-
         MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
         if (params.size() > 0) {
             for (Map.Entry<String, String> param : params.entrySet()){
                 if(param.getKey().equals("current_photo_key")){
                     try {
                         multipartEntity.addPart(param.getKey(),
-                                new ByteArrayBody(IOUtils.toByteArray(new CaptureHelper(context).getDecodedImageStream(param.getValue())),
+                                new ByteArrayBody(IOUtils.toByteArray(new CaptureHelper((RapidFtrApplication)context).getDecodedImageStream(param.getValue())),
                                         "image/jpg", param.getValue()+".jpg"));
                     } catch (Exception e) {
                         e.printStackTrace();

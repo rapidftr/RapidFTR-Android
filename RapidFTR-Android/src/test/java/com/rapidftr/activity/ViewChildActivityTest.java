@@ -35,7 +35,7 @@ public class ViewChildActivityTest {
         List<FormSection> formSections = new ArrayList<FormSection>();
         RapidFtrApplication.getInstance().setFormSections(formSections);
 
-        activity.initializeData();
+        activity.initialize();
         assertThat(activity.formSections, equalTo(formSections));
     }
 

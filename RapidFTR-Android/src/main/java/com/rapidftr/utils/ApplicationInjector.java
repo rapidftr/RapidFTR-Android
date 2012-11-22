@@ -24,6 +24,7 @@ public class ApplicationInjector extends AbstractModule {
         bind(ChildRepository.class);
         bind(FormService.class);
         bind(SyncAllDataAsyncTask.class);
+        bind(FluentRequest.class);
         bind(ChildService.class);
     }
 

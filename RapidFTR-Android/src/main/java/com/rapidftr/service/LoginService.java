@@ -2,6 +2,7 @@ package com.rapidftr.service;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
+import com.rapidftr.RapidFtrApplication;
 import org.apache.http.HttpResponse;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ public class LoginService {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
         return http()
-              .context(context)
+              .context((RapidFtrApplication)context)
               .path("/sessions")
               .host(url)
               .param("imei", telephonyManager.getDeviceId())

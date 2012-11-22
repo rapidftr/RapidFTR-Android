@@ -20,36 +20,36 @@ import java.util.Map;
 
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.rapidftr.utils.FluentRequest.http;
 import static java.util.Arrays.asList;
 
 public class ChildService {
 
     private RapidFtrApplication context;
     private ChildRepository repository;
+    private FluentRequest fluentRequest;
 
     @Inject
-    public ChildService(RapidFtrApplication context, ChildRepository repository) {
+    public ChildService(RapidFtrApplication context, ChildRepository repository, FluentRequest fluentRequest) {
         this.context = context;
         this.repository = repository;
+        this.fluentRequest = fluentRequest;
     }
 
     public void sync(Child child) throws IOException, JSONException {
         child.setSynced(true);
-        FluentRequest request = http()
+        fluentRequest
                 .path(String.format("/children/%s", child.getUniqueId()))
                 .context(context)
                 .param("child", child.toString());
-        request.setContext(context);
-        if(child.opt("current_photo_key") != null && !child.opt("current_photo_key").equals("")){
-            request.param("current_photo_key", child.opt("current_photo_key").toString());
+        if (child.opt("current_photo_key") != null && !child.optString("current_photo_key").equals("")) {
+            fluentRequest.param("current_photo_key", child.optString("current_photo_key"));
         }
-         request.put();
+        fluentRequest.put();
         repository.update(child);
     }
 
     public List<Child> getAllChildren() throws IOException {
-        HttpResponse response = http()
+        HttpResponse response = fluentRequest
                 .context(context)
                 .path("/children")
                 .get();

@@ -46,7 +46,7 @@ public class FluentRequestTest {
     @Test
     public void testSimplePut() throws IOException {
         Robolectric.getFakeHttpLayer().addHttpResponseRule("PUT", "http://example.com/", response);
-        assertThat(http().host("example.com").put(null), equalTo(response));
+        assertThat(http().host("example.com").put(), equalTo(response));
     }
 
     @Test

@@ -26,7 +26,7 @@ import java.util.Calendar;
 import static android.graphics.BitmapFactory.decodeResource;
 
 @RequiredArgsConstructor(suppressConstructorProperties = true)
-public class CaptureHelper{
+public class CaptureHelper {
 
     protected final RapidFtrApplication application;
 
@@ -55,7 +55,7 @@ public class CaptureHelper{
     }
 
     public Bitmap getCapture() throws IOException {
-         return BitmapFactory.decodeFile(getTempCaptureFile().getAbsolutePath());
+        return BitmapFactory.decodeFile(getTempCaptureFile().getAbsolutePath());
     }
 
     public void deleteCaptures() {
@@ -75,7 +75,7 @@ public class CaptureHelper{
         ContentResolver resolver = application.getContentResolver();
 
         @Cleanup Cursor cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[] {BaseColumns._ID, MediaStore.Images.ImageColumns.DATE_TAKEN,  MediaStore.Images.ImageColumns.DATA },
+                new String[]{BaseColumns._ID, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.DATA},
                 null, null, null);
 
         while (cursor != null && cursor.moveToNext()) {
@@ -110,13 +110,14 @@ public class CaptureHelper{
         return Bitmap.createScaledBitmap(image, width, height, false);
     }
 
-    protected void save(Bitmap bitmap, String fileNameWithoutExtension)  throws IOException, GeneralSecurityException {
+    protected void save(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
         File file = new File(getPhotoDir(), fileNameWithoutExtension + ".jpg");
         if (!file.exists())
             file.createNewFile();
         @Cleanup OutputStream outputStream = getCipherOutputStream(file);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream);
     }
+
     public void saveThumbnail(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
         save(scaleImageTo(bitmap, 96, 96), fileNameWithoutExtension + "_thumb");
     }
@@ -144,7 +145,8 @@ public class CaptureHelper{
             if (fileNameWithoutExtension != null) {
                 bitmap = loadThumbnail(fileNameWithoutExtension);
             }
-        } catch (Exception e) { }
+        } catch (Exception e) {
+        }
 
         return bitmap != null ? bitmap : getDefaultThumbnail();
     }
@@ -152,13 +154,13 @@ public class CaptureHelper{
     /**
      * We need to generate a Cipher key from the DbKey (since we cannot just directly use the dbKey as password)
      * So we generate the following:
-     *    Salt   - salt is not supposed to be secure, it is just for avoiding dictionary based attacks
-     *             salt is almost always stored along with the encrypted data
-     *             so in our case we use the file name as a seed for generating a random salt
-     *    Key    - 256 bit cipher key generated from Password and Salt
-     *    IV     - Initialization vector, some random number to begin with, again generated from file name
-     *    Cipher - Cipher created from key and IV
-     *
+     * Salt   - salt is not supposed to be secure, it is just for avoiding dictionary based attacks
+     * salt is almost always stored along with the encrypted data
+     * so in our case we use the file name as a seed for generating a random salt
+     * Key    - 256 bit cipher key generated from Password and Salt
+     * IV     - Initialization vector, some random number to begin with, again generated from file name
+     * Cipher - Cipher created from key and IV
+     * <p/>
      * Reference: http://nelenkov.blogspot.in/2012/04/using-password-based-encryption-on.html
      */
     protected Cipher getCipher(int mode, String fileName) throws GeneralSecurityException {
