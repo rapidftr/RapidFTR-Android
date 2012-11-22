@@ -57,9 +57,16 @@ public class Child extends JSONObject implements Parcelable, Comparable {
 
     public Child(String content) throws JSONException {
         super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
+        setHistories();
         if (!has(created_at.getColumnName())) {
             setCreatedAt(RapidFtrDateTime.now().defaultFormat());
         }
+    }
+
+    private void setHistories() throws JSONException {
+        String histories = this.optString(HISTORIES, null);
+        if (histories != null)
+            this.put(HISTORIES, new JSONArray(histories));
     }
 
     public Child(String content, boolean synced) throws JSONException {
@@ -235,6 +242,7 @@ public class Child extends JSONObject implements Parcelable, Comparable {
     }
 
     public class History extends JSONObject implements Parcelable{
+        public static final String HISTORIES = "histories";
         public static final String USER_NAME = "user_name";
         public static final String DATETIME = "datetime";
         public static final String CHANGES = "changes";
