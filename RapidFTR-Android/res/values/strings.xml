@@ -53,4 +53,8 @@
     <string name="edit">Edit</string>
     <string name="save">Save</string>
 
+    <string name="register_tab_name">Register</string>
+    <string name="view_all_tab_name">View All</string>
+    <string name="search_tab_name">Search</string>
+
 </resources>

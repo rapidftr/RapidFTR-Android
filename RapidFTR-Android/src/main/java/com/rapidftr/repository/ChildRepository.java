@@ -20,6 +20,8 @@ import java.util.List;
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.id;
+import static com.rapidftr.database.Database.child;
+import static com.rapidftr.model.Child.History.HISTORIES;
 import static java.lang.String.format;
 
 public class ChildRepository implements Closeable {
@@ -43,8 +45,8 @@ public class ChildRepository implements Closeable {
     }
 
     public boolean exists(String childId) {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE id = ?", new String[]{childId});
-        return cursor.getCount() > 0;
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE id = ?", new String[] { childId == null ? "" : childId });
+        return cursor.moveToNext() && cursor.getCount() > 0;
     }
 
     public int size() {
@@ -66,12 +68,12 @@ public class ChildRepository implements Closeable {
     public void createOrUpdate(Child child) throws JSONException {
         Log.e("ChildRepository", child.toString());
         ContentValues values = new ContentValues();
+        addHistory(child);
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
         values.put(id.getColumnName(), child.getUniqueId());
         values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
         values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
         values.put(Database.ChildTableColumn.created_at.getColumnName(), child.getCreatedAt());
-        addHistory(child);
         long id = session.replace(Database.child.getTableName(), null, values);
         if (id <= 0)
             throw new IllegalArgumentException();
@@ -80,16 +82,19 @@ public class ChildRepository implements Closeable {
     private void addHistory(Child child) throws JSONException {
         if (exists(child.getUniqueId())) {
             Child existingChild = get(child.getUniqueId());
-            child.put("histories", convertToString((JSONArray) existingChild.opt("histories"), child.changeLogs(existingChild)));
+            JSONArray existingHistories = (JSONArray) existingChild.opt(HISTORIES);
+            List<Child.History> histories = child.changeLogs(existingChild);
+            if(histories.size() > 0 || (existingHistories != null && existingHistories.length() > 1))
+                child.put(HISTORIES, convertToString(existingHistories, histories));
         }
     }
 
-    private String convertToString(JSONArray existingHistories, List<Child.ChildHistory> histories) throws JSONException {
+    private String convertToString(JSONArray existingHistories, List<Child.History> histories) throws JSONException {
         StringBuffer json = new StringBuffer("[");
         for(int i = 0; existingHistories != null && (i < existingHistories.length()); i++){
             json.append(existingHistories.get(i)+",");
         }
-        for (Child.ChildHistory history : histories) {
+        for (Child.History history : histories) {
             json.append(history.toString()+",");
         }
         json.setLength(json.length() - 1);

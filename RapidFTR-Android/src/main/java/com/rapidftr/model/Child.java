@@ -16,13 +16,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
-import static com.rapidftr.model.Child.ChildHistory.*;
+import static com.rapidftr.model.Child.History.*;
 import static com.rapidftr.utils.JSONArrays.asJSONArray;
 import static com.rapidftr.utils.JSONArrays.asList;
 
@@ -58,9 +57,16 @@ public class Child extends JSONObject implements Parcelable, Comparable {
 
     public Child(String content) throws JSONException {
         super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
+        setHistories();
         if (!has(created_at.getColumnName())) {
             setCreatedAt(RapidFtrDateTime.now().defaultFormat());
         }
+    }
+
+    private void setHistories() throws JSONException {
+        String histories = this.optString(HISTORIES, null);
+        if (histories != null)
+            this.put(HISTORIES, new JSONArray(histories));
     }
 
     public Child(String content, boolean synced) throws JSONException {
@@ -99,7 +105,7 @@ public class Child extends JSONObject implements Parcelable, Comparable {
     }
 
     public String getUniqueId() throws JSONException {
-        return getString(unique_identifier.getColumnName());
+        return has(unique_identifier.getColumnName()) ? getString(unique_identifier.getColumnName()) : null;
     }
 
     public String getShortId() throws JSONException {
@@ -197,16 +203,16 @@ public class Child extends JSONObject implements Parcelable, Comparable {
         return new JSONObject(this, names.toArray(new String[names.size()]));
     }
 
-    public List<ChildHistory> changeLogs(Child child) throws JSONException {
+    public List<History> changeLogs(Child child) throws JSONException {
         JSONArray names = this.names();
-        List<ChildHistory> histories = new ArrayList<ChildHistory>();
+        List<History> histories = new ArrayList<History>();
         for(int i=0; i < names.length(); i++){
             String newValue = this.optString(names.getString(i), "");
             String oldValue = child.optString(names.getString(i), "");
             if(!oldValue.equals(newValue)){
-                ChildHistory history = new ChildHistory();
-                HashMap changes = new HashMap();
-                HashMap fromTo = new HashMap();
+                History history = new History();
+                JSONObject changes = new JSONObject();
+                JSONObject fromTo = new JSONObject();
                 fromTo.put(FROM, oldValue);
                 fromTo.put(TO, newValue);
                 changes.put(names.getString(i), fromTo);
@@ -228,7 +234,8 @@ public class Child extends JSONObject implements Parcelable, Comparable {
         return this.optString("name").compareTo(((Child) that).optString("name"));
     }
 
-    public class ChildHistory extends JSONObject implements Parcelable {
+    public class History extends JSONObject implements Parcelable{
+        public static final String HISTORIES = "histories";
         public static final String USER_NAME = "user_name";
         public static final String DATETIME = "datetime";
         public static final String CHANGES = "changes";

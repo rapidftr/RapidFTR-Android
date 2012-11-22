@@ -2,11 +2,14 @@ package com.rapidftr.utils.http;
 
 import android.content.Context;
 import android.net.Uri;
+import com.google.common.collect.ObjectArrays;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.IOUtils;
 import lombok.Cleanup;
 import lombok.Getter;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
@@ -14,6 +17,11 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -21,11 +29,16 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.Socket;
 import java.net.URI;
-import java.security.KeyStore;
+import java.net.UnknownHostException;
+import java.security.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,11 +52,13 @@ public class FluentRequest {
     private final Map<String, String> params  = new HashMap<String, String>();
     private final Map<String, Object> configs = new HashMap<String, Object>();
     private final Uri.Builder uri = new Uri.Builder();
+    private Context context;
 
     public static FluentRequest http() {
         return new FluentRequest();
     }
 
+    @Inject
     public FluentRequest() {
         header("Accept", "application/json");
         scheme("http"); // TODO: Default scheme should be https, but how to specify URL in Login Screen?
@@ -86,6 +101,7 @@ public class FluentRequest {
     }
 
     public FluentRequest context(Context context) {
+        this.context = context;
         host(getBaseUrl(context));
         config(HttpConnectionParams.CONNECTION_TIMEOUT, getConnectionTimeout(context));
         return this;
@@ -100,11 +116,34 @@ public class FluentRequest {
     }
 
     public FluentResponse put() throws IOException {
-        return executeEnclosed(new HttpPut(uri.build().toString()));
+        return executeMultiPart(new HttpPut(uri.build().toString()));
     }
 
     public FluentResponse delete() throws IOException {
         return executeUnenclosed(new HttpDelete(uri.build().toString()));
+    }
+
+    private FluentResponse executeMultiPart(HttpEntityEnclosingRequestBase request) throws IOException{
+        MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+        if (params.size() > 0) {
+            for (Map.Entry<String, String> param : params.entrySet()){
+                if(param.getKey().equals("current_photo_key")){
+                    try {
+                        multipartEntity.addPart(param.getKey(),
+                                new ByteArrayBody(IOUtils.toByteArray(new CaptureHelper((RapidFtrApplication) context).getDecodedImageStream(param.getValue())),
+                                        "image/jpg", param.getValue()+".jpg"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    multipartEntity.addPart(param.getKey(), new StringBody(param.getValue()));
+                }
+            }
+
+
+        }
+        request.setEntity(multipartEntity);
+        return execute(request);
     }
 
     private FluentResponse executeUnenclosed(HttpRequestBase request) throws IOException {
@@ -114,7 +153,6 @@ public class FluentRequest {
 
             request.setURI(URI.create(uri.build().toString()));
         }
-
         return execute(request);
     }
 
@@ -171,6 +209,36 @@ public class FluentRequest {
             return new DefaultHttpClient(connectionManager, params);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    protected static class SelfSignedSSLSocketFactory extends SSLSocketFactory {
+
+        protected final javax.net.ssl.SSLSocketFactory socketFactory;
+
+        public SelfSignedSSLSocketFactory(KeyStore keyStore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
+            super(null, null, null, null, null, null);
+            this.setHostnameVerifier(BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+
+            TrustManagerFactory originalCAs = TrustManagerFactory.getInstance("X509");
+            originalCAs.init((KeyStore) null);
+
+            TrustManagerFactory customCAs = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            customCAs.init(keyStore);
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, ObjectArrays.concat(customCAs.getTrustManagers(), originalCAs.getTrustManagers(), TrustManager.class), null);
+            socketFactory = sslContext.getSocketFactory();
+        }
+
+        @Override
+        public Socket createSocket() throws IOException {
+            return socketFactory.createSocket();
+        }
+
+        @Override
+        public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
+            return socketFactory.createSocket(socket, host, port, autoClose);
         }
     }
 

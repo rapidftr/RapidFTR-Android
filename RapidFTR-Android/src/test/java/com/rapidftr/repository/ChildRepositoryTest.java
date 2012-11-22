@@ -4,7 +4,9 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Child;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,13 +18,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static com.rapidftr.model.Child.ChildHistory.*;
+import static com.rapidftr.model.Child.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static com.rapidftr.utils.JSONMatcher.hasJSONObjects;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.*;
@@ -198,8 +201,8 @@ public class ChildRepositoryTest {
 
         Child updatedChild = new Child("id", "user1", "{'name' : 'updated-name'}");
         Child spyUpdatedChild = spy(updatedChild);
-        List<Child.ChildHistory> histories = new ArrayList<Child.ChildHistory>();
-        Child.ChildHistory history = updatedChild.new ChildHistory();
+        List<Child.History> histories = new ArrayList<Child.History>();
+        Child.History history = updatedChild.new History();
         HashMap changes = new HashMap();
         HashMap fromTo = new LinkedHashMap();
         fromTo.put(FROM, "old-name");
@@ -213,7 +216,9 @@ public class ChildRepositoryTest {
         doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild);
         repository.createOrUpdate(spyUpdatedChild);
 
-        verify(spyUpdatedChild).put("histories", "[{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
+        verify(spyUpdatedChild).put(HISTORIES, "[{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
+        Child savedChild = repository.get(updatedChild.getUniqueId());
+        assertThat(savedChild.get(HISTORIES).toString(), is("[{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"to\":\"new-name\",\"from\":\"old-name\"}}}]"));
     }
 
     @Test
@@ -223,8 +228,8 @@ public class ChildRepositoryTest {
 
         Child updatedChild = new Child("id", "user1", "{'name' : 'updated-name'}");
         Child spyUpdatedChild = spy(updatedChild);
-        List<Child.ChildHistory> histories = new ArrayList<Child.ChildHistory>();
-        Child.ChildHistory history = updatedChild.new ChildHistory();
+        List<Child.History> histories = new ArrayList<Child.History>();
+        Child.History history = updatedChild.new History();
         HashMap changes = new HashMap();
         HashMap fromTo = new LinkedHashMap();
         fromTo.put(FROM, "old-name");
@@ -238,6 +243,21 @@ public class ChildRepositoryTest {
         doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild);
         repository.createOrUpdate(spyUpdatedChild);
 
-        verify(spyUpdatedChild).put("histories", "[{\"changes\":{\"name\":{}}},{\"changes\":{\"sex\":{}}},{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
+        verify(spyUpdatedChild).put(HISTORIES, "[{\"changes\":{\"name\":{}}},{\"changes\":{\"sex\":{}}},{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
+    }
+
+    @Test
+    public void shouldConstructTheHistoryObjectIfHistoriesArePassedAsStringInContent() throws JSONException {
+        Child child = new Child("id", "user1", "{\"histories\":[{\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}, {\"changes\":{\"sex\":{\"from\":\"\",\"to\":\"male\"}}}]}", false);
+        repository.createOrUpdate(child);
+        List<Child> children = repository.toBeSynced();
+        JSONArray histories = (JSONArray) children.get(0).get(HISTORIES);
+        assertThat(histories.length(), is(2));
+        JSONObject name = (JSONObject) ((JSONObject) ((JSONObject) histories.get(0)).get("changes")).get("name");
+        JSONObject sex = (JSONObject) ((JSONObject) ((JSONObject) histories.get(1)).get("changes")).get("sex");
+        assertThat(name.get("from").toString(), is("old-name"));
+        assertThat(name.get("to").toString(), is("new-name"));
+        assertThat(sex.get("from").toString(), is(""));
+        assertThat(sex.get("to").toString(), is("male"));
     }
 }
