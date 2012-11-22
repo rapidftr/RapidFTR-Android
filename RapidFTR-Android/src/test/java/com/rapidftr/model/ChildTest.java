@@ -227,6 +227,5 @@ public class ChildTest {
         assertThat(changesMap.names().get(0).toString(), is("name"));
         assertThat(fromTo.get(FROM).toString(),is("old-name"));
         assertThat(fromTo.get(TO).toString(), is("new-name"));
-
     }
 }
