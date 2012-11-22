@@ -20,6 +20,7 @@ import java.util.List;
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.id;
+import static com.rapidftr.model.Child.History.HISTORIES;
 import static java.lang.String.format;
 
 public class ChildRepository implements Closeable {
@@ -62,12 +63,12 @@ public class ChildRepository implements Closeable {
     public void createOrUpdate(Child child) throws JSONException {
         Log.e("ChildRepository", child.toString());
         ContentValues values = new ContentValues();
+        addHistory(child);
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
         values.put(id.getColumnName(), child.getUniqueId());
         values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
         values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
         values.put(Database.ChildTableColumn.created_at.getColumnName(), child.getCreatedAt());
-        addHistory(child);
         long id = session.replace(Database.child.getTableName(), null, values);
         if (id <= 0)
             throw new IllegalArgumentException();
@@ -76,10 +77,10 @@ public class ChildRepository implements Closeable {
     private void addHistory(Child child) throws JSONException {
         Child existingChild = get(child.getUniqueId());
         if(existingChild != null){
-            JSONArray existingHistories = (JSONArray) existingChild.opt("histories");
+            JSONArray existingHistories = (JSONArray) existingChild.opt(HISTORIES);
             List<Child.History> histories = child.changeLogs(existingChild);
             if(histories.size() > 0 || (existingHistories != null && existingHistories.length() > 1))
-                child.put("histories", convertToString(existingHistories, histories));
+                child.put(HISTORIES, convertToString(existingHistories, histories));
         }
 
     }
