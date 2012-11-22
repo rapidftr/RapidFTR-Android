@@ -16,7 +16,8 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest<Login
         super.setUp();
         loginPage.login();
         registerChildPage.navigateToRegisterPage();
-}
+    }
+
     @Override
     public void tearDown() throws  Exception{
         solo.goBackToActivity("MainActivity");
