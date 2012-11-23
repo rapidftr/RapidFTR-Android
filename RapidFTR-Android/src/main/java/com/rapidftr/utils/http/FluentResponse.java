@@ -1,8 +1,8 @@
 package com.rapidftr.utils.http;
 
 import lombok.Delegate;
+import lombok.EqualsAndHashCode;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpResponseException;
 
 public class FluentResponse implements HttpResponse {
 

@@ -1,26 +1,25 @@
 package com.rapidftr.activity;
 
-import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
+import com.rapidftr.activity.pages.ChildPage;
 import com.rapidftr.activity.pages.LoginPage;
-import com.rapidftr.activity.pages.RegisterChildPage;
 
-public abstract class BaseActivityIntegrationTest<T extends Activity> extends ActivityInstrumentationTestCase2<T> {
+public abstract class BaseActivityIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
     public Solo solo;
     public LoginPage loginPage;
-    public RegisterChildPage registerChildPage;
+    public ChildPage childPage;
 
-    public BaseActivityIntegrationTest(Class<T> activityClass) {
-        super(activityClass);
+    public BaseActivityIntegrationTest() {
+        super(LoginActivity.class);
     }
 
     @Override
     public void setUp() throws Exception {
         solo = new Solo(getInstrumentation(), getActivity());
         loginPage = new LoginPage(solo);
-        registerChildPage = new RegisterChildPage(solo);
+        childPage = new ChildPage(solo);
     }
 
     @Override
