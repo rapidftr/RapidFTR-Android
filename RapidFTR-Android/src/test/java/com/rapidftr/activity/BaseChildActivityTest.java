@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.MenuItem;
 import android.widget.Spinner;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
@@ -25,7 +24,6 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -151,15 +149,6 @@ public class BaseChildActivityTest {
         activity.child.setSynced(true);
         activity.save();
         assertEquals(false, activity.child.isSynced());
-    }
-
-    @Test
-    public void shouldCallSyncWhenMenuSelected() {
-        doNothing().when(activity).sync();
-        MenuItem item = mock(MenuItem.class);
-        given(item.getItemId()).willReturn(R.id.synchronize_child);
-        activity.onOptionsItemSelected(item);
-        verify(activity).sync();
     }
 
 }
