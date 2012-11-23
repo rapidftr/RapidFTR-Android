@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
-import com.rapidftr.R;
 
 public abstract class AsyncTaskWithDialog<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
@@ -30,7 +29,6 @@ public abstract class AsyncTaskWithDialog<Params, Progress, Result> extends Asyn
                 try {
                     return actualTask.doInBackground(params);
                 } catch (Exception e) {
-                    onError();
                     return null;
                 }
             }
@@ -39,19 +37,15 @@ public abstract class AsyncTaskWithDialog<Params, Progress, Result> extends Asyn
             protected void onPostExecute(Result result) {
                 dialog.dismiss();
                 int message = result == null ? failureMessage : successMessage;
-                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 
                 try {
                     actualTask.onPostExecute(result);
                 } catch (Exception e) {
-                    onError();
+                    message = failureMessage;
                 }
-            }
 
-            protected void onError() {
-                Toast.makeText(context, R.string.internal_error, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
             }
-
         };
 
     }

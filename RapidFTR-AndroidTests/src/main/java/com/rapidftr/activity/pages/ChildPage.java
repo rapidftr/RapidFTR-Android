@@ -8,12 +8,12 @@ import com.jayway.android.robotium.solo.Solo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegisterChildPage {
+public class ChildPage {
 
     public Solo solo;
     int formPosition ;
 
-    public RegisterChildPage(Solo solo) {
+    public ChildPage(Solo solo) {
         this.solo = solo;
     }
 
