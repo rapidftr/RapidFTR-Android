@@ -30,7 +30,7 @@ public class ViewChildActivityTest {
         Robolectric.shadowOf(activity).setIntent(new Intent().putExtra("id", "id1"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = RuntimeException.class)
     public void testShouldSetFormSectionFromContext() throws JSONException {
         List<FormSection> formSections = new ArrayList<FormSection>();
         RapidFtrApplication.getInstance().setFormSections(formSections);
