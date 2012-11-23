@@ -1,8 +1,11 @@
 package com.rapidftr.task;
 
-import android.app.ProgressDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.widget.Toast;
+import android.widget.RemoteViews;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.activity.RapidFtrActivity;
@@ -15,13 +18,18 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.List;
 
+import static java.lang.System.currentTimeMillis;
+
 public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
 
+    public static final int NOTIFICATION_ID = 1010;
     private FormService formService;
     private ChildService childService;
     private ChildRepository childRepository;
-    private ProgressDialog progressDialog;
     private RapidFtrActivity context;
+    private int MAX_PROGRESS = 30;
+    private Notification notification;
+    private NotificationManager notificationManager;
 
     @Inject
     public SyncAllDataAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository) {
@@ -32,45 +40,59 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected void onPreExecute() {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Starting sync...");
-        progressDialog.show();
+        initNotifiers();
+        configureNotification();
+    }
+
+    private void configureNotification() {
+        Intent intent = new Intent(context, RapidFtrActivity.class);
+        notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT;
+        notification.contentIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        notification.contentView = new RemoteViews(context.getPackageName(), R.layout.progress_bar);
     }
 
     @Override
     protected Boolean doInBackground(Void... notRelevant) {
         try {
-            progressDialog.setMessage("Step 1 of 3 - Syncing Form Sections...");
+            setProgressAndNotify("Step 1 of 3 - Syncing Form Sections...", 0);
             formService.getPublishedFormSections();
-            publishProgress("Step 2 of 3 - Sending records to server...");
+            setProgressAndNotify("Step 2 of 3 - Sending records to server...", 10);
             List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
             sendChildrenToServer(childrenToSyncWithServer);
-            publishProgress("Step 3 of 3 - Bringing down records from server...");
+            setProgressAndNotify("Step 3 of 3 - Bringing down records from server...", 20);
             saveIncomingChildren();
-            publishProgress("Sync complete.");
+            setProgressAndNotify("Sync complete.", 30);
         } catch (Exception e) {
-            publishProgress("Sync failed. please try again.");
+            setProgressAndNotify("Sync failed. please try again.", 30);
             return false;
         }
         return true;
     }
 
-    @Override
-    protected void onProgressUpdate(String... progressMessages) {
-        progressDialog.setMessage(progressMessages[0]);
-    }
 
     @Override
     protected void onPostExecute(Boolean result) {
-        if(progressDialog.isShowing()){
-            progressDialog.dismiss();
-        }
+        notificationManager.cancel(NOTIFICATION_ID);
+    }
+
+    private void initNotifiers() {
+        notification = new Notification(R.drawable.icon, "Syncing in progress...", currentTimeMillis());
+        notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+    }
+
+    private void setProgressAndNotify(String statusText, int progress) {
+        notification.contentView.setTextViewText(R.id.status_text, statusText);
+        notification.contentView.setProgressBar(R.id.status_progress, MAX_PROGRESS, progress, false);
+        notificationManager.notify(NOTIFICATION_ID, notification);
     }
 
     private void sendChildrenToServer(List<Child> childrenToSyncWithServer) {
+        String subStatusFormat = "Records %s/" + childrenToSyncWithServer.size() + " Uploaded";
+        int counter = 0;
         for (Child child : childrenToSyncWithServer) {
             try {
                 childService.sync(child);
+                setProgressAndNotify(String.format(subStatusFormat, ++counter), 15);
             } catch (Exception e) {
                 // TODO: Handle error
             }
@@ -80,9 +102,9 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
     private void saveIncomingChildren() throws IOException, JSONException {
         for (Child incomingChild : childService.getAllChildren()) {
             incomingChild.setSynced(true);
-            if(childRepository.exists(incomingChild.getUniqueId())){
+            if (childRepository.exists(incomingChild.getUniqueId())) {
                 childRepository.update(incomingChild);
-            }else{
+            } else {
                 childRepository.createOrUpdate(incomingChild);
             }
         }
