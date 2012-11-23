@@ -24,6 +24,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -142,6 +143,14 @@ public class BaseChildActivityTest {
         activity.child = child;
         activity.save();
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(activity.getString(R.string.save_child_invalid)));
+    }
+
+    @Test
+    public void shouldMarkChildSyncStateToFalseWhenEverChildIsSaved() throws Exception {
+        activity.child = new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        activity.child.setSynced(true);
+        activity.save();
+        assertEquals(false, activity.child.isSynced());
     }
 
     @Test

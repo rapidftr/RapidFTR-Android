@@ -1,5 +1,7 @@
 package com.rapidftr.service;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import com.google.common.base.Function;
 import com.google.common.io.CharStreams;
@@ -7,6 +9,7 @@ import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.utils.CaptureHelper;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
 import org.apache.http.HttpResponse;
@@ -16,6 +19,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.SyncFailedException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +50,7 @@ public class ChildService {
             fluentRequest.param("current_photo_key", child.optString("current_photo_key"));
         }
 
-        FluentResponse response = child.isNew() ? fluentRequest.post() : fluentRequest.put();
+        FluentResponse response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
 
         if (response != null && response.isSuccess()) {
             String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
@@ -56,6 +60,17 @@ public class ChildService {
             return child;
         } else {
             throw new SyncFailedException(child.getUniqueId());
+        }
+    }
+
+    public void setPrimaryPhoto(Child child, String currentPhotoKey) throws JSONException, IOException {
+        //TODO need to modify this code once we implement multiple images. Can clean the webapp API, so that
+        //TODO we can send the primary photo along with the child put request
+
+        if(!currentPhotoKey.equals("")){
+            String setPrimaryPhotoPath = "/children/"+child.get(internal_id.getColumnName())+"/select_primary_photo/"+currentPhotoKey;
+            fluentRequest.path(setPrimaryPhotoPath);
+            fluentRequest.put();
         }
     }
 
@@ -105,5 +120,21 @@ public class ChildService {
                 }
             }
         }));
+    }
+
+    public void setPhoto(Child child) throws IOException, GeneralSecurityException {
+        HttpResponse httpResponse = getPhoto(child);
+        Bitmap bitmap = BitmapFactory.decodeStream(httpResponse.getEntity().getContent());
+        CaptureHelper captureHelper = new CaptureHelper(context);
+        String current_photo_key = child.optString("current_photo_key");
+        captureHelper.saveThumbnail(bitmap, current_photo_key);
+        captureHelper.savePhoto(bitmap, current_photo_key);
+    }
+
+    public HttpResponse getPhoto(Child child) throws IOException {
+        return fluentRequest
+                    .path(String.format("/children/%s/photo/%s", child.optString("_id"), child.optString("current_photo_key")))
+                    .context(context)
+                    .get();
     }
 }

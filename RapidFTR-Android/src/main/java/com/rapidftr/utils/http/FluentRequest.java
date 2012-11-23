@@ -108,6 +108,10 @@ public class FluentRequest {
         return executeEnclosed(new HttpPost(uri.build().toString()));
     }
 
+    public FluentResponse postWithMultipart() throws IOException {
+        return executeMultiPart(new HttpPost(uri.build().toString()));
+    }
+
     public FluentResponse put() throws IOException {
         return executeMultiPart(new HttpPut(uri.build().toString()));
     }

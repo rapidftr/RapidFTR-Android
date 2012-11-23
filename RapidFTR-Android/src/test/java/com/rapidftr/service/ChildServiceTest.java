@@ -16,6 +16,7 @@ import org.mockito.Mock;
 
 import java.io.IOException;
 import java.io.SyncFailedException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,10 +110,21 @@ public class ChildServiceTest {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         Child child = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'current_photo_key' : '1234ABC'}");
         RapidFtrApplication context = mockContext();
-        doReturn(null).when(mockFluentRequest).post();
+        doReturn(null).when(mockFluentRequest).postWithMultipart();
 
         new ChildService(context, repository, mockFluentRequest).sync(child);
         verify(mockFluentRequest).param("current_photo_key", "1234ABC");
+    }
+
+    @Test
+    public void shouldFetchPrimaryPhotoFromServer() throws JSONException, IOException, GeneralSecurityException {
+        FluentRequest mockFluentRequest = spy(new FluentRequest());
+        Child child = new Child("id1", "user1", "{ '_id' : '1234abcd' ,'current_photo_key' : 'image_file_name'}");
+        getFakeHttpLayer().setDefaultHttpResponse(200, "image stream");
+
+        new ChildService(mockContext(), repository, mockFluentRequest).getPhoto(child);
+
+        verify(mockFluentRequest).path("/children/1234abcd/photo/image_file_name");
     }
 
     private RapidFtrApplication mockContext() {
