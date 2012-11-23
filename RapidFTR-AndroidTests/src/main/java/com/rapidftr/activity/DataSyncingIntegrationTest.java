@@ -7,7 +7,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-import static com.rapidftr.utils.FluentRequest.http;
+import static com.rapidftr.utils.http.FluentRequest.http;
 import static com.rapidftr.utils.RapidFtrDateTime.now;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

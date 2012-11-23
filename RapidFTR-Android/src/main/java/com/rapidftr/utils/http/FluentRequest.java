@@ -1,4 +1,4 @@
-package com.rapidftr.utils;
+package com.rapidftr.utils.http;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,9 +6,10 @@ import com.google.common.collect.ObjectArrays;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.IOUtils;
 import lombok.Cleanup;
 import lombok.Getter;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
@@ -106,30 +107,30 @@ public class FluentRequest {
         return this;
     }
 
-    public HttpResponse get() throws IOException {
+    public FluentResponse get() throws IOException {
         return executeUnenclosed(new HttpGet(uri.build().toString()));
     }
 
-    public HttpResponse post() throws IOException {
+    public FluentResponse post() throws IOException {
         return executeEnclosed(new HttpPost(uri.build().toString()));
     }
 
-    public HttpResponse put() throws IOException {
+    public FluentResponse put() throws IOException {
         return executeMultiPart(new HttpPut(uri.build().toString()));
     }
 
-    public HttpResponse delete() throws IOException {
+    public FluentResponse delete() throws IOException {
         return executeUnenclosed(new HttpDelete(uri.build().toString()));
     }
 
-    private HttpResponse executeMultiPart(HttpEntityEnclosingRequestBase request) throws IOException{
+    private FluentResponse executeMultiPart(HttpEntityEnclosingRequestBase request) throws IOException{
         MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
         if (params.size() > 0) {
             for (Map.Entry<String, String> param : params.entrySet()){
                 if(param.getKey().equals("current_photo_key")){
                     try {
                         multipartEntity.addPart(param.getKey(),
-                                new ByteArrayBody(IOUtils.toByteArray(new CaptureHelper((RapidFtrApplication)context).getDecodedImageStream(param.getValue())),
+                                new ByteArrayBody(IOUtils.toByteArray(new CaptureHelper((RapidFtrApplication) context).getDecodedImageStream(param.getValue())),
                                         "image/jpg", param.getValue()+".jpg"));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -145,7 +146,7 @@ public class FluentRequest {
         return execute(request);
     }
 
-    private HttpResponse executeUnenclosed(HttpRequestBase request) throws IOException {
+    private FluentResponse executeUnenclosed(HttpRequestBase request) throws IOException {
         if (params.size() > 0) {
             for (Map.Entry<String, String> param : params.entrySet())
                 uri.appendQueryParameter(param.getKey(), param.getValue());
@@ -155,7 +156,7 @@ public class FluentRequest {
         return execute(request);
     }
 
-    private HttpResponse executeEnclosed(HttpEntityEnclosingRequestBase request) throws IOException {
+    private FluentResponse executeEnclosed(HttpEntityEnclosingRequestBase request) throws IOException {
         if (params.size() > 0) {
             List<BasicNameValuePair> entities = new ArrayList<BasicNameValuePair>();
             for (Map.Entry<String, String> param : params.entrySet())
@@ -172,14 +173,14 @@ public class FluentRequest {
         return execute(request);
     }
 
-    private HttpResponse execute(HttpRequestBase request) throws IOException {
+    private FluentResponse execute(HttpRequestBase request) throws IOException {
         for (Map.Entry<String, Object> config : configs.entrySet())
             request.getParams().setParameter(config.getKey(), config.getValue());
 
         for (Map.Entry<String, String> header : headers.entrySet())
             request.setHeader(header.getKey(), header.getValue());
 
-        return getHttpClient().execute(request);
+        return new FluentResponse(getHttpClient().execute(request));
     }
 
     public String getBaseUrl(Context context) {
@@ -209,10 +210,6 @@ public class FluentRequest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void setContext(RapidFtrApplication context) {
-        this.context = context;
     }
 
     protected static class SelfSignedSSLSocketFactory extends SSLSocketFactory {

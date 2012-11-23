@@ -20,6 +20,7 @@ import java.util.List;
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.id;
+import static com.rapidftr.database.Database.child;
 import static com.rapidftr.model.Child.History.HISTORIES;
 import static java.lang.String.format;
 
@@ -36,12 +37,16 @@ public class ChildRepository implements Closeable {
 
     public Child get(String id) throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ? AND child_owner = ?", new String[]{id, userName});
-        return cursor.moveToNext() ? childFrom(cursor) : null;
+        if (cursor.moveToNext()) {
+            return childFrom(cursor);
+        } else {
+            throw new NullPointerException(id);
+        }
     }
 
     public boolean exists(String childId) {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE id = ?", new String[]{childId});
-        return cursor.getCount() > 0;
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE id = ?", new String[] { childId == null ? "" : childId });
+        return cursor.moveToNext() && cursor.getCount() > 0;
     }
 
     public int size() {
@@ -75,14 +80,13 @@ public class ChildRepository implements Closeable {
     }
 
     private void addHistory(Child child) throws JSONException {
-        Child existingChild = get(child.getUniqueId());
-        if(existingChild != null){
+        if (exists(child.getUniqueId())) {
+            Child existingChild = get(child.getUniqueId());
             JSONArray existingHistories = (JSONArray) existingChild.opt(HISTORIES);
             List<Child.History> histories = child.changeLogs(existingChild);
             if(histories.size() > 0 || (existingHistories != null && existingHistories.length() > 1))
                 child.put(HISTORIES, convertToString(existingHistories, histories));
         }
-
     }
 
     private String convertToString(JSONArray existingHistories, List<Child.History> histories) throws JSONException {

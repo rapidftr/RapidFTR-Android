@@ -10,7 +10,8 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.CaptureHelper;
-import com.rapidftr.utils.FluentRequest;
+import com.rapidftr.utils.http.FluentRequest;
+import com.rapidftr.utils.http.FluentResponse;
 import org.apache.http.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
@@ -18,6 +19,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.SyncFailedException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static java.util.Arrays.asList;
 
 public class ChildService {
@@ -40,17 +43,25 @@ public class ChildService {
         this.fluentRequest = fluentRequest;
     }
 
-    public void sync(Child child) throws IOException, JSONException {
-        fluentRequest
-                .path(String.format("/children/%s", child.getUniqueId()))
-                .context(context)
-                .param("child", child.toString());
+    public Child sync(Child child) throws IOException, JSONException {
+        String path = child.isNew() ? "/children" : String.format("/children/%s", child.get(internal_id.getColumnName()));
+
+        fluentRequest.path(path).context(context).param("child", child.values().toString());
         if (child.opt("current_photo_key") != null && !child.optString("current_photo_key").equals("")) {
             fluentRequest.param("current_photo_key", child.optString("current_photo_key"));
         }
-        fluentRequest.put();
-        child.setSynced(true);
-        repository.update(child);
+
+        FluentResponse response = child.isNew() ? fluentRequest.post() : fluentRequest.put();
+
+        if (response != null && response.isSuccess()) {
+            String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
+            child = new Child(source);
+            child.setSynced(true);
+            repository.update(child);
+            return child;
+        } else {
+            throw new SyncFailedException(child.getUniqueId());
+        }
     }
 
     public List<Child> getAllChildren() throws IOException {

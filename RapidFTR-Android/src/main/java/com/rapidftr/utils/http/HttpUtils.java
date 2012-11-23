@@ -1,4 +1,4 @@
-package com.rapidftr.utils;
+package com.rapidftr.utils.http;
 
 
 import com.rapidftr.R;

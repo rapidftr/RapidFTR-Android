@@ -2,7 +2,9 @@ package com.rapidftr.task;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.widget.Toast;
 import com.google.inject.Inject;
+import com.rapidftr.R;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
@@ -41,10 +43,10 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
         try {
             progressDialog.setMessage("Step 1 of 3 - Syncing Form Sections...");
             formService.getPublishedFormSections();
-            publishProgress("Step 2 of 3 - sending records to server...");
+            publishProgress("Step 2 of 3 - Sending records to server...");
             List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
             sendChildrenToServer(childrenToSyncWithServer);
-            publishProgress("Step 3 of 3 - bringing down records from server...");
+            publishProgress("Step 3 of 3 - Bringing down records from server...");
             saveIncomingChildren();
             publishProgress("Sync complete.");
         } catch (Exception e) {
@@ -66,9 +68,13 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
         }
     }
 
-    private void sendChildrenToServer(List<Child> childrenToSyncWithServer) throws IOException, JSONException {
+    private void sendChildrenToServer(List<Child> childrenToSyncWithServer) {
         for (Child child : childrenToSyncWithServer) {
-            childService.sync(child);
+            try {
+                childService.sync(child);
+            } catch (Exception e) {
+                // TODO: Handle error
+            }
         }
     }
 
