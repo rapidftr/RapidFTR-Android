@@ -111,7 +111,8 @@ public class CaptureHelper {
     }
 
     protected void save(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        File file = new File(getPhotoDir(), fileNameWithoutExtension + ".jpg");
+        fileNameWithoutExtension = fileNameWithoutExtension.contains(".jpg")? fileNameWithoutExtension : fileNameWithoutExtension + ".jpg";
+        File file = new File(getPhotoDir(), fileNameWithoutExtension);
         if (!file.exists())
             file.createNewFile();
         @Cleanup OutputStream outputStream = getCipherOutputStream(file);

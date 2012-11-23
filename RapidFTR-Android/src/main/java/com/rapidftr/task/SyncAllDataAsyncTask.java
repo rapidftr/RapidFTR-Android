@@ -11,6 +11,7 @@ import com.rapidftr.service.FormService;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
@@ -71,7 +72,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
         }
     }
 
-    private void saveIncomingChildren() throws IOException, JSONException {
+    private void saveIncomingChildren() throws IOException, JSONException, GeneralSecurityException {
         for (Child incomingChild : childService.getAllChildren()) {
             incomingChild.setSynced(true);
             if(childRepository.exists(incomingChild.getUniqueId())){
@@ -79,6 +80,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
             }else{
                 childRepository.createOrUpdate(incomingChild);
             }
+         childService.setPhoto(incomingChild);
         }
     }
 
