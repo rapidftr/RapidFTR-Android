@@ -114,7 +114,7 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
 
         child.setOwner(getContext().getUserName());
         child.generateUniqueId();
-
+        child.setSynced(false);
         @Cleanup ChildRepository repository = inject(ChildRepository.class);
         repository.createOrUpdate(child);
         return child;

@@ -49,6 +49,7 @@ public class SyncAllDataAsyncTaskTest {
 
         verify(childService).getAllChildren();
         verify(childRepository).createOrUpdate(child);
+        verify(childService).setPhoto(child);
     }
 
     @Test
