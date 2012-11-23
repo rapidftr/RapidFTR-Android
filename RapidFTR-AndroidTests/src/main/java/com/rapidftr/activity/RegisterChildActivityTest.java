@@ -5,17 +5,13 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-public class RegisterChildActivityTest extends BaseActivityIntegrationTest<LoginActivity> {
-
-    public RegisterChildActivityTest() {
-        super(LoginActivity.class);
-    }
+public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         loginPage.login();
-        registerChildPage.navigateToRegisterPage();
+        childPage.navigateToRegisterPage();
 }
     @Override
     public void tearDown() throws  Exception{
@@ -25,9 +21,8 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest<Login
         super.tearDown();
     }
 
-
     public void testFormSectionsDisplayed() {
-       List<String> actualSections = registerChildPage.getDropDownFormSections();
+       List<String> actualSections = childPage.getDropDownFormSections();
        List<String> expectedSections = new ArrayList<String>(asList(new String[]{"Basic Identity", "Family details", "Care Arrangements", "Separation History", "Protection Concerns",
                "Childs Wishes", "Other Interviews", "Other Tracing Info", "Interview Details", "Automation Form"}));
         assertEquals(actualSections, expectedSections);
@@ -35,26 +30,24 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest<Login
 
 
     public void testFieldsDisplayed() {
-        registerChildPage.selectFormSection("Automation Form");
+        childPage.selectFormSection("Automation Form");
         List expectedFields = asList("Automation TextField", "Automation TextArea", "Automation CheckBoxes", "Automation Select",
                 "Automation Radio", "Automation Number", "Automation Date");
-        assertTrue(registerChildPage.verifyFields(expectedFields));
+        assertTrue(childPage.verifyFields(expectedFields));
     }
 
     public void testFieldsHidden() {
-        registerChildPage.selectFormSection("Automation Form");
+        childPage.selectFormSection("Automation Form");
         List hiddenField= asList("Hidden TextField");
-        assertFalse(registerChildPage.verifyFields(hiddenField));
-
+        assertFalse(childPage.verifyFields(hiddenField));
     }
 
-
-    public void testRegisterChild() {
-        registerChildPage.selectFormSection("Automation Form");
+    public void testRegisterAndSyncChild() {
+        childPage.selectFormSection("Automation Form");
         List automationFormData = asList("Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012");
-        registerChildPage.enterAutomationFormDetails(automationFormData);
-        registerChildPage.save();
-        registerChildPage.verifyRegisterChildDetail(automationFormData,"Automation Form");
+        childPage.enterAutomationFormDetails(automationFormData);
+        childPage.save();
+        childPage.verifyRegisterChildDetail(automationFormData,"Automation Form");
     }
 
 }

@@ -2,7 +2,6 @@ package com.rapidftr.utils.http;
 
 import android.content.Context;
 import android.net.Uri;
-import com.google.common.collect.ObjectArrays;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -17,7 +16,6 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
@@ -29,16 +27,11 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.Socket;
 import java.net.URI;
-import java.net.UnknownHostException;
-import java.security.*;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -213,36 +206,6 @@ public class FluentRequest {
             return new DefaultHttpClient(connectionManager, params);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    protected static class SelfSignedSSLSocketFactory extends SSLSocketFactory {
-
-        protected final javax.net.ssl.SSLSocketFactory socketFactory;
-
-        public SelfSignedSSLSocketFactory(KeyStore keyStore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
-            super(null, null, null, null, null, null);
-            this.setHostnameVerifier(BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
-
-            TrustManagerFactory originalCAs = TrustManagerFactory.getInstance("X509");
-            originalCAs.init((KeyStore) null);
-
-            TrustManagerFactory customCAs = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            customCAs.init(keyStore);
-
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, ObjectArrays.concat(customCAs.getTrustManagers(), originalCAs.getTrustManagers(), TrustManager.class), null);
-            socketFactory = sslContext.getSocketFactory();
-        }
-
-        @Override
-        public Socket createSocket() throws IOException {
-            return socketFactory.createSocket();
-        }
-
-        @Override
-        public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
-            return socketFactory.createSocket(socket, host, port, autoClose);
         }
     }
 

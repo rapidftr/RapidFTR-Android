@@ -7,16 +7,12 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
-import static com.rapidftr.utils.http.FluentRequest.http;
 import static com.rapidftr.utils.RapidFtrDateTime.now;
+import static com.rapidftr.utils.http.FluentRequest.http;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest<LoginActivity> {
-
-    public DataSyncingIntegrationTest() {
-        super(LoginActivity.class);
-    }
+public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     @Override
     public void setUp() throws Exception {

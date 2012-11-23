@@ -134,6 +134,12 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
         startActivity(intent);
     }
 
+    public void restart() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
+
     protected class SaveChildTask extends AsyncTaskWithDialog<Void, Void, Child> {
         @Override
         protected Child doInBackground(Void... params) {
