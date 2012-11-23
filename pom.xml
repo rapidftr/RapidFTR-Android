@@ -27,17 +27,17 @@
         children in emergency situations, so they can be reunited with their families.
     </description>
     <packaging>pom</packaging>
-    <url>https://github.com/jorgej/RapidFTR---Android</url>
+    <url>https://github.com/rapidftr/RapidFTR---Android</url>
 
     <issueManagement>
-        <url>https://github.com/jorgej/RapidFTR---Android/issues</url>
+        <url>https://github.com/rapidftr/RapidFTR---Android/issues</url>
         <system>RapidFTR Issues</system>
     </issueManagement>
 
     <scm>
-      <url>https://github.com/jorgej/RapidFTR---Android</url>
-      <connection>scm:git:git://github.com/jorgej/RapidFTR---Android</connection>
-      <developerConnection>scm:git:git@github.com:jorgej/RapidFTR---Android</developerConnection>
+      <url>https://github.com/rapidftr/RapidFTR---Android</url>
+      <connection>scm:git:git://github.com/rapidftr/RapidFTR---Android</connection>
+      <developerConnection>scm:git:git@github.com:rapidftr/RapidFTR---Android</developerConnection>
     </scm>
 
     <modules>

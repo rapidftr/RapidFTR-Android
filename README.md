@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/jorgej/RapidFTR---Android.png)](http://travis-ci.org/jorgej/RapidFTR---Android)
+[![Build Status](https://secure.travis-ci.org/rapidftr/RapidFTR---Android.png)](http://travis-ci.org/rapidftr/RapidFTR---Android)
 RapidFTR
 =============
 
@@ -21,9 +21,9 @@ Please feel free to comment or contribute.
 
 Join the google group and read through the wikis on the main repo for how to join the project.
 
-* [RapidFTR Repository](http://github.com/jorgej/RapidFTR/)
-* [RapidFTR BlackBerry Repository](http://github.com/jorgej/RapidFTR---BlackBerry-Edition)
-* [RapidFTR Android Repository](http://github.com/jorgej/RapidFTR---Android)
+* [RapidFTR Repository](http://github.com/rapidftr/RapidFTR/)
+* [RapidFTR BlackBerry Repository](http://github.com/rapidftr/RapidFTR---BlackBerry-Edition)
+* [RapidFTR Android Repository](http://github.com/rapidftr/RapidFTR---Android)
 
 RapidFTR is being developed using Ruby on Rails and CouchDB. Alongside the development of the API,
 we've also started to develop the BlackBerry client, with an Android client to follow.
@@ -31,4 +31,4 @@ If you've got experience with any of these and want to help, please get in touch
 
 WIKI
 =====
-https://github.com/jorgej/RapidFTR---Android/wiki
+https://github.com/rapidftr/RapidFTR---Android/wiki
