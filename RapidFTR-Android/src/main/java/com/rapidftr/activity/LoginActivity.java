@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static com.rapidftr.utils.HttpUtils.getToastMessage;
+import static com.rapidftr.utils.http.HttpUtils.getToastMessage;
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 
@@ -34,7 +34,7 @@ public class LoginActivity extends RapidFtrActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initializeCrittercismAPM();
+//        initializeCrittercismAPM();
         context = this;
         loginService = new LoginService();
         if (getContext().isLoggedIn()) {

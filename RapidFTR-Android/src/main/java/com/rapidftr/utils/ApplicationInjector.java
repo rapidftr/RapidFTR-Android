@@ -12,6 +12,7 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.service.FormService;
 import com.rapidftr.task.SyncAllDataAsyncTask;
+import com.rapidftr.utils.http.FluentRequest;
 
 public class ApplicationInjector extends AbstractModule {
 

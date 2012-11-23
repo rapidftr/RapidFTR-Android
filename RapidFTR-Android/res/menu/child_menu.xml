@@ -2,7 +2,7 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/synchronize_all"
-          android:title="@string/synchronize_all"/>
+    <item android:id="@+id/synchronize_child"
+          android:title="@string/synchronize_child" />
 
 </menu>

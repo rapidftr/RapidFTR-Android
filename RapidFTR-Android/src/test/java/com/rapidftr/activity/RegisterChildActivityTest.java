@@ -36,8 +36,8 @@ public class RegisterChildActivityTest {
     }
 
     @Test
-    public void testInitializeEmptyChild() {
-        activity.initialize();
+    public void testRenderLayout() throws JSONException {
+        activity.onCreate(null);
         verify(activity).setContentView(R.layout.activity_register_child);
     }
 
@@ -62,63 +62,46 @@ public class RegisterChildActivityTest {
     }
 
     @Test
-    public void testInitializeChild() {
-        activity.initializeData();
+    public void testInitializeChild() throws JSONException {
+        activity.initializeData(null);
         assertThat(activity.child, equalTo(new Child()));
     }
 
     @Test
-    public void testShouldNotInitializeChildIfAlreadyRestored() {
+    public void testShouldNotInitializeChildIfAlreadyRestored() throws JSONException {
         Child child = mock(Child.class);
         activity.child = child;
 
-        activity.initialize();
+        activity.onCreate(null);
         assertThat(activity.child, equalTo(child));
     }
 
     @Test
-    public void testInitializeFormSections() {
+    public void testInitializeFormSections() throws JSONException {
         List<FormSection> formSections = (List<FormSection>) mock(List.class);
         RapidFtrApplication.getInstance().setFormSections(formSections);
 
-        activity.initializeData();
+        activity.initializeData(null);
         assertThat(activity.formSections, equalTo(formSections));
     }
 
     @Test
-    public void testSaveListener() {
-        Intent mockIntent = mock(Intent.class, RETURNS_DEEP_STUBS);
-        activity.setIntent(mockIntent);
-        doNothing().when(activity).saveChild();
-        when(activity.getIntent().getParcelableExtra("child")).thenReturn(null);
-
-        activity.onCreate(null);
-        activity.initializeListeners();
+    public void testSaveListener() throws JSONException {
+        doReturn(null).when(activity).save();
+        activity.initializeView();
 
         activity.findViewById(R.id.submit).performClick();
-        verify(activity).saveChild();
+        verify(activity).save();
     }
 
     @Test
-    public void testToastInvalidChild() {
+    public void testToastInvalidChild() throws JSONException {
         Child child = mock(Child.class);
         when(child.isValid()).thenReturn(false);
 
         activity.child = child;
-        activity.saveChild();
+        activity.save();
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(activity.getString(R.string.save_child_invalid)));
-    }
-
-    @Test
-    public void testDoInBackground() throws JSONException {
-        Child child = mock(Child.class);
-        when(child.isValid()).thenReturn(true);
-
-        doReturn(null).when(activity).doInBackground(child);
-        activity.child = child;
-
-        activity.saveChild();
-        verify(activity).doInBackground(child);
     }
 
     @Test
@@ -127,7 +110,7 @@ public class RegisterChildActivityTest {
         doNothing().when(activity).startActivity(captor.capture());
 
         activity.child = new Child("id1", "user1", null);
-        activity.onSuccess();
+        activity.view();
         Intent intent = captor.getValue();
 
         assertThat(intent.getComponent(), equalTo(new ComponentName(activity.getContext(), ViewChildActivity.class)));
@@ -148,11 +131,11 @@ public class RegisterChildActivityTest {
     }
 
     @Test @Ignore
-    public void testSpinnerChangeWhenPagerChange() {
+    public void testSpinnerChangeWhenPagerChange() throws JSONException {
         Spinner spinner = mock(Spinner.class);
         doReturn(spinner).when(activity).getSpinner();
 
-        activity.initialize();
+        activity.onCreate(null);
         activity.getPager().setCurrentItem(1);
         verify(spinner).setSelection(1);
         // Unable test this now because pager.setCurrentItem doesn't trigger
@@ -160,11 +143,11 @@ public class RegisterChildActivityTest {
     }
 
     @Test
-    public void testPagerChangeWhenSpinnerChange() {
+    public void testPagerChangeWhenSpinnerChange() throws JSONException {
         ViewPager pager = mock(ViewPager.class);
         doReturn(pager).when(activity).getPager();
 
-        activity.initialize();
+        activity.onCreate(null);
         activity.getSpinner().setSelection(1);
         verify(pager).setCurrentItem(1);
     }

@@ -1,7 +1,8 @@
-package com.rapidftr.utils;
+package com.rapidftr.utils.http;
 
 import android.content.Context;
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.tester.org.apache.http.FakeHttpLayer;
 import com.xtremelabs.robolectric.tester.org.apache.http.RequestMatcher;
@@ -15,7 +16,7 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.security.Security;
 
-import static com.rapidftr.utils.FluentRequest.http;
+import static com.rapidftr.utils.http.FluentRequest.http;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -23,12 +24,12 @@ import static org.mockito.Mockito.*;
 @RunWith(CustomTestRunner.class)
 public class FluentRequestTest {
 
-    private HttpResponse response;
+    private FluentResponse response;
 
     @Before
     public void setUp() {
         Security.addProvider(new BouncyCastleProvider());
-        response = mock(HttpResponse.class, RETURNS_DEEP_STUBS);
+        response = mock(FluentResponse.class, RETURNS_DEEP_STUBS);
     }
 
     @Test

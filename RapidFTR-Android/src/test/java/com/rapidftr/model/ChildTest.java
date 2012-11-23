@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static com.rapidftr.model.Child.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static junit.framework.Assert.*;
@@ -123,7 +124,7 @@ public class ChildTest {
     }
 
     @Test
-    public void shouldReturnNamesWithLengthOneInsteadOfNull() {
+    public void shouldReturnNamesWithLengthOneInsteadOfNull() throws JSONException {
         Child child = new Child();
         assertThat(child.names().length(), equalTo(1));
     }
@@ -139,7 +140,7 @@ public class ChildTest {
     }
 
     @Test
-    public void shouldHaveFalseSyncStatusIfTheChildObjectIsCreated(){
+    public void shouldHaveFalseSyncStatusIfTheChildObjectIsCreated() throws JSONException {
         Child child = new Child();
         assertFalse(child.isSynced());
     }
@@ -228,4 +229,18 @@ public class ChildTest {
         assertThat(fromTo.get(FROM).toString(),is("old-name"));
         assertThat(fromTo.get(TO).toString(), is("new-name"));
     }
+
+    @Test
+    public void shouldBeNewIfThereIsNoID() throws JSONException {
+        Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
+        assertThat(child.isNew(), is(true));
+    }
+
+    @Test
+    public void shouldNotBeNewIfThereIsID() throws JSONException {
+        Child child = new Child();
+        child.put(internal_id.getColumnName(), "xyz");
+        assertThat(child.isNew(), is(false));
+    }
+
 }

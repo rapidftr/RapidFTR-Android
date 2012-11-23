@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -23,7 +24,6 @@ import static com.rapidftr.utils.JSONMatcher.hasJSONObjects;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
@@ -80,6 +80,11 @@ public class ChildRepositoryTest {
         assertThat(repository.get("unsyncedID").isSynced(), is(false));
     }
 
+    @Test(expected = NullPointerException.class)
+    public void getShouldThrowExceptionIfRecordDoesNotExist() throws JSONException {
+        repository.get("blah");
+    }
+
     @Test
     public void shouldReturnMatchedChildRecords() throws JSONException, IOException {
         Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
@@ -108,15 +113,15 @@ public class ChildRepositoryTest {
         assertThat(all.get(1).isSynced(), is(false));
     }
 
-    @Test
+    @Test @Ignore // This expectation is no longer true, All users will be able to see all records
     public void shouldOnlyReturnsOwnRecords() throws JSONException {
         repository.createOrUpdate(new Child("id1", "user1", null));
 
         ChildRepository anotherUsersRepository = new ChildRepository("user2", session);
         anotherUsersRepository.createOrUpdate(new Child("id2", "user2", null));
 
-        assertThat(repository.get("id2"), is(nullValue()));
-        assertThat(anotherUsersRepository.get("id1"), is(nullValue()));
+        assertThat(repository.exists("id2"), is(false));
+        assertThat(anotherUsersRepository.exists("id1"), is(false));
     }
 
     @Test
@@ -197,7 +202,7 @@ public class ChildRepositoryTest {
         Child updatedChild = new Child("id", "user1", "{'name' : 'updated-name'}");
         Child spyUpdatedChild = spy(updatedChild);
         List<Child.History> histories = new ArrayList<Child.History>();
-        Child.History history = existingChild.new History();
+        Child.History history = updatedChild.new History();
         HashMap changes = new HashMap();
         HashMap fromTo = new LinkedHashMap();
         fromTo.put(FROM, "old-name");
@@ -224,7 +229,7 @@ public class ChildRepositoryTest {
         Child updatedChild = new Child("id", "user1", "{'name' : 'updated-name'}");
         Child spyUpdatedChild = spy(updatedChild);
         List<Child.History> histories = new ArrayList<Child.History>();
-        Child.History history = existingChild.new History();
+        Child.History history = updatedChild.new History();
         HashMap changes = new HashMap();
         HashMap fromTo = new LinkedHashMap();
         fromTo.put(FROM, "old-name");
