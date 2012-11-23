@@ -3,6 +3,8 @@ package com.rapidftr.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.rapidftr.R;
@@ -10,8 +12,10 @@ import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.service.ChildService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import lombok.Cleanup;
+import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
 
 import java.util.List;
@@ -132,6 +136,50 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
         Intent intent = new Intent(this, EditChildActivity.class);
         intent.putExtra("id", child.getUniqueId());
         startActivity(intent);
+    }
+
+    protected void sync() {
+        SyncChildTask task = new SyncChildTask(inject(ChildService.class));
+        AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child);
+    }
+
+    public void rebuild() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
+
+    public void populateMenu(Menu menu) {
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.synchronize_child:
+                sync();
+                return true;
+        }
+
+        return false;
+    }
+
+    @RequiredArgsConstructor(suppressConstructorProperties = true)
+    protected class SyncChildTask extends AsyncTaskWithDialog<Child, Void, Child> {
+
+        protected final ChildService service;
+
+        @Override
+        protected Child doInBackground(Child... children) {
+            try {
+                return service.sync(child);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Child child) {
+            rebuild();
+        }
     }
 
     protected class SaveChildTask extends AsyncTaskWithDialog<Void, Void, Child> {

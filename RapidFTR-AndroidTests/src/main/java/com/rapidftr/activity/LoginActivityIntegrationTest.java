@@ -2,11 +2,7 @@ package com.rapidftr.activity;
 
 import static com.rapidftr.activity.pages.LoginPage.*;
 
-public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest<LoginActivity> {
-
-    public LoginActivityIntegrationTest() {
-        super(LoginActivity.class);
-    }
+public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
 
     public void WIPtestIncorrectLoginCredentials(){
         loginPage.login("wrongUsername", "wrongPassword", LOGIN_URL);

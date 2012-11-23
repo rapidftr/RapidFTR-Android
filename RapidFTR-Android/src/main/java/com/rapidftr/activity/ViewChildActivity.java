@@ -1,6 +1,7 @@
 package com.rapidftr.activity;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import com.rapidftr.R;
 import org.json.JSONException;
@@ -35,4 +36,9 @@ public class ViewChildActivity extends BaseChildActivity {
         load();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.child_menu, menu);
+        return true;
+    }
 }

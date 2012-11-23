@@ -1,8 +1,6 @@
 package com.rapidftr.activity;
 
-import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
-import com.rapidftr.R;
 import com.rapidftr.model.Child;
 import com.rapidftr.service.ChildService;
 import org.json.JSONException;
@@ -12,7 +10,6 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
@@ -23,15 +20,6 @@ public class EditChildActivityTest {
     @Before
     public void setUp() {
         activity = spy(new EditChildActivity());
-    }
-
-    @Test
-    public void shouldCallSyncWhenMenuSelected() {
-        doNothing().when(activity).sync();
-        MenuItem item = mock(MenuItem.class);
-        given(item.getItemId()).willReturn(R.id.synchronize_child);
-        activity.onOptionsItemSelected(item);
-        verify(activity).sync();
     }
 
     @Test
