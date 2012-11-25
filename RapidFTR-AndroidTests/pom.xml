@@ -5,7 +5,7 @@
 
     <artifactId>rapidftr-integration-tests</artifactId>
     <packaging>apk</packaging>
-    <name>RapidFTR Client Integration Test suite Application</name>
+    <name>RapidFTR Android Client Integration Test Suite</name>
 
     <parent>
         <version>1.0</version>

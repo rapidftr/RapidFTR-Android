@@ -1,6 +1,10 @@
 language: java
+
 env:
-  - ANDROID_HOME=~/android-sdk-linux
+  global:
+    - ANDROID_HOME=~/android-sdk-linux
+#    - secure: "OrcrExPirnqysI+5f88Jq1yOyKVcLqaxV1F5L/VvdIpnjsyxVe9cdZHEKMRl\nJROuroQqjUXqQOFxohp6V2Sai9wPRQPah3J0W4YPwDLxSqa0Q1KVAougRLyw\nnkkME36/XBhKcuMSvzWvydTpDHUEDX4XrZgvx9jDN/2uHaoNYj4=" # rapidftr
+    - secure: "QYc8UKxgiC1SenxyKe6UR0Pqs9QkUH3/0fluhIqfV3dECkL77aCsyV+r4PUZ\napgQwHWcPvua24h/mxNrroQ8KjYBG3CHwFGrn08Kpx5JuSRrfRMJMN/AyVB/\nuRKdDQj94jdULVqBUvLGh4ZQc9FoW1KwRwIbth7xudlnMM3JqGE=" # rdsubhas
 
 before_install:
   - export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
@@ -10,9 +14,13 @@ before_install:
   - echo no | android create avd -n android2.2 -t android-8 --skin QVGA
   - mv $ANDROID_HOME/tools/emulator $ANDROID_HOME/tools/emulator-old
   - ln -s $ANDROID_HOME/tools/emulator-arm $ANDROID_HOME/tools/emulator
+  - alias grepd="grep -v -e 'Downloaded:' -e 'Downloading:'"
 
 install: echo
-script:  mvn clean install -P ci
+script: "mvn clean install -P ci | grepd"
+
+after_script:
+  - mvn pl.project13.maven:git-commit-id-plugin:revision ghDownloads:upload -P ci --projects RapidFTR-Android --fail-never | grepd
 
 notifications:
   email: false

@@ -21,7 +21,7 @@
     <version>1.0</version>
     <groupId>com.rapidftr</groupId>
     <artifactId>rapidftr-android-parent</artifactId>
-    <name>RapidFTR Android parent</name>
+    <name>RapidFTR Android Parent</name>
     <description>
         RapidFTR is a mobile app and database system that lets aid workers collect and share information about
         children in emergency situations, so they can be reunited with their families.
@@ -196,22 +196,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
                 <configuration>
                     <compilerVersion>1.6</compilerVersion>
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.6</version>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -220,10 +219,45 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <sdk>
+                        <platform>${android.version}</platform>
+                        <path>${env.ANDROID_HOME}</path>
+                    </sdk>
+                    <dex>
+                        <jvmArguments>
+                            <jvmArgument>-Xms512m</jvmArgument>
+                            <jvmArgument>-Xmx1024m</jvmArgument>
+                        </jvmArguments>
+                    </dex>
+                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                    <androidManifestFile>AndroidManifest.xml</androidManifestFile>
+                </configuration>
+            </plugin>
         </plugins>
 
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>2.3.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
@@ -235,29 +269,24 @@
                     <version>2.6</version>
                 </plugin>
                 <plugin>
-                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                    <artifactId>android-maven-plugin</artifactId>
-                    <version>3.4.0</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <sdk>
-                            <platform>${android.version}</platform>
-                            <path>${env.ANDROID_HOME}</path>
-                        </sdk>
-                        <dex>
-                            <jvmArguments>
-                                <jvmArgument>-Xms512m</jvmArgument>
-                                <jvmArgument>-Xmx1024m</jvmArgument>
-                            </jvmArguments>
-                        </dex>
-                        <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                        <androidManifestFile>AndroidManifest.xml</androidManifestFile>
-                    </configuration>
-                </plugin>
-                <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>keytool-maven-plugin</artifactId>
                     <version>1.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                    <artifactId>android-maven-plugin</artifactId>
+                    <version>3.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>2.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.github</groupId>
+                    <artifactId>downloads-maven-plugin</artifactId>
+                    <version>0.6</version>
                 </plugin>
             </plugins>
         </pluginManagement>

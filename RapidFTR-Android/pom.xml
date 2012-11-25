@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rapidftr-android</artifactId>
     <packaging>apk</packaging>
-    <name>RapidFTR Client Application</name>
+    <name>RapidFTR Android Client</name>
 
     <parent>
         <version>1.0</version>
@@ -94,10 +95,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>keytool-maven-plugin</artifactId>
@@ -128,5 +131,44 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <configuration>
+                            <prefix>git</prefix>
+                            <verbose>false</verbose>
+                            <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                            <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>downloads-maven-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>*.apk</include>
+                            </includes>
+
+                            <oauth2Token>${env.OAUTH_TOKEN}</oauth2Token>
+                            <repositoryOwner>rdsubhas</repositoryOwner>
+                            <repositoryName>RapidFTR---Android</repositoryName>
+
+                            <includeAttached>true</includeAttached>
+                            <description>Android client APK version: ${project.version}, commit: ${git.commit.id}</description>
+                            <override>true</override>
+                            <suffix>-${project.version}</suffix>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
