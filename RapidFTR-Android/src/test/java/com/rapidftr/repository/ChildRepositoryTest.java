@@ -20,7 +20,6 @@ import java.util.List;
 
 import static com.rapidftr.model.Child.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
-import static com.rapidftr.utils.JSONMatcher.hasJSONObjects;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
@@ -128,14 +127,15 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldReturnsAllRecords() throws JSONException, IOException {
-        Child child1 = new Child("id1", "user1", null);
-        Child child2 = new Child("id2", "user1", null);
+        Child child1 = new Child("id1", "user1", "{'name':'last_user'}");
+        Child child2 = new Child("id2", "user1", "{'name':'first_user'}");
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
         List<Child> children = repository.getChildrenByOwner();
         assertThat(children.size(), equalTo(2));
-        assertThat(children, hasJSONObjects(child1, child2));
+        assertThat(child2,equalTo(children.get(0)));
+        assertThat(child1,equalTo(children.get(1)));
     }
 
     @Test

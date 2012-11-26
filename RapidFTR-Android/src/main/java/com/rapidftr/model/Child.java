@@ -25,7 +25,7 @@ import static com.rapidftr.model.Child.History.*;
 import static com.rapidftr.utils.JSONArrays.asJSONArray;
 import static com.rapidftr.utils.JSONArrays.asList;
 
-public class Child extends JSONObject implements Parcelable, Comparable {
+public class Child extends JSONObject implements Parcelable {
 
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     public static final String EMPTY_STRING = "";
@@ -243,11 +243,6 @@ public class Child extends JSONObject implements Parcelable, Comparable {
 
     public boolean isNew() {
         return !has(internal_id.getColumnName());
-    }
-
-    @Override
-    public int compareTo(Object that) {
-        return this.optString("name").compareTo(((Child) that).optString("name"));
     }
 
     public class History extends JSONObject implements Parcelable {
