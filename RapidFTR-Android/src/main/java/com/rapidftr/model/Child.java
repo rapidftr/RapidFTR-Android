@@ -28,10 +28,14 @@ import static com.rapidftr.utils.JSONArrays.asList;
 public class Child extends JSONObject implements Parcelable, Comparable {
 
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    public static final String EMPTY_STRING = "";
 
-    protected @Getter @Setter boolean synced;
+    protected
+    @Getter
+    @Setter
+    boolean synced;
 
-    public Child()  {
+    public Child() {
         try {
             setSynced(false);
             setCreatedAt(RapidFtrDateTime.now().defaultFormat());
@@ -128,6 +132,18 @@ public class Child extends JSONObject implements Parcelable, Comparable {
         put(created_by.getColumnName(), owner);
     }
 
+    public String getName()  {
+        try {
+            return getString(name.getColumnName());
+        } catch (JSONException e) {
+            return EMPTY_STRING;
+        }
+    }
+
+    public void setName(String childName) throws JSONException {
+        put(name.getColumnName(), childName);
+    }
+
     public String getCreatedAt() throws JSONException {
         return getString(created_at.getColumnName());
     }
@@ -175,7 +191,7 @@ public class Child extends JSONObject implements Parcelable, Comparable {
         int numberOfNonInternalFields = names().length();
 
         for (ChildTableColumn field : ChildTableColumn.internalFields()) {
-            if(has(field.getColumnName())){
+            if (has(field.getColumnName())) {
                 numberOfNonInternalFields--;
             }
         }
@@ -206,10 +222,10 @@ public class Child extends JSONObject implements Parcelable, Comparable {
     public List<History> changeLogs(Child child) throws JSONException {
         JSONArray names = this.names();
         List<History> histories = new ArrayList<History>();
-        for(int i=0; i < names.length(); i++){
+        for (int i = 0; i < names.length(); i++) {
             String newValue = this.optString(names.getString(i), "");
             String oldValue = child.optString(names.getString(i), "");
-            if(!oldValue.equals(newValue)){
+            if (!oldValue.equals(newValue)) {
                 History history = new History();
                 JSONObject changes = new JSONObject();
                 JSONObject fromTo = new JSONObject();
@@ -234,7 +250,7 @@ public class Child extends JSONObject implements Parcelable, Comparable {
         return this.optString("name").compareTo(((Child) that).optString("name"));
     }
 
-    public class History extends JSONObject implements Parcelable{
+    public class History extends JSONObject implements Parcelable {
         public static final String HISTORIES = "histories";
         public static final String USER_NAME = "user_name";
         public static final String DATETIME = "datetime";

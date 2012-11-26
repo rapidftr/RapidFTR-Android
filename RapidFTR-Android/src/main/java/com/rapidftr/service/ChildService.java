@@ -84,25 +84,6 @@ public class ChildService {
         return convertToChildRecords(childrenJson);
     }
 
-    public List<Child> searchChildrenInDB(String subString) {
-        List<Child> filteredList = new ArrayList<Child>();
-        try {
-            for (Child child : repository.getAllChildren()) {
-                try {
-                    if (containsIgnoreCase(child.getUniqueId(), subString) ||
-                            containsIgnoreCase((String) child.get("name"), subString)) {
-                        filteredList.add(child);
-                    }
-                } catch (JSONException e) {
-                    Log.e("ChildService", "Error while Searching Children");
-                }
-            }
-        } catch (JSONException e) {
-            Log.e("ChildService", "Error while Searching Children");
-        }
-        return filteredList;
-    }
-
     private boolean containsIgnoreCase(String completeString, String subString) {
         return completeString.toLowerCase().contains(subString.toLowerCase());
     }
