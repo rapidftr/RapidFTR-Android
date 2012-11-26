@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 import com.google.inject.Inject;
@@ -65,13 +66,17 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
             saveIncomingChildren();
             setProgressAndNotify("Sync complete.", 30);
         } catch (Exception e) {
-            notificationManager.cancel(NOTIFICATION_ID);
-            Toast.makeText(context, "Sync failed. please try again.", Toast.LENGTH_LONG);
+            Log.e("SyncAllDataTask", e.toString());
+            publishProgress("Error in syncing. Try again after some time.");
             return false;
         }
         return true;
     }
 
+    @Override
+    protected void onProgressUpdate(String... values) {
+        Toast.makeText(context, values[0], Toast.LENGTH_LONG).show();
+    }
 
     @Override
     protected void onPostExecute(Boolean result) {

@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -171,15 +170,6 @@ public class ChildTest {
         Child child = new Child();
         child.put("name", "\r\n line1 \r\n line2 \r\n \r\n");
         assertThat(child.getString("name"), equalTo("line1 \r\n line2"));
-    }
-
-    @Test
-    public void shouldSortChildrenByNameAlphabetically() throws Exception {
-        Child child1 = new Child("id1", "user1", "{ \"name\" : \"abc\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
-        Child child2 = new Child("id2", "user2", "{ \"name\" : \"def\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }");
-        List<Child> children = Arrays.asList(child1,child2);
-        Collections.sort(children);
-        assertEquals(child1, children.get(0));
     }
 
     @Test

@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
+
 public class FluentRequest {
 
     private static @Getter(lazy = true) final HttpClient httpClient = createHttpClient();
@@ -57,8 +59,9 @@ public class FluentRequest {
         scheme("http"); // TODO: Default scheme should be https, but how to specify URL in Login Screen?
         path("/");
     }
+
     public FluentRequest host(String host) {
-        if (host.startsWith("https://") || host.startsWith("http://")) {
+        if (host != null && (host.startsWith("https://") || host.startsWith("http://"))) {
             String[] parts = host.split("\\:\\/\\/");
             scheme(parts[0]);
             host = parts[1];
@@ -188,9 +191,7 @@ public class FluentRequest {
     }
 
     public String getBaseUrl(Context context) {
-        return context.getApplicationContext()
-                .getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, 0)
-                .getString("SERVER_URL", "");
+        return ((RapidFtrApplication) context.getApplicationContext()).getPreference(SERVER_URL);
     }
 
     public int getConnectionTimeout(Context context) {

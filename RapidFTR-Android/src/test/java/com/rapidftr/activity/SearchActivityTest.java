@@ -6,7 +6,7 @@ import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Child;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.repository.ChildRepository;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class SearchActivityTest {
     protected SearchActivity activity;
 
     @Mock
-    private ChildService childService;
+    private ChildRepository childRepository;
 
     @Before
     public void setUp() {
@@ -34,7 +34,7 @@ public class SearchActivityTest {
         activity = spy(new SearchActivity());
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
-        doReturn(childService).when(mockInjector).getInstance(ChildService.class);
+        doReturn(childRepository).when(mockInjector).getInstance(ChildRepository.class);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class SearchActivityTest {
         List<Child> searchResults = new ArrayList<Child>();
         searchResults.add(new Child("id1", "user1", "{ \"name\" : \"child1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }"));
         String searchString = "Hild";
-        when(childService.searchChildrenInDB(searchString)).thenReturn(searchResults);
+        when(childRepository.getMatchingChildren(searchString)).thenReturn(searchResults);
 
         activity.onCreate(null);
         TextView textView = (TextView) activity.findViewById(R.id.search_text);
@@ -57,7 +57,7 @@ public class SearchActivityTest {
     public void shouldShowEmptyViewForNoSearchResults() throws JSONException {
         List<Child> searchResults = new ArrayList<Child>();
         String searchString = "Hild";
-        when(childService.searchChildrenInDB(searchString)).thenReturn(searchResults);
+        when(childRepository.getMatchingChildren(searchString)).thenReturn(searchResults);
 
         activity.onCreate(null);
         TextView textView = (TextView) activity.findViewById(R.id.search_text);
@@ -75,7 +75,7 @@ public class SearchActivityTest {
         textView.setText(searchString);
         activity.findViewById(R.id.search_btn).performClick();
         ListView listView = (ListView) activity.findViewById(R.id.child_list);
-        verify(childService,never()).searchChildrenInDB(searchString);
+        verify(childRepository,never()).getMatchingChildren(searchString);
         assertNotNull(listView.getEmptyView());
     }
 

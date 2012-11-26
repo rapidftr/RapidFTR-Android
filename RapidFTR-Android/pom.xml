@@ -157,11 +157,11 @@
                             </includes>
 
                             <oauth2Token>${env.OAUTH_TOKEN}</oauth2Token>
-                            <repositoryOwner>rdsubhas</repositoryOwner>
+                            <repositoryOwner>rapidftr</repositoryOwner>
                             <repositoryName>RapidFTR---Android</repositoryName>
 
                             <includeAttached>true</includeAttached>
-                            <description>Android client APK version: ${project.version}, commit: ${git.commit.id}</description>
+                            <description>Android client APK version: ${project.version} generated for commit ${git.commit.id}</description>
                             <override>true</override>
                             <suffix>-${project.version}</suffix>
                         </configuration>

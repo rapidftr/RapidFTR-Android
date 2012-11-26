@@ -3,8 +3,7 @@ language: java
 env:
   global:
     - ANDROID_HOME=~/android-sdk-linux
-    - secure: "OrcrExPirnqysI+5f88Jq1yOyKVcLqaxV1F5L/VvdIpnjsyxVe9cdZHEKMRl\nJROuroQqjUXqQOFxohp6V2Sai9wPRQPah3J0W4YPwDLxSqa0Q1KVAougRLyw\nnkkME36/XBhKcuMSvzWvydTpDHUEDX4XrZgvx9jDN/2uHaoNYj4=" # rapidftr
-#    - secure: "QYc8UKxgiC1SenxyKe6UR0Pqs9QkUH3/0fluhIqfV3dECkL77aCsyV+r4PUZ\napgQwHWcPvua24h/mxNrroQ8KjYBG3CHwFGrn08Kpx5JuSRrfRMJMN/AyVB/\nuRKdDQj94jdULVqBUvLGh4ZQc9FoW1KwRwIbth7xudlnMM3JqGE=" # rdsubhas
+    - secure: "eMONRmh/28CnRRhnK1hkoJwrAFptyLwQ4Z5hGP/ccywZmKOUlkkDwapbcKkk\narSLHGY8Ybn+QMj/L8DVm+KnTApNq9cWc+1DNbMhZuANzraDHaBrdIdJeBtO\nQEG2bkaYwtYEmUYPBqSLMen/Vs8c0eVWQISU76UIvvPknA/PHA0="
 
 before_install:
   - export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools

@@ -2,13 +2,13 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
-              android:background="#333333"
+              android:background="#cccccc"
               android:orientation="vertical"
               android:layout_height="fill_parent">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="fill_parent"
-                  android:background="#333333"
+                  android:background="#cccccc"
                   android:orientation="horizontal"
                   android:layout_height="wrap_content">
 
@@ -22,9 +22,7 @@
                 android:background="@drawable/tab_active"
                 android:onClick="registerTabListener"
                 />
-        <View android:background="#333333"
-              android:layout_height="30dp"
-              android:layout_width="1dp"/>
+
         <Button
                 android:text="@string/view_all_tab_name"
                 android:layout_width="fill_parent"
@@ -35,9 +33,10 @@
                 android:drawableLeft="@drawable/icon_viewall"
                 android:onClick="viewAllChildrenListener"
                 />
-        <View android:background="#333333"
-              android:layout_height="30dp"
-              android:layout_width="1dp"/>
+        <View android:background="#aaaaaa"
+              android:layout_height="20dp"
+              android:layout_width="1dp"
+              android:layout_marginTop="5dp"/>
         <Button
                 android:id="@+id/search_tab"
                 android:text="@string/search_tab_name"

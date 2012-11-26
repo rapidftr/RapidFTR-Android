@@ -21,9 +21,7 @@
                 android:background="@drawable/tab"
                 android:onClick="registerTabListener"
                 />
-        <View android:background="#333333"
-              android:layout_height="30dp"
-              android:layout_width="1dp"/>
+
         <Button
                 android:text="@string/view_all_tab_name"
                 android:layout_width="fill_parent"
@@ -33,9 +31,7 @@
                 android:background="@drawable/tab_active"
                 android:drawableLeft="@drawable/icon_viewall_sel"
                 android:onClick="viewAllChildrenListener"/>
-        <View android:background="#333333"
-              android:layout_height="30dp"
-              android:layout_width="1dp"/>
+
         <Button
                 android:id="@+id/search_tab"
                 android:text="@string/search_tab_name"
@@ -49,6 +45,6 @@
                 />
     </LinearLayout>
     <View android:background="@color/tab_partition"
-          android:layout_height="5dp"
+          android:layout_height="3dp"
           android:layout_width="fill_parent"/>
 </LinearLayout>
