@@ -16,6 +16,8 @@ import org.json.JSONException;
 
 import java.util.List;
 
+import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
+
 public abstract class BaseChildActivity extends RapidFtrActivity {
 
     public static final int CLOSE_ACTIVITY = 999;
@@ -112,7 +114,7 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
             return null;
         }
 
-        child.setOwner(getContext().getUserName());
+        child.setOwner(getContext().getPreference(USER_NAME));
         child.generateUniqueId();
         child.setSynced(false);
         @Cleanup ChildRepository repository = inject(ChildRepository.class);

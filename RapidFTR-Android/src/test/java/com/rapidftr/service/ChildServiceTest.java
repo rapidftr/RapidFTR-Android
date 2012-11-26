@@ -1,7 +1,5 @@
 package com.rapidftr.service;
 
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
@@ -19,11 +17,11 @@ import java.io.SyncFailedException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
 import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -112,13 +110,8 @@ public class ChildServiceTest {
     }
 
     private RapidFtrApplication mockContext() {
-        RapidFtrApplication context = mock(RapidFtrApplication.class);
-        Resources resources = mock(Resources.class);
-        given(context.getApplicationContext()).willReturn(context);
-        SharedPreferences preferences = mock(SharedPreferences.class);
-        given(preferences.getString("SERVER_URL", "")).willReturn("whatever");
-        given(context.getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, 0)).willReturn(preferences);
-        given(context.getResources()).willReturn(resources);
+        RapidFtrApplication context = RapidFtrApplication.getInstance();
+        context.setPreference(SERVER_URL, "whatever");
         return context;
     }
 
