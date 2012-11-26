@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.activity.RapidFtrActivity;
@@ -64,7 +65,8 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
             saveIncomingChildren();
             setProgressAndNotify("Sync complete.", 30);
         } catch (Exception e) {
-            setProgressAndNotify("Sync failed. please try again.", 30);
+            notificationManager.cancel(NOTIFICATION_ID);
+            Toast.makeText(context, "Sync failed. please try again.", Toast.LENGTH_LONG);
             return false;
         }
         return true;
@@ -87,16 +89,12 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
         notificationManager.notify(NOTIFICATION_ID, notification);
     }
 
-    private void sendChildrenToServer(List<Child> childrenToSyncWithServer) {
+    private void sendChildrenToServer(List<Child> childrenToSyncWithServer) throws IOException, JSONException {
         String subStatusFormat = "Records %s/" + childrenToSyncWithServer.size() + " Uploaded";
         int counter = 0;
         for (Child child : childrenToSyncWithServer) {
-            try {
-                childService.sync(child);
-                setProgressAndNotify(String.format(subStatusFormat, ++counter), 15);
-            } catch (Exception e) {
-                // TODO: Handle error
-            }
+            childService.sync(child);
+            setProgressAndNotify(String.format(subStatusFormat, ++counter), 15);
         }
     }
 
@@ -108,7 +106,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
             } else {
                 childRepository.createOrUpdate(incomingChild);
             }
-         childService.setPhoto(incomingChild);
+            childService.setPhoto(incomingChild);
         }
     }
 
