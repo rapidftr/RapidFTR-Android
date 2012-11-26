@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import java.io.IOException;
 import java.io.SyncFailedException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
@@ -23,7 +22,6 @@ import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -87,20 +85,6 @@ public class ChildServiceTest {
         child = new ChildService(mockContext(), repository, fluentRequest).sync(child);
         assertThat(child.getString("test1"), is("value2"));
         verify(repository).update(child);
-    }
-
-    @Test
-    public void shouldFilterChildRecordsThatMatchesSearchString() throws JSONException {
-        List<Child> fullChildrenList = new ArrayList<Child>();
-        fullChildrenList.add(new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
-        fullChildrenList.add(new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
-        fullChildrenList.add(new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ] }"));
-        fullChildrenList.add(new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }"));
-        when(repository.getAllChildren()).thenReturn(fullChildrenList);
-        List<Child> searchResults = new ChildService(mockContext(), repository, fluentRequest).searchChildrenInDB("Hild1");
-        assertEquals(2,searchResults.size());
-        assertEquals("id1", searchResults.get(0).getUniqueId());
-        assertEquals("child1", searchResults.get(1).getUniqueId());
     }
 
     @Test(expected = SyncFailedException.class)

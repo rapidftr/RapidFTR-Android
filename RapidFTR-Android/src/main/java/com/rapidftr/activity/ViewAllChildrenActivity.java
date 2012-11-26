@@ -30,7 +30,6 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
         childRepository = inject(ChildRepository.class);
         try {
             children = childRepository.getChildrenByOwner();
-            Collections.sort(children);
         } catch (JSONException e) {
             Log.e("ViewAllChildrenActivity","Error while displaying children list");
         }

@@ -55,6 +55,7 @@ public enum Database {
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum ChildTableColumn {
         id("id"),
+        name("name"),
         content("child_json"),
         owner("child_owner"),
         synced("synced"),
