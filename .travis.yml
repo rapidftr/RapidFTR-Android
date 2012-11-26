@@ -23,4 +23,9 @@ after_script:
 
 notifications:
   email: false
-  irc: "irc.freenode.org#rapidftr"
+  irc:
+    channels:
+      - "irc.freenode.org#rapidftr"
+    template:
+      - "%{repository}:%{commit}:%{author} - %{description} - %{build_url}
+    use_notice: true
