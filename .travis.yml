@@ -27,5 +27,5 @@ notifications:
     channels:
       - "irc.freenode.org#rapidftr"
     template:
-      - "%{repository}:%{commit}:%{author} - %{description} - %{build_url}
+      - "%{repository}:%{commit}:%{author} - %{description} - %{build_url}"
     use_notice: true
