@@ -174,7 +174,7 @@ public class CaptureHelper {
         random.nextBytes(salt);
 
         KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, iterationCount, keyLength);
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithSHA256And256BitAES-CBC-BC");
         byte[] keyBytes = keyFactory.generateSecret(keySpec).getEncoded();
         SecretKey key = new SecretKeySpec(keyBytes, "AES");
 

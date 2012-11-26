@@ -18,7 +18,6 @@ import com.rapidftr.service.FormService;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 
 import static java.lang.System.currentTimeMillis;
@@ -66,7 +65,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
             saveIncomingChildren();
             setProgressAndNotify("Sync complete.", 30);
         } catch (Exception e) {
-            Log.e("SyncAllDataTask", e.toString());
+            Log.e("SyncAllDataTask", "Error in sync", e);
             publishProgress("Error in syncing. Try again after some time.");
             return false;
         }
@@ -103,15 +102,19 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
         }
     }
 
-    private void saveIncomingChildren() throws IOException, JSONException, GeneralSecurityException {
+    private void saveIncomingChildren() throws IOException {
         for (Child incomingChild : childService.getAllChildren()) {
-            incomingChild.setSynced(true);
-            if (childRepository.exists(incomingChild.getUniqueId())) {
-                childRepository.update(incomingChild);
-            } else {
-                childRepository.createOrUpdate(incomingChild);
+            try {
+                incomingChild.setSynced(true);
+                if (childRepository.exists(incomingChild.getUniqueId())) {
+                    childRepository.update(incomingChild);
+                } else {
+                    childRepository.createOrUpdate(incomingChild);
+                }
+                childService.setPhoto(incomingChild);
+            } catch (Exception e) {
+                Log.e("SyncAllDataTask", "Error syncing child", e);
             }
-            childService.setPhoto(incomingChild);
         }
     }
 

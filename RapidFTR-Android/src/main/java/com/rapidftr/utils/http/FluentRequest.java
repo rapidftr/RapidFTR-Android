@@ -43,10 +43,10 @@ public class FluentRequest {
 
     private static @Getter(lazy = true) final HttpClient httpClient = createHttpClient();
 
-    private final Map<String, String> headers = new HashMap<String, String>();
-    private final Map<String, String> params  = new HashMap<String, String>();
-    private final Map<String, Object> configs = new HashMap<String, Object>();
-    private final Uri.Builder uri = new Uri.Builder();
+    private Map<String, String> headers;
+    private Map<String, String> params;
+    private Map<String, Object> configs;
+    private Uri.Builder uri;
     private Context context;
 
     public static FluentRequest http() {
@@ -55,9 +55,7 @@ public class FluentRequest {
 
     @Inject
     public FluentRequest() {
-        header("Accept", "application/json");
-        scheme("http"); // TODO: Default scheme should be https, but how to specify URL in Login Screen?
-        path("/");
+        reset();
     }
 
     public FluentRequest host(String host) {
@@ -171,6 +169,17 @@ public class FluentRequest {
         }
 
         return execute(request);
+    }
+
+    public void reset() {
+        headers = new HashMap<String, String>();
+        params  = new HashMap<String, String>();
+        configs = new HashMap<String, Object>();
+        uri = new Uri.Builder();
+
+        header("Accept", "application/json");
+        scheme("http"); // TODO: Default scheme should be https, but how to specify URL in Login Screen?
+        path("/");
     }
 
     private FluentResponse execute(HttpRequestBase request) throws IOException {
