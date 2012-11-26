@@ -161,9 +161,9 @@
                             <repositoryName>RapidFTR---Android</repositoryName>
 
                             <includeAttached>true</includeAttached>
-                            <description>Android client APK version: ${project.version}, commit: ${git.commit.id}</description>
+                            <description>Android client APK</description>
                             <override>true</override>
-                            <suffix>-${project.version}</suffix>
+                            <suffix>-${env.TRAVIS_BRANCH}-${project.version}</suffix>
                         </configuration>
                     </plugin>
                 </plugins>
