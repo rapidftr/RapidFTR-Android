@@ -2,6 +2,9 @@ package com.rapidftr.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Looper;
+import android.os.Process;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,7 +53,6 @@ public abstract class RapidFtrActivity extends Activity {
         if(message!=null){
            Log.e(RapidFtrApplication.APP_IDENTIFIER, message);
         }
-
     }
 
     protected void logDebug(String message) {
@@ -63,6 +65,10 @@ public abstract class RapidFtrActivity extends Activity {
 
     protected Injector getInjector() {
         return ((RapidFtrApplication) getApplication()).getInjector();
+    }
+
+    protected <T> T inject(Class<T> clazz) {
+        return getInjector().getInstance(clazz);
     }
 
     public void addResultListener(int requestCode, ResultListener listener) {
@@ -85,19 +91,48 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        try {
-            SyncAllDataAsyncTask task = getInjector().getInstance(SyncAllDataAsyncTask.class);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.synchronize_all:
+            SyncAllDataAsyncTask task = inject(SyncAllDataAsyncTask.class);
             task.setContext(this);
             task.execute();
             return true;
-        } catch (Exception e) {
-            return false;
         }
+
+        return false;
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initializeExceptionHandler();
     }
+
+    protected void initializeExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(final Thread thread, final Throwable throwable) {
+                Log.e(RapidFtrApplication.APP_IDENTIFIER, throwable.getMessage(), throwable);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+                        Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.internal_error), Toast.LENGTH_LONG).show();
+                        Looper.loop();
+                    }
+                }).start();
+
+                try {
+                    Thread.sleep(4000);
+                } catch (InterruptedException e) {
+                }
+
+                Process.killProcess(Process.myPid());
+                System.exit(10);
+            }
+        });
+    }
+
 }

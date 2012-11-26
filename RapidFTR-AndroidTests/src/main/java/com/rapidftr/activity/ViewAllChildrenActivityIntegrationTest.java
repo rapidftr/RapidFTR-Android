@@ -5,10 +5,7 @@ import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import org.json.JSONException;
 
-public class ViewAllChildrenActivityIntegrationTest extends BaseActivityIntegrationTest<LoginActivity>{
-    public ViewAllChildrenActivityIntegrationTest() {
-        super(LoginActivity.class);
-    }
+public class ViewAllChildrenActivityIntegrationTest extends BaseActivityIntegrationTest{
 
     @Override
     public void setUp() throws Exception {

@@ -27,7 +27,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
     private List<Child> getChildren()
     {
         List<Child> children = new ArrayList<Child>();
-        childRepository = getInjector().getInstance(ChildRepository.class);
+        childRepository = inject(ChildRepository.class);
         try {
             children = childRepository.getChildrenByOwner();
             Collections.sort(children);
