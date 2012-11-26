@@ -10,10 +10,12 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
 import org.apache.http.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -46,9 +48,7 @@ public class ChildService {
         String path = child.isNew() ? "/children" : String.format("/children/%s", child.get(internal_id.getColumnName()));
 
         fluentRequest.path(path).context(context).param("child", child.values().toString());
-        if (child.opt("current_photo_key") != null && !child.optString("current_photo_key").equals("")) {
-            fluentRequest.param("current_photo_key", child.optString("current_photo_key"));
-        }
+        addPhotoToTheRequest(child);
 
         FluentResponse response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
 
@@ -56,11 +56,27 @@ public class ChildService {
             String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
             child = new Child(source);
             child.setSynced(true);
+            child.remove("_attachments");
             repository.update(child);
+            setPhoto(child);
             return child;
         } else {
             throw new SyncFailedException(child.getUniqueId());
         }
+    }
+
+    private void addPhotoToTheRequest(Child child) throws JSONException {
+        if (child.opt("current_photo_key") != null && !child.optString("current_photo_key").equals("")) {
+            List<Object> photoKeys = getPhotoKeys(child);
+            if (!photoKeys.contains(child.optString("current_photo_key"))) {
+                fluentRequest.param("current_photo_key", child.optString("current_photo_key"));
+            }
+        }
+    }
+
+    private List<Object> getPhotoKeys(Child child) throws JSONException {
+        JSONArray array = child.has("photo_keys") ? child.getJSONArray("photo_keys") : new JSONArray();
+        return JSONArrays.asList(array);
     }
 
     public void setPrimaryPhoto(Child child, String currentPhotoKey) throws JSONException, IOException {
@@ -122,13 +138,24 @@ public class ChildService {
         }));
     }
 
-    public void setPhoto(Child child) throws IOException, GeneralSecurityException {
+    public void setPhoto(Child child) throws IOException {
         HttpResponse httpResponse = getPhoto(child);
         Bitmap bitmap = BitmapFactory.decodeStream(httpResponse.getEntity().getContent());
         CaptureHelper captureHelper = new CaptureHelper(context);
         String current_photo_key = child.optString("current_photo_key");
-        captureHelper.saveThumbnail(bitmap, current_photo_key);
-        captureHelper.savePhoto(bitmap, current_photo_key);
+        savePhoto(bitmap, captureHelper, current_photo_key);
+
+    }
+
+    private void savePhoto(Bitmap bitmap, CaptureHelper captureHelper, String current_photo_key) throws IOException {
+        if(bitmap!=null && !current_photo_key.equals("")){
+            try {
+                captureHelper.saveThumbnail(bitmap, current_photo_key);
+                captureHelper.savePhoto(bitmap, current_photo_key);
+            } catch (GeneralSecurityException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public HttpResponse getPhoto(Child child) throws IOException {
