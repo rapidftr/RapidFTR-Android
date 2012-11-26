@@ -138,8 +138,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     protected String createCaptureFileName() {
-        String fileName = child.optString(formField.getId());
-        return "".equals(fileName) ? UUID.randomUUID().toString() : fileName;
+        return UUID.randomUUID().toString();
     }
 
     protected ImageView getImageView() {

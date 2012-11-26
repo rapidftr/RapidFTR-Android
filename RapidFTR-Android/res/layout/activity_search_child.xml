@@ -18,14 +18,15 @@
                   android:weightSum="5"
                   android:layout_height="wrap_content"
                    android:padding="5dp"
-                android:background="#30343d">
+                android:background="#999999">
         <EditText
                 android:id="@+id/search_text"
                 android:hint="Search Child by name/id"
                 android:layout_weight="4"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
-                android:background="@drawable/textbox">
+                android:background="@drawable/textbox"
+                style="@style/TextView">
         </EditText>
         <Button android:id="@+id/search_btn"
                 android:text="Go"

@@ -161,13 +161,6 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     }
 
     @Test
-    public void shouldOverwriteExistingFile() throws Exception {
-        view.initialize(field, child);
-        child.put(field.getId(), "random_file_name");
-        assertThat(view.createCaptureFileName(), equalTo("random_file_name"));
-    }
-
-    @Test
     public void testPaintThumbnail() throws JSONException, IOException {
         view.initialize(field, child);
         child.put(field.getId(), "test_image");

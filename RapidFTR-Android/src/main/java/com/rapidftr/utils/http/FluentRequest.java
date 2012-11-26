@@ -141,7 +141,12 @@ public class FluentRequest {
 
         }
         request.setEntity(multipartEntity);
+        reInitializeParams();
         return execute(request);
+    }
+
+    private void reInitializeParams() {
+        params = new HashMap<String,String>();
     }
 
     private FluentResponse executeUnenclosed(HttpRequestBase request) throws IOException {
@@ -151,6 +156,7 @@ public class FluentRequest {
 
             request.setURI(URI.create(uri.build().toString()));
         }
+        reInitializeParams();
         return execute(request);
     }
 
@@ -167,7 +173,7 @@ public class FluentRequest {
                 throw (IOException) new IOException().initCause(e);
             }
         }
-
+        reInitializeParams();
         return execute(request);
     }
 
@@ -189,6 +195,7 @@ public class FluentRequest {
         for (Map.Entry<String, String> header : headers.entrySet())
             request.setHeader(header.getKey(), header.getValue());
 
+        reInitializeParams();
         return new FluentResponse(getHttpClient().execute(request));
     }
 

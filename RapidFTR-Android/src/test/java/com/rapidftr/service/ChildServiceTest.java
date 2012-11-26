@@ -51,7 +51,7 @@ public class ChildServiceTest {
     }
 
     @Test
-    public void shouldMarkChildAsSyncedWhenSyncing() throws IOException, JSONException {
+    public void shouldMarkChildAsSyncedWhenSyncing() throws IOException, JSONException, GeneralSecurityException {
         Child child = new Child();
         getFakeHttpLayer().setDefaultHttpResponse(201, "{}");
 
@@ -70,25 +70,27 @@ public class ChildServiceTest {
 
     @Test
     public void shouldCallServerURLWithCouchID() throws Exception {
-        Child child = new Child();
+        Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
         child.put(Database.ChildTableColumn.internal_id.getColumnName(), "xyz");
 
         getFakeHttpLayer().addHttpResponseRule("http://whatever/children/xyz", "{}");
+        getFakeHttpLayer().setDefaultHttpResponse(200,"{}");
         new ChildService(mockContext(), repository, fluentRequest).sync(child);
     }
 
     @Test
     public void shouldCreateNewChildIfThereIsNoID() throws Exception {
         Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/children", "{ 'test1' : 'value2' }");
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/children", "{ 'test1' : 'value2', '_id' : 'abcd1234'}");
 
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/children/abcd1234/photo/", "{}");
         child = new ChildService(mockContext(), repository, fluentRequest).sync(child);
         assertThat(child.getString("test1"), is("value2"));
         verify(repository).update(child);
     }
 
     @Test(expected = SyncFailedException.class)
-    public void shouldAddPhotoParamIfPhotoIsCapturedAsPartOfChild() throws JSONException, IOException {
+    public void shouldAddPhotoParamIfPhotoIsCapturedAsPartOfChild() throws JSONException, IOException, GeneralSecurityException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         Child child = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'current_photo_key' : '1234ABC'}");
         RapidFtrApplication context = mockContext();
