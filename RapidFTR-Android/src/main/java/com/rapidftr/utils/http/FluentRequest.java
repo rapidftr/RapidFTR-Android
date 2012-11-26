@@ -43,11 +43,11 @@ public class FluentRequest {
 
     private static @Getter(lazy = true) final HttpClient httpClient = createHttpClient();
 
-    private Map<String, String> headers;
-    private Map<String, String> params;
-    private Map<String, Object> configs;
-    private Uri.Builder uri;
-    private Context context;
+    protected Map<String, String> headers;
+    protected Map<String, String> params;
+    protected Map<String, Object> configs;
+    protected Uri.Builder uri;
+    protected Context context;
 
     public static FluentRequest http() {
         return new FluentRequest();
@@ -121,7 +121,7 @@ public class FluentRequest {
         return executeUnenclosed(new HttpDelete(uri.build().toString()));
     }
 
-    private FluentResponse executeMultiPart(HttpEntityEnclosingRequestBase request) throws IOException{
+    protected FluentResponse executeMultiPart(HttpEntityEnclosingRequestBase request) throws IOException{
         MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
         if (params.size() > 0) {
             for (Map.Entry<String, String> param : params.entrySet()){
@@ -141,26 +141,20 @@ public class FluentRequest {
 
         }
         request.setEntity(multipartEntity);
-        reInitializeParams();
         return execute(request);
     }
 
-    private void reInitializeParams() {
-        params = new HashMap<String,String>();
-    }
-
-    private FluentResponse executeUnenclosed(HttpRequestBase request) throws IOException {
+    protected FluentResponse executeUnenclosed(HttpRequestBase request) throws IOException {
         if (params.size() > 0) {
             for (Map.Entry<String, String> param : params.entrySet())
                 uri.appendQueryParameter(param.getKey(), param.getValue());
 
             request.setURI(URI.create(uri.build().toString()));
         }
-        reInitializeParams();
         return execute(request);
     }
 
-    private FluentResponse executeEnclosed(HttpEntityEnclosingRequestBase request) throws IOException {
+    protected FluentResponse executeEnclosed(HttpEntityEnclosingRequestBase request) throws IOException {
         if (params.size() > 0) {
             List<BasicNameValuePair> entities = new ArrayList<BasicNameValuePair>();
             for (Map.Entry<String, String> param : params.entrySet())
@@ -173,8 +167,18 @@ public class FluentRequest {
                 throw (IOException) new IOException().initCause(e);
             }
         }
-        reInitializeParams();
         return execute(request);
+    }
+
+    protected FluentResponse execute(HttpRequestBase request) throws IOException {
+        for (Map.Entry<String, Object> config : configs.entrySet())
+            request.getParams().setParameter(config.getKey(), config.getValue());
+
+        for (Map.Entry<String, String> header : headers.entrySet())
+            request.setHeader(header.getKey(), header.getValue());
+
+        reset();
+        return new FluentResponse(getHttpClient().execute(request));
     }
 
     public void reset() {
@@ -182,21 +186,11 @@ public class FluentRequest {
         params  = new HashMap<String, String>();
         configs = new HashMap<String, Object>();
         uri = new Uri.Builder();
+        context = null;
 
         header("Accept", "application/json");
         scheme("http"); // TODO: Default scheme should be https, but how to specify URL in Login Screen?
         path("/");
-    }
-
-    private FluentResponse execute(HttpRequestBase request) throws IOException {
-        for (Map.Entry<String, Object> config : configs.entrySet())
-            request.getParams().setParameter(config.getKey(), config.getValue());
-
-        for (Map.Entry<String, String> header : headers.entrySet())
-            request.setHeader(header.getKey(), header.getValue());
-
-        reInitializeParams();
-        return new FluentResponse(getHttpClient().execute(request));
     }
 
     public String getBaseUrl(Context context) {

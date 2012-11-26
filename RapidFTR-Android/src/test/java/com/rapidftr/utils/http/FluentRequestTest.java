@@ -2,11 +2,11 @@ package com.rapidftr.utils.http;
 
 import android.content.Context;
 import com.rapidftr.CustomTestRunner;
-import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.tester.org.apache.http.FakeHttpLayer;
 import com.xtremelabs.robolectric.tester.org.apache.http.RequestMatcher;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -100,6 +100,53 @@ public class FluentRequestTest {
 
         Robolectric.getFakeHttpLayer().addHttpResponseRule("http://example.com/test", response);
         assertThat(http.path("/test").context(context).get(), equalTo(response));
+    }
+
+    @Test
+    public void testGetShouldCallExecute() throws IOException {
+        FluentRequest http = spy(http().host("test"));
+        doReturn(null).when(http).execute(any(HttpRequestBase.class));
+        http.get();
+        verify(http).execute(any(HttpRequestBase.class));
+    }
+
+    @Test
+    public void testPostShouldCallExecute() throws IOException {
+        FluentRequest http = spy(http().host("test"));
+        doReturn(null).when(http).execute(any(HttpRequestBase.class));
+        http.post();
+        verify(http).execute(any(HttpRequestBase.class));
+    }
+
+    @Test
+    public void testPostMultiPartShouldCallExecute() throws IOException {
+        FluentRequest http = spy(http().host("test"));
+        doReturn(null).when(http).execute(any(HttpRequestBase.class));
+        http.postWithMultipart();
+        verify(http).execute(any(HttpRequestBase.class));
+    }
+
+    @Test
+    public void testPutShouldCallExecute() throws IOException {
+        FluentRequest http = spy(http().host("test"));
+        doReturn(null).when(http).execute(any(HttpRequestBase.class));
+        http.put();
+        verify(http).execute(any(HttpRequestBase.class));
+    }
+
+    @Test
+    public void testDeleteShouldCallExecute() throws IOException {
+        FluentRequest http = spy(http().host("test"));
+        doReturn(null).when(http).execute(any(HttpRequestBase.class));
+        http.delete();
+        verify(http).execute(any(HttpRequestBase.class));
+    }
+
+    @Test(expected = Exception.class)
+    public void testExecuteShouldCallReset() throws IOException {
+        FluentRequest http = spy(http());
+        http.execute(mock(HttpRequestBase.class, RETURNS_DEEP_STUBS));
+        verify(http).reset();
     }
 
     @Test @Ignore // This test alone does a *real* connection to test SSL
