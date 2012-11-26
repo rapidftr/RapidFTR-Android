@@ -7,6 +7,7 @@ import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.utils.ApplicationInjector;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -17,6 +18,14 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class RapidFtrApplication extends Application {
+
+    @RequiredArgsConstructor(suppressConstructorProperties = true)
+    public enum Preference {
+        USER_NAME("USER_NAME"),
+        SERVER_URL("SERVER_URL");
+
+        private final @Getter String key;
+    }
 
     public static final String SHARED_PREFERENCES_FILE = "RAPIDFTR_PREFERENCES";
     public static final String APP_IDENTIFIER = "RapidFTR";
@@ -42,12 +51,12 @@ public class RapidFtrApplication extends Application {
         return getSharedPreferences(SHARED_PREFERENCES_FILE, MODE_PRIVATE);
     }
 
-    public String getUserName() {
-        return getSharedPreferences().getString("USER_NAME", null);
+    public String getPreference(Preference preference) {
+        return getSharedPreferences().getString(preference.getKey(), null);
     }
 
-    public void setUserName(String userName) {
-        getSharedPreferences().edit().putString("USER_NAME", userName).commit();
+    public void setPreference(Preference preference, String value) {
+        getSharedPreferences().edit().putString(preference.getKey(), value).commit();
     }
 
     public void setFormSectionsTemplate(String formSectionResponse) throws IOException {

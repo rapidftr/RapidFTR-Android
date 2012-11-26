@@ -12,7 +12,6 @@ public class SQLCipherHelper extends SQLiteOpenHelper implements DatabaseHelper 
 
     public static final int DB_VERSION = 1;
 
-
     protected @Getter final DatabaseSession session;
 
     @Inject

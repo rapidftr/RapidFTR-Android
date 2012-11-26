@@ -1,13 +1,15 @@
 package com.rapidftr.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.adapter.ChildViewAdapter;
 import com.rapidftr.model.Child;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.repository.ChildRepository;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,18 +40,22 @@ public class SearchActivity extends RapidFtrActivity {
             public void onClick(View v) {
                 TextView searchTextView = (TextView) findViewById(R.id.search_text);
                 String subString = searchTextView.getText().toString();
-                listView(search(subString));
+                try {
+                    listView(search(subString));
+                } catch (Exception e) {
+                    Log.e("ChildSearch", "Error while Searching Children");
+                }
             }
         };
     }
 
-    private List<Child> search(String subString) {
-        ChildService childService = inject(ChildService.class);
+    private List<Child> search(String subString) throws JSONException {
+        ChildRepository childRepository = inject(ChildRepository.class);
         subString = subString.trim();
         if ("".equals(subString)) {
             return new ArrayList<Child>();
         }
-        return childService.searchChildrenInDB(subString);
+        return childRepository.getMatchingChildren(subString);
     }
 
 }
