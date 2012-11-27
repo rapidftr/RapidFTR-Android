@@ -63,11 +63,12 @@ public enum Database {
         internal_id("_id", true, false),
         unique_identifier("unique_identifier", true, false),
         created_by("created_by", true, false),
+        last_updated_at("last_updated_at", true, false),
 
         revision("_rev", true, true),
         thumbnail("_thumbnail", true, true),
-        created_at("created_at", true, true),
-        updated_at("updated_at", true, true);
+        created_at("created_at", true, true);
+
 
         private @Getter final String columnName;
         private final boolean isInternal;

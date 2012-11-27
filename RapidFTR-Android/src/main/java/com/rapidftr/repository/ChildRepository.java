@@ -7,6 +7,7 @@ import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Child;
+import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +67,10 @@ public class ChildRepository implements Closeable {
 
     public void createOrUpdate(Child child) throws JSONException {
         ContentValues values = new ContentValues();
-        addHistory(child);
+        if (exists(child.getUniqueId())) {
+            addHistory(child);
+            child.setLastUpdatedAt(getTimeStamp());
+        }
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
         values.put(id.getColumnName(), child.getUniqueId());
         values.put(Database.ChildTableColumn.name.getColumnName(), child.getName());
@@ -79,13 +83,11 @@ public class ChildRepository implements Closeable {
     }
 
     private void addHistory(Child child) throws JSONException {
-        if (exists(child.getUniqueId())) {
-            Child existingChild = get(child.getUniqueId());
-            JSONArray existingHistories = (JSONArray) existingChild.opt(HISTORIES);
-            List<Child.History> histories = child.changeLogs(existingChild);
-            if (histories.size() > 0 || (existingHistories != null && existingHistories.length() > 1))
-                child.put(HISTORIES, convertToString(existingHistories, histories));
-        }
+        Child existingChild = get(child.getUniqueId());
+        JSONArray existingHistories = (JSONArray) existingChild.opt(HISTORIES);
+        List<Child.History> histories = child.changeLogs(existingChild);
+        if(histories.size() > 0 || (existingHistories != null && existingHistories.length() > 1))
+            child.put(HISTORIES, convertToString(existingHistories, histories));
     }
 
     private String convertToString(JSONArray existingHistories, List<Child.History> histories) throws JSONException {
@@ -132,5 +134,9 @@ public class ChildRepository implements Closeable {
 
     private Child childFrom(Cursor cursor) throws JSONException {
         return new Child(cursor.getString(0), BooleanColumn.from(cursor.getString(1)).toBoolean());
+    }
+
+    protected String getTimeStamp(){
+        return RapidFtrDateTime.now().defaultFormat();
     }
 }

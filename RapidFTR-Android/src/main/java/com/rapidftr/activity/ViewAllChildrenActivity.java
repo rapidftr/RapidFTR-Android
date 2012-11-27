@@ -7,15 +7,13 @@ import com.rapidftr.R;
 import com.rapidftr.adapter.ChildViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ViewAllChildrenActivity extends RapidFtrActivity {
-    private ChildViewAdapter childViewAdapter;
-    private ChildRepository childRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +25,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
     private List<Child> getChildren()
     {
         List<Child> children = new ArrayList<Child>();
-        childRepository = inject(ChildRepository.class);
+        @Cleanup ChildRepository childRepository = inject(ChildRepository.class);
         try {
             children = childRepository.getChildrenByOwner();
         } catch (JSONException e) {
@@ -37,7 +35,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
     }
     
     private void listView(List<Child> children) {
-        childViewAdapter = new ChildViewAdapter(this, R.layout.row_child, children);
+        ChildViewAdapter childViewAdapter = new ChildViewAdapter(this, R.layout.row_child, children);
         ListView childListView = (ListView) findViewById(R.id.child_list);
         if (children.isEmpty()) {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
