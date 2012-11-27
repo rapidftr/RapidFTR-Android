@@ -76,17 +76,6 @@
                             <executable>${basedir}/src/scripts/unlock_keyguard.sh</executable>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>delete children</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>com.rapidftr.test.utils.RapidFTRDatabase</mainClass>
-                        </configuration>
-                    </execution>
-
                 </executions>
             </plugin>
             <plugin>

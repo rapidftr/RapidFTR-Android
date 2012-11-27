@@ -4,6 +4,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.test.utils.RapidFTRDatabase;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         String timeStamp = now().defaultFormat();
         seed(new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'unique_identifier' : 'abcd1234', 'one' : '1' }", timeStamp)));
         repository = RapidFtrApplication.getInstance().getInjector().getInstance(ChildRepository.class);
+        RapidFTRDatabase.deleteChildren();
     }
 
     public void testRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
