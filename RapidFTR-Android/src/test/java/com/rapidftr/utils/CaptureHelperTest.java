@@ -1,5 +1,6 @@
 package com.rapidftr.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Environment;
 import com.google.common.io.Files;
@@ -33,14 +34,42 @@ public class CaptureHelperTest {
 
     @Before
     public void setUp() {
-        application = new RapidFtrApplication();
+        application = spy(new RapidFtrApplication());
         captureHelper = spy(new CaptureHelper(application));
     }
 
     @Test
-    public void testCaptureDirUnderRapidTRNoMedia() {
+    public void testCaptureUnderNoMedia() {
         String path = captureHelper.getPhotoDir().getAbsolutePath();
-        assertThat(path, endsWith("/rapidftr/.nomedia"));
+        assertThat(path, endsWith("/.nomedia"));
+    }
+
+    @Test
+    public void testCaptureUnderSDCard() {
+        File file = new File(Environment.getExternalStorageDirectory(), "sdcard");
+        doReturn(file).when(captureHelper).getExternalStorageDir();
+
+        File result = captureHelper.getPhotoDir();
+        assertThat(result.getParentFile(), equalTo(file));
+
+    }
+
+    @Test
+    public void testCaptureUnderInternalStorage() {
+        File file = mock(File.class);
+        doReturn(false).when(file).canWrite();
+        doReturn(file).when(captureHelper).getExternalStorageDir();
+
+        File file2 = new File(Environment.getExternalStorageDirectory(), "internal");
+        doReturn(file2).when(application).getDir("capture", Context.MODE_PRIVATE);
+
+        File result = captureHelper.getPhotoDir();
+        assertThat(result.getParentFile(), equalTo(file2));
+    }
+
+    @Test
+    public void testCaptureDirUnderSDCard() {
+        Environment.getExternalStorageState();
     }
 
     @Test
