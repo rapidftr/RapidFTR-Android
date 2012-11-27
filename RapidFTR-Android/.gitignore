@@ -5,3 +5,4 @@ res/raw/*.bks
 .idea/
 classes/
 gen/
+.nomedia/
