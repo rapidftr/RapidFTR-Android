@@ -13,13 +13,12 @@ before_install:
   - echo no | android create avd -n android2.2 -t android-8 --skin QVGA
   - mv $ANDROID_HOME/tools/emulator $ANDROID_HOME/tools/emulator-old
   - ln -s $ANDROID_HOME/tools/emulator-arm $ANDROID_HOME/tools/emulator
-  - alias grepd="grep -v -e 'Downloaded:' -e 'Downloading:'"
 
 install: echo
-script: "mvn clean install -P ci | grepd"
+script: "mvn clean install -P ci"
 
 after_script:
-  - mvn pl.project13.maven:git-commit-id-plugin:revision ghDownloads:upload -P ci --projects RapidFTR-Android --fail-never | grepd
+  - mvn pl.project13.maven:git-commit-id-plugin:revision ghDownloads:upload -P ci --projects RapidFTR-Android --fail-never
 
 notifications:
   email: false
