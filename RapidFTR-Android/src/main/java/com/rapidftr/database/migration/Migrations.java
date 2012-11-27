@@ -65,7 +65,7 @@ class MigrationSQL {
     public static final String addUpdatedAtColumn = "ALTER TABLE "
             + Database.child.getTableName()
             + " ADD COLUMN "
-            + Database.ChildTableColumn.updated_at.getColumnName()
+            + Database.ChildTableColumn.last_updated_at.getColumnName()
             + " text";
 
     public static final String addNameColumn = "ALTER TABLE "
