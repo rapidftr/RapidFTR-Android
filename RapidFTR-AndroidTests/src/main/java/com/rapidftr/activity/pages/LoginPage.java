@@ -8,7 +8,9 @@ import com.rapidftr.R;
 
 public class LoginPage {
 
-    public static final String LOGIN_URL ="https://dev.rapidftr.com:5443"  ;
+    public static final String HOST = "https://dev.rapidftr.com";
+    public static final String PORT = "5443";
+    public static final String LOGIN_URL = HOST + ":" + PORT;
     public static final String PASSWORD = "rapidftr";
     public static final String USERNAME = "rapidftr";
 
