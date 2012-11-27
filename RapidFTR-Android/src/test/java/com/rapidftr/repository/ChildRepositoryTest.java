@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
@@ -42,21 +43,26 @@ public class ChildRepositoryTest {
     }
 
     @Test
-    public void shouldCreateChildRecord() throws JSONException {
+    public void shouldCreateChildRecordAndNotSetLastUpdatedAt() throws JSONException {
         repository.createOrUpdate(new Child("id1", "user1", null));
         assertThat(repository.size(), equalTo(1));
     }
 
     @Test
-    public void shouldUpdateChildRecordIfIdAlreadyExists() throws Exception {
-        ChildRepository repository = new ChildRepository("user1", session);
+    public void shouldUpdateChildRecordIfIdAlreadyExistsAndSetLastUpdateAt() throws Exception {
+        ChildRepository repository = spy(new ChildRepository("user1", session));
         repository.createOrUpdate(new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
+
         String updateString = "{ 'test1' : 'value1' }";
-        String expectedString = "{'created_by':'user1','test1':'value1','unique_identifier':'id1'}";
+        String expectedString = "{'created_by':'user1','test1':'value1','unique_identifier':'id1','last_updated_at':'LAST_UPDATED_AT'}";
+        doReturn("LAST_UPDATED_AT").when(repository).getTimeStamp();
+
         repository.createOrUpdate(new Child("id1", "user1", updateString));
         Child child = repository.get("id1");
+
         assertThat(child.getUniqueId(), equalTo("id1"));
         assertThat(child.values(), equalJSONIgnoreOrder(expectedString));
+        assertThat(child.getLastUpdatedAt(), is("LAST_UPDATED_AT"));
     }
 
     @Test
@@ -66,6 +72,7 @@ public class ChildRepositoryTest {
 
         Child child2 = repository.get("id1");
         assertThat(child1.values(), equalJSONIgnoreOrder(child2.values()));
+        assertNull(child2.getLastUpdatedAt());
     }
 
     @Test

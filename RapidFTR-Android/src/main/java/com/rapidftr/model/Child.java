@@ -152,6 +152,14 @@ public class Child extends JSONObject implements Parcelable {
         put(created_at.getColumnName(), createdAt);
     }
 
+    public String getLastUpdatedAt()  throws JSONException {
+        return optString(last_updated_at.getColumnName(), null);
+    }
+
+    public void setLastUpdatedAt(String lastUpdatedAt) throws JSONException {
+        put(last_updated_at.getColumnName(), lastUpdatedAt);
+    }
+
     public void addToJSONArray(String key, Object element) throws JSONException {
         JSONArray array = has(key) ? getJSONArray(key) : new JSONArray();
         List<Object> list = asList(array);
@@ -233,7 +241,7 @@ public class Child extends JSONObject implements Parcelable {
                 fromTo.put(TO, newValue);
                 changes.put(names.getString(i), fromTo);
                 history.put(USER_NAME, child.getOwner());
-                history.put(DATETIME, child.getCreatedAt());
+                history.put(DATETIME, RapidFtrDateTime.now().defaultFormat());
                 history.put(CHANGES, changes);
                 histories.add(history);
             }
