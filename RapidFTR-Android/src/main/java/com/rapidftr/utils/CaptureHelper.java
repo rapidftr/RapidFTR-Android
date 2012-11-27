@@ -1,6 +1,7 @@
 package com.rapidftr.utils;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,12 +32,22 @@ public class CaptureHelper {
     protected final RapidFtrApplication application;
 
     public File getPhotoDir() {
-        File extDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File appDir = new File(extDir, "rapidftr");
-        File picDir = new File(appDir, ".nomedia");
+        File baseDir = getExternalStorageDir();
+        if (!baseDir.canWrite())
+            baseDir = getInternalStorageDir();
 
+        File picDir = new File(baseDir, ".nomedia");
         picDir.mkdirs();
         return picDir;
+    }
+
+    protected File getExternalStorageDir() {
+        File extDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        return new File(extDir, "rapidftr");
+    }
+
+    protected File getInternalStorageDir() {
+        return application.getDir("capture", Context.MODE_PRIVATE);
     }
 
     public File getTempCaptureFile() {
