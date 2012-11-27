@@ -46,7 +46,7 @@ public class CaptureHelperTest {
 
     @Test
     public void testCaptureUnderSDCard() {
-        File file = new File(Environment.getExternalStorageDirectory(), "sdcard");
+        File file = Environment.getExternalStorageDirectory();
         doReturn(file).when(captureHelper).getExternalStorageDir();
 
         File result = captureHelper.getPhotoDir();
