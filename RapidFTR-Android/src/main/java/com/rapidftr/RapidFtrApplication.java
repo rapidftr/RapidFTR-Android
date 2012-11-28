@@ -22,6 +22,7 @@ public class RapidFtrApplication extends Application {
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum Preference {
         USER_NAME("USER_NAME"),
+        USER_ORG("USER_ORG"),
         SERVER_URL("SERVER_URL");
 
         private final @Getter String key;

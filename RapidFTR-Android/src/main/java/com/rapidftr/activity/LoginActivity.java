@@ -11,13 +11,13 @@ import com.rapidftr.R;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import org.apache.http.HttpResponse;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
+import static com.rapidftr.RapidFtrApplication.Preference.*;
 import static com.rapidftr.utils.http.HttpUtils.getToastMessage;
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_NOT_FOUND;
@@ -66,7 +66,7 @@ public class LoginActivity extends RapidFtrActivity {
 
     private void toggleBaseUrl() {
         String preferencesUrl = getContext().getPreference(SERVER_URL);
-        if(preferencesUrl != null && !preferencesUrl.equals("")) {
+        if (preferencesUrl != null && !preferencesUrl.equals("")) {
             setEditText(R.id.url, preferencesUrl);
             toggleView(R.id.url, View.GONE);
             toggleView(R.id.change_url, View.VISIBLE);
@@ -142,10 +142,12 @@ public class LoginActivity extends RapidFtrActivity {
             int statusCode = response == null ? SC_NOT_FOUND : response.getStatusLine().getStatusCode();
             if (statusCode == SC_CREATED) {
                 getContext().setLoggedIn(true);
-                setDbKey(response);
+                JSONObject responseJSON = responseJSON(response);
+                setDbKey(responseJSON);
                 try {
                     getContext().setPreference(USER_NAME, getEditText(R.id.username));
                     getContext().setPreference(SERVER_URL, getEditText(R.id.url));
+                    getContext().setPreference(USER_ORG, getUserOrg(responseJSON));
                     new FormService(getContext()).getPublishedFormSections();
                 } catch (IOException e) {
                     logError(e.getMessage());
@@ -156,17 +158,35 @@ public class LoginActivity extends RapidFtrActivity {
             makeToast(getToastMessage(statusCode));
         }
 
-        protected void setDbKey(HttpResponse response) {
+        private String getUserOrg(JSONObject responseJSON) {
             try {
-                String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
-                JSONObject responseAsJson = new JSONObject(responseAsString);
-                String db_key = responseAsJson.get("db_key").toString();
+                return responseJSON.get("user_org").toString();
+            } catch (JSONException e) {
+                return null;
+            }
+        }
+
+        protected void setDbKey(JSONObject responseJSON) {
+            try {
+                String db_key = responseJSON.get("db_key").toString();
                 getContext().setDbKey(db_key);
             } catch (Exception e) {
                 logError(e.getMessage());
             }
         }
 
+        private JSONObject responseJSON(HttpResponse response) {
+            JSONObject jsonObject = null;
+            try {
+                String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
+                jsonObject = new JSONObject(responseAsString);
+            } catch (Exception e) {
+                logError(e.getMessage());
+            }
+            return jsonObject;
+        }
+
     }
+
 
 }
