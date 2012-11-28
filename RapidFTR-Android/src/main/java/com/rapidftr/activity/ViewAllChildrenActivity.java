@@ -30,6 +30,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
             children = childRepository.getChildrenByOwner();
         } catch (JSONException e) {
             Log.e("ViewAllChildrenActivity","Error while displaying children list");
+            makeToast(R.string.fetch_child_error);
         }
         return children;
     }

@@ -31,6 +31,7 @@ public class RadioButtons extends BaseView {
                 getRadioGroup().addView(createRadioButton(options));
         } catch (JSONException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -57,6 +58,7 @@ public class RadioButtons extends BaseView {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
 

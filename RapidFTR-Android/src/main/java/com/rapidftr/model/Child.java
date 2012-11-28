@@ -133,11 +133,7 @@ public class Child extends JSONObject implements Parcelable {
     }
 
     public String getName()  {
-        try {
-            return getString(name.getColumnName());
-        } catch (JSONException e) {
-            return EMPTY_STRING;
-        }
+        return optString(name.getColumnName(), EMPTY_STRING);
     }
 
     public void setName(String childName) throws JSONException {

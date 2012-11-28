@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -158,6 +159,7 @@ public class CaptureHelper {
                 bitmap = loadThumbnail(fileNameWithoutExtension);
             }
         } catch (Exception e) {
+            Log.e("Child Image", "Error while getting the Thumbnail",e);
         }
 
         return bitmap != null ? bitmap : getDefaultThumbnail();

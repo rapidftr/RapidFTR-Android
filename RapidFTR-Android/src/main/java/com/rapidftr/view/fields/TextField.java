@@ -41,6 +41,7 @@ public class TextField extends BaseView {
                 getEditTextView().setText(child.get(formField.getId()).toString());
             } catch (JSONException e) {
                 e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
 
@@ -59,6 +60,7 @@ public class TextField extends BaseView {
                     child.put(formField.getId(), s.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         });

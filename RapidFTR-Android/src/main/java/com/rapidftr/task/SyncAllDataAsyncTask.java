@@ -114,6 +114,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
                 childService.setPhoto(incomingChild);
             } catch (Exception e) {
                 Log.e("SyncAllDataTask", "Error syncing child", e);
+                throw new RuntimeException(e);
             }
         }
     }

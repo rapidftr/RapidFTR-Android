@@ -44,6 +44,7 @@ public class SearchActivity extends RapidFtrActivity {
                     listView(search(subString));
                 } catch (Exception e) {
                     Log.e("ChildSearch", "Error while Searching Children");
+                    makeToast(R.string.fetch_child_error);
                 }
             }
         };
