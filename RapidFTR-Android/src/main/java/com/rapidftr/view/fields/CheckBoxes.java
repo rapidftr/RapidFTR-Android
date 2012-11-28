@@ -33,6 +33,7 @@ public class CheckBoxes extends BaseView {
                 getCheckBoxGroup().addView(createCheckBoxFor(option));
         } catch (JSONException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -63,6 +64,7 @@ public class CheckBoxes extends BaseView {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         });

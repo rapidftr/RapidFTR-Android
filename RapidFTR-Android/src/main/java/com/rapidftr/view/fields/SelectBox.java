@@ -47,6 +47,7 @@ public class SelectBox extends BaseView {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
 
@@ -57,6 +58,7 @@ public class SelectBox extends BaseView {
                     child.put(formField.getId(), getSpinner().getAdapter().getItem(position));
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
 
@@ -66,6 +68,7 @@ public class SelectBox extends BaseView {
                     child.put(formField.getId(), "");
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         });

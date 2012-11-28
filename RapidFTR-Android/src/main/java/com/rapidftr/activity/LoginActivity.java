@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import com.crittercism.app.Crittercism;
 import com.google.common.io.CharStreams;
 import com.rapidftr.R;
 import com.rapidftr.service.FormService;
@@ -30,7 +29,6 @@ public class LoginActivity extends RapidFtrActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        initializeCrittercismAPM();
         if (getContext().isLoggedIn()) {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
@@ -58,10 +56,6 @@ public class LoginActivity extends RapidFtrActivity {
                 }
             }
         });
-    }
-
-    private void initializeCrittercismAPM() {
-        Crittercism.init(getApplicationContext(), "50ab25407e69a34895000003");
     }
 
     @Override
