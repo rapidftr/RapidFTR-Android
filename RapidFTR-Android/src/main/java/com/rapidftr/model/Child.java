@@ -241,7 +241,7 @@ public class Child extends JSONObject implements Parcelable {
                 fromTo.put(TO, newValue);
                 changes.put(names.getString(i), fromTo);
                 history.put(USER_NAME, child.getOwner());
-                history.put(USER_ORGANISATION, child.get("created_organisation"));
+                history.put(USER_ORGANISATION, child.optString("created_organisation"));
                 history.put(DATETIME, RapidFtrDateTime.now().defaultFormat());
                 history.put(CHANGES, changes);
                 histories.add(history);

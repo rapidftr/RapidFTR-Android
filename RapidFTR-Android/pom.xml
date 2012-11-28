@@ -100,6 +100,17 @@
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
+                <inherited>true</inherited>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>alignApk</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>zipalign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -116,8 +127,8 @@
                 </executions>
                 <configuration>
                     <workingDirectory>${project.basedir}/res/raw</workingDirectory>
-                    <noprompt />
-                    <trustcacerts />
+                    <noprompt/>
+                    <trustcacerts/>
                     <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
                     <storetype>bks</storetype>
                     <storepass>rapidftr</storepass>
@@ -162,10 +173,45 @@
                             <repositoryName>RapidFTR---Android</repositoryName>
 
                             <includeAttached>true</includeAttached>
-                            <description>Android client APK version: ${project.version} generated for commit ${git.commit.id}</description>
+                            <description>Android client APK version: ${project.version} generated for commit
+                                ${git.commit.id}
+                            </description>
                             <override>true</override>
                             <suffix>-${project.version}</suffix>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <artifactId>android-maven-plugin</artifactId>
+                        <configuration>
+                            <proguard>
+                                <skip>false</skip>
+                                <config>proguard.cfg</config>
+                            </proguard>
+                            <zipalign>
+                                <skip>false</skip>
+                                <verbose>true</verbose>
+                                <inputApk>${project.build.directory}/${project.artifactId}.apk</inputApk>
+                                <outputApk>${project.build.directory}/${project.artifactId}-aligned.apk
+                                </outputApk>
+                            </zipalign>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>alignApk</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>zipalign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

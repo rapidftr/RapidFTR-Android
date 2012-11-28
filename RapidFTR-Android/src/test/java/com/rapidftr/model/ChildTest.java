@@ -200,7 +200,7 @@ public class ChildTest {
 
     @Test
     public void shouldReturnListOfChangeLogsForNewFieldValueToExistingChild() throws JSONException {
-        Child oldChild = new Child("id", "user", "{'gender' : 'male', 'name' : 'old-name'}");
+        Child oldChild = new Child("id", "user", "{'gender' : 'male', 'name' : 'old-name', 'created_organisation' : 'XYZ'}");
         Child updatedChild = new Child("id", "user", "{'gender' : 'male','nationality' : 'Indian', 'name' : 'new-name'}");
         List<Child.History> histories = updatedChild.changeLogs(oldChild);
 

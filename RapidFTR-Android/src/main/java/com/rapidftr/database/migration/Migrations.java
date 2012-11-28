@@ -14,9 +14,9 @@ public enum Migrations {
 
 
     v001_createChildTable(1, MigrationSQL.createChildTable),
-    v002_addCreatedAtColumn(2, MigrationSQL.addCreatedAtColumn),
-    v002_addUpdatedAtColumn(2, MigrationSQL.addUpdatedAtColumn),
-    v003_addNameColumn(3, MigrationSQL.addNameColumn),
+    v001_addCreatedAtColumn(1, MigrationSQL.addCreatedAtColumn),
+    v001_addUpdatedAtColumn(1, MigrationSQL.addLastUpdatedAtColumn),
+    v001_addNameColumn(1, MigrationSQL.addNameColumn),
     ;
 
     private int databaseVersion;
@@ -62,7 +62,7 @@ class MigrationSQL {
             + Database.ChildTableColumn.created_at.getColumnName()
             + " text not null default '"+ RapidFtrDateTime.now().defaultFormat() +"'";
 
-    public static final String addUpdatedAtColumn = "ALTER TABLE "
+    public static final String addLastUpdatedAtColumn = "ALTER TABLE "
             + Database.child.getTableName()
             + " ADD COLUMN "
             + Database.ChildTableColumn.last_updated_at.getColumnName()

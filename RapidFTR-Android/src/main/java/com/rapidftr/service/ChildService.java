@@ -119,10 +119,13 @@ public class ChildService {
     }
 
     public void setPhoto(Child child) throws IOException {
+        String current_photo_key = child.optString("current_photo_key");
+        if(current_photo_key == null || current_photo_key.equals("") ){
+            return;
+        }
         HttpResponse httpResponse = getPhoto(child);
         Bitmap bitmap = BitmapFactory.decodeStream(httpResponse.getEntity().getContent());
         CaptureHelper captureHelper = new CaptureHelper(context);
-        String current_photo_key = child.optString("current_photo_key");
         savePhoto(bitmap, captureHelper, current_photo_key);
 
     }
