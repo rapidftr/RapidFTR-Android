@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.SyncFailedException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +48,7 @@ public class ChildService {
 
         fluentRequest.path(path).context(context).param("child", child.values().toString());
         addPhotoToTheRequest(child);
-
+        Log.e("######",child.getJsonString());
         FluentResponse response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
 
         if (response != null && response.isSuccess()) {

@@ -160,7 +160,7 @@ public class LoginActivity extends RapidFtrActivity {
 
         private String getUserOrg(JSONObject responseJSON) {
             try {
-                return responseJSON.get("user_org").toString();
+                return responseJSON != null ? responseJSON.get("user_org").toString() : null;
             } catch (JSONException e) {
                 return null;
             }

@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 
 import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
+import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -35,6 +36,7 @@ public class LoginActivityTest {
     public void setUp() throws Exception {
         loginActivity = new LoginActivity();
         loginActivity.getContext().setPreference(USER_NAME, null);
+        loginActivity.getContext().setPreference(USER_ORG, null);
         loginActivity.getContext().setDbKey(null);
         loginActivity.getContext().setFormSections(null);
         loginActivity.onCreate(null);

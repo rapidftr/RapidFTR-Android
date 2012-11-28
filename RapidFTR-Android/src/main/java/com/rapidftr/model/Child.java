@@ -132,6 +132,10 @@ public class Child extends JSONObject implements Parcelable {
         put(created_by.getColumnName(), owner);
     }
 
+    public void setOrganisation(String userOrg) throws JSONException {
+        put(created_organisation.getColumnName(), userOrg);
+    }
+
     public String getName()  {
         return optString(name.getColumnName(), EMPTY_STRING);
     }
@@ -237,6 +241,7 @@ public class Child extends JSONObject implements Parcelable {
                 fromTo.put(TO, newValue);
                 changes.put(names.getString(i), fromTo);
                 history.put(USER_NAME, child.getOwner());
+                history.put(USER_ORGANISATION, child.get("created_organisation"));
                 history.put(DATETIME, RapidFtrDateTime.now().defaultFormat());
                 history.put(CHANGES, changes);
                 histories.add(history);
@@ -252,6 +257,7 @@ public class Child extends JSONObject implements Parcelable {
     public class History extends JSONObject implements Parcelable {
         public static final String HISTORIES = "histories";
         public static final String USER_NAME = "user_name";
+        public static final String USER_ORGANISATION = "user_organisation";
         public static final String DATETIME = "datetime";
         public static final String CHANGES = "changes";
         public static final String FROM = "from";

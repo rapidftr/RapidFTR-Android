@@ -67,7 +67,8 @@ public enum Database {
 
         revision("_rev", true, true),
         thumbnail("_thumbnail", true, true),
-        created_at("created_at", true, true);
+        created_at("created_at", true, true),
+        created_organisation("created_organisation", true, false);
 
 
         private @Getter final String columnName;
