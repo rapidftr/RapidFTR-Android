@@ -16,6 +16,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest<Login
     public void setUp() throws Exception {
         super.setUp();
         loginPage.login();
+        solo.waitForText("Login Successful");
         registerChildPage.navigateToRegisterPage();
 }
     @Override
@@ -50,12 +51,28 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest<Login
     }
 
 
-    public void estRegisterChild() {
+    public void testRegisterChild() {
         registerChildPage.selectFormSection("Automation Form");
         List automationFormData = Arrays.asList(new String[] { "Automation TextField value", "Automation TextArea value","Check 3", "Select 1", "Radio 3","1","20","10","2012" });
         registerChildPage.enterAutomationFormDetails(automationFormData);
         registerChildPage.save();
         registerChildPage.verifyRegisterChildDetail(automationFormData,"Automation Form");
+    }
+
+    public void testEditChild(){
+        String name="Test Edit Child";
+        registerChildPage.selectFormSection("Automation Form");
+        registerChildPage.registerChild();
+        registerChildPage.selectEditChild();
+        registerChildPage.selectFormSection("Basic Identity");
+        registerChildPage.enterChildName(name);
+        registerChildPage.save();
+        solo.waitForText("Saved Child Record Successfully");
+        assertTrue(registerChildPage.getChildName(name));
+    }
+
+    public void estSearchChild(){
+
     }
 
 }

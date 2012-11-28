@@ -4,14 +4,17 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import com.jayway.android.robotium.solo.Solo;
+import junit.framework.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RegisterChildPage {
 
     public Solo solo;
     int formPosition ;
+    List automationFormData = Arrays.asList(new String[]{"Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012"});
 
     public RegisterChildPage(Solo solo) {
         this.solo = solo;
@@ -49,6 +52,7 @@ public class RegisterChildPage {
 
 
     public void selectFormSection(String formSectionName) {
+        solo.waitForText("Save");
         solo.clickOnView(solo.getCurrentSpinners().get(0));
         solo.waitForText(formSectionName);
         ListAdapter adapter= solo.getCurrentListViews().get(0).getAdapter();
@@ -75,11 +79,16 @@ public class RegisterChildPage {
         }
         return result;
     }
-
+    public void registerChild(){
+        enterAutomationFormDetails(automationFormData);
+        save();
+    }
 
     public void save() {
         solo.clickOnButton("Save");
-        solo.waitForText("Saved child record successfully");
+        Assert.assertTrue(solo.waitForText("Saved child record successfully"));
+        solo.waitForText("Edit");
+
     }
 
     public void enterAutomationFormDetails(List automationFormData) {
@@ -110,14 +119,35 @@ public class RegisterChildPage {
     }
 
     public void verifyRegisterChildDetail(List automationFormData,String formName) {
-        solo.searchButton("Edit",true);
-        selectFormSection("formName");
-        solo.isTextChecked(automationFormData.get(0).toString());
-        solo.isTextChecked(automationFormData.get(1).toString());
-        solo.isCheckBoxChecked(automationFormData.get(2).toString());
-        solo.isRadioButtonChecked(automationFormData.get(3).toString());
+        solo.searchButton("Edit", true);
+        selectFormSection(formName);
+        Assert.assertTrue(solo.searchEditText(automationFormData.get(0).toString()));
+        Assert.assertTrue(solo.searchEditText(automationFormData.get(1).toString()));
+//        Assert.assertTrue(solo.isCheckBoxChecked(automationFormData.get(2).toString()));
+//        Assert.assertTrue(solo.isRadioButtonChecked(automationFormData.get(3).toString()));
 //        solo.getCurrentNumberPickers().get(0) ;
 //        solo.getCurrentDatePickers().get(0);
 
     }
+
+
+
+    public void selectEditChild(){
+        solo.waitForText("Edit");
+        solo.clickOnText("Edit");
+
+    }
+
+    public void enterChildName(String name){
+        solo.waitForText("Save");
+        solo.enterText(3,name);
+//        solo.enterText(1,"RCID123");
+    }
+
+    public boolean getChildName(String name){
+        System.out.print(solo.getCurrentEditTexts().get(0).getText());
+       return solo.getCurrentEditTexts().get(5).getText().toString().equals(name);
+
+    }
+
 }
