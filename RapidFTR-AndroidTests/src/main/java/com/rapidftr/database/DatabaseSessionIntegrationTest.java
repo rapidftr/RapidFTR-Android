@@ -1,18 +1,13 @@
 package com.rapidftr.database;
 
 import com.rapidftr.activity.BaseActivityIntegrationTest;
-import com.rapidftr.activity.LoginActivity;
 import org.junit.Test;
 
 
-public class DatabaseSessionIntegrationTest extends BaseActivityIntegrationTest<LoginActivity> {
+public class DatabaseSessionIntegrationTest extends BaseActivityIntegrationTest {
 
     public DatabaseHelper helper;
     public DatabaseSession session;
-
-    public DatabaseSessionIntegrationTest() {
-        super(LoginActivity.class);
-    }
 
     @Override
     public void setUp() throws Exception {

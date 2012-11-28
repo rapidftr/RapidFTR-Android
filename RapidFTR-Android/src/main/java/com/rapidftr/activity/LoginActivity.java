@@ -1,40 +1,36 @@
 package com.rapidftr.activity;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import com.crittercism.app.Crittercism;
+import com.google.common.io.CharStreams;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import org.apache.http.HttpResponse;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static com.rapidftr.utils.HttpUtils.getToastMessage;
+import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
+import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
+import static com.rapidftr.utils.http.HttpUtils.getToastMessage;
 import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 
 public class LoginActivity extends RapidFtrActivity {
 
-    LoginService loginService;
-    private ProgressDialog mProgressDialog;
-    private Context context;
+    protected ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = this;
-        loginService = new LoginService();
+//        initializeCrittercismAPM();
         if (getContext().isLoggedIn()) {
             Intent mainIntent = new Intent(this, MainActivity.class);
             startActivity(mainIntent);
@@ -64,6 +60,10 @@ public class LoginActivity extends RapidFtrActivity {
         });
     }
 
+    private void initializeCrittercismAPM() {
+        Crittercism.init(getApplicationContext(), "50ab25407e69a34895000003");
+    }
+
     @Override
     public void onBackPressed() {
         // Suppress the BACK key when this activity is running
@@ -71,7 +71,7 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     private void toggleBaseUrl() {
-        String preferencesUrl = getStringFromSharedPreferences("SERVER_URL");
+        String preferencesUrl = getContext().getPreference(SERVER_URL);
         if(preferencesUrl != null && !preferencesUrl.equals("")) {
             setEditText(R.id.url, preferencesUrl);
             toggleView(R.id.url, View.GONE);
@@ -85,7 +85,7 @@ public class LoginActivity extends RapidFtrActivity {
                 & validateTextFieldNotEmpty(R.id.url, R.string.url_required);
     }
 
-    private boolean validateTextFieldNotEmpty(int id, int messageId) {
+    protected boolean validateTextFieldNotEmpty(int id, int messageId) {
         EditText editText = (EditText) findViewById(id);
         String value = getEditText(id);
 
@@ -97,25 +97,20 @@ public class LoginActivity extends RapidFtrActivity {
         }
     }
 
-    private void toggleView(int field, int visibility) {
+    protected void toggleView(int field, int visibility) {
         View view = findViewById(field);
         view.setVisibility(visibility);
     }
 
-    private String getStringFromSharedPreferences(String key) {
-        SharedPreferences preferences = getApplication().getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, 0);
-        return preferences.getString(key, "");
-    }
-
-    private String getBaseUrl() {
+    protected String getBaseUrl() {
         return getEditText(R.id.url);
     }
 
-    private void login(String username, String password, String baseUrl) throws IOException {
+    protected void login(String username, String password, String baseUrl) throws IOException {
         new LoginAsyncTask().execute(username, password, baseUrl);
     }
 
-    private void goToHomeScreen() {
+    protected void goToHomeScreen() {
         startActivity(new Intent(this, MainActivity.class));
     }
 
@@ -124,15 +119,15 @@ public class LoginActivity extends RapidFtrActivity {
         return value == null ? null : value.toString().trim();
     }
 
-    private void setEditText(int resId, String text) {
+    protected void setEditText(int resId, String text) {
         ((EditText) findViewById(resId)).setText(text);
     }
 
-    private class LoginAsyncTask extends AsyncTask<String, Void, HttpResponse> {
+    protected class LoginAsyncTask extends AsyncTask<String, Void, HttpResponse> {
 
         @Override
         protected void onPreExecute() {
-            mProgressDialog = new ProgressDialog(context);
+            mProgressDialog = new ProgressDialog(LoginActivity.this);
             mProgressDialog.setMessage(getString(R.string.loading_message));
             mProgressDialog.setCancelable(false);
             mProgressDialog.show();
@@ -141,7 +136,7 @@ public class LoginActivity extends RapidFtrActivity {
         @Override
         protected HttpResponse doInBackground(String... params) {
             try {
-                return loginService.login(getApplicationContext(), params[0], params[1], params[2]);
+                return new LoginService().login(getApplicationContext(), params[0], params[1], params[2]);
             } catch (Exception error) {
                 logError(error.getMessage());
                 return null;
@@ -155,11 +150,8 @@ public class LoginActivity extends RapidFtrActivity {
                 getContext().setLoggedIn(true);
                 setDbKey(response);
                 try {
-                    SharedPreferences preferences = getApplication().getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE,0);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("SERVER_URL", getBaseUrl());
-                    editor.putString("USER_NAME", (getEditText(R.id.username)));
-                    editor.commit();
+                    getContext().setPreference(USER_NAME, getEditText(R.id.username));
+                    getContext().setPreference(SERVER_URL, getEditText(R.id.url));
                     new FormService(getContext()).getPublishedFormSections();
                 } catch (IOException e) {
                     logError(e.getMessage());
@@ -170,25 +162,15 @@ public class LoginActivity extends RapidFtrActivity {
             makeToast(getToastMessage(statusCode));
         }
 
-        private void setDbKey(HttpResponse response) {
+        protected void setDbKey(HttpResponse response) {
             try {
-                String responseAsString = inputStreamToString(response.getEntity().getContent());
+                String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
                 JSONObject responseAsJson = new JSONObject(responseAsString);
                 String db_key = responseAsJson.get("db_key").toString();
                 getContext().setDbKey(db_key);
             } catch (Exception e) {
                 logError(e.getMessage());
             }
-        }
-
-        private String inputStreamToString(InputStream is) throws IOException {
-            String line = "";
-            StringBuilder total = new StringBuilder();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-            while ((line = rd.readLine()) != null) {
-                total.append(line);
-            }
-            return total.toString();
         }
 
     }

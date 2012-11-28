@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rapidftr-android</artifactId>
     <packaging>apk</packaging>
-    <name>RapidFTR Client Application</name>
+    <name>RapidFTR Android Client</name>
 
     <parent>
         <version>1.0</version>
@@ -24,6 +25,10 @@
             <artifactId>support-v4</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>crittercism</groupId>
+            <artifactId>crittercism</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -56,6 +61,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk16</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>sqlcipher</artifactId>
         </dependency>
@@ -66,6 +76,11 @@
         <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.1.3</version>
         </dependency>
     </dependencies>
 
@@ -79,17 +94,82 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-resources-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
+
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>keytool-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>clean</goal>
+                            <goal>import</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <workingDirectory>${project.basedir}/res/raw</workingDirectory>
+                    <noprompt />
+                    <trustcacerts />
+                    <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
+                    <storetype>bks</storetype>
+                    <storepass>rapidftr</storepass>
+                    <file>rapid_ftr_ca.der</file>
+                    <arguments>
+                        <argument>-provider</argument>
+                        <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
+                        <argument>-providerpath</argument>
+                        <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <configuration>
+                            <prefix>git</prefix>
+                            <verbose>false</verbose>
+                            <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                            <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>downloads-maven-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>*.apk</include>
+                            </includes>
+
+                            <oauth2Token>${env.OAUTH_TOKEN}</oauth2Token>
+                            <repositoryOwner>rapidftr</repositoryOwner>
+                            <repositoryName>RapidFTR---Android</repositoryName>
+
+                            <includeAttached>true</includeAttached>
+                            <description>Android client APK version: ${project.version} generated for commit ${git.commit.id}</description>
+                            <override>true</override>
+                            <suffix>-${project.version}</suffix>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

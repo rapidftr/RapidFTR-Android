@@ -8,14 +8,15 @@ import com.rapidftr.R;
 
 public class LoginPage {
 
-    public static final String LOGIN_URL ="http://dev.rapidftr.com:5000"  ;
-//            "dev.rapidftr.com:5000";
+    public static final String HOST = "https://dev.rapidftr.com";
+    public static final String PORT = "5443";
+    public static final String LOGIN_URL = HOST + ":" + PORT;
     public static final String PASSWORD = "rapidftr";
     public static final String USERNAME = "rapidftr";
 
     public final Solo solo;
 
-    public LoginPage(Solo solo) {
+    public LoginPage(Solo solo){
         this.solo = solo;
     }
 

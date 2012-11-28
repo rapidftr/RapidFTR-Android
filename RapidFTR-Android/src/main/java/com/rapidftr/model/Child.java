@@ -2,63 +2,80 @@ package com.rapidftr.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.rapidftr.utils.RapidFtrDateTime;
+import lombok.Getter;
+import lombok.Setter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
+import static com.rapidftr.model.Child.History.*;
+import static com.rapidftr.utils.JSONArrays.asJSONArray;
+import static com.rapidftr.utils.JSONArrays.asList;
 
 public class Child extends JSONObject implements Parcelable {
 
-    public static final SimpleDateFormat UUID_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
-    public static final ObjectMapper     JSON_MAPPER      = new ObjectMapper();
+    public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    public static final String EMPTY_STRING = "";
 
-    private String jsonString;
-    private String createdAt;
+    protected
+    @Getter
+    @Setter
+    boolean synced;
 
-    public Child()  {
+    public Child() {
         try {
             setSynced(false);
-            this.createdAt = (has(created_at.getColumnName()) ? getString(created_at.getColumnName()) : RapidFtrDateTime.now().defaultFormat());
+            setCreatedAt(RapidFtrDateTime.now().defaultFormat());
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Child(Parcel parcel){
-        jsonString = parcel.readString();
+    public Child(Parcel parcel) throws JSONException {
+        this(parcel.readString());
     }
 
     public Child(String id, String owner, String content) throws JSONException {
-        this(id, owner, content, false);
+        this(content);
+        setUniqueId(id);
+        setOwner(owner);
     }
 
     public Child(String id, String owner, String content, boolean synced) throws JSONException {
-        this(content);
-        setId(id);
-        setOwner(owner);
+        this(id, owner, content);
         setSynced(synced);
     }
 
     public Child(String content) throws JSONException {
-        this(content, false);
+        super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
+        setHistories();
+        if (!has(created_at.getColumnName())) {
+            setCreatedAt(RapidFtrDateTime.now().defaultFormat());
+        }
+    }
+
+    private void setHistories() throws JSONException {
+        String histories = this.optString(HISTORIES, null);
+        if (histories != null)
+            this.put(HISTORIES, new JSONArray(histories));
     }
 
     public Child(String content, boolean synced) throws JSONException {
-        super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
-        this.createdAt = (has(created_at.getColumnName()) ? getString(created_at.getColumnName()) : RapidFtrDateTime.now().defaultFormat());
+        this(content);
         setSynced(synced);
-        jsonString = content;
     }
 
     @Override
@@ -84,16 +101,27 @@ public class Child extends JSONObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        setJsonString(this.toString());
-        parcel.writeString(jsonString);
+        parcel.writeString(getJsonString());
     }
 
     public String getId() throws JSONException {
         return getString(internal_id.getColumnName());
     }
 
-    public void setId(String id) throws JSONException {
-        put(internal_id.getColumnName(), id);
+    public String getUniqueId() throws JSONException {
+        return has(unique_identifier.getColumnName()) ? getString(unique_identifier.getColumnName()) : null;
+    }
+
+    public String getShortId() throws JSONException {
+        if (!has(unique_identifier.getColumnName()))
+            return null;
+
+        int length = getUniqueId().length();
+        return length > 7 ? getUniqueId().substring(length - 7) : getUniqueId();
+    }
+
+    public void setUniqueId(String id) throws JSONException {
+        put(unique_identifier.getColumnName(), id);
     }
 
     public String getOwner() throws JSONException {
@@ -104,26 +132,41 @@ public class Child extends JSONObject implements Parcelable {
         put(created_by.getColumnName(), owner);
     }
 
-    public void setSynced(boolean synced) throws JSONException {
-        put(ChildTableColumn.synced.getColumnName(), synced);
+    public String getName()  {
+        try {
+            return getString(name.getColumnName());
+        } catch (JSONException e) {
+            return EMPTY_STRING;
+        }
     }
 
-    public boolean isSynced()  {
-        return Boolean.valueOf(opt(ChildTableColumn.synced.getColumnName()).toString());
+    public void setName(String childName) throws JSONException {
+        put(name.getColumnName(), childName);
     }
 
-    public String getCreatedAt() {
-        return createdAt;
+    public String getCreatedAt() throws JSONException {
+        return getString(created_at.getColumnName());
+    }
+
+    protected void setCreatedAt(String createdAt) throws JSONException {
+        put(created_at.getColumnName(), createdAt);
+    }
+
+    public String getLastUpdatedAt()  throws JSONException {
+        return optString(last_updated_at.getColumnName(), null);
+    }
+
+    public void setLastUpdatedAt(String lastUpdatedAt) throws JSONException {
+        put(last_updated_at.getColumnName(), lastUpdatedAt);
     }
 
     public void addToJSONArray(String key, Object element) throws JSONException {
         JSONArray array = has(key) ? getJSONArray(key) : new JSONArray();
-        for (int i=0, j=array.length(); i < j; i++)
-            if (element.equals(array.get(i)))
-                return;
+        List<Object> list = asList(array);
+        if (!list.contains(element))
+            list.add(element);
 
-        array.put(element);
-        put(key, array);
+        put(key, asJSONArray(list));
     }
 
     public void removeFromJSONArray(String key, Object element) throws JSONException {
@@ -131,49 +174,32 @@ public class Child extends JSONObject implements Parcelable {
             return;
 
         JSONArray array = getJSONArray(key);
-        JSONArray newArray = new JSONArray();
-        for (int i=0, j=array.length(); i < j; i++) {
-            if (!element.equals(array.get(i))) {
-                newArray.put(array.get(i));
-            }
-        }
-
-        put(key, newArray);
-    }
-
-    public void setJsonString(String childJson){
-        this.jsonString = childJson;
+        List<Object> list = asList(array);
+        list.remove(element);
+        put(key, asJSONArray(list));
     }
 
     public String getJsonString() {
-        return jsonString;
+        return toString();
     }
 
     public void generateUniqueId() throws JSONException {
-        if (has(internal_id.getColumnName())){ /*do nothing*/ }
-        else if (!has(created_by.getColumnName()))
-            throw new IllegalArgumentException("Owner is required for generating ID");
-        else
-            setId(createUniqueId(Calendar.getInstance()));
+        if (has(unique_identifier.getColumnName())) {
+            /* do nothing */
+        } else {
+            setUniqueId(createUniqueId());
+        }
     }
 
-    protected String createUniqueId(Calendar calendar) throws JSONException {
-        StringBuilder uuid = new StringBuilder(getOwner());
-        uuid.append(UUID_DATE_FORMAT.format(calendar.getTime()));
-        uuid.append(getUUIDRandom(5));
-        return uuid.toString();
-    }
-
-    protected String getUUIDRandom(int length) {
-        String uuid = String.valueOf(UUID.randomUUID());
-        return uuid.substring(uuid.length() - length, uuid.length());
+    protected String createUniqueId() throws JSONException {
+        return UUID.randomUUID().toString();
     }
 
     public boolean isValid() {
         int numberOfNonInternalFields = names().length();
 
-        for (ChildTableColumn field : ChildTableColumn.internalFields()){
-            if(has(field.getColumnName())){
+        for (ChildTableColumn field : ChildTableColumn.internalFields()) {
+            if (has(field.getColumnName())) {
                 numberOfNonInternalFields--;
             }
         }
@@ -188,23 +214,62 @@ public class Child extends JSONObject implements Parcelable {
         }
     }
 
-    /** Static field used to regenerate object, individually or as arrays */
-    public static final Parcelable.Creator<Child> CREATOR = new Parcelable.Creator<Child>() {
-        public Child createFromParcel(Parcel pc) {
-            return new Child(pc);
-        }
-        public Child[] newArray(int size) {
-            return new Child[size];
-        }
-    };
+    public JSONObject values() throws JSONException {
+        List<Object> names = asList(names());
+        Iterable<Object> systemFields = Iterables.transform(ChildTableColumn.systemFields(), new Function<ChildTableColumn, Object>() {
+            @Override
+            public Object apply(ChildTableColumn childTableColumn) {
+                return childTableColumn.getColumnName();
+            }
+        });
 
-    public String getFromJSON(String key) {
-        String result = null;
-        try {
-            result = (String) get(key);
-        } catch (JSONException e) {
-            Log.e("ChildJSON", "Doesn't Contains Key : " + key);
+        Iterables.removeAll(names, Lists.newArrayList(systemFields));
+        return new JSONObject(this, names.toArray(new String[names.size()]));
+    }
+
+    public List<History> changeLogs(Child child) throws JSONException {
+        JSONArray names = this.names();
+        List<History> histories = new ArrayList<History>();
+        for (int i = 0; i < names.length(); i++) {
+            String newValue = this.optString(names.getString(i), "");
+            String oldValue = child.optString(names.getString(i), "");
+            if (!oldValue.equals(newValue)) {
+                History history = new History();
+                JSONObject changes = new JSONObject();
+                JSONObject fromTo = new JSONObject();
+                fromTo.put(FROM, oldValue);
+                fromTo.put(TO, newValue);
+                changes.put(names.getString(i), fromTo);
+                history.put(USER_NAME, child.getOwner());
+                history.put(DATETIME, RapidFtrDateTime.now().defaultFormat());
+                history.put(CHANGES, changes);
+                histories.add(history);
+            }
         }
-        return result;
+        return histories;
+    }
+
+    public boolean isNew() {
+        return !has(internal_id.getColumnName());
+    }
+
+    public class History extends JSONObject implements Parcelable {
+        public static final String HISTORIES = "histories";
+        public static final String USER_NAME = "user_name";
+        public static final String DATETIME = "datetime";
+        public static final String CHANGES = "changes";
+        public static final String FROM = "from";
+        public static final String TO = "to";
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int flags) {
+            parcel.writeString(this.toString());
+        }
+
     }
 }

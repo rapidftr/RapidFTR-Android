@@ -1,6 +1,7 @@
 package com.rapidftr.utils;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,17 +27,27 @@ import java.util.Calendar;
 import static android.graphics.BitmapFactory.decodeResource;
 
 @RequiredArgsConstructor(suppressConstructorProperties = true)
-public class CaptureHelper{
+public class CaptureHelper {
 
     protected final RapidFtrApplication application;
 
     public File getPhotoDir() {
-        File extDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File appDir = new File(extDir, "rapidftr");
-        File picDir = new File(appDir, ".nomedia");
+        File baseDir = getExternalStorageDir();
+        if (!baseDir.canWrite())
+            baseDir = getInternalStorageDir();
 
+        File picDir = new File(baseDir, ".nomedia");
         picDir.mkdirs();
         return picDir;
+    }
+
+    protected File getExternalStorageDir() {
+        File extDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        return new File(extDir, "rapidftr");
+    }
+
+    protected File getInternalStorageDir() {
+        return application.getDir("capture", Context.MODE_PRIVATE);
     }
 
     public File getTempCaptureFile() {
@@ -55,7 +66,7 @@ public class CaptureHelper{
     }
 
     public Bitmap getCapture() throws IOException {
-         return BitmapFactory.decodeFile(getTempCaptureFile().getAbsolutePath());
+        return BitmapFactory.decodeFile(getTempCaptureFile().getAbsolutePath());
     }
 
     public void deleteCaptures() {
@@ -75,7 +86,7 @@ public class CaptureHelper{
         ContentResolver resolver = application.getContentResolver();
 
         @Cleanup Cursor cursor = resolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[] {BaseColumns._ID, MediaStore.Images.ImageColumns.DATE_TAKEN,  MediaStore.Images.ImageColumns.DATA },
+                new String[]{BaseColumns._ID, MediaStore.Images.ImageColumns.DATE_TAKEN, MediaStore.Images.ImageColumns.DATA},
                 null, null, null);
 
         while (cursor != null && cursor.moveToNext()) {
@@ -110,13 +121,15 @@ public class CaptureHelper{
         return Bitmap.createScaledBitmap(image, width, height, false);
     }
 
-    protected void save(Bitmap bitmap, String fileNameWithoutExtension)  throws IOException, GeneralSecurityException {
-        File file = new File(getPhotoDir(), fileNameWithoutExtension + ".jpg");
+    protected void save(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        fileNameWithoutExtension = fileNameWithoutExtension.contains(".jpg")? fileNameWithoutExtension : fileNameWithoutExtension + ".jpg";
+        File file = new File(getPhotoDir(), fileNameWithoutExtension);
         if (!file.exists())
             file.createNewFile();
         @Cleanup OutputStream outputStream = getCipherOutputStream(file);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream);
     }
+
     public void saveThumbnail(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
         save(scaleImageTo(bitmap, 96, 96), fileNameWithoutExtension + "_thumb");
     }
@@ -126,12 +139,16 @@ public class CaptureHelper{
     }
 
     public Bitmap loadPhoto(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        @Cleanup InputStream inputStream = getDecodedImageStream(fileNameWithoutExtension);
+        return BitmapFactory.decodeStream(inputStream);
+    }
+
+    public InputStream getDecodedImageStream(String fileNameWithoutExtension) throws GeneralSecurityException, IOException {
         File file = new File(getPhotoDir(), fileNameWithoutExtension + ".jpg");
         if (!file.exists())
             throw new FileNotFoundException();
 
-        @Cleanup InputStream inputStream = getCipherInputStream(file);
-        return BitmapFactory.decodeStream(inputStream);
+        return getCipherInputStream(file);
     }
 
     public Bitmap getThumbnailOrDefault(String fileNameWithoutExtension) {
@@ -140,7 +157,8 @@ public class CaptureHelper{
             if (fileNameWithoutExtension != null) {
                 bitmap = loadThumbnail(fileNameWithoutExtension);
             }
-        } catch (Exception e) { }
+        } catch (Exception e) {
+        }
 
         return bitmap != null ? bitmap : getDefaultThumbnail();
     }
@@ -148,13 +166,13 @@ public class CaptureHelper{
     /**
      * We need to generate a Cipher key from the DbKey (since we cannot just directly use the dbKey as password)
      * So we generate the following:
-     *    Salt   - salt is not supposed to be secure, it is just for avoiding dictionary based attacks
-     *             salt is almost always stored along with the encrypted data
-     *             so in our case we use the file name as a seed for generating a random salt
-     *    Key    - 256 bit cipher key generated from Password and Salt
-     *    IV     - Initialization vector, some random number to begin with, again generated from file name
-     *    Cipher - Cipher created from key and IV
-     *
+     * Salt   - salt is not supposed to be secure, it is just for avoiding dictionary based attacks
+     * salt is almost always stored along with the encrypted data
+     * so in our case we use the file name as a seed for generating a random salt
+     * Key    - 256 bit cipher key generated from Password and Salt
+     * IV     - Initialization vector, some random number to begin with, again generated from file name
+     * Cipher - Cipher created from key and IV
+     * <p/>
      * Reference: http://nelenkov.blogspot.in/2012/04/using-password-based-encryption-on.html
      */
     protected Cipher getCipher(int mode, String fileName) throws GeneralSecurityException {
@@ -167,7 +185,7 @@ public class CaptureHelper{
         random.nextBytes(salt);
 
         KeySpec keySpec = new PBEKeySpec(password.toCharArray(), salt, iterationCount, keyLength);
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithSHA256And256BitAES-CBC-BC");
         byte[] keyBytes = keyFactory.generateSecret(keySpec).getEncoded();
         SecretKey key = new SecretKeySpec(keyBytes, "AES");
 

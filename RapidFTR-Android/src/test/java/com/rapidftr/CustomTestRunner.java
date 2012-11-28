@@ -5,7 +5,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import com.google.inject.name.Names;
 import com.google.inject.util.Modules;
 import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.ShadowSQLiteHelper;
@@ -13,12 +12,16 @@ import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.utils.ApplicationInjector;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
-import lombok.experimental.Accessors;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.runners.model.InitializationError;
 import org.mockito.MockitoAnnotations;
 
+import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
+import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 
 public class CustomTestRunner extends RobolectricTestRunner {
 
@@ -51,12 +54,14 @@ public class CustomTestRunner extends RobolectricTestRunner {
     public CustomTestRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
         MockitoAnnotations.initMocks(testClass);
+        Security.addProvider(new BouncyCastleProvider());
     }
 
     @Override
     protected Application createApplication() {
         RapidFtrApplication application = new RapidFtrApplication(INJECTOR);
-        application.setUserName("user1");
+        application.setPreference(SERVER_URL, "http://1.2.3.4:5");
+        application.setPreference(USER_NAME, "user1");
         application.setDbKey("db_key");
         application.setFormSections(formSectionSeed);
         return application;

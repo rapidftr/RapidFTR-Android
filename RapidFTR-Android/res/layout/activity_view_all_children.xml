@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent"
+              android:orientation="vertical"
+              android:layout_height="fill_parent">
+    <LinearLayout android:layout_width="fill_parent"
+                  android:id="@+id/nav_bar"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal">
+        <include layout="@layout/view_all_tab"/>
+    </LinearLayout>
+
+    <ListView
+            android:layout_below="@id/nav_bar"
+            android:id="@+id/child_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+    </ListView>
+
+    <LinearLayout android:id="@+id/no_child_view"
+                  android:layout_weight="4"
+                  android:layout_width="fill_parent"
+                  style="@style/no_child_text"
+                  android:gravity="center_horizontal"
+                  android:layout_height="0dip"
+                  android:visibility="gone"
+                  android:layout_below="@id/search_bar">
+
+        <TextView android:text="No Child Found"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content">
+        </TextView>
+
+    </LinearLayout>
+
+</LinearLayout>

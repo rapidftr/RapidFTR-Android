@@ -3,11 +3,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:orientation="horizontal"
-              android:layout_height="fill_parent">
+              android:layout_height="fill_parent"
+              style="@style/childrow"
+              android:background="@drawable/list_bg">
     <ImageView
             android:id="@+id/thumbnail"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitCenter"
+            style="@style/childphoto"
+            android:background="#aaaaaa"
             />
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="fill_parent"
@@ -16,9 +21,11 @@
                   android:layout_height="fill_parent">
         <TextView android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
+                  style="@style/childid"
                   android:id="@+id/row_child_unique_id"/>
         <TextView android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
+                  style="@style/childname"
                   android:id="@+id/row_child_name"/>
     </LinearLayout>
 </LinearLayout>

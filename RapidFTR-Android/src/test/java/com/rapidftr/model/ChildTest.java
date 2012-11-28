@@ -2,19 +2,26 @@ package com.rapidftr.model;
 
 
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.database.Database;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 
+import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
+import static com.rapidftr.model.Child.History.*;
+import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static junit.framework.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -28,8 +35,8 @@ public class ChildTest {
 
     @Test
     public void shouldDecodeIDFromJSON() throws JSONException {
-        Child child = new Child("{ '_id' : 'test1' }");
-        assertThat(child.getId(), is("test1"));
+        Child child = new Child("{ 'unique_identifier' : 'test1' }");
+        assertThat(child.getUniqueId(), is("test1"));
     }
 
     @Test
@@ -59,7 +66,7 @@ public class ChildTest {
     @Test
     public void shouldGenerateWithIdAndOwnerAndContent() throws JSONException {
         Child child = new Child("id1", "owner1", "{ 'test1' : 'value1' }");
-        assertThat(child.getId(), is("id1"));
+        assertThat(child.getUniqueId(), is("id1"));
         assertThat(child.getOwner(), is("owner1"));
         assertThat(child.getString("test1"), is("value1"));
     }
@@ -75,37 +82,25 @@ public class ChildTest {
         Child child = new Child(null, "rapidftr", null);
         child = spy(child);
 
-        doReturn("xyz").when(child).createUniqueId(any(Calendar.class));
+        doReturn("xyz").when(child).createUniqueId();
 
         child.generateUniqueId();
-        assertThat(child.getId(), equalTo("xyz"));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldNotGenerateUniqueIdIfOwnerIsNull() throws JSONException {
-        new Child().generateUniqueId();
+        assertThat(child.getUniqueId(), equalTo("xyz"));
     }
 
     @Test
     public void shouldNotOverwriteIdIfAlreadyPresent() throws JSONException {
         Child child = new Child("id1", "owner1", null);
         child.generateUniqueId();
-        assertThat(child.getId(), equalTo("id1"));
+        assertThat(child.getUniqueId(), equalTo("id1"));
     }
 
     @Test
-    public void testShouldGenerateUniqueIdInFormat() throws JSONException {
-        Child child = new Child(null, "rapidftr", null);
+    public void shouldReturnShortID() throws JSONException {
+        Child child = new Child();
+        child.setUniqueId("987654321");
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, 2012);
-        calendar.set(Calendar.MONTH, Calendar.JULY);
-        calendar.set(Calendar.DAY_OF_MONTH, 21);
-
-        String guid = child.createUniqueId(calendar);
-
-        assertTrue(guid.contains("rapidftr20120721"));
-        assertTrue(guid.length() == 21);
+        assertThat(child.getShortId(), equalTo("7654321"));
     }
 
     @Test
@@ -128,7 +123,7 @@ public class ChildTest {
     }
 
     @Test
-    public void shouldReturnNamesWithLengthOneInsteadOfNull() {
+    public void shouldReturnNamesWithLengthOneInsteadOfNull() throws JSONException {
         Child child = new Child();
         assertThat(child.names().length(), equalTo(1));
     }
@@ -137,14 +132,14 @@ public class ChildTest {
     public void shouldRemoveFieldIfBlank() throws JSONException {
         Child child = new Child();
         child.put("name", "test");
-        assertThat(child.names().length(), equalTo(2));
+        assertThat(child.values().names().length(), equalTo(1));
 
         child.put("name", "\r  \n  \r  \n");
-        assertThat(child.names().length(), equalTo(1));
+        assertNull(child.values().names());
     }
 
     @Test
-    public void shouldHaveFalseSyncStatusIfTheChildObjectIsCreated(){
+    public void shouldHaveFalseSyncStatusIfTheChildObjectIsCreated() throws JSONException {
         Child child = new Child();
         assertFalse(child.isSynced());
     }
@@ -164,10 +159,10 @@ public class ChildTest {
     public void shouldRemoveFieldIfJSONArrayIsEmtpy() throws JSONException {
         Child child = new Child();
         child.put("name", new JSONArray(Arrays.asList("one")));
-        assertThat(child.names().length(), equalTo(2));
+        assertThat(child.values().names().length(), equalTo(1));
 
         child.put("name", new JSONArray());
-        assertThat(child.names().length(), equalTo(1));
+        assertNull(child.values().names());
     }
 
     @Test
@@ -178,25 +173,64 @@ public class ChildTest {
     }
 
     @Test
-    public void shouldNotGenerateDuplicateIdForSameUserSameChildNameAndSameDate() throws JSONException {
-        Child child = new Child(null, "rapidftr", null);
+    public void valuesShouldReturnAllExceptSystemFields() throws JSONException, IOException {
+        Child child = new Child();
+        child.put("test1", "value1");
+        for (Database.ChildTableColumn column : Database.ChildTableColumn.systemFields()) {
+            child.put(column.getColumnName(), "test");
+        }
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, 2012);
-        calendar.set(Calendar.MONTH, Calendar.JULY);
-        calendar.set(Calendar.DAY_OF_MONTH, 21);
-
-        String guid1 = child.createUniqueId(calendar);
-        String guid2 = child.createUniqueId(calendar);
-
-        assertNotSame(guid1, guid2);
+        assertThat(child.values(), equalJSONIgnoreOrder("{\"test1\":\"value1\"}"));
     }
-    
+
+    public void shouldReturnListOfChangeLogsBasedOnChanges() throws JSONException {
+        Child oldChild = new Child("id", "user", "{'name' : 'old-name'}");
+        Child updatedChild = new Child("id", "user", "{'name' : 'updated-name'}");
+        List<Child.History> histories = updatedChild.changeLogs(oldChild);
+
+        JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
+        HashMap fromTo = (HashMap) changesMap.get("name");
+
+        assertThat(histories.size() ,is(1));
+        assertThat(histories.get(0).get(USER_NAME).toString(), is(updatedChild.getOwner()));
+        assertThat(changesMap.names().get(0).toString(), is("name"));
+        assertThat(fromTo.get(FROM).toString(), is("old-name"));
+        assertThat(fromTo.get(TO).toString(), is("updated-name"));
+    }
+
     @Test
-    public void shouldReturnValueFromJSON() throws JSONException {
-        Child child = new Child("{ 'created_by' : 'test1' }");
-        assertEquals("test1",child.getFromJSON("created_by"));
-        assertNull("test1",child.getFromJSON("unknown_key"));
+    public void shouldReturnListOfChangeLogsForNewFieldValueToExistingChild() throws JSONException {
+        Child oldChild = new Child("id", "user", "{'gender' : 'male', 'name' : 'old-name'}");
+        Child updatedChild = new Child("id", "user", "{'gender' : 'male','nationality' : 'Indian', 'name' : 'new-name'}");
+        List<Child.History> histories = updatedChild.changeLogs(oldChild);
+
+        JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
+        JSONObject fromTo = (JSONObject) changesMap.get("nationality");
+
+        assertThat(histories.size(),is(2));
+        assertThat(changesMap.names().get(0).toString(), is("nationality"));
+        assertThat(fromTo.get(FROM).toString(),is(""));
+        assertThat(fromTo.get(TO).toString(), is("Indian"));
+
+        changesMap = (JSONObject) histories.get(1).get(CHANGES);
+        fromTo = (JSONObject) changesMap.get("name");
+
+        assertThat(changesMap.names().get(0).toString(), is("name"));
+        assertThat(fromTo.get(FROM).toString(),is("old-name"));
+        assertThat(fromTo.get(TO).toString(), is("new-name"));
+    }
+
+    @Test
+    public void shouldBeNewIfThereIsNoID() throws JSONException {
+        Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
+        assertThat(child.isNew(), is(true));
+    }
+
+    @Test
+    public void shouldNotBeNewIfThereIsID() throws JSONException {
+        Child child = new Child();
+        child.put(internal_id.getColumnName(), "xyz");
+        assertThat(child.isNew(), is(false));
     }
 
 }

@@ -1,23 +1,21 @@
 package com.rapidftr.activity;
 
 import android.content.Intent;
+import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.forms.FormSection;
+import com.rapidftr.model.Child;
+import com.rapidftr.service.ChildService;
 import com.xtremelabs.robolectric.Robolectric;
-import com.xtremelabs.robolectric.shadows.ShadowToast;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 @RunWith(CustomTestRunner.class)
 public class ViewChildActivityTest {
@@ -30,31 +28,42 @@ public class ViewChildActivityTest {
         Robolectric.shadowOf(activity).setIntent(new Intent().putExtra("id", "id1"));
     }
 
-    @Test
-    public void testShouldSetFormSectionFromContext() {
-        List<FormSection> formSections = new ArrayList<FormSection>();
-        RapidFtrApplication.getInstance().setFormSections(formSections);
-
-        activity.initializeData();
-        assertThat(activity.formSections, equalTo(formSections));
+    @Test(expected = Exception.class)
+    public void shouldThrowErrorIfChildIsNotFound() throws Exception {
+        activity.initializeData(null);
     }
 
     @Test
-    public void shouldShowErrorMessageWhenChildRecordIsNull() throws Exception {
-        activity.initializeData();
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(activity.getString(R.string.internal_error)));
-    }
+    public void testEditListener() throws JSONException {
+        doNothing().when(activity).edit();
 
-    @Test
-    public void testEditListener() {
-        doNothing().when(activity).editChild();
-
-        activity.onCreate(null);
-        activity.initializeListeners();
+        activity.initializeView();
 
         activity.findViewById(R.id.submit).performClick();
-        verify(activity).editChild();
+        verify(activity).edit();
     }
 
+    @Test
+    public void shouldSyncAndShowChildRecord() throws IOException, JSONException {
+        Child child = mock(Child.class);
+        ChildService service = mock(ChildService.class);
 
+        doReturn(child).when(service).sync(child);
+        doReturn(service).when(activity).inject(ChildService.class);
+
+        activity.child = child;
+        activity.sync();
+
+        verify(service).sync(child);
+        verify(activity).restart();
+    }
+
+    @Test
+    public void shouldCallSyncWhenMenuSelected() {
+        doNothing().when(activity).sync();
+        MenuItem item = mock(MenuItem.class);
+        given(item.getItemId()).willReturn(R.id.synchronize_child);
+        activity.onOptionsItemSelected(item);
+        verify(activity).sync();
+    }
 }

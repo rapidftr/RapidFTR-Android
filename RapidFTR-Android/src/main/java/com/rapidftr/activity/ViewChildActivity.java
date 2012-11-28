@@ -1,61 +1,86 @@
 package com.rapidftr.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import com.rapidftr.R;
-import com.rapidftr.repository.ChildRepository;
-import lombok.Cleanup;
+import com.rapidftr.model.Child;
+import com.rapidftr.service.ChildService;
+import com.rapidftr.task.AsyncTaskWithDialog;
+import lombok.RequiredArgsConstructor;
+import org.json.JSONException;
 
-public class ViewChildActivity extends RegisterChildActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+public class ViewChildActivity extends BaseChildActivity {
 
     @Override
-    protected void initialize() {
+    protected void initializeView() {
         setContentView(R.layout.activity_register_child);
-        setLabel(R.string.edit);
-        initializeData();
-        initializePager();
-        initializeSpinner();
-        initializeListeners();
-    }
-
-    @Override
-    protected void initializeData() {
-        editable = false;
-        formSections = getContext().getFormSections();
-
-        @Cleanup ChildRepository repository = getInjector().getInstance(ChildRepository.class);
-        String childId = getIntent().getExtras().getString("id");
-
-        try {
-            child = repository.get(childId);
-            ((TextView) findViewById(R.id.title)).setText(child.getId());
-        } catch (Exception e) {
-            makeToast(R.string.internal_error);
-        }
-    }
-
-    @Override
-    protected void initializeListeners(){
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editChild();
+                try {
+                    edit();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
 
-    protected void editChild() {
-        Intent registerChildActivity = new Intent(this, RegisterChildActivity.class);
-        registerChildActivity.putExtra("child", child);
-        startActivity(registerChildActivity);
+    @Override
+    protected void initializeLabels() throws JSONException {
+        setLabel(R.string.edit);
+        setTitle(child.getShortId());
+    }
+
+    @Override
+    protected void initializeData(Bundle savedInstanceState) throws JSONException {
+        super.initializeData(savedInstanceState);
+        this.editable = false;
+        load();
+    }
+
+    protected void sync() {
+        SyncChildTask task = new SyncChildTask(inject(ChildService.class));
+        AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.child_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.synchronize_child:
+                sync();
+                return true;
+        }
+
+        return false;
+    }
+
+    @RequiredArgsConstructor(suppressConstructorProperties = true)
+    protected class SyncChildTask extends AsyncTaskWithDialog<Child, Void, Child> {
+
+        protected final ChildService service;
+
+        @Override
+        protected Child doInBackground(Child... children) {
+            try {
+                return service.sync(child);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Child child) {
+            restart();
+        }
     }
 
 }

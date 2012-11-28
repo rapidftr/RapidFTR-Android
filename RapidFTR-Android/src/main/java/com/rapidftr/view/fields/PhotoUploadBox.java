@@ -13,14 +13,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.rapidftr.R;
+import com.rapidftr.activity.BaseChildActivity;
 import com.rapidftr.activity.RapidFtrActivity;
-import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.activity.ViewPhotoActivity;
 import com.rapidftr.task.EncryptImageAsyncTask;
 import com.rapidftr.utils.CaptureHelper;
 import org.json.JSONException;
 
 import java.util.UUID;
+
+import static com.rapidftr.activity.BaseChildActivity.CLOSE_ACTIVITY;
 
 public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultListener {
 
@@ -45,7 +47,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
 
         RapidFtrActivity activity = (RapidFtrActivity) getContext();
         activity.addResultListener(CAPTURE_IMAGE_REQUEST, this);
-        activity.addResultListener(RegisterChildActivity.CLOSE_ACTIVITY, this);
+        activity.addResultListener(CLOSE_ACTIVITY, this);
 
         getImageContainer().setOnClickListener(new OnClickListener() {
             @Override
@@ -66,7 +68,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
                 if (resultCode == Activity.RESULT_OK)
                     saveCapture();
                 break;
-            case RegisterChildActivity.CLOSE_ACTIVITY:
+            case CLOSE_ACTIVITY:
                 deleteCapture();
                 break;
         }
@@ -136,8 +138,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     protected String createCaptureFileName() {
-        String fileName = child.optString(formField.getId());
-        return "".equals(fileName) ? UUID.randomUUID().toString() : fileName;
+        return UUID.randomUUID().toString();
     }
 
     protected ImageView getImageView() {

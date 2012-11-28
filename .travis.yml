@@ -1,6 +1,9 @@
 language: java
+
 env:
-  - ANDROID_HOME=~/android-sdk-linux
+  global:
+    - ANDROID_HOME=~/android-sdk-linux
+    - secure: "eMONRmh/28CnRRhnK1hkoJwrAFptyLwQ4Z5hGP/ccywZmKOUlkkDwapbcKkk\narSLHGY8Ybn+QMj/L8DVm+KnTApNq9cWc+1DNbMhZuANzraDHaBrdIdJeBtO\nQEG2bkaYwtYEmUYPBqSLMen/Vs8c0eVWQISU76UIvvPknA/PHA0="
 
 before_install:
   - export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
@@ -12,8 +15,15 @@ before_install:
   - ln -s $ANDROID_HOME/tools/emulator-arm $ANDROID_HOME/tools/emulator
 
 install: echo
-script:  mvn clean install -P ci
+script: "mvn clean install -P ci"
+
+after_script:
+  - mvn pl.project13.maven:git-commit-id-plugin:revision ghDownloads:upload -P ci --projects RapidFTR-Android --fail-never
 
 notifications:
   email: false
-  irc: "irc.freenode.org#rapidftr"
+  irc:
+    channels:
+      - "irc.freenode.org#rapidftr"
+    template:
+      - "[%{repository}] [%{commit}] [%{author}] %{message} - %{build_url}"

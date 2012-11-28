@@ -8,26 +8,32 @@
                   android:id="@+id/nav_bar"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal">
-        <include layout="@layout/navigation_tabs"/>
+        <include layout="@layout/search_tab"/>
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/search_bar"
                   android:layout_width="fill_parent"
                   android:orientation="horizontal"
                   android:layout_below="@id/nav_bar"
                   android:weightSum="5"
-                  android:layout_height="wrap_content">
+                  android:layout_height="wrap_content"
+                   android:padding="5dp"
+                android:background="#999999">
         <EditText
                 android:id="@+id/search_text"
-                android:hint="Search Children"
+                android:hint="Search Child by name/id"
                 android:layout_weight="4"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/textbox"
+                style="@style/TextView">
         </EditText>
         <Button android:id="@+id/search_btn"
                 android:text="Go"
                 android:layout_weight="1"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@drawable/button">
         </Button>
 
     </LinearLayout>
@@ -43,8 +49,10 @@
                   android:layout_weight="4"
                   android:layout_width="fill_parent"
                   android:layout_height="0dip"
+                  style="@style/no_child_text"
+                  android:gravity="center_horizontal"
                   android:visibility="gone"
-                  android:gravity="center">
+                  android:layout_below="@id/search_bar">
 
         <TextView android:text="No Child Found"
                   android:layout_width="wrap_content"

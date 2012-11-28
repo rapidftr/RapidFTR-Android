@@ -1,4 +1,4 @@
-package com.rapidftr.utils;
+package com.rapidftr.utils.http;
 
 import android.content.Context;
 import com.rapidftr.CustomTestRunner;
@@ -6,13 +6,17 @@ import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.tester.org.apache.http.FakeHttpLayer;
 import com.xtremelabs.robolectric.tester.org.apache.http.RequestMatcher;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.security.Security;
 
-import static com.rapidftr.utils.FluentRequest.http;
+import static com.rapidftr.utils.http.FluentRequest.http;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -20,11 +24,12 @@ import static org.mockito.Mockito.*;
 @RunWith(CustomTestRunner.class)
 public class FluentRequestTest {
 
-    private HttpResponse response;
+    private FluentResponse response;
 
     @Before
     public void setUp() {
-        response = mock(HttpResponse.class, RETURNS_DEEP_STUBS);
+        Security.addProvider(new BouncyCastleProvider());
+        response = mock(FluentResponse.class, RETURNS_DEEP_STUBS);
     }
 
     @Test
@@ -95,6 +100,60 @@ public class FluentRequestTest {
 
         Robolectric.getFakeHttpLayer().addHttpResponseRule("http://example.com/test", response);
         assertThat(http.path("/test").context(context).get(), equalTo(response));
+    }
+
+    @Test
+    public void testGetShouldCallExecute() throws IOException {
+        FluentRequest http = spy(http().host("test"));
+        doReturn(null).when(http).execute(any(HttpRequestBase.class));
+        http.get();
+        verify(http).execute(any(HttpRequestBase.class));
+    }
+
+    @Test
+    public void testPostShouldCallExecute() throws IOException {
+        FluentRequest http = spy(http().host("test"));
+        doReturn(null).when(http).execute(any(HttpRequestBase.class));
+        http.post();
+        verify(http).execute(any(HttpRequestBase.class));
+    }
+
+    @Test
+    public void testPostMultiPartShouldCallExecute() throws IOException {
+        FluentRequest http = spy(http().host("test"));
+        doReturn(null).when(http).execute(any(HttpRequestBase.class));
+        http.postWithMultipart();
+        verify(http).execute(any(HttpRequestBase.class));
+    }
+
+    @Test
+    public void testPutShouldCallExecute() throws IOException {
+        FluentRequest http = spy(http().host("test"));
+        doReturn(null).when(http).execute(any(HttpRequestBase.class));
+        http.put();
+        verify(http).execute(any(HttpRequestBase.class));
+    }
+
+    @Test
+    public void testDeleteShouldCallExecute() throws IOException {
+        FluentRequest http = spy(http().host("test"));
+        doReturn(null).when(http).execute(any(HttpRequestBase.class));
+        http.delete();
+        verify(http).execute(any(HttpRequestBase.class));
+    }
+
+    @Test(expected = Exception.class)
+    public void testExecuteShouldCallReset() throws IOException {
+        FluentRequest http = spy(http());
+        http.execute(mock(HttpRequestBase.class, RETURNS_DEEP_STUBS));
+        verify(http).reset();
+    }
+
+    @Test @Ignore // This test alone does a *real* connection to test SSL
+    public void testSSL() throws IOException {
+        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        HttpResponse httpResponse = http().host("https://dev.rapidftr.com:5443/login").header("Accept", "text/html").get();
+        System.out.println(httpResponse.getStatusLine());
     }
 
 }

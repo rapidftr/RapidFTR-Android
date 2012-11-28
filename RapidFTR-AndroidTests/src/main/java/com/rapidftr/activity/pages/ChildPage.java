@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class RegisterChildPage {
+public class ChildPage {
 
     public Solo solo;
     int formPosition ;
     List automationFormData = Arrays.asList(new String[]{"Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012"});
 
-    public RegisterChildPage(Solo solo) {
+    public ChildPage(Solo solo) {
         this.solo = solo;
     }
 

@@ -12,10 +12,12 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.service.FormService;
 import com.rapidftr.task.SyncAllDataAsyncTask;
+import com.rapidftr.utils.http.FluentRequest;
+
+import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
+import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 
 public class ApplicationInjector extends AbstractModule {
-
-    public static final String DB_NAME = "rapidftr";
 
     @Override
     protected void configure() {
@@ -24,12 +26,13 @@ public class ApplicationInjector extends AbstractModule {
         bind(ChildRepository.class);
         bind(FormService.class);
         bind(SyncAllDataAsyncTask.class);
+        bind(FluentRequest.class);
         bind(ChildService.class);
     }
 
     @Provides @Named("USER_NAME")
     public String getUserName(RapidFtrApplication application) {
-        return application.getUserName();
+        return application.getPreference(USER_NAME);
     }
 
     @Provides @Named("DB_KEY")
@@ -38,8 +41,9 @@ public class ApplicationInjector extends AbstractModule {
     }
 
     @Provides @Named("DB_NAME")
-    public String getDBName() {
-        return DB_NAME;
+    public String getDBName(RapidFtrApplication application) {
+        String serverUrl = application.getPreference(SERVER_URL);
+        return serverUrl.replaceAll("^.+//", "").replaceAll("\\W+", "_");
     }
 
     @Provides

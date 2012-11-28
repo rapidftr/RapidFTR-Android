@@ -1,6 +1,8 @@
 package com.rapidftr.database;
 
 import com.google.common.base.Predicate;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,38 +52,46 @@ public enum Database {
         }
     }
 
+    @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum ChildTableColumn {
         id("id"),
+        name("name"),
         content("child_json"),
         owner("child_owner"),
-        synced("synced", true),
-        internal_id("_id", true),
-        created_by("created_by", true),
-        thumbnail("_thumbnail", true),
-        created_at("created_at", true),
-        updated_at("updated_at", true);
+        synced("synced"),
 
-        private String columnName;
-        private boolean isInternal;
+        internal_id("_id", true, false),
+        unique_identifier("unique_identifier", true, false),
+        created_by("created_by", true, false),
+        last_updated_at("last_updated_at", true, false),
+
+        revision("_rev", true, true),
+        thumbnail("_thumbnail", true, true),
+        created_at("created_at", true, true);
+
+
+        private @Getter final String columnName;
+        private final boolean isInternal;
+        private final boolean isSystem;
 
         ChildTableColumn(String columnName) {
-            this(columnName, false);
+            this(columnName, false, false);
         }
 
-        ChildTableColumn(String columnName, boolean isInternal) {
-            this.columnName = columnName;
-            this.isInternal = isInternal;
-        }
-
-        public String getColumnName() {
-            return columnName;
-        }
-
-        public static Iterable<ChildTableColumn> internalFields(){
+        public static Iterable<ChildTableColumn> internalFields() {
             List<ChildTableColumn> allColumns = Arrays.asList(ChildTableColumn.values());
             return filter(allColumns, new Predicate<ChildTableColumn>() {
                 public boolean apply(ChildTableColumn column) {
                     return column.isInternal;
+                }
+            });
+        }
+
+        public static Iterable<ChildTableColumn> systemFields() {
+            List<ChildTableColumn> allColumns = Arrays.asList(ChildTableColumn.values());
+            return filter(allColumns, new Predicate<ChildTableColumn>() {
+                public boolean apply(ChildTableColumn column) {
+                    return column.isSystem;
                 }
             });
         }
