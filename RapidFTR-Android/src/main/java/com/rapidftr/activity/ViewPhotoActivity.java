@@ -1,6 +1,7 @@
 package com.rapidftr.activity;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.rapidftr.R;
@@ -16,6 +17,12 @@ public class ViewPhotoActivity extends RapidFtrActivity {
         captureHelper = new CaptureHelper(getContext());
         this.initialize();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
 
     protected ImageView getImageView() {
         return (ImageView) findViewById(R.id.photo);

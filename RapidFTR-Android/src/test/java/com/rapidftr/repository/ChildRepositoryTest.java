@@ -23,9 +23,7 @@ import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.*;
@@ -72,7 +70,7 @@ public class ChildRepositoryTest {
 
         Child child2 = repository.get("id1");
         assertThat(child1.values(), equalJSONIgnoreOrder(child2.values()));
-        assertNull(child2.getLastUpdatedAt());
+        assertNotNull(child2.getLastUpdatedAt());
     }
 
     @Test
