@@ -48,7 +48,6 @@ public class ChildService {
 
         fluentRequest.path(path).context(context).param("child", child.values().toString());
         addPhotoToTheRequest(child);
-        Log.e("######",child.getJsonString());
         FluentResponse response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
 
         if (response != null && response.isSuccess()) {

@@ -35,7 +35,7 @@ public class ChildRepository implements Closeable {
     }
 
     public Child get(String id) throws JSONException {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ? AND child_owner = ?", new String[]{id, userName});
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ?", new String[]{id});
         if (cursor.moveToNext()) {
             return childFrom(cursor);
         } else {
@@ -69,8 +69,8 @@ public class ChildRepository implements Closeable {
         ContentValues values = new ContentValues();
         if (exists(child.getUniqueId())) {
             addHistory(child);
-            child.setLastUpdatedAt(getTimeStamp());
         }
+        child.setLastUpdatedAt(getTimeStamp());
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
         values.put(id.getColumnName(), child.getUniqueId());
         values.put(Database.ChildTableColumn.name.getColumnName(), child.getName());
