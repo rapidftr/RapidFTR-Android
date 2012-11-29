@@ -1,5 +1,7 @@
 package com.rapidftr.activity;
 
+import com.rapidftr.activity.pages.LoginPage;
+
 import static com.rapidftr.activity.pages.LoginPage.*;
 
 public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
@@ -10,7 +12,7 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
     }
 
     public void testIncorrectServer() {
-        loginPage.login(USERNAME, PASSWORD,"http://dev.rapidftr.com:abc");
+        loginPage.login(USERNAME, PASSWORD, LoginPage.LOGIN_URL+":abc");
         solo.waitForText("Unable to connect to the server, please contact your system administrator");
     }
 

@@ -40,7 +40,7 @@
         <EditText android:background="@drawable/textbox"
                   android:id="@+id/url"
                   android:hint="@string/url"
-                  android:text="dev.rapidftr.com:5000"
+                  android:text="https://151.236.218.124:5001"
                   android:inputType="textFilter|textUri|textVisiblePassword|textNoSuggestions"
                   android:autoText="false"
                   android:layout_width="fill_parent"
