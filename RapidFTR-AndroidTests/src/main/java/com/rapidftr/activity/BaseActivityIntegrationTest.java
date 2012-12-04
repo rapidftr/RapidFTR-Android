@@ -35,7 +35,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     @Override
     public void tearDown() throws Exception {
         solo.finishOpenedActivities();
-        RapidFtrApplication.getInstance().setLoggedIn(false);
+        RapidFtrApplication.getApplicationInstance().setLoggedIn(false);
     }
 
     public boolean isTextPresent(String searchText){

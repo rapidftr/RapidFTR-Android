@@ -24,7 +24,7 @@ public class ApplicationInjectorTest {
     @Before
     public void setUp() {
         injector = Guice.createInjector(new ApplicationInjector());
-        application = RapidFtrApplication.getInstance();
+        application = RapidFtrApplication.getApplicationInstance();
     }
 
     @Test

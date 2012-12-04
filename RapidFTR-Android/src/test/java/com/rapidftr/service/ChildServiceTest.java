@@ -112,7 +112,7 @@ public class ChildServiceTest {
     }
 
     private RapidFtrApplication mockContext() {
-        RapidFtrApplication context = RapidFtrApplication.getInstance();
+        RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();
         context.setPreference(SERVER_URL, "whatever");
         return context;
     }

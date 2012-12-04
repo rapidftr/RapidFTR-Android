@@ -70,7 +70,7 @@ public class BaseChildActivityTest {
     @Test
     public void testInitializeFormSections() throws JSONException {
         List<FormSection> formSections = (List<FormSection>) mock(List.class);
-        RapidFtrApplication.getInstance().setFormSections(formSections);
+        RapidFtrApplication.getApplicationInstance().setFormSections(formSections);
 
         activity.initializeData(null);
         assertThat(activity.formSections, equalTo(formSections));

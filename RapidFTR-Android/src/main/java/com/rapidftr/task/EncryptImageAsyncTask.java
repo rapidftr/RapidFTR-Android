@@ -9,6 +9,8 @@ import com.rapidftr.utils.CaptureHelper;
 import com.rapidftr.view.fields.PhotoUploadBox;
 import org.json.JSONException;
 
+import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
+
 public class EncryptImageAsyncTask extends AsyncTask<Void, Void, Boolean> {
 
     private CaptureHelper captureHelper;
@@ -32,7 +34,7 @@ public class EncryptImageAsyncTask extends AsyncTask<Void, Void, Boolean> {
             captureHelper.savePhoto(bitmap, fileName);
             return true;
         } catch (Exception e) {
-            Toast.makeText(context, R.string.photo_capture_error, Toast.LENGTH_LONG);
+            Toast.makeText(getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG);
         }
         return false;
     }
@@ -43,7 +45,7 @@ public class EncryptImageAsyncTask extends AsyncTask<Void, Void, Boolean> {
         try {
             photoUploadBox.repaint();
         } catch (JSONException e) {
-            Toast.makeText(context, R.string.photo_capture_error, Toast.LENGTH_LONG);
+            Toast.makeText(getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG);
         }
     }
 

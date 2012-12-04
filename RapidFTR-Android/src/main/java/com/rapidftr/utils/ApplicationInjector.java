@@ -48,7 +48,7 @@ public class ApplicationInjector extends AbstractModule {
 
     @Provides
     public RapidFtrApplication getRapidFTRApplication() {
-        return RapidFtrApplication.getInstance();
+        return RapidFtrApplication.getApplicationInstance();
     }
 
     @Provides

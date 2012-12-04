@@ -3,7 +3,6 @@ package com.rapidftr.activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.ImageView;
-import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.utils.CaptureHelper;
 
@@ -35,7 +34,7 @@ public class ViewPhotoActivity extends RapidFtrActivity {
         try {
             getImageView().setImageBitmap(captureHelper.loadPhoto(fileName));
         } catch (Exception e) {
-            Toast.makeText(getContext(), R.string.photo_view_error, Toast.LENGTH_LONG).show();
+            makeToast(R.string.photo_view_error);
         }
     }
 

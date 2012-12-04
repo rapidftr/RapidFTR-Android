@@ -17,6 +17,8 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 
+import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
+
 public abstract class RapidFtrActivity extends Activity {
 
     public interface ResultListener {
@@ -60,7 +62,7 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     protected void makeToast(int resId) {
-        Toast.makeText(this, getText(resId), Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationInstance(), getText(resId), Toast.LENGTH_LONG).show();
     }
 
     protected Injector getInjector() {
@@ -87,7 +89,7 @@ public abstract class RapidFtrActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.options_menu, menu);
-        return RapidFtrApplication.getInstance().isLoggedIn();
+        return getApplicationInstance().isLoggedIn();
     }
 
     @Override

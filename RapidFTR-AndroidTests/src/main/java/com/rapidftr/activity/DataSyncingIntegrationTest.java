@@ -22,7 +22,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
     public void setUp() throws Exception {
         super.setUp();
         loginPage.login();
-        context = RapidFtrApplication.getInstance();
+        context = RapidFtrApplication.getApplicationInstance();
         repository = context.getInjector().getInstance(ChildRepository.class);
         RapidFTRDatabase.deleteChildren();
     }

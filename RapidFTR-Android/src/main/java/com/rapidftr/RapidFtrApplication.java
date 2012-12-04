@@ -31,7 +31,7 @@ public class RapidFtrApplication extends Application {
     public static final String SHARED_PREFERENCES_FILE = "RAPIDFTR_PREFERENCES";
     public static final String APP_IDENTIFIER = "RapidFTR";
 
-    private @Getter static RapidFtrApplication instance;
+    private @Getter static RapidFtrApplication applicationInstance;
 
     private @Getter final Injector injector;
 
@@ -44,7 +44,7 @@ public class RapidFtrApplication extends Application {
     }
 
     public RapidFtrApplication(Injector injector) {
-        RapidFtrApplication.instance = this;
+        RapidFtrApplication.applicationInstance = this;
         this.injector = injector;
     }
 

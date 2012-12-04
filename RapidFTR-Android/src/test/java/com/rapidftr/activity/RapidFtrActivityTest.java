@@ -15,7 +15,7 @@ public class RapidFtrActivityTest {
 
     @Test
     public void shouldNotRenderMenuWhenUserIsNotLoggedIn(){
-        RapidFtrApplication instance = RapidFtrApplication.getInstance();
+        RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         instance.setLoggedIn(false);
         RapidFtrActivity loginActivity = new LoginActivity();
 
@@ -26,7 +26,7 @@ public class RapidFtrActivityTest {
 
     @Test
     public void shouldRenderMenuWhenUserIsLoggedIn(){
-        RapidFtrApplication instance = RapidFtrApplication.getInstance();
+        RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         instance.setLoggedIn(true);
         RapidFtrActivity loginActivity = new LoginActivity();
 

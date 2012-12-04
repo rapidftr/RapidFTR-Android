@@ -204,7 +204,7 @@ public class FluentRequest {
     private static HttpClient createHttpClient() {
         try {
             KeyStore trusted = KeyStore.getInstance("BKS");
-            @Cleanup InputStream in = RapidFtrApplication.getInstance().getResources().openRawResource(R.raw.trusted);
+            @Cleanup InputStream in = RapidFtrApplication.getApplicationInstance().getResources().openRawResource(R.raw.trusted);
             trusted.load(in, "rapidftr".toCharArray());
 
             SchemeRegistry registry = new SchemeRegistry();

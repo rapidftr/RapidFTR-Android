@@ -10,7 +10,7 @@ public class RapidFTRDatabase {
     public static void deleteChildren() throws IOException, InterruptedException {
         http()
                 .path("/database/delete_children")
-                .context(RapidFtrApplication.getInstance())
+                .context(RapidFtrApplication.getApplicationInstance())
                 .delete();
         Thread.sleep(5000);
     }

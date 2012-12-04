@@ -15,7 +15,7 @@ public class ViewAllChildrenActivityIntegrationTest extends BaseActivityIntegrat
     }
 
     public void testDisplayAllChildren() throws JSONException {
-        ChildRepository repository = RapidFtrApplication.getInstance().getInjector().getInstance(ChildRepository.class);
+        ChildRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(ChildRepository.class);
         repository.createOrUpdate(new Child("id1", "rapidftr","{\"name\":\"Test1\"}"));
         repository.createOrUpdate(new Child("id2", "rapidftr", "{\"name\":\"Test2\"}"));
         viewAllChildrenPage.navigateToViewAllPage();
@@ -24,7 +24,7 @@ public class ViewAllChildrenActivityIntegrationTest extends BaseActivityIntegrat
     }
 
     public void testClickOnChildShouldShowViewPage() throws JSONException {
-        ChildRepository repository = RapidFtrApplication.getInstance().getInjector().getInstance(ChildRepository.class);
+        ChildRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(ChildRepository.class);
         Child child1 = new Child(getAlphaNumeric(4), "rapidftr", "{\"name\":\"Test1\"}");
         repository.createOrUpdate(child1);
         Child child2 = new Child(getAlphaNumeric(6), "rapidftr", "{\"name\":\"Test2\"}");
