@@ -138,6 +138,7 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
     protected void edit() throws JSONException {
         Intent intent = new Intent(this, EditChildActivity.class);
         intent.putExtra("id", child.getUniqueId());
+        finish();
         startActivity(intent);
     }
 
