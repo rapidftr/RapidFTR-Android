@@ -11,6 +11,7 @@ public class ViewAllChildrenActivityIntegrationTest extends BaseActivityIntegrat
     public void setUp() throws Exception {
         super.setUp();
         loginPage.login();
+        solo.waitForText("Login Successful");
     }
 
     public void testDisplayAllChildren() throws JSONException {
@@ -24,13 +25,17 @@ public class ViewAllChildrenActivityIntegrationTest extends BaseActivityIntegrat
 
     public void testClickOnChildShouldShowViewPage() throws JSONException {
         ChildRepository repository = RapidFtrApplication.getInstance().getInjector().getInstance(ChildRepository.class);
-        Child child1 = new Child("id1", "rapidftr", "{\"name\":\"Test1\"}");
+        Child child1 = new Child(getAlphaNumeric(4), "rapidftr", "{\"name\":\"Test1\"}");
         repository.createOrUpdate(child1);
-        Child child2 = new Child("id2", "rapidftr", "{\"name\":\"Test2\"}");
+        Child child2 = new Child(getAlphaNumeric(6), "rapidftr", "{\"name\":\"Test2\"}");
         repository.createOrUpdate(child2);
-
         viewAllChildrenPage.navigateToViewAllPage();
-        viewAllChildrenPage.clickChild("id1");
+        viewAllChildrenPage.clickChild(child1.getUniqueId());
         viewAllChildrenPage.verifyChildDetails(child1);
     }
+
+
+
+
+
 }

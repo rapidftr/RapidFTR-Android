@@ -1,5 +1,7 @@
 package com.rapidftr.activity;
 
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -71,11 +73,8 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         childPage.enterChildName(name);
         childPage.save();
         solo.waitForText("Saved Child Record Successfully");
-        assertTrue(childPage.getChildName(name));
-    }
-
-    public void estSearchChild(){
-
+//        assertTrue(childPage.getChildName(name));
+        assertTrue(isEditedTextPresent(name));
     }
 
 }

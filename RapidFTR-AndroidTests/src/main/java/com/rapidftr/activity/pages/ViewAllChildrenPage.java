@@ -32,7 +32,7 @@ public class ViewAllChildrenPage {
         boolean isButtonPresent = edit != null;
         assertTrue(isButtonPresent);
         assertTrue(solo.searchText("Basic Identity"));
-        assertTrue(solo.searchText(child.get("name").toString()));
-        assertTrue(solo.searchText(child.get("unique_identifier").toString()));
+        assertTrue(solo.searchText(child.get("name").toString(),true));
+        assertTrue(solo.searchText(child.get("unique_identifier").toString(),true));
     }
 }

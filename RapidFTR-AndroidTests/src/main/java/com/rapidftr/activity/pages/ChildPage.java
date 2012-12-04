@@ -140,6 +140,7 @@ public class ChildPage {
 
     public void enterChildName(String name){
         solo.waitForText("Save");
+        solo.enterText(3,"");
         solo.enterText(3,name);
 //        solo.enterText(1,"RCID123");
     }
@@ -147,6 +148,7 @@ public class ChildPage {
     public boolean getChildName(String name){
         System.out.print(solo.getCurrentEditTexts().get(0).getText());
        return solo.getCurrentEditTexts().get(5).getText().toString().equals(name);
+
 
     }
 
