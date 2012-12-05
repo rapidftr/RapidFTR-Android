@@ -8,9 +8,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.DatePicker;
+import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -31,7 +33,7 @@ public class DateField extends TextField implements DatePickerDialog.OnDateSetLi
     }
 
     protected DateFormat getDateFormatter() {
-        return DateFormat.getDateInstance(DateFormat.MEDIUM);
+        return new SimpleDateFormat(RapidFtrDateTime.formatForChildRegister);
     }
 
     protected Calendar getDate() {

@@ -77,7 +77,7 @@ public class DateFieldTest extends BaseViewSpec<DateField> {
     public void testShouldStoreDateInChildJSONObject(){
          view.initialize(field, child);
          view.onDateSet(null, 2012, 11, 31);
-          assertThat(view.getText(), equalTo("Dec 31, 2012"));
+          assertThat(view.getText(), equalTo("31 Dec 2012"));
     }
 
 }

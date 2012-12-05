@@ -8,6 +8,8 @@ import java.util.TimeZone;
 public class RapidFtrDateTime {
 
     private static final String defaultFormat = "yyyy-MM-dd HH:mm:ss";
+    public static final String formatForChildRegister = "dd MMM yyyy";
+
     private Date dateTime;
 
     private RapidFtrDateTime() {
