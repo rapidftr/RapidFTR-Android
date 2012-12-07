@@ -173,8 +173,9 @@
                             <repositoryName>RapidFTR---Android</repositoryName>
 
                             <includeAttached>true</includeAttached>
-                            <description>Android client APK version: ${project.version} generated for commit
-                                ${git.commit.id}
+                            <description>
+                                Android client APK version: ${project.version} 
+                                generated for commit ${git.commit.id}
                             </description>
                             <override>true</override>
                             <suffix>-${project.version}</suffix>
