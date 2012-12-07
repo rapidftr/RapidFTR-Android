@@ -5,7 +5,7 @@ import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import org.json.JSONException;
 
-import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
+import com.rapidftr.RapidFtrApplication;
 
 public class SearchChildrenActivity extends BaseActivityIntegrationTest{
 
@@ -25,7 +25,7 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
     }
 
     public void testSearchChildAndViewDetail() throws JSONException {
-        ChildRepository repository = getApplicationInstance().getInjector().getInstance(ChildRepository.class);
+        ChildRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(ChildRepository.class);
         Child child=new Child(getAlphaNumeric(5), "rapidftr","{\"name\":\"SearchTest\"}");
         repository.createOrUpdate(child);
         searchPage.navigateToSearchPage();
@@ -44,7 +44,7 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
     }
 
     public void testUserCanEditChildCreatedByOtherUserViaSearch() throws JSONException{
-        ChildRepository repository = getApplicationInstance().getInjector().getInstance(ChildRepository.class);
+        ChildRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(ChildRepository.class);
         Child child =new Child(getAlphaNumeric(5), "admin","{\"name\":\"SearchEditTest\"}");
         repository.createOrUpdate(child);
         searchPage.navigateToSearchPage();

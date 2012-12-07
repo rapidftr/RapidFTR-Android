@@ -7,15 +7,13 @@ env:
 
 before_install:
   - export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
-  - wget http://dl.google.com/android/android-sdk_r20.0.3-linux.tgz
-  - tar xfz android-sdk_r20.0.3-linux.tgz -C ~
+  - wget http://dl.google.com/android/android-sdk_r21-linux.tgz
+  - tar xfz android-sdk_r21-linux.tgz -C ~
   - android update sdk --filter platform-tools,android-8,extra-android-support --no-ui --force
   - echo no | android create avd -n android2.2 -t android-8 --skin QVGA
-  - mv $ANDROID_HOME/tools/emulator $ANDROID_HOME/tools/emulator-old
-  - ln -s $ANDROID_HOME/tools/emulator-arm $ANDROID_HOME/tools/emulator
 
 install: echo
-script: "mvn clean install -P ci"
+script: mvn clean install -P ci
 
 after_script:
   - mvn pl.project13.maven:git-commit-id-plugin:revision ghDownloads:upload -P ci --projects RapidFTR-Android --fail-never

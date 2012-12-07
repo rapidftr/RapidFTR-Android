@@ -17,8 +17,6 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 
-import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
-
 public abstract class RapidFtrActivity extends Activity {
 
     public interface ResultListener {
@@ -62,11 +60,11 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     protected void makeToast(int resId) {
-        Toast.makeText(getApplicationInstance(), getText(resId), Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), getText(resId), Toast.LENGTH_LONG).show();
     }
 
     protected Injector getInjector() {
-        return ((RapidFtrApplication) getApplication()).getInjector();
+        return getContext().getInjector();
     }
 
     protected <T> T inject(Class<T> clazz) {
@@ -89,7 +87,7 @@ public abstract class RapidFtrActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.options_menu, menu);
-        return getApplicationInstance().isLoggedIn();
+        return getContext().isLoggedIn();
     }
 
     @Override
@@ -121,7 +119,7 @@ public abstract class RapidFtrActivity extends Activity {
                     @Override
                     public void run() {
                         Looper.prepare();
-                        Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.internal_error), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), getContext().getString(R.string.internal_error), Toast.LENGTH_LONG).show();
                         Looper.loop();
                     }
                 }).start();
