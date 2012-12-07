@@ -16,11 +16,11 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.service.FormService;
 import org.json.JSONException;
+import com.rapidftr.RapidFtrApplication;
 
 import java.io.IOException;
 import java.util.List;
 
-import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
 import static java.lang.System.currentTimeMillis;
 
 public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
@@ -75,7 +75,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected void onProgressUpdate(String... values) {
-        Toast.makeText(getApplicationInstance(), values[0], Toast.LENGTH_LONG).show();
+        Toast.makeText(RapidFtrApplication.getApplicationInstance(), values[0], Toast.LENGTH_LONG).show();
     }
 
     @Override

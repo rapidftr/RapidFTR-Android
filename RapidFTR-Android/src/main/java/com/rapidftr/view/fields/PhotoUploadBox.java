@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.ViewPhotoActivity;
 import com.rapidftr.task.EncryptImageAsyncTask;
@@ -21,7 +22,6 @@ import org.json.JSONException;
 
 import java.util.UUID;
 
-import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
 import static com.rapidftr.activity.BaseChildActivity.CLOSE_ACTIVITY;
 
 public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultListener {
@@ -102,14 +102,14 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         try {
             String fileName = (String) child.opt(formField.getId());
             if (fileName == null) {
-                Toast.makeText(getApplicationInstance(), R.string.photo_not_captured, Toast.LENGTH_LONG).show();
+                Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_not_captured, Toast.LENGTH_LONG).show();
             } else {
                 Intent intent = new Intent(context, ViewPhotoActivity.class);
                 intent.putExtra("file_name", fileName);
                 context.startActivity(intent);
             }
         } catch (Exception e) {
-            Toast.makeText(getApplicationInstance(), R.string.photo_view_error, Toast.LENGTH_LONG).show();
+            Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_view_error, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -133,7 +133,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
             child.put(formField.getId(), fileName);
 //            repaint();
         } catch (Exception e) {
-            Toast.makeText(getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG);
+            Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG);
         }
     }
 

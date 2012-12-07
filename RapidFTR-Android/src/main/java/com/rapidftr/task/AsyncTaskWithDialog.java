@@ -4,8 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
-
-import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
+import com.rapidftr.RapidFtrApplication;
 
 public abstract class AsyncTaskWithDialog<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
@@ -46,7 +45,7 @@ public abstract class AsyncTaskWithDialog<Params, Progress, Result> extends Asyn
                     message = failureMessage;
                 }
 
-                Toast.makeText(getApplicationInstance(), message, Toast.LENGTH_LONG).show();
+                Toast.makeText(RapidFtrApplication.getApplicationInstance(), message, Toast.LENGTH_LONG).show();
             }
         };
 

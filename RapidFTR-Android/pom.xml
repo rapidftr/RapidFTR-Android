@@ -146,46 +146,7 @@
 
     <profiles>
         <profile>
-            <id>ci</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>pl.project13.maven</groupId>
-                        <artifactId>git-commit-id-plugin</artifactId>
-                        <configuration>
-                            <prefix>git</prefix>
-                            <verbose>false</verbose>
-                            <generateGitPropertiesFile>false</generateGitPropertiesFile>
-                            <failOnNoGitDirectory>false</failOnNoGitDirectory>
-                        </configuration>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>com.github.github</groupId>
-                        <artifactId>downloads-maven-plugin</artifactId>
-                        <configuration>
-                            <includes>
-                                <include>*.apk</include>
-                            </includes>
-
-                            <oauth2Token>${env.OAUTH_TOKEN}</oauth2Token>
-                            <repositoryOwner>rapidftr</repositoryOwner>
-                            <repositoryName>RapidFTR---Android</repositoryName>
-
-                            <includeAttached>true</includeAttached>
-                            <description>
-                                Android client APK version: ${project.version} 
-                                generated for commit ${git.commit.id}
-                            </description>
-                            <override>true</override>
-                            <suffix>-${project.version}</suffix>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>release</id>
+            <id>run-proguard</id>
             <build>
                 <plugins>
                     <plugin>
@@ -213,6 +174,50 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <profile>
+            <id>upload-apk</id>
+            <activation>
+                <property>
+                    <name>OAUTH_TOKEN</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <configuration>
+                            <prefix>git</prefix>
+                            <verbose>false</verbose>
+                            <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>com.github.github</groupId>
+                        <artifactId>downloads-maven-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>*.apk</include>
+                            </includes>
+
+                            <oauth2Token>${env.OAUTH_TOKEN}</oauth2Token>
+                            <repositoryOwner>rapidftr</repositoryOwner>
+                            <repositoryName>RapidFTR---Android</repositoryName>
+
+                            <includeAttached>true</includeAttached>
+                            <description>
+                                Android client APK version: ${project.version} 
+                                generated for commit ${git.commit.id}
+                            </description>
+                            <override>true</override>
+                            <suffix>-${project.version}</suffix>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
