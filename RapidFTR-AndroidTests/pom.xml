@@ -93,7 +93,7 @@
                 <configuration>
                     <emulator>
                         <avd>android2.2</avd>
-                        <wait>40000</wait>
+                        <wait>60000</wait>
                     </emulator>
                 </configuration>
             </plugin>
@@ -120,9 +120,8 @@
                         </executions>
                         <configuration>
                             <emulator>
-                                <avd>android2.2</avd>
-                                <wait>40000</wait>
-                                <options>-no-window</options>
+                                <options>-no-window -no-skin</options>
+                                <executable>emulator-arm</executable>
                             </emulator>
                         </configuration>
                     </plugin>

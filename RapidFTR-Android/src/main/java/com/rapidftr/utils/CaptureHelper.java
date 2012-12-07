@@ -26,7 +26,6 @@ import java.security.spec.KeySpec;
 import java.util.Calendar;
 
 import static android.graphics.BitmapFactory.decodeResource;
-import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
 
 @RequiredArgsConstructor(suppressConstructorProperties = true)
 public class CaptureHelper {
@@ -98,7 +97,7 @@ public class CaptureHelper {
                     deleteGalleryCapture(cursor.getString(0), cursor.getString(2));
                 }
             } catch (Exception e) {
-                Toast.makeText(getApplicationInstance(), R.string.photo_gallery_delete_error, Toast.LENGTH_LONG).show();
+                Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_gallery_delete_error, Toast.LENGTH_LONG).show();
             }
         }
     }
