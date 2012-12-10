@@ -2,7 +2,6 @@ package com.rapidftr.service;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import com.google.common.base.Function;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
