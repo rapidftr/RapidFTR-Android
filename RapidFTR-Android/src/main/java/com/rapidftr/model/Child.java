@@ -208,7 +208,7 @@ public class Child extends JSONObject implements Parcelable {
 
     public boolean equals(Object other) {
         try {
-            return (other != null && other instanceof JSONObject) ? JSON_MAPPER.readTree(toString()).equals(JSON_MAPPER.readTree(other.toString())) : false;
+            return (other != null && other instanceof JSONObject) && JSON_MAPPER.readTree(toString()).equals(JSON_MAPPER.readTree(other.toString()));
         } catch (IOException e) {
             return false;
         }

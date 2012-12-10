@@ -8,7 +8,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.security.*;
 
 public class SelfSignedSSLSocketFactory extends SSLSocketFactory {
@@ -36,7 +35,7 @@ public class SelfSignedSSLSocketFactory extends SSLSocketFactory {
     }
 
     @Override
-    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
+    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException {
         return socketFactory.createSocket(socket, host, port, autoClose);
     }
 }

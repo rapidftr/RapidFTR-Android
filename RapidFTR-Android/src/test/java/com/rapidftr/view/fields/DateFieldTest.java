@@ -68,7 +68,7 @@ public class DateFieldTest extends BaseViewSpec<DateField> {
 
     @Test
     public void testClearButton() {
-        view.setDate(new GregorianCalendar(2012, 01, 01));
+        view.setDate(new GregorianCalendar(2012, 1, 1));
         view.onClick(null, 0);
         assertThat(view.getText(), equalTo(""));
     }

@@ -50,7 +50,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
 
     public void testRegisterChild() {
         childPage.selectFormSection("Automation Form");
-        List automationFormData = Arrays.asList(new String[]{"Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012"});
+        List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012");
         childPage.enterAutomationFormDetails(automationFormData);
         childPage.save();
         childPage.verifyRegisterChildDetail(automationFormData,"Automation Form");

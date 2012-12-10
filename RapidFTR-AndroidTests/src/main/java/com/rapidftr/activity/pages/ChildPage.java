@@ -14,7 +14,7 @@ public class ChildPage {
 
     public Solo solo;
     int formPosition ;
-    List automationFormData = Arrays.asList(new String[]{"Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012"});
+    List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012");
 
     public ChildPage(Solo solo) {
         this.solo = solo;
@@ -71,7 +71,7 @@ public class ChildPage {
     public boolean verifyFields(List fieldNames) {
         boolean result = true;
         for(int i=0; i<fieldNames.size();i++){
-            if(solo.searchText(fieldNames.get(i).toString(),true)==false){
+            if(!solo.searchText(fieldNames.get(i).toString(),true)){
                 result=false;
                 Log.e(fieldNames.get(i).toString()," Field Does not exists in the Form ");
                 break;

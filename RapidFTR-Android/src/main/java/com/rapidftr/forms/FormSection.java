@@ -28,7 +28,7 @@ public class FormSection implements Comparable<FormSection> {
 
     @Override
     public int compareTo(FormSection other) {
-        int otherOrder = other == null ? Integer.MIN_VALUE : ((FormSection)other).getOrder();
+        int otherOrder = other == null ? Integer.MIN_VALUE : other.getOrder();
         return Integer.valueOf(this.order).compareTo(otherOrder);
     }
 

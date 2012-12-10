@@ -86,7 +86,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     public View getImageContainer() {
-        return (View) findViewById(R.id.capture);
+        return findViewById(R.id.capture);
     }
 
     public void onImageClick() {
