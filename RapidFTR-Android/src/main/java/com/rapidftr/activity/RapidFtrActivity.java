@@ -100,13 +100,16 @@ public abstract class RapidFtrActivity extends Activity {
             syncAllDataTask.execute();
             return true;
         case R.id.logout:
-            inject(LogOutService.class).logOut(getContext());
-            finish();
-            startActivity(new Intent(this, LoginActivity.class));
-            return true;
+            return logOut();
         }
-
         return false;
+    }
+
+    protected boolean logOut() {
+        inject(LogOutService.class).logOut(getContext());
+        finish();
+        startActivity(new Intent(this, LoginActivity.class));
+        return true;
     }
 
     @Override
