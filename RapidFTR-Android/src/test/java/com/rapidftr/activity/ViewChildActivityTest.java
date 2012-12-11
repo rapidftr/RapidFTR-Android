@@ -95,7 +95,7 @@ public class ViewChildActivityTest {
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(syncError));
     }
 
-    @Test(expected = SyncFailedException.class)
+    @Test(expected = RuntimeException.class)
     public void shouldThrowExceptionOnSyncFail() throws IOException, JSONException {
         Child child = mock(Child.class);
         ChildService service = mock(ChildService.class);
@@ -103,10 +103,9 @@ public class ViewChildActivityTest {
         ChildRepository repository = mock(ChildRepository.class);
         ViewChildActivity.SyncChildTask syncChildTask = activity.getSyncChildTask(service,repository);
         doThrow(SyncFailedException.class).when(service).sync(child);
+        doNothing().when(repository).update(child);
+        doNothing().when(child).setSyncLog(anyString());
         syncChildTask.doInBackground(child);
-        verify(service).sync(child);
-        verify(child).setSyncLog(anyString());
-
     }
 
 }
