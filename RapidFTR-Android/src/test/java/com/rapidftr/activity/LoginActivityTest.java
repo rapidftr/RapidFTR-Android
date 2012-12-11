@@ -142,5 +142,4 @@ public class LoginActivityTest {
         ShadowHandler.idleMainLooper();
         assertThat(loginActivity.getContext().getDbKey(), is("fa8f5e7599ed5402"));
     }
-
 }

@@ -36,4 +36,10 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         assertTrue("Login should be successful", solo.waitForText("Login Successful"));
     }
 
+    public void testCannotNavigateBackToLoginPageOnceLoggedIn(){
+        loginPage.login();
+        solo.goBack();
+        solo.assertCurrentActivity("should still be on the home page", MainActivity.class);
+    }
+
 }
