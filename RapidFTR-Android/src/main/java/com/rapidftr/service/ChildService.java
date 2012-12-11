@@ -2,7 +2,6 @@ package com.rapidftr.service;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import com.google.common.base.Function;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
@@ -48,7 +47,16 @@ public class ChildService {
 
         fluentRequest.path(path).context(context).param("child", child.values().toString());
         addPhotoToTheRequest(child);
-        FluentResponse response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
+        FluentResponse response = null;
+        try {
+        response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
+        }
+        catch (IOException e){
+            child.setSynced(false);
+            child.setSyncLog(e.getMessage());
+            repository.update(child);
+            throw new SyncFailedException(e.getMessage());
+        }
 
         if (response != null && response.isSuccess()) {
             String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));

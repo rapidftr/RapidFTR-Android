@@ -57,5 +57,6 @@
     <string name="register_tab_name">Register</string>
     <string name="view_all_tab_name">View All</string>
     <string name="search_tab_name">Search</string>
+    <string name="synchronize_log">Sync error</string>
 
 </resources>

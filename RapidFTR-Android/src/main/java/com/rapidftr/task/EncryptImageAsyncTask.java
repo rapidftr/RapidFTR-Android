@@ -5,13 +5,11 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.widget.Toast;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.CaptureHelper;
 import com.rapidftr.view.fields.PhotoUploadBox;
-import org.json.JSONException;
 
-import com.rapidftr.RapidFtrApplication;
-
-public class EncryptImageAsyncTask extends AsyncTask<Void, Void, Boolean> {
+public class EncryptImageAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 
     private CaptureHelper captureHelper;
     private Bitmap bitmap;
@@ -34,19 +32,22 @@ public class EncryptImageAsyncTask extends AsyncTask<Void, Void, Boolean> {
             captureHelper.savePhoto(bitmap, fileName);
             return true;
         } catch (Exception e) {
-            Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG);
+	        return false;
         }
-        return false;
     }
 
     @Override
     protected void onPostExecute(Boolean result) {
-        bitmap.recycle();
         try {
-            photoUploadBox.repaint();
-        } catch (JSONException e) {
-            Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG);
+	        bitmap.recycle();
+	        photoUploadBox.repaint();
+        } catch (Exception e) {
+	        result = false;
         }
+
+	    if (!result) {
+		    Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG);
+	    }
     }
 
 }

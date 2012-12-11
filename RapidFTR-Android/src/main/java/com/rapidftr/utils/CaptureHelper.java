@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import dalvik.system.DexFile;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 
@@ -44,7 +45,10 @@ public class CaptureHelper {
 
     protected File getExternalStorageDir() {
         File extDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        return new File(extDir, "rapidftr");
+        File picDir = new File(extDir, "rapidftr");
+
+	    picDir.mkdirs();
+	    return picDir;
     }
 
     protected File getInternalStorageDir() {
@@ -153,16 +157,12 @@ public class CaptureHelper {
     }
 
     public Bitmap getThumbnailOrDefault(String fileNameWithoutExtension) {
-        Bitmap bitmap = null;
         try {
-            if (fileNameWithoutExtension != null) {
-                bitmap = loadThumbnail(fileNameWithoutExtension);
-            }
+            return loadThumbnail(fileNameWithoutExtension);
         } catch (Exception e) {
             Log.e("Child Image", "Error while getting the Thumbnail",e);
+	        return getDefaultThumbnail();
         }
-
-        return bitmap != null ? bitmap : getDefaultThumbnail();
     }
 
     /**

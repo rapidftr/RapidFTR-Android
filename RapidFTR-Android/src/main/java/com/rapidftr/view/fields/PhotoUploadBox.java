@@ -62,7 +62,6 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         switch (requestCode) {
             case CAPTURE_IMAGE_REQUEST:
                 if (resultCode == Activity.RESULT_OK)
@@ -127,11 +126,9 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
             Bitmap bitmap = captureHelper.getCapture();
             captureHelper.deleteCaptures();
             String fileName = createCaptureFileName();
-//            captureHelper.saveThumbnail(bitmap, fileName);
             Log.e("REGISTER", "start of async task ");
             new EncryptImageAsyncTask(getContext(), captureHelper, bitmap, fileName, this).execute();
             child.put(formField.getId(), fileName);
-//            repaint();
         } catch (Exception e) {
             Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG);
         }
