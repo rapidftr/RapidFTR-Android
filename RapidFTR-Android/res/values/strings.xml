@@ -42,6 +42,7 @@
     <string name="photo_gallery_delete_error">Unable to delete photo from Gallery. Please go to Gallery and delete it manually</string>
 
     <string name="synchronize_all">Synchronize All</string>
+    <string name="cancel_synchronize_all">Cancel Synchronize All</string>
     <string name="synchronize_child">Synchronize This Child</string>
     <string name="sync_progress">Sync in progress</string>
     <string name="sync_success">Sync successful</string>

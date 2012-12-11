@@ -2,6 +2,7 @@ package com.rapidftr.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
@@ -17,8 +18,16 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SyncAllDataAsyncTask;
+import lombok.Getter;
+import lombok.Setter;
+
+import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
 
 public abstract class RapidFtrActivity extends Activity {
+    private
+    @Getter
+    @Setter
+    Menu menu;
 
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
@@ -51,13 +60,9 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     protected void logError(String message) {
-        if(message!=null){
-           Log.e(RapidFtrApplication.APP_IDENTIFIER, message);
+        if (message != null) {
+            Log.e(RapidFtrApplication.APP_IDENTIFIER, message);
         }
-    }
-
-    protected void logDebug(String message) {
-        Log.d(RapidFtrApplication.APP_IDENTIFIER, message);
     }
 
     protected void makeToast(int resId) {
@@ -86,21 +91,32 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.options_menu, menu);
+        setMenu(menu);
+        toggleSync(menu);
         return getContext().isLoggedIn();
+    }
+
+    private void toggleSync(Menu menu) {
+        menu.getItem(0).setVisible(getApplicationInstance().getSyncTask() == null);
+        menu.getItem(1).setVisible(getApplicationInstance().getSyncTask() != null);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.synchronize_all:
-            SyncAllDataAsyncTask syncAllDataTask = inject(SyncAllDataAsyncTask.class);
-            syncAllDataTask.setContext(this);
-            syncAllDataTask.execute();
-            return true;
-        case R.id.logout:
-            return logOut();
+            case R.id.synchronize_all:
+                SyncAllDataAsyncTask task = inject(SyncAllDataAsyncTask.class);
+                task.setContext(this);
+                task.execute();
+                return true;
+            case R.id.cancel_synchronize_all:
+                AsyncTask syncTask = getApplicationInstance().getSyncTask();
+                if (syncTask != null)
+                    syncTask.cancel(false);
+            case R.id.logout:
+                return logOut();
         }
         return false;
     }
@@ -118,14 +134,14 @@ public abstract class RapidFtrActivity extends Activity {
         initializeExceptionHandler();
     }
 
-    protected boolean shouldEnsureLoggedIn(){
+    protected boolean shouldEnsureLoggedIn() {
         return true;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(shouldEnsureLoggedIn() && !getContext().isLoggedIn()){
+        if (shouldEnsureLoggedIn() && !getContext().isLoggedIn()) {
             finish();
         }
     }

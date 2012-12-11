@@ -2,6 +2,7 @@ package com.rapidftr;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
@@ -38,6 +39,7 @@ public class RapidFtrApplication extends Application {
     private @Getter @Setter List<FormSection> formSections;
     private @Getter @Setter boolean loggedIn;
     private @Getter @Setter String dbKey;
+    private @Getter @Setter AsyncTask syncTask;
 
     public RapidFtrApplication() {
         this(Guice.createInjector(new ApplicationInjector()));
