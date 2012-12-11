@@ -41,7 +41,7 @@ public class LoginPage {
     }
 
     public void logout() {
-        solo.clickOnButton("Log Out");
+        solo.clickOnMenuItem(solo.getString(R.string.log_out));
     }
 
     public void clickLoginButton() {

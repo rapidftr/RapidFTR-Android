@@ -24,7 +24,6 @@
     <string name="loading_message">Loading...</string>
     <string name="unauthorized">Incorrect username or password</string>
     <string name="login_successful">Login Successful</string>
-    <string name="logout_successful">Logout not really implemented yet</string>
     <string name="invalid_url">Please enter a valid url</string>
     <string name="server_not_reachable">Unable to connect to the server, please contact your system administrator</string>
     <string name="RapidFTRLogo">RapidFTR</string>

@@ -17,6 +17,9 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 
+import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
+import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
+
 public abstract class RapidFtrActivity extends Activity {
 
     public interface ResultListener {
@@ -94,9 +97,16 @@ public abstract class RapidFtrActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.synchronize_all:
-            SyncAllDataAsyncTask task = inject(SyncAllDataAsyncTask.class);
-            task.setContext(this);
-            task.execute();
+            SyncAllDataAsyncTask syncAllDataTask = inject(SyncAllDataAsyncTask.class);
+            syncAllDataTask.setContext(this);
+            syncAllDataTask.execute();
+            return true;
+        case R.id.logout:
+            getContext().setLoggedIn(false);
+            getContext().removePreference(USER_NAME);
+            getContext().removePreference(USER_ORG);
+            finish();
+            startActivity(new Intent(this, LoginActivity.class));
             return true;
         }
 
@@ -107,6 +117,18 @@ public abstract class RapidFtrActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeExceptionHandler();
+    }
+
+    protected boolean shouldEnsureLoggedIn(){
+        return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(shouldEnsureLoggedIn() && !getContext().isLoggedIn()){
+            finish();
+        }
     }
 
     protected void initializeExceptionHandler() {

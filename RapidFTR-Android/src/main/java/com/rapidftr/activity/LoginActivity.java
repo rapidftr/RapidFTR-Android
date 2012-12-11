@@ -117,6 +117,11 @@ public class LoginActivity extends RapidFtrActivity {
         ((EditText) findViewById(resId)).setText(text);
     }
 
+    @Override
+    protected boolean shouldEnsureLoggedIn() {
+        return false;
+    }
+
     protected class LoginAsyncTask extends AsyncTask<String, Void, HttpResponse> {
 
         @Override

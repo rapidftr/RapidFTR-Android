@@ -27,16 +27,13 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
          loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
          solo.waitForText("Login Successful");
          loginPage.logout();
-         loginPage.clickLoginButton();
          loginPage.changeURL();
          assertTrue(loginPage.getUrl().equals(LOGIN_URL));
     }
 
-
     public void testSuccessfulLogin() {
         loginPage.login();
         assertTrue("Login should be successful", solo.waitForText("Login Successful"));
-        loginPage.logout();
     }
 
 }

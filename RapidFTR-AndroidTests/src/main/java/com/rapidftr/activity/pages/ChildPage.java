@@ -1,7 +1,6 @@
 package com.rapidftr.activity.pages;
 
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import com.jayway.android.robotium.solo.Solo;
 import junit.framework.Assert;
@@ -35,21 +34,8 @@ public class ChildPage {
        for(int i=0;i<totalCount;i++){
            formSections.add(adapter.getItem(i).toString());
         }
-//        solo.getCurrentListViews().get(0).getAdapter().getItem(2);
-//        Spinner spinner= (Spinner)solo.getCurrentSpinners().get(0).getSelectedItem();
         return formSections;
     }
-
-
-    public int getIndexFromElement(ArrayAdapter adapter, String element) {
-        for(int i = 0; i < adapter.getCount(); i++) {
-            if(adapter.getItem(i).equals(element)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
 
     public void selectFormSection(String formSectionName) {
         solo.waitForText("Save");
@@ -64,8 +50,6 @@ public class ChildPage {
         }
         solo.clickOnText(adapter.getItem(formPosition).toString());
         solo.waitForText(formSectionName);
-
-
     }
 
     public boolean verifyFields(List fieldNames) {
@@ -88,7 +72,6 @@ public class ChildPage {
         solo.clickOnButton("Save");
         Assert.assertTrue(solo.waitForText("Saved child record successfully"));
         solo.waitForText("Edit");
-
     }
 
     public void enterAutomationFormDetails(List automationFormData) {
@@ -96,9 +79,9 @@ public class ChildPage {
         solo.enterText(1, automationFormData.get(1).toString());
         int checkBoxCount=solo.getCurrentCheckBoxes().size();
         for(int i=0;i<checkBoxCount;i++){
-        if (solo.getCurrentCheckBoxes().get(i).getText().toString().equals(automationFormData.get(2).toString())){
-            solo.clickOnCheckBox(i);
-        }
+            if (solo.getCurrentCheckBoxes().get(i).getText().toString().equals(automationFormData.get(2).toString())) {
+                solo.clickOnCheckBox(i);
+            }
         }
         int selectBoxCount=solo.getCurrentSpinners().get(1).getCount();
 
@@ -111,11 +94,6 @@ public class ChildPage {
 
         solo.clickOnText(automationFormData.get(2).toString());
         solo.clickOnText(automationFormData.get(4).toString());
-//        solo.enterText(2,automationFormData.get(5).toString());
-
-
-
-
     }
 
     public void verifyRegisterChildDetail(List automationFormData,String formName) {
@@ -123,33 +101,17 @@ public class ChildPage {
         selectFormSection(formName);
         Assert.assertTrue(solo.searchEditText(automationFormData.get(0).toString()));
         Assert.assertTrue(solo.searchEditText(automationFormData.get(1).toString()));
-//        Assert.assertTrue(solo.isCheckBoxChecked(automationFormData.get(2).toString()));
-//        Assert.assertTrue(solo.isRadioButtonChecked(automationFormData.get(3).toString()));
-//        solo.getCurrentNumberPickers().get(0) ;
-//        solo.getCurrentDatePickers().get(0);
-
     }
-
-
 
     public void selectEditChild(){
         solo.waitForText("Edit");
         solo.clickOnText("Edit");
-
     }
 
     public void enterChildName(String name){
         solo.waitForText("Save");
         solo.enterText(3,"");
         solo.enterText(3,name);
-//        solo.enterText(1,"RCID123");
-    }
-
-    public boolean getChildName(String name){
-        System.out.print(solo.getCurrentEditTexts().get(0).getText());
-       return solo.getCurrentEditTexts().get(5).getText().toString().equals(name);
-
-
     }
 
 }

@@ -60,6 +60,10 @@ public class RapidFtrApplication extends Application {
         getSharedPreferences().edit().putString(preference.getKey(), value).commit();
     }
 
+    public void removePreference(Preference preference) {
+        getSharedPreferences().edit().remove(preference.getKey());
+    }
+
     public void setFormSectionsTemplate(String formSectionResponse) throws IOException {
         formSections = Arrays.asList(new ObjectMapper().readValue(formSectionResponse, FormSection[].class));
         Collections.sort(formSections);
