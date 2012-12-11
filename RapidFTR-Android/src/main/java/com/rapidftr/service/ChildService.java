@@ -48,7 +48,6 @@ public class ChildService {
         fluentRequest.path(path).context(context).param("child", child.values().toString());
         addPhotoToTheRequest(child);
         FluentResponse response = null;
-        String exception;
         try {
         response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
         }
@@ -68,9 +67,6 @@ public class ChildService {
             setPhoto(child);
             return child;
         } else {
-            child.setSynced(false);
-            child.setSyncLog("Error in connection");
-            repository.update(child);
             throw new SyncFailedException(child.getUniqueId());
         }
     }
