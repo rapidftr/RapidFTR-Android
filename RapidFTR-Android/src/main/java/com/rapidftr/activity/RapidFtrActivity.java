@@ -15,10 +15,8 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SyncAllDataAsyncTask;
-
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
 
 public abstract class RapidFtrActivity extends Activity {
 
@@ -102,9 +100,7 @@ public abstract class RapidFtrActivity extends Activity {
             syncAllDataTask.execute();
             return true;
         case R.id.logout:
-            getContext().setLoggedIn(false);
-            getContext().removePreference(USER_NAME);
-            getContext().removePreference(USER_ORG);
+            inject(LogOutService.class).logOut(getContext());
             finish();
             startActivity(new Intent(this, LoginActivity.class));
             return true;
