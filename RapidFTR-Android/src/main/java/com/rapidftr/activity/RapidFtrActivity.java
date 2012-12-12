@@ -21,7 +21,6 @@ import com.rapidftr.task.SyncAllDataAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
 
-import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
 
 public abstract class RapidFtrActivity extends Activity {
     private
@@ -99,8 +98,8 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     private void toggleSync(Menu menu) {
-        menu.getItem(0).setVisible(getApplicationInstance().getSyncTask() == null);
-        menu.getItem(1).setVisible(getApplicationInstance().getSyncTask() != null);
+        menu.getItem(0).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() == null);
+        menu.getItem(1).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() != null);
     }
 
     @Override
@@ -112,7 +111,7 @@ public abstract class RapidFtrActivity extends Activity {
                 task.execute();
                 return true;
             case R.id.cancel_synchronize_all:
-                AsyncTask syncTask = getApplicationInstance().getSyncTask();
+                AsyncTask syncTask = RapidFtrApplication.getApplicationInstance().getSyncTask();
                 if (syncTask != null)
                     syncTask.cancel(false);
                 return true;
