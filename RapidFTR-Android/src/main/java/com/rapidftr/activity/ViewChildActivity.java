@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.model.Child;
+import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import lombok.RequiredArgsConstructor;
@@ -42,13 +44,21 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     protected void sync() {
-        SyncChildTask task = new SyncChildTask(inject(ChildService.class));
+        SyncChildTask task = new SyncChildTask(inject(ChildService.class),inject(ChildRepository.class));
         AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.child_menu, menu);
+        try {
+            if(!child.isSynced() && child.getSyncLog()!=null)
+            {
+                menu.findItem(R.id.synchronize_log).setVisible(true);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
         return true;
     }
 
@@ -58,23 +68,43 @@ public class ViewChildActivity extends BaseChildActivity {
             case R.id.synchronize_child:
                 sync();
                 return true;
-            case R.id.logout:
-                return logOut();
+            case R.id.synchronize_log:
+                showSyncLog();
+                return true;
         }
 
         return false;
+    }
+
+    protected void showSyncLog() {
+        try {
+            Toast.makeText(this,child.getSyncLog(), Toast.LENGTH_LONG).show();
+        } catch (JSONException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    protected SyncChildTask getSyncChildTask(ChildService service, ChildRepository repository) {
+        return new SyncChildTask(service, repository);
     }
 
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     protected class SyncChildTask extends AsyncTaskWithDialog<Child, Void, Child> {
 
         protected final ChildService service;
+        protected final ChildRepository repository;
 
         @Override
         protected Child doInBackground(Child... children) {
             try {
                 return service.sync(child);
             } catch (Exception e) {
+                try {
+                    child.setSyncLog(e.getMessage());
+                    repository.update(child);
+                } catch (JSONException jsonException) {
+                    logError(jsonException.getMessage());
+                }
                 throw new RuntimeException(e);
             }
         }
