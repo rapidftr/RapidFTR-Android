@@ -27,7 +27,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         RapidFTRDatabase.deleteChildren();
     }
 
-    public void wipTestRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
+    public void estRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
         String timeStamp = now().defaultFormat();
         seed(new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'unique_identifier' : 'abcd1234', 'one' : '1', 'name' : 'jen' }", timeStamp)));
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
@@ -36,6 +36,9 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         assertTrue(repository.exists("abcd1234"));
         Child child = repository.get("abcd1234");
         assertEquals("123456", child.optString("_id"));
+        searchPage.navigateToSearchPage();
+        searchPage.searchChild(child.optString("_id"));
+        assertTrue(searchPage.isChildPresent(child.optString("_id"), "jen"));
     }
 
     public void testRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
@@ -44,12 +47,15 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         repository.createOrUpdate(childToBeSynced);
         assertFalse(childToBeSynced.isSynced());
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        Thread.sleep(10000); //Sleep for synchronization to happen.
+        solo.waitForText("Sync Successful");
+//        Thread.sleep(10000); //Sleep for synchronization to happen.
         assertTrue(repository.exists("xyz4321"));
         List<Child> children = repository.getMatchingChildren("xyz4321");
         assertEquals(1, children.size());
         assertTrue(children.get(0).isSynced());
     }
+
+
 
     private void seed(Child child) throws JSONException, IOException {
         http()
