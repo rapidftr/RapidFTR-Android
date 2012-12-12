@@ -83,14 +83,14 @@ public class ChildPage {
                 solo.clickOnCheckBox(i);
             }
         }
-        int selectBoxCount=solo.getCurrentSpinners().get(1).getCount();
+//        int selectBoxCount = solo.getCurrentSpinners().get(1).getCount();
 
-        for(int i=0;i<selectBoxCount;i++){
-            if(solo.getCurrentSpinners().get(1).getAdapter().getItem(i).toString().equals(automationFormData.get(3).toString())){
-                solo.pressSpinnerItem(1,i);
-                solo.clickOnText(automationFormData.get(3).toString());
-            }
-        }
+//        for(int i=0;i<selectBoxCount;i++){
+//            if(solo.getCurrentSpinners().get(1).getAdapter().getItem(i).toString().equals(automationFormData.get(3).toString())){
+//                solo.pressSpinnerItem(1,i);
+//                solo.clickOnText(automationFormData.get(3).toString());
+//            }
+//        }
 
         solo.clickOnText(automationFormData.get(2).toString());
         solo.clickOnText(automationFormData.get(4).toString());
