@@ -1,8 +1,11 @@
 package com.rapidftr.activity.pages;
 
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import com.jayway.android.robotium.solo.Solo;
+import com.rapidftr.R;
+import com.rapidftr.view.fields.TextField;
 import junit.framework.Assert;
 
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ public class ChildPage {
     public Solo solo;
     int formPosition ;
     List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012");
+    private int nameHashCode = "name".hashCode();
 
     public ChildPage(Solo solo) {
         this.solo = solo;
@@ -110,8 +114,10 @@ public class ChildPage {
 
     public void enterChildName(String name){
         solo.waitForText("Save");
-        solo.enterText(3,"");
-        solo.enterText(3,name);
+        TextField textField = (TextField) solo.getCurrentActivity().findViewById(nameHashCode);
+        EditText nameField = (EditText) textField.findViewById(R.id.value);
+        solo.enterText(nameField, "");
+        solo.enterText(nameField, name);
     }
 
 }

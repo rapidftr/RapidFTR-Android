@@ -71,6 +71,7 @@ public class FormSectionView extends ScrollView {
         if (resourceId > 0) {
             BaseView fieldView = (BaseView) LayoutInflater.from(getContext()).inflate(resourceId, null);
             fieldView.initialize(field, child);
+
             return fieldView;
         }
 
