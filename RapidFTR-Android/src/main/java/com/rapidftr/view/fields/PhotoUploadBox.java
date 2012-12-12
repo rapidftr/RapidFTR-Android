@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
+import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.activity.ViewPhotoActivity;
 import com.rapidftr.task.EncryptImageAsyncTask;
 import com.rapidftr.utils.CaptureHelper;
@@ -151,7 +152,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         Log.e("PhotoUploadBox-ID",child.optString(formField.getId()));
         Bitmap bitmap = captureHelper.getThumbnailOrDefault(child.optString(formField.getId()));
         getImageView().setImageBitmap(bitmap);
-        getImageCaption().setText(child.has(formField.getId()) ? R.string.photo_view : R.string.photo_capture);
+        getImageCaption().setText((getContext() instanceof RegisterChildActivity) ? R.string.photo_capture : R.string.photo_view);
     }
 
 }
