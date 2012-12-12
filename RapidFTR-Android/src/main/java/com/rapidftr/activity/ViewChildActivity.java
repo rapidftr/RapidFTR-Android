@@ -52,12 +52,11 @@ public class ViewChildActivity extends BaseChildActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.child_menu, menu);
         try {
-            if(!child.isSynced() && child.getSyncLog()!=null)
-            {
+            if (!child.isSynced() && child.getSyncLog() != null) {
                 menu.findItem(R.id.synchronize_log).setVisible(true);
             }
         } catch (JSONException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         return true;
     }
@@ -71,8 +70,9 @@ public class ViewChildActivity extends BaseChildActivity {
             case R.id.synchronize_log:
                 showSyncLog();
                 return true;
+            case R.id.logout:
+                return logOut();
         }
-
         return false;
     }
 
@@ -80,7 +80,7 @@ public class ViewChildActivity extends BaseChildActivity {
         try {
             Toast.makeText(this,child.getSyncLog(), Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 

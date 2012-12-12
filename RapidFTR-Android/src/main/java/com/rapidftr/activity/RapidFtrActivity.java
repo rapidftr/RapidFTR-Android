@@ -116,13 +116,17 @@ public abstract class RapidFtrActivity extends Activity {
                 if (syncTask != null)
                     syncTask.cancel(false);
             case R.id.logout:
-                inject(LogOutService.class).logOut(getContext());
-                finish();
-                startActivity(new Intent(this, LoginActivity.class));
-                return true;
+                return logOut();
         }
 
         return false;
+    }
+
+    protected boolean logOut() {
+        inject(LogOutService.class).logOut(getContext());
+        finish();
+        startActivity(new Intent(this, LoginActivity.class));
+        return true;
     }
 
     @Override
