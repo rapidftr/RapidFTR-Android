@@ -115,6 +115,7 @@ public abstract class RapidFtrActivity extends Activity {
                 AsyncTask syncTask = getApplicationInstance().getSyncTask();
                 if (syncTask != null)
                     syncTask.cancel(false);
+                return true;
             case R.id.logout:
                 return logOut();
         }
