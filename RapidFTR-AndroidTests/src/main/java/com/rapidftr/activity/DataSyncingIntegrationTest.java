@@ -22,9 +22,16 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
     public void setUp() throws Exception {
         super.setUp();
         loginPage.login();
+        solo.waitForText("Login Successful");
         context = RapidFtrApplication.getApplicationInstance();
         repository = context.getInjector().getInstance(ChildRepository.class);
         RapidFTRDatabase.deleteChildren();
+    }
+
+    @Override
+    public void tearDown() throws Exception{
+        loginPage.logout();
+        super.tearDown();
     }
 
     public void estRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
