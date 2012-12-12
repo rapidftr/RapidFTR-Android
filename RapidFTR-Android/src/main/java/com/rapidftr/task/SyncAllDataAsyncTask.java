@@ -10,6 +10,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 import com.google.inject.Inject;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
@@ -20,7 +21,6 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.List;
 
-import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
 import static java.lang.System.currentTimeMillis;
 
 public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
@@ -45,7 +45,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected void onPreExecute() {
-        getApplicationInstance().setSyncTask(this);
+        RapidFtrApplication.getApplicationInstance().setSyncTask(this);
         toggleMenu(CANCEL_SYNC_ALL);
         initNotifiers();
         configureNotification();
@@ -81,19 +81,19 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected void onProgressUpdate(String... values) {
-        Toast.makeText(getApplicationInstance(), values[0], Toast.LENGTH_LONG).show();
+        Toast.makeText(RapidFtrApplication.getApplicationInstance(), values[0], Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onPostExecute(Boolean result) {
-        getApplicationInstance().setSyncTask(null);
+        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
         toggleMenu(SYNC_ALL);
         notificationManager.cancel(NOTIFICATION_ID);
     }
 
     @Override
     protected void onCancelled() {
-        getApplicationInstance().setSyncTask(null);
+        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
         toggleMenu(SYNC_ALL);
         notificationManager.cancel(NOTIFICATION_ID);
     }
