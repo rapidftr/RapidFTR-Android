@@ -9,6 +9,7 @@ import com.rapidftr.R;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
+import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
@@ -71,7 +72,8 @@ public class ViewChildActivity extends BaseChildActivity {
                 showSyncLog();
                 return true;
             case R.id.logout:
-                return logOut();
+                inject(LogOutService.class).attemptLogOut(this);
+                return true;
         }
         return false;
     }

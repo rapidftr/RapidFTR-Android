@@ -21,12 +21,8 @@ import com.rapidftr.task.SyncAllDataAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
 
-
 public abstract class RapidFtrActivity extends Activity {
-    private
-    @Getter
-    @Setter
-    Menu menu;
+    private @Getter @Setter Menu menu;
 
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
@@ -97,11 +93,6 @@ public abstract class RapidFtrActivity extends Activity {
         return getContext().isLoggedIn();
     }
 
-    private void toggleSync(Menu menu) {
-        menu.getItem(0).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() == null);
-        menu.getItem(1).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() != null);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -111,22 +102,15 @@ public abstract class RapidFtrActivity extends Activity {
                 task.execute();
                 return true;
             case R.id.cancel_synchronize_all:
-                AsyncTask syncTask = RapidFtrApplication.getApplicationInstance().getSyncTask();
-                if (syncTask != null)
-                    syncTask.cancel(false);
+                AsyncTask taskToCancel = RapidFtrApplication.getApplicationInstance().getSyncTask();
+                if (taskToCancel != null)
+                    taskToCancel.cancel(false);
                 return true;
             case R.id.logout:
-                return logOut();
+                    inject(LogOutService.class).attemptLogOut(this);
+                return true;
         }
-
         return false;
-    }
-
-    protected boolean logOut() {
-        inject(LogOutService.class).logOut(getContext());
-        finish();
-        startActivity(new Intent(this, LoginActivity.class));
-        return true;
     }
 
     @Override
@@ -171,6 +155,11 @@ public abstract class RapidFtrActivity extends Activity {
                 System.exit(10);
             }
         });
+    }
+
+    private void toggleSync(Menu menu) {
+        menu.getItem(0).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() == null);
+        menu.getItem(1).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() != null);
     }
 
 }

@@ -107,4 +107,20 @@ public class RapidFtrActivityTest {
         verify(syncAllMenuItem).setVisible(true);
         verify(cancelSyncAllMenuItem).setVisible(false);
     }
+
+    @Test
+    public void shouldPromptUserWhenAttemptingToLogOutWhileSyncIsActive(){
+        RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
+        AsyncTask mockAsyncTask = mock(AsyncTask.class);
+        instance.setSyncTask(mockAsyncTask);
+
+        RapidFtrActivity mainActivity = new MainActivity();
+        MenuItem cancelSynAll = mock(MenuItem.class);
+        doReturn(R.id.cancel_synchronize_all).when(cancelSynAll).getItemId();
+
+        mainActivity.onOptionsItemSelected(cancelSynAll);
+
+        verify(mockAsyncTask).cancel(false);
+    }
+
 }

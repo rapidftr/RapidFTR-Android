@@ -6,6 +6,8 @@
 
     <string name="log_in">Log In</string>
     <string name="log_out">Log Out</string>
+    <string name="confirm_logout_message">Child records are still being sychronised. Logging out now will cancel this process, are you sure you want to log out?</string>
+    <string name="cancel">Cancel</string>
     <string name="change_url">Change URL</string>
     <string name="register_child">Register Child</string>
     <string name="view_all_children">View All Children</string>
@@ -47,7 +49,6 @@
     <string name="sync_progress">Sync in progress</string>
     <string name="sync_success">Sync successful</string>
     <string name="sync_failure">Sync failed</string>
-
 
     <string name="internal_error">An error occurred while performing this operation</string>
     <string name="fetch_child_error">An error occurred while fetching children, please try again</string>
