@@ -31,20 +31,18 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         assertEquals(actualSections, expectedSections);
     }
 
-
     public void testFieldsDisplayed() {
         childPage.selectFormSection("Automation Form");
         List expectedFields = asList("Automation TextField", "Automation TextArea", "Automation CheckBoxes", "Automation Select",
                 "Automation Radio", "Automation Number", "Automation Date");
-        assertTrue(childPage.verifyFields(expectedFields));
+        childPage.verifyFields(expectedFields, true);
     }
 
     public void testFieldsHidden() {
         childPage.selectFormSection("Automation Form");
         List hiddenField = asList("Hidden TextField");
-        assertFalse(childPage.verifyFields(hiddenField));
+        childPage.verifyFields(hiddenField, false);
     }
-
 
     public void testRegisterChild() {
         childPage.selectFormSection("Automation Form");
