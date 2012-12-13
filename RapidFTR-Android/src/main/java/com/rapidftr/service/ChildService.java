@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.SyncFailedException;
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,8 +107,14 @@ public class ChildService {
         return convertToChildRecords(childrenJson);
     }
 
-    private boolean containsIgnoreCase(String completeString, String subString) {
-        return completeString.toLowerCase().contains(subString.toLowerCase());
+    public Child getChild(String id) throws IOException, JSONException {
+        HttpResponse response = fluentRequest
+                .context(context)
+                .path(String.format("/children/%s", id))
+                .get();
+
+        String childrenJson = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
+        return new Child(childrenJson);
     }
 
     private List<Child> convertToChildRecords(String childrenJson) throws IOException {
@@ -153,5 +160,16 @@ public class ChildService {
                     .path(String.format("/children/%s/photo/%s", child.optString("_id"), child.optString("current_photo_key")))
                     .context(context)
                     .get();
+    }
+
+    public HashMap<String,String> getAllIdsAndRevs() throws IOException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        HttpResponse response = fluentRequest.path("/children-ids").context(context).get();
+        List<Map> idRevs = asList(objectMapper.readValue(response.getEntity().getContent(), Map[].class));
+        HashMap<String, String> idRevMapping = new HashMap<String, String>();
+        for (Map idRev : idRevs) {
+            idRevMapping.put(idRev.get("id").toString(), idRev.get("rev").toString());
+        }
+        return idRevMapping;
     }
 }

@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.*;
@@ -61,6 +62,29 @@ public class ChildRepositoryTest {
         assertThat(child.getUniqueId(), equalTo("id1"));
         assertThat(child.values(), equalJSONIgnoreOrder(expectedString));
         assertThat(child.getLastUpdatedAt(), is("LAST_UPDATED_AT"));
+    }
+
+    @Test
+    public void shouldSaveInternalIdAndRevDuringChildCreation() throws JSONException {
+        Child child1 = new ChildBuilder().withName("tester").withCreatedBy("user1").withUniqueId("abcd1234").build();
+        Child child2 = new ChildBuilder().withId("59cd40f39ab6aa791f73885e3bdd99f9").withName("tester").withUniqueId("1234abcd").withRev("4-b011946150a16b0d2c6271aed05e2abe").withCreatedBy("user1").build();
+        repository.createOrUpdate(child1);
+        repository.createOrUpdate(child2);
+
+        HashMap<String, String> allIdsAndRevs = repository.getAllIdsAndRevs();
+        assertEquals(2, allIdsAndRevs.size());
+        assertEquals("", allIdsAndRevs.get(""));
+        assertEquals("4-b011946150a16b0d2c6271aed05e2abe", allIdsAndRevs.get("59cd40f39ab6aa791f73885e3bdd99f9"));
+
+        child1.put("_id", "dfb2031ebfcbef39dccdb468f5200edc");
+        child1.put("_rev", "5-1ed26a0e5072830a9064361a570684f6");
+        repository.update(child1);
+
+        allIdsAndRevs = repository.getAllIdsAndRevs();
+        assertEquals(2, allIdsAndRevs.size());
+        assertEquals("4-b011946150a16b0d2c6271aed05e2abe", allIdsAndRevs.get("59cd40f39ab6aa791f73885e3bdd99f9"));
+        assertEquals("5-1ed26a0e5072830a9064361a570684f6", allIdsAndRevs.get("dfb2031ebfcbef39dccdb468f5200edc"));
+
     }
 
     @Test
@@ -102,8 +126,8 @@ public class ChildRepositoryTest {
 
         List<Child> children = repository.getMatchingChildren("hiLd1");
         assertEquals(2, children.size());
-        assertThat(child1,equalTo(children.get(0)));
-        assertThat(child4,equalTo(children.get(1)));
+        assertThat(child1, equalTo(children.get(0)));
+        assertThat(child4, equalTo(children.get(1)));
     }
 
 
@@ -119,7 +143,8 @@ public class ChildRepositoryTest {
         assertThat(all.get(1).isSynced(), is(false));
     }
 
-    @Test @Ignore // This expectation is no longer true, All users will be able to see all records
+    @Test
+    @Ignore // This expectation is no longer true, All users will be able to see all records
     public void shouldOnlyReturnsOwnRecords() throws JSONException {
         repository.createOrUpdate(new Child("id1", "user1", null));
 
@@ -139,8 +164,8 @@ public class ChildRepositoryTest {
 
         List<Child> children = repository.getChildrenByOwner();
         assertThat(children.size(), equalTo(2));
-        assertThat(child2,equalTo(children.get(0)));
-        assertThat(child1,equalTo(children.get(1)));
+        assertThat(child2, equalTo(children.get(0)));
+        assertThat(child1, equalTo(children.get(1)));
     }
 
     @Test
@@ -230,7 +255,7 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldAppendHistoryIfHistoriesAlreadyExist() throws JSONException {
-        Child existingChild = new Child("id","user1","{\"name\":\"old-name\",\"histories\":[{\"changes\":{\"name\":{}}}, {\"changes\":{\"sex\":{}}}]}");
+        Child existingChild = new Child("id", "user1", "{\"name\":\"old-name\",\"histories\":[{\"changes\":{\"name\":{}}}, {\"changes\":{\"sex\":{}}}]}");
         repository.createOrUpdate(existingChild);
 
         Child updatedChild = new Child("id", "user1", "{'name' : 'updated-name'}");
@@ -267,4 +292,53 @@ public class ChildRepositoryTest {
         assertThat(sex.get("from").toString(), is(""));
         assertThat(sex.get("to").toString(), is("male"));
     }
+
+    @Test
+    public void shouldRetrieveAllIdsAndRevs() throws JSONException {
+        Child child1 = new ChildBuilder().withId("dfb2031ebfcbef39dccdb468f5200edc").withName("tester").withRev("5-1ed26a0e5072830a9064361a570684f6").withCreatedBy("user1").build();
+        Child child2 = new ChildBuilder().withId("59cd40f39ab6aa791f73885e3bdd99f9").withName("tester").withRev("4-b011946150a16b0d2c6271aed05e2abe").withCreatedBy("user1").build();
+        repository.createOrUpdate(child1);
+        repository.createOrUpdate(child2);
+
+        HashMap<String, String> allIdsAndRevs = repository.getAllIdsAndRevs();
+        assertEquals(2, allIdsAndRevs.size());
+        assertEquals("5-1ed26a0e5072830a9064361a570684f6", allIdsAndRevs.get("dfb2031ebfcbef39dccdb468f5200edc"));
+        assertEquals("4-b011946150a16b0d2c6271aed05e2abe", allIdsAndRevs.get("59cd40f39ab6aa791f73885e3bdd99f9"));
+
+    }
+
+    public class ChildBuilder {
+        Child child = new Child();
+
+        public ChildBuilder withName(String name) throws JSONException {
+            child.put("name", name);
+            return this;
+        }
+
+        public ChildBuilder withId(String id) throws JSONException {
+            child.put("_id", id);
+            return this;
+        }
+
+        public ChildBuilder withRev(String rev) throws JSONException {
+            child.put("_rev", rev);
+            return this;
+        }
+
+        public ChildBuilder withCreatedBy(String createdBy) throws JSONException {
+            child.put("created_by", createdBy);
+            return this;
+        }
+
+        public ChildBuilder withUniqueId(String uniqueId) throws JSONException {
+            child.put("unique_identifier", uniqueId);
+            return this;
+        }
+        public Child build() {
+            return child;
+        }
+
+    }
+
 }
+

@@ -62,6 +62,7 @@ public enum Database {
         syncLog("syncLog"),
 
         internal_id("_id", true, false),
+        internal_rev("_rev", true, false),
         unique_identifier("unique_identifier", true, false),
         created_by("created_by", true, false),
         last_updated_at("last_updated_at", true, false),

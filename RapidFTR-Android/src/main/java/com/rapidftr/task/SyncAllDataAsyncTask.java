@@ -19,7 +19,10 @@ import com.rapidftr.service.FormService;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -65,11 +68,12 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
                 setProgressAndNotify("Step 1 of 3 - Syncing Form Sections...", 0);
                 formService.getPublishedFormSections();
             }
+            ArrayList<String> idsToDownload = getAllIdsForDownload();
             setProgressAndNotify("Step 2 of 3 - Sending records to server...", 10);
             List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
             sendChildrenToServer(childrenToSyncWithServer);
             setProgressAndNotify("Step 3 of 3 - Bringing down records from server...", 20);
-            saveIncomingChildren();
+            saveIncomingChildren(idsToDownload);
             setProgressAndNotify("Sync complete.", 30);
         } catch (Exception e) {
             Log.e("SyncAllDataTask", "Error in sync", e);
@@ -77,6 +81,26 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
             return false;
         }
         return true;
+    }
+
+    public ArrayList<String> getAllIdsForDownload() throws IOException, JSONException {
+        HashMap<String,String> serverIdsRevs = childService.getAllIdsAndRevs();
+        HashMap<String, String> repoIdsAndRevs = childRepository.getAllIdsAndRevs();
+        ArrayList<String> idsToDownload = new ArrayList<String>();
+        for(Map.Entry<String,String> serverIdRev : serverIdsRevs.entrySet()){
+            if(!isServerIdExistingInRepository(repoIdsAndRevs, serverIdRev) || (repoIdsAndRevs.get(serverIdRev.getKey()) != null && isRevisionMismatch(repoIdsAndRevs, serverIdRev))){
+                idsToDownload.add(serverIdRev.getKey());
+            }
+        }
+        return idsToDownload;
+    }
+
+    private boolean isRevisionMismatch(HashMap<String, String> repoIdsAndRevs, Map.Entry<String, String> serverIdRev) {
+        return !repoIdsAndRevs.get(serverIdRev.getKey()).equals(serverIdRev.getValue());
+    }
+
+    private boolean isServerIdExistingInRepository(HashMap<String, String> repoIdsAndRevs, Map.Entry<String, String> serverIdRev) {
+        return repoIdsAndRevs.get(serverIdRev.getKey()) != null;
     }
 
     @Override
@@ -129,8 +153,9 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
         }
     }
 
-    private void saveIncomingChildren() throws IOException {
-        for (Child incomingChild : childService.getAllChildren()) {
+    private void saveIncomingChildren(ArrayList<String> idsToDownload) throws IOException, JSONException {
+        for (String idToDownload : idsToDownload) {
+            Child incomingChild = childService.getChild(idToDownload);
             if (isCancelled()) {
                 break;
             }

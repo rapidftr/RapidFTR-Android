@@ -17,6 +17,8 @@ public enum Migrations {
     v001_addCreatedAtColumn(1, MigrationSQL.addCreatedAtColumn),
     v001_addUpdatedAtColumn(1, MigrationSQL.addLastUpdatedAtColumn),
     v001_addNameColumn(1, MigrationSQL.addNameColumn),
+    v001_add_idColumn(1, MigrationSQL.addIdColumn),
+    v001_add_revColumn(1, MigrationSQL.addRevColumn)
     ;
 
     private int databaseVersion;
@@ -74,5 +76,16 @@ class MigrationSQL {
             + Database.ChildTableColumn.name.getColumnName()
             + " text";
 
+    public static String addIdColumn = "ALTER TABLE "
+            + Database.child.getTableName()
+            + " ADD COLUMN "
+            + Database.ChildTableColumn.internal_id.getColumnName()
+            + " text ";
+
+    public static String addRevColumn = "ALTER TABLE "
+            + Database.child.getTableName()
+            + " ADD COLUMN "
+            + Database.ChildTableColumn.internal_rev.getColumnName()
+            + " text ";
 }
 

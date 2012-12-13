@@ -15,11 +15,12 @@ import org.json.JSONException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
-import static com.rapidftr.database.Database.ChildTableColumn.id;
+import static com.rapidftr.database.Database.ChildTableColumn.*;
 import static com.rapidftr.model.Child.History.HISTORIES;
 import static java.lang.String.format;
 
@@ -73,13 +74,19 @@ public class ChildRepository implements Closeable {
         child.setLastUpdatedAt(getTimeStamp());
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
         values.put(id.getColumnName(), child.getUniqueId());
-        values.put(Database.ChildTableColumn.name.getColumnName(), child.getName());
-        values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
-        values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
-        values.put(Database.ChildTableColumn.created_at.getColumnName(), child.getCreatedAt());
+        values.put(name.getColumnName(), child.getName());
+        values.put(content.getColumnName(), child.toString());
+        values.put(synced.getColumnName(), child.isSynced());
+        values.put(created_at.getColumnName(), child.getCreatedAt());
+        populateInternalColumns(child, values);
         long id = session.replace(Database.child.getTableName(), null, values);
         if (id <= 0)
             throw new IllegalArgumentException();
+    }
+
+    private void populateInternalColumns(Child child, ContentValues values) {
+        values.put(internal_id.getColumnName(), child.optString("_id"));
+        values.put(internal_rev.getColumnName(), child.optString("_rev"));
     }
 
     private void addHistory(Child child) throws JSONException {
@@ -104,15 +111,27 @@ public class ChildRepository implements Closeable {
 
     public void update(Child child) throws JSONException {
         ContentValues values = new ContentValues();
-        values.put(Database.ChildTableColumn.content.getColumnName(), child.toString());
-        values.put(Database.ChildTableColumn.synced.getColumnName(), child.isSynced());
-
+        values.put(content.getColumnName(), child.toString());
+        values.put(synced.getColumnName(), child.isSynced());
+        populateInternalColumns(child, values);
         session.update(Database.child.getTableName(), values, format("%s=?", id.getColumnName()), new String[]{child.getUniqueId()});
     }
 
     public List<Child> toBeSynced() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE synced = ?", new String[]{falseValue.getColumnValue()});
         return toChildren(cursor);
+    }
+
+    public HashMap<String, String> getAllIdsAndRevs() throws JSONException {
+        HashMap<String, String> idRevs = new HashMap();
+        @Cleanup Cursor cursor = session.rawQuery("SELECT "
+                + Database.ChildTableColumn.internal_id.getColumnName() + ", "
+                + Database.ChildTableColumn.internal_rev.getColumnName()
+                + " FROM "+ Database.child.getTableName(), null);
+        while(cursor.moveToNext()){
+            idRevs.put(cursor.getString(0), cursor.getString(1));
+        }
+        return idRevs;
     }
 
     @Override
@@ -139,4 +158,5 @@ public class ChildRepository implements Closeable {
     protected String getTimeStamp(){
         return RapidFtrDateTime.now().defaultFormat();
     }
+
 }
