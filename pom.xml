@@ -292,5 +292,10 @@
         </pluginManagement>
     </build>
 
-</project>
+    <profiles>
+        <profile>
+            <id>ci</id>
+        </profile>
+    </profiles>
 
+</project>
