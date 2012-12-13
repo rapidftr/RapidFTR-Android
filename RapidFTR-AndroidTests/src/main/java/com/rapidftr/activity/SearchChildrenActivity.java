@@ -20,7 +20,7 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
     public void tearDown() throws  Exception{
         solo.goBackToActivity("MainActivity");
         loginPage.logout();
-        loginPage.clickLoginButton();
+//        loginPage.clickLoginButton();
         super.tearDown();
     }
 

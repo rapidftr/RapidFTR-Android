@@ -59,6 +59,7 @@ public enum Database {
         content("child_json"),
         owner("child_owner"),
         synced("synced"),
+        syncLog("syncLog"),
 
         internal_id("_id", true, false),
         unique_identifier("unique_identifier", true, false),

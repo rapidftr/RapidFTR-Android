@@ -2,6 +2,7 @@ package com.rapidftr;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
@@ -38,6 +39,7 @@ public class RapidFtrApplication extends Application {
     private @Getter @Setter List<FormSection> formSections;
     private @Getter @Setter boolean loggedIn;
     private @Getter @Setter String dbKey;
+    private @Getter @Setter AsyncTask syncTask;
 
     public RapidFtrApplication() {
         this(Guice.createInjector(new ApplicationInjector()));
@@ -58,6 +60,10 @@ public class RapidFtrApplication extends Application {
 
     public void setPreference(Preference preference, String value) {
         getSharedPreferences().edit().putString(preference.getKey(), value).commit();
+    }
+
+    public void removePreference(Preference preference) {
+        getSharedPreferences().edit().remove(preference.getKey());
     }
 
     public void setFormSectionsTemplate(String formSectionResponse) throws IOException {

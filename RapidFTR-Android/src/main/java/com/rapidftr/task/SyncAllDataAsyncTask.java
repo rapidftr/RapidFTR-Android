@@ -10,13 +10,13 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 import com.google.inject.Inject;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.service.FormService;
 import org.json.JSONException;
-import com.rapidftr.RapidFtrApplication;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,6 +33,8 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
     private int MAX_PROGRESS = 30;
     private Notification notification;
     private NotificationManager notificationManager;
+    private static final String SYNC_ALL = "SYNC_ALL";
+    private static final String CANCEL_SYNC_ALL = "CANCEL_SYNC_ALL";
 
     @Inject
     public SyncAllDataAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository) {
@@ -43,6 +45,8 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected void onPreExecute() {
+        RapidFtrApplication.getApplicationInstance().setSyncTask(this);
+        toggleMenu(CANCEL_SYNC_ALL);
         initNotifiers();
         configureNotification();
     }
@@ -57,8 +61,10 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected Boolean doInBackground(Void... notRelevant) {
         try {
-            setProgressAndNotify("Step 1 of 3 - Syncing Form Sections...", 0);
-            formService.getPublishedFormSections();
+            if (!isCancelled()) {
+                setProgressAndNotify("Step 1 of 3 - Syncing Form Sections...", 0);
+                formService.getPublishedFormSections();
+            }
             setProgressAndNotify("Step 2 of 3 - Sending records to server...", 10);
             List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
             sendChildrenToServer(childrenToSyncWithServer);
@@ -80,7 +86,21 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected void onPostExecute(Boolean result) {
+        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
+        toggleMenu(SYNC_ALL);
         notificationManager.cancel(NOTIFICATION_ID);
+    }
+
+    @Override
+    protected void onCancelled() {
+        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
+        toggleMenu(SYNC_ALL);
+        notificationManager.cancel(NOTIFICATION_ID);
+    }
+
+    private void toggleMenu(String showMenu) {
+        context.getMenu().getItem(0).setVisible(showMenu == SYNC_ALL);
+        context.getMenu().getItem(1).setVisible(showMenu == CANCEL_SYNC_ALL);
     }
 
     private void initNotifiers() {
@@ -89,22 +109,31 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
     }
 
     private void setProgressAndNotify(String statusText, int progress) {
-        notification.contentView.setTextViewText(R.id.status_text, statusText);
-        notification.contentView.setProgressBar(R.id.status_progress, MAX_PROGRESS, progress, false);
-        notificationManager.notify(NOTIFICATION_ID, notification);
+        if (!isCancelled()) {
+            notification.contentView.setTextViewText(R.id.status_text, statusText);
+            notification.contentView.setProgressBar(R.id.status_progress, MAX_PROGRESS, progress, false);
+            notificationManager.notify(NOTIFICATION_ID, notification);
+        }
     }
 
     private void sendChildrenToServer(List<Child> childrenToSyncWithServer) throws IOException, JSONException {
         String subStatusFormat = "Records %s/" + childrenToSyncWithServer.size() + " Uploaded";
         int counter = 0;
         for (Child child : childrenToSyncWithServer) {
+            if (isCancelled()) {
+                break;
+            }
             childService.sync(child);
             setProgressAndNotify(String.format(subStatusFormat, ++counter), 15);
+
         }
     }
 
     private void saveIncomingChildren() throws IOException {
         for (Child incomingChild : childService.getAllChildren()) {
+            if (isCancelled()) {
+                break;
+            }
             try {
                 incomingChild.setSynced(true);
                 if (childRepository.exists(incomingChild.getUniqueId())) {

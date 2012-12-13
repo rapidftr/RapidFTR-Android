@@ -1,7 +1,6 @@
 package com.rapidftr.activity;
 
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,20 +15,19 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         loginPage.login();
         solo.waitForText("Login Successful");
         childPage.navigateToRegisterPage();
-}
+    }
 
     @Override
     public void tearDown() throws  Exception{
         solo.goBackToActivity("MainActivity");
         loginPage.logout();
-        loginPage.clickLoginButton();
         super.tearDown();
     }
 
     public void testFormSectionsDisplayed() {
-       List<String> actualSections = childPage.getDropDownFormSections();
-       List<String> expectedSections = new ArrayList<String>(asList(new String[]{"Basic Identity", "Family details", "Care Arrangements", "Separation History", "Protection Concerns",
-               "Childs Wishes", "Other Interviews", "Other Tracing Info", "Interview Details", "Automation Form"}));
+        List<String> actualSections = childPage.getDropDownFormSections();
+        List<String> expectedSections = new ArrayList<String>(asList(new String[]{"Basic Identity", "Family details", "Care Arrangements", "Separation History", "Protection Concerns",
+                "Childs Wishes", "Other Interviews", "Other Tracing Info", "Interview Details", "Automation Form"}));
         assertEquals(actualSections, expectedSections);
     }
 
@@ -43,7 +41,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
 
     public void testFieldsHidden() {
         childPage.selectFormSection("Automation Form");
-        List hiddenField= asList("Hidden TextField");
+        List hiddenField = asList("Hidden TextField");
         assertFalse(childPage.verifyFields(hiddenField));
     }
 
@@ -53,7 +51,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012");
         childPage.enterAutomationFormDetails(automationFormData);
         childPage.save();
-        childPage.verifyRegisterChildDetail(automationFormData,"Automation Form");
+        childPage.verifyRegisterChildDetail(automationFormData, "Automation Form");
     }
 
     public void testRegisterAndSyncChild() {
@@ -61,11 +59,11 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         List automationFormData = asList("Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012");
         childPage.enterAutomationFormDetails(automationFormData);
         childPage.save();
-        childPage.verifyRegisterChildDetail(automationFormData,"Automation Form");
+        childPage.verifyRegisterChildDetail(automationFormData, "Automation Form");
     }
 
-    public void testEditChild(){
-        String name="Test Edit Child";
+    public void testEditChild() {
+        String name = "Test Edit Child";
         childPage.selectFormSection("Automation Form");
         childPage.registerChild();
         childPage.selectEditChild();
@@ -73,7 +71,6 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         childPage.enterChildName(name);
         childPage.save();
         solo.waitForText("Saved Child Record Successfully");
-//        assertTrue(childPage.getChildName(name));
         assertTrue(isEditedTextPresent(name));
     }
 

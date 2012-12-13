@@ -30,6 +30,7 @@ public abstract class BaseView extends LinearLayout {
         this.formField = formField;
         this.child = child;
         this.setTag(formField.getId());
+        this.setId(formField.getId().hashCode());
 
         try {
             this.initialize();

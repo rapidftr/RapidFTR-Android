@@ -160,6 +160,14 @@ public class Child extends JSONObject implements Parcelable {
         put(last_updated_at.getColumnName(), lastUpdatedAt);
     }
 
+    public String getSyncLog()  throws JSONException {
+        return optString(syncLog.getColumnName(),null);
+    }
+
+    public void setSyncLog(String syncLog1) throws JSONException {
+        put(syncLog.getColumnName(), syncLog1);
+    }
+
     public void addToJSONArray(String key, Object element) throws JSONException {
         JSONArray array = has(key) ? getJSONArray(key) : new JSONArray();
         List<Object> list = asList(array);

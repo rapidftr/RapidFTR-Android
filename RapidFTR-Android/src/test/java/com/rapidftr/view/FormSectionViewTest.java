@@ -124,6 +124,10 @@ public class FormSectionViewTest {
     @Test
     public void shouldRenderMultipleFields() {
         FormField field1 = new FormField(), field2 = new FormField(), field3 = new FormField();
+        field1.setId("text_field");
+        field2.setId("abcd");
+        field3.setId("textarea");
+
         field1.setType("text_field");
         field2.setType("abcd");
         field3.setType("textarea");

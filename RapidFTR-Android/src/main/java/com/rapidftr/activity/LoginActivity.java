@@ -30,8 +30,7 @@ public class LoginActivity extends RapidFtrActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getContext().isLoggedIn()) {
-            Intent mainIntent = new Intent(this, MainActivity.class);
-            startActivity(mainIntent);
+            goToHomeScreen();
         }
         setContentView(R.layout.activity_login);
         toggleBaseUrl();
@@ -62,6 +61,14 @@ public class LoginActivity extends RapidFtrActivity {
     public void onBackPressed() {
         // Suppress the BACK key when this activity is running
         // no-op
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(getContext().isLoggedIn()){
+            goToHomeScreen();
+        }
     }
 
     private void toggleBaseUrl() {
@@ -115,6 +122,11 @@ public class LoginActivity extends RapidFtrActivity {
 
     protected void setEditText(int resId, String text) {
         ((EditText) findViewById(resId)).setText(text);
+    }
+
+    @Override
+    protected boolean shouldEnsureLoggedIn() {
+        return false;
     }
 
     protected class LoginAsyncTask extends AsyncTask<String, Void, HttpResponse> {

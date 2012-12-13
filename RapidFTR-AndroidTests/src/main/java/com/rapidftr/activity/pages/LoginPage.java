@@ -37,11 +37,13 @@ public class LoginPage {
         solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.url), "");
         solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.url), url);
         clickLoginButton();
-        solo.waitForText("Login Successful");
+//        solo.waitForText("Login Successful");
     }
 
     public void logout() {
-        solo.clickOnButton("Log Out");
+//        solo.clickOnButton(solo.getString(R.string.log_out));
+        solo.clickOnMenuItem(solo.getString(R.string.log_out));
+        solo.waitForText("You have been logged out.");
     }
 
     public void clickLoginButton() {

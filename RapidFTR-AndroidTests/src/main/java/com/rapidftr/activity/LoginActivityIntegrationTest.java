@@ -6,7 +6,7 @@ import static com.rapidftr.activity.pages.LoginPage.*;
 
 public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
 
-    public void WIPtestIncorrectLoginCredentials(){
+    public void testIncorrectLoginCredentials(){
         loginPage.login("wrongUsername", "wrongPassword", LOGIN_URL);
         assertTrue(solo.waitForText("Incorrect username or password"));
     }
@@ -27,15 +27,21 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
          loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
          solo.waitForText("Login Successful");
          loginPage.logout();
-         loginPage.clickLoginButton();
          loginPage.changeURL();
          assertTrue(loginPage.getUrl().equals(LOGIN_URL));
     }
 
-
     public void testSuccessfulLogin() {
         loginPage.login();
         assertTrue("Login should be successful", solo.waitForText("Login Successful"));
+        loginPage.logout();
+    }
+
+    public void testCannotNavigateBackToLoginPageOnceLoggedIn(){
+        loginPage.login();
+        solo.waitForText("Login Successful");
+        solo.goBack();
+        solo.assertCurrentActivity("should still be on the home page", MainActivity.class);
         loginPage.logout();
     }
 

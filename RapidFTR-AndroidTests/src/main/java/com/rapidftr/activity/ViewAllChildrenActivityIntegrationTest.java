@@ -14,6 +14,12 @@ public class ViewAllChildrenActivityIntegrationTest extends BaseActivityIntegrat
         solo.waitForText("Login Successful");
     }
 
+    @Override
+    public void tearDown() throws Exception{
+        loginPage.logout();
+        super.tearDown();
+    }
+
     public void testDisplayAllChildren() throws JSONException {
         ChildRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(ChildRepository.class);
         repository.createOrUpdate(new Child("id1", "rapidftr","{\"name\":\"Test1\"}"));

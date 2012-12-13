@@ -24,7 +24,6 @@
     <string name="loading_message">Loading...</string>
     <string name="unauthorized">Incorrect username or password</string>
     <string name="login_successful">Login Successful</string>
-    <string name="logout_successful">Logout not really implemented yet</string>
     <string name="invalid_url">Please enter a valid url</string>
     <string name="server_not_reachable">Unable to connect to the server, please contact your system administrator</string>
     <string name="RapidFTRLogo">RapidFTR</string>
@@ -43,6 +42,7 @@
     <string name="photo_gallery_delete_error">Unable to delete photo from Gallery. Please go to Gallery and delete it manually</string>
 
     <string name="synchronize_all">Synchronize All</string>
+    <string name="cancel_synchronize_all">Cancel Synchronize All</string>
     <string name="synchronize_child">Synchronize This Child</string>
     <string name="sync_progress">Sync in progress</string>
     <string name="sync_success">Sync successful</string>
@@ -58,5 +58,6 @@
     <string name="register_tab_name">Register</string>
     <string name="view_all_tab_name">View All</string>
     <string name="search_tab_name">Search</string>
+    <string name="synchronize_log">Sync error</string>
 
 </resources>
