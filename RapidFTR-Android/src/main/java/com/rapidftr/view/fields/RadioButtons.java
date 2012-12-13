@@ -75,8 +75,6 @@ public class RadioButtons extends BaseView {
             View view = group.getChildAt(i);
             view.setEnabled(enabled);
             view.setClickable(enabled);
-            view.setFocusable(enabled);
-            view.setFocusableInTouchMode(enabled);
         }
     }
 }
