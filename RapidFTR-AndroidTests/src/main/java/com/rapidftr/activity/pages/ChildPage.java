@@ -1,6 +1,5 @@
 package com.rapidftr.activity.pages;
 
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import com.jayway.android.robotium.solo.Solo;
@@ -11,6 +10,9 @@ import junit.framework.Assert;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static java.lang.String.format;
+import static junit.framework.Assert.assertEquals;
 
 public class ChildPage {
 
@@ -56,17 +58,13 @@ public class ChildPage {
         solo.waitForText(formSectionName);
     }
 
-    public boolean verifyFields(List fieldNames) {
-        boolean result = true;
-        for(int i=0; i<fieldNames.size();i++){
-            if(!solo.searchText(fieldNames.get(i).toString(),true)){
-                result=false;
-                Log.e(fieldNames.get(i).toString()," Field Does not exists in the Form ");
-                break;
-            }
+    public void verifyFields(List fieldNames, boolean visible) {
+        for (Object fieldName : fieldNames) {
+            assertEquals(format("Visibility of field %s", fieldName),
+                         visible, solo.searchText(fieldName.toString(), 1, true, true));
         }
-        return result;
     }
+
     public void registerChild(){
         enterAutomationFormDetails(automationFormData);
         save();
@@ -84,20 +82,11 @@ public class ChildPage {
         int checkBoxCount=solo.getCurrentCheckBoxes().size();
         for(int i=0;i<checkBoxCount;i++){
             if (solo.getCurrentCheckBoxes().get(i).getText().toString().equals(automationFormData.get(2).toString())) {
+                solo.waitForText(solo.getCurrentCheckBoxes().get(i).getText().toString(), 1, 20000, true);
                 solo.clickOnCheckBox(i);
             }
         }
-//        int selectBoxCount = solo.getCurrentSpinners().get(1).getCount();
-
-//        for(int i=0;i<selectBoxCount;i++){
-//            if(solo.getCurrentSpinners().get(1).getAdapter().getItem(i).toString().equals(automationFormData.get(3).toString())){
-//                solo.pressSpinnerItem(1,i);
-//                solo.clickOnText(automationFormData.get(3).toString());
-//            }
-//        }
-
-        solo.clickOnText(automationFormData.get(2).toString());
-        solo.clickOnText(automationFormData.get(4).toString());
+        solo.clickOnText(automationFormData.get(4).toString(), 1, true);
     }
 
     public void verifyRegisterChildDetail(List automationFormData,String formName) {

@@ -41,7 +41,6 @@ public class LoginPage {
     }
 
     public void logout() {
-//        solo.clickOnButton(solo.getString(R.string.log_out));
         solo.clickOnMenuItem(solo.getString(R.string.log_out));
         solo.waitForText("You have been logged out.");
     }
