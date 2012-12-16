@@ -168,7 +168,7 @@ public class ChildService {
         List<Map> idRevs = asList(objectMapper.readValue(response.getEntity().getContent(), Map[].class));
         HashMap<String, String> idRevMapping = new HashMap<String, String>();
         for (Map idRev : idRevs) {
-            idRevMapping.put(idRev.get("id").toString(), idRev.get("rev").toString());
+            idRevMapping.put(idRev.get("_id").toString(), idRev.get("_rev").toString());
         }
         return idRevMapping;
     }

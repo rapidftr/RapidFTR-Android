@@ -117,7 +117,7 @@ public class ChildServiceTest {
     public void shouldFetchAllIdRevs() throws IOException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
 
-        String response = "[{\"rev\":\"5-1ed26a0e5072830a9064361a570684f6\",\"id\":\"dfb2031ebfcbef39dccdb468f5200edc\"},{\"rev\":\"4-b011946150a16b0d2c6271aed05e2abe\",\"id\":\"59cd40f39ab6aa791f73885e3bdd99f9\"}]";
+        String response = "[{\"_rev\":\"5-1ed26a0e5072830a9064361a570684f6\",\"_id\":\"dfb2031ebfcbef39dccdb468f5200edc\"},{\"_rev\":\"4-b011946150a16b0d2c6271aed05e2abe\",\"_id\":\"59cd40f39ab6aa791f73885e3bdd99f9\"}]";
         getFakeHttpLayer().setDefaultHttpResponse(200, response);
 
         Map<String,String> allIdRevs = new ChildService(mockContext(), repository, mockFluentRequest).getAllIdsAndRevs();
