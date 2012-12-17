@@ -30,13 +30,12 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     @Override
     public void tearDown() throws Exception{
-        loginPage.logout();
         super.tearDown();
     }
 
     public void estRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
         String timeStamp = now().defaultFormat();
-        seed(new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'unique_identifier' : 'abcd1234', 'one' : '1', 'name' : 'jen' }", timeStamp)));
+        seedDataOnServer(new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'unique_identifier' : 'abcd1234', 'one' : '1', 'name' : 'jen' }", timeStamp)));
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         Thread.sleep(10000); //Sleep for synchronization to happen.
 
@@ -46,6 +45,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         searchPage.navigateToSearchPage();
         searchPage.searchChild(child.optString("_id"));
         assertTrue(searchPage.isChildPresent(child.optString("_id"), "jen"));
+        loginPage.logout();
     }
 
     public void testRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
@@ -60,11 +60,30 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         List<Child> children = repository.getMatchingChildren("xyz4321");
         assertEquals(1, children.size());
         assertTrue(children.get(0).isSynced());
+        loginPage.logout();
     }
 
+    public void testSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException {
+        Child child1 = new Child("abc4321", "rapidftr", "{'name' : 'moses'}");
+        Child child2 = new Child("qwe4321", "rapidftr", "{'name' : 'james'}");
+        Child child3 = new Child("zxy4321", "rapidftr", "{'name' : 'kenyata'}");
+        Child child4 = new Child("uye4321", "rapidftr", "{'name' : 'keburingi'}");
+        seedDataToRepository(child1, child2, child3, child4);
+        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
 
+        solo.clickOnMenuItem(solo.getString(R.string.log_out));
+        //Robotium doesn't support asserting on notification bar by default. Below is the hack to get around it.
+        solo.clickOnButton(solo.getString(R.string.log_out)); //As the synchronization is still happening we'll get an dialog box for the user action.
+        solo.waitForText(solo.getString(R.string.logout_successful));
+   }
 
-    private void seed(Child child) throws JSONException, IOException {
+    private void seedDataToRepository(Child... children) throws JSONException {
+        for(Child child : children){
+            repository.createOrUpdate(child);
+        }
+    }
+
+    private void seedDataOnServer(Child child) throws JSONException, IOException {
         http()
         .context(context)
         .host(LoginPage.LOGIN_URL)
