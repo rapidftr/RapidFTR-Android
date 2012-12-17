@@ -33,12 +33,12 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
     private ChildService childService;
     private ChildRepository childRepository;
     private RapidFtrActivity context;
-    private static final int MAX_PROGRESS = 100;
+    private static int MAX_PROGRESS;
     private Notification notification;
     private NotificationManager notificationManager;
     private static final String SYNC_ALL = "SYNC_ALL";
     private static final String CANCEL_SYNC_ALL = "CANCEL_SYNC_ALL";
-    private static final int FORM_SECTION_PROGRESS = 20;
+    private static int FORM_SECTION_PROGRESS;
 
     @Inject
     public SyncAllDataAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository) {
@@ -65,17 +65,15 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected Boolean doInBackground(Void... notRelevant) {
         try {
-            if (!isCancelled()) {
-                setProgressAndNotify("Step 1 of 3 - Syncing Form Sections...", 0);
-                formService.getPublishedFormSections();
-            }
-            setProgressAndNotify("Step 2 of 3 - Sending records to server...", FORM_SECTION_PROGRESS);
             ArrayList<String> idsToDownload = getAllIdsForDownload();
             List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
+            setProgressBarParameters(idsToDownload, childrenToSyncWithServer);
 
-            int uploadMaxProgressLimit = calculateUploadMaxProgress(idsToDownload, childrenToSyncWithServer);
-            sendChildrenToServer(childrenToSyncWithServer, uploadMaxProgressLimit);
-            saveIncomingChildren(idsToDownload, uploadMaxProgressLimit);
+            getFormSections();
+            sendChildrenToServer(childrenToSyncWithServer);
+            int startProgressForDownloadingChildren = FORM_SECTION_PROGRESS + childrenToSyncWithServer.size();
+            saveIncomingChildren(idsToDownload, startProgressForDownloadingChildren);
+
             setProgressAndNotify("Sync complete.", MAX_PROGRESS);
         } catch (Exception e) {
             Log.e("SyncAllDataTask", "Error in sync", e);
@@ -85,11 +83,17 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
         return true;
     }
 
-    private int calculateUploadMaxProgress(ArrayList<String> idsToDownload, List<Child> childrenToSyncWithServer) {
-        int numberOfRecordsToDownload = idsToDownload.size();
-        int numberOfRecordsToUpload = childrenToSyncWithServer.size();
-        int totalRecords = numberOfRecordsToDownload + numberOfRecordsToUpload;
-        return (numberOfRecordsToUpload / totalRecords) * 80;
+    private void getFormSections() throws IOException {
+        if (!isCancelled()) {
+            setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
+            formService.getPublishedFormSections();
+        }
+    }
+
+    private void setProgressBarParameters(ArrayList<String> idsToDownload, List<Child> childrenToSyncWithServer) {
+        int totalRecordsToSynchronize = idsToDownload.size() + childrenToSyncWithServer.size();
+        FORM_SECTION_PROGRESS = totalRecordsToSynchronize/4 == 0 ? 20 : totalRecordsToSynchronize/4;
+        MAX_PROGRESS = totalRecordsToSynchronize + FORM_SECTION_PROGRESS;
     }
 
     public ArrayList<String> getAllIdsForDownload() throws IOException, JSONException {
@@ -149,27 +153,25 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
         }
     }
 
-    private void sendChildrenToServer(List<Child> childrenToSyncWithServer, int maxProgress) throws IOException, JSONException {
+    private void sendChildrenToServer(List<Child> childrenToSyncWithServer) throws IOException, JSONException {
+        setProgressAndNotify(context.getString(R.string.synchronize_step_2), FORM_SECTION_PROGRESS);
         String subStatusFormat = "Uploading Child %s of " + childrenToSyncWithServer.size();
         int counter = 0;
-        int progressStep = childrenToSyncWithServer.size() == 0 ? 0 : maxProgress / childrenToSyncWithServer.size();
-        int startProgress = progressStep + FORM_SECTION_PROGRESS;
+        int startProgress = FORM_SECTION_PROGRESS;
         for (Child child : childrenToSyncWithServer) {
             if (isCancelled()) {
                 break;
             }
             childService.sync(child);
             setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
-            startProgress += progressStep;
+            startProgress += 1;
         }
     }
 
-    private void saveIncomingChildren(ArrayList<String> idsToDownload, int maxProgressed) throws IOException, JSONException {
+    private void saveIncomingChildren(ArrayList<String> idsToDownload, int startProgress) throws IOException, JSONException {
         String subStatusFormat = "Downloading Child %s of" + idsToDownload.size();
         int counter = 0;
-        int currentProgress = (MAX_PROGRESS - maxProgressed) / idsToDownload.size();
-        int startProgress = currentProgress + FORM_SECTION_PROGRESS ;
-        setProgressAndNotify("Step 3 of 3 - Bringing down records from server...", startProgress);
+        setProgressAndNotify(context.getString(R.string.synchronize_step_3), startProgress);
 
         for (String idToDownload : idsToDownload) {
             Child incomingChild = childService.getChild(idToDownload);
@@ -185,7 +187,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
                 }
                 childService.setPhoto(incomingChild);
                 setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
-                startProgress += currentProgress;
+                startProgress += 1 ;
             } catch (Exception e) {
                 Log.e("SyncAllDataTask", "Error syncing child", e);
                 throw new RuntimeException(e);

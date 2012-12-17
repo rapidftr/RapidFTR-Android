@@ -60,5 +60,8 @@
     <string name="view_all_tab_name">View All</string>
     <string name="search_tab_name">Search</string>
     <string name="synchronize_log">Sync error</string>
+    <string name="synchronize_step_1">Step 1 of 3 - Syncing Form Sections...</string>
+    <string name="synchronize_step_2">Step 2 of 3 - Sending records to server...</string>
+    <string name="synchronize_step_3">Step 3 of 3 - Getting records from server...</string>
 
 </resources>

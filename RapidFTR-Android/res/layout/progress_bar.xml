@@ -2,9 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent" android:layout_height="fill_parent">
     <TextView android:id="@+id/status_text" android:layout_width="fill_parent"
-              android:layout_height="wrap_content" android:layout_alignParentTop="true"/>
+              android:layout_height="wrap_content" android:layout_alignParentTop="true"
+              android:textColor="@color/white"
+              android:paddingBottom="5dp"/>
     <ProgressBar android:id="@+id/status_progress"
-                 android:layout_width="fill_parent" android:layout_height="wrap_content"
+                 android:layout_width="fill_parent" android:layout_height="28dp"
                  android:layout_below="@id/status_text"
                  android:progressDrawable="@android:drawable/progress_horizontal"
                  android:indeterminate="false" android:indeterminateOnly="false"/>
