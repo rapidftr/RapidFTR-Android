@@ -18,7 +18,7 @@ public class RegisterChildActivity extends BaseChildActivity {
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AsyncTaskWithDialog.wrap(RegisterChildActivity.this, new SaveChildTask(), R.string.save_child_progress, R.string.save_child_success, R.string.save_child_failure).execute();
+                AsyncTaskWithDialog.wrap(RegisterChildActivity.this, new SaveChildTask(), R.string.save_child_progress, R.string.save_child_success, R.string.save_child_invalid).execute();
             }
         });
     }

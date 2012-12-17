@@ -151,4 +151,11 @@ public class BaseChildActivityTest {
         assertEquals(false, activity.child.isSynced());
     }
 
+    @Test
+    public void SaveChildTaskOnPreExecuteShouldNotCallViewIfResultIsNull() throws JSONException {
+        BaseChildActivity.SaveChildTask saveChildTask = activity.getSaveChildTask();
+        saveChildTask.onPostExecute(null);
+        verify(activity, never()).view();
+    }
+
 }

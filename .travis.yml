@@ -15,9 +15,6 @@ before_install:
 install: echo
 script: mvn clean install -P ci
 
-after_script:
-  - mvn pl.project13.maven:git-commit-id-plugin:revision ghDownloads:upload -P ci --projects RapidFTR-Android --fail-never
-
 notifications:
   email: false
   irc:
