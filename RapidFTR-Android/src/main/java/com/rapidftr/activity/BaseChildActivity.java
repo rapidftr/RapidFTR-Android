@@ -148,6 +148,10 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
         startActivity(intent);
     }
 
+    protected SaveChildTask getSaveChildTask() {
+        return new SaveChildTask();
+    }
+
     protected class SaveChildTask extends AsyncTaskWithDialog<Void, Void, Child> {
         @Override
         protected Child doInBackground(Void... params) {
@@ -161,7 +165,8 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
         @Override
         protected void onPostExecute(Child result) {
             try {
-                view();
+                if (result != null)
+                    view();
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
