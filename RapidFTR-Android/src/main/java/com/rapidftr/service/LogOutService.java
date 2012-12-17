@@ -3,6 +3,7 @@ package com.rapidftr.service;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -16,8 +17,9 @@ import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
 public class LogOutService {
 
     public void attemptLogOut(RapidFtrActivity currentActivity) {
-        if (RapidFtrApplication.getApplicationInstance().getSyncTask() != null) {
-            createAlertDialog(currentActivity);
+        AsyncTask syncTask = RapidFtrApplication.getApplicationInstance().getSyncTask();
+        if (syncTask != null) {
+            createAlertDialog(currentActivity, syncTask);
         } else {
             logOut(currentActivity);
         }
@@ -33,13 +35,14 @@ public class LogOutService {
         currentActivity.startActivity(new Intent(currentActivity, LoginActivity.class));
     }
 
-    private void createAlertDialog(final RapidFtrActivity currentActivity) {
+    private void createAlertDialog(final RapidFtrActivity currentActivity, final AsyncTask taskToCancel) {
         AlertDialog.Builder builder = new AlertDialog.Builder(currentActivity);
 
         builder.setTitle(R.string.log_out);
         builder.setMessage(R.string.confirm_logout_message);
         builder.setPositiveButton(R.string.log_out, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                taskToCancel.cancel(false);
                 logOut(currentActivity);
             }
         });
