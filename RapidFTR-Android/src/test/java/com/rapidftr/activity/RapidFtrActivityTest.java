@@ -1,11 +1,11 @@
 package com.rapidftr.activity;
 
-import android.os.AsyncTask;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.task.SyncAllDataAsyncTask;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -13,9 +13,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
 public class RapidFtrActivityTest {
@@ -60,7 +58,7 @@ public class RapidFtrActivityTest {
     @Test
     public void shouldCancelTheAsyncTaskIfCancelSynMenuIsClicked(){
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
-        AsyncTask mockAsyncTask = mock(AsyncTask.class);
+        SyncAllDataAsyncTask mockAsyncTask = mock(SyncAllDataAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
 
         RapidFtrActivity mainActivity = new MainActivity();
@@ -87,7 +85,7 @@ public class RapidFtrActivityTest {
     @Test
     public void shouldSetTheMenuBasedOnAsynTask(){
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
-        AsyncTask mockAsyncTask = mock(AsyncTask.class);
+        SyncAllDataAsyncTask mockAsyncTask = mock(SyncAllDataAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
 
         Menu mockMenu = mock(Menu.class);
@@ -111,7 +109,7 @@ public class RapidFtrActivityTest {
     @Test
     public void shouldPromptUserWhenAttemptingToLogOutWhileSyncIsActive(){
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
-        AsyncTask mockAsyncTask = mock(AsyncTask.class);
+        SyncAllDataAsyncTask mockAsyncTask = mock(SyncAllDataAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
 
         RapidFtrActivity mainActivity = new MainActivity();
@@ -123,4 +121,16 @@ public class RapidFtrActivityTest {
         verify(mockAsyncTask).cancel(false);
     }
 
+    @Test
+    public void shouldSetCurrentContextWhileCreatingMenu(){
+        RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
+        SyncAllDataAsyncTask mockSyncAll = mock(SyncAllDataAsyncTask.class);
+        instance.setSyncTask(mockSyncAll);
+
+        RapidFtrActivity mainActivity = new MainActivity();
+        Menu mockMenu = mock(Menu.class);
+        when(mockMenu.getItem(anyInt())).thenReturn(mock(MenuItem.class));
+        mainActivity.onCreateOptionsMenu(mockMenu);
+        verify(mockSyncAll).setContext(mainActivity);
+    }
 }

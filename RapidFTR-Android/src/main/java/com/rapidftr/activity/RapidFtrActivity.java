@@ -98,7 +98,14 @@ public abstract class RapidFtrActivity extends Activity {
         getMenuInflater().inflate(R.menu.options_menu, menu);
         setMenu(menu);
         toggleSync(menu);
+        setContextToSyncTask();
         return getContext().isLoggedIn();
+    }
+
+    private void setContextToSyncTask() {
+        SyncAllDataAsyncTask syncTask = (SyncAllDataAsyncTask) RapidFtrApplication.getApplicationInstance().getSyncTask();
+        if (syncTask != null)
+            syncTask.setContext(this);
     }
 
     @Override
@@ -165,7 +172,7 @@ public abstract class RapidFtrActivity extends Activity {
         });
     }
 
-    private void toggleSync(Menu menu) {
+    protected void toggleSync(Menu menu) {
         menu.getItem(0).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() == null);
         menu.getItem(1).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() != null);
     }

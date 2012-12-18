@@ -30,6 +30,7 @@ public abstract class AsyncTaskWithDialog<Params, Progress, Result> extends Asyn
                 try {
                     return actualTask.doInBackground(params);
                 } catch (Exception e) {
+                    dialog.dismiss();
                     return null;
                 }
             }

@@ -28,23 +28,14 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @RunWith(CustomTestRunner.class)
 public class SyncAllDataAsyncTaskTest {
 
-    @Mock
-    private FormService formService;
-    @Mock
-    private ChildService childService;
-    @Mock
-    private ChildRepository childRepository;
-    @Mock
-    private RapidFtrActivity rapidFtrActivity;
-    @Mock
-    private NotificationManager notificationManager;
-    @Mock
-    private Menu menu;
-    @Mock
-    private MenuItem syncAll;
-    @Mock
-    private MenuItem cancelSyncAll;
-
+    @Mock private FormService formService;
+    @Mock private ChildService childService;
+    @Mock private ChildRepository childRepository;
+    @Mock private RapidFtrActivity rapidFtrActivity;
+    @Mock private NotificationManager notificationManager;
+    @Mock private Menu menu;
+    @Mock private MenuItem syncAll;
+    @Mock private MenuItem cancelSyncAll;
 
     @Before
     public void setUp() throws Exception {
@@ -99,8 +90,6 @@ public class SyncAllDataAsyncTaskTest {
         verify(childService, never()).sync(child1);
         verify(childService, never()).sync(child2);
     }
-
-
 
     @Test
     public void shouldNotGetIncomingChildrenFromServerIfCancelled() throws Exception {
@@ -211,7 +200,6 @@ public class SyncAllDataAsyncTaskTest {
         verify(childRepository).getAllIdsAndRevs();
         verify(childService).getChild("qwerty0987");
         verify(childService).getChild("abcd1234");
-
     }
 
     private HashMap<String, String> createServerIdRevMap() {
