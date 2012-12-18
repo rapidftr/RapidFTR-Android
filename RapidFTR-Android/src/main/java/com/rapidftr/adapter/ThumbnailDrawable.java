@@ -14,7 +14,7 @@ public class ThumbnailDrawable extends ColorDrawable {
         childrenListThumbnailAsyncTaskReference = new WeakReference<AssignThumbnailAsyncTask>(task);
     }
 
-    public AssignThumbnailAsyncTask getChildrenListThumbnailAsyncTask() {
+    public AssignThumbnailAsyncTask getAssignThumbnailAsyncTask() {
         return childrenListThumbnailAsyncTaskReference.get();
     }
 }

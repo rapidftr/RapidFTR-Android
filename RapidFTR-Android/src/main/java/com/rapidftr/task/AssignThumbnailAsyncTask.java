@@ -26,7 +26,6 @@ public class AssignThumbnailAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
     @Override
     protected void onPostExecute(Bitmap bitmap) {
-//        imageView.setImageBitmap(bitmap);
         AssignThumbnailAsyncTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
         // Change bitmap only if this process is still associated with it
         if (this == bitmapDownloaderTask) {
@@ -43,7 +42,7 @@ public class AssignThumbnailAsyncTask extends AsyncTask<String, Void, Bitmap> {
             Drawable drawable = imageView.getDrawable();
             if (drawable instanceof ThumbnailDrawable) {
                 ThumbnailDrawable downloadedDrawable = (ThumbnailDrawable)drawable;
-                return downloadedDrawable.getChildrenListThumbnailAsyncTask();
+                return downloadedDrawable.getAssignThumbnailAsyncTask();
             }
         }
         return null;

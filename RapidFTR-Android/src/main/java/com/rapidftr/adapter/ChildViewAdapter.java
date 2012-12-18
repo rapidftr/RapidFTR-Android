@@ -90,7 +90,7 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
             Drawable drawable = imageView.getDrawable();
             if (drawable instanceof ThumbnailDrawable) {
                 ThumbnailDrawable thumbnailDrawable = (ThumbnailDrawable)drawable;
-                return thumbnailDrawable.getChildrenListThumbnailAsyncTask();
+                return thumbnailDrawable.getAssignThumbnailAsyncTask();
             }
         }
         return null;
