@@ -76,6 +76,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
 
             setProgressAndNotify("Sync complete.", MAX_PROGRESS);
         } catch (Exception e) {
+            notificationManager.cancel(NOTIFICATION_ID);
             Log.e("SyncAllDataTask", "Error in sync", e);
             publishProgress("Error in syncing. Try again after some time.");
             return false;
