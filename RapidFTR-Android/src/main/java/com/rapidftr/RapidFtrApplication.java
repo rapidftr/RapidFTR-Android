@@ -2,10 +2,10 @@ package com.rapidftr;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.task.SyncAllDataAsyncTask;
 import com.rapidftr.utils.ApplicationInjector;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class RapidFtrApplication extends Application {
     private @Getter @Setter List<FormSection> formSections;
     private @Getter @Setter boolean loggedIn;
     private @Getter @Setter String dbKey;
-    private @Getter @Setter AsyncTask syncTask;
+    private @Getter @Setter SyncAllDataAsyncTask syncTask;
 
     public RapidFtrApplication() {
         this(Guice.createInjector(new ApplicationInjector()));
