@@ -38,6 +38,11 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     @Override
+    protected void saveChild() {
+        //Nothing to implement
+    }
+
+    @Override
     protected void initializeData(Bundle savedInstanceState) throws JSONException {
         super.initializeData(savedInstanceState);
         this.editable = false;

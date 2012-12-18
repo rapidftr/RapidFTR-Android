@@ -1,5 +1,6 @@
 package com.rapidftr.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -67,6 +68,7 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
     protected abstract void initializeView();
 
     protected abstract void initializeLabels() throws JSONException;
+    protected abstract void saveChild();
 
     protected void initializeData(Bundle savedInstanceState) throws JSONException {
         this.formSections = getContext().getFormSections();
@@ -172,4 +174,31 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
             }
         }
     }
+
+    public void showAlertDialog() {
+        DialogInterface.OnClickListener listener = createAlertListener();
+        saveOrDiscardOrCancelChild(listener);
+    }
+
+    private DialogInterface.OnClickListener createAlertListener() {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int selectedItem) {
+                switch (selectedItem) {
+                    case 0:
+                        saveChild();
+                        break;
+                    case 1:
+                        superBackPressed();
+                    case 2:
+                        break;
+                }
+            }
+        };
+    }
+
+    private void superBackPressed() {
+        super.onBackPressed();
+    }
+
 }

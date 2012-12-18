@@ -43,6 +43,9 @@ public class BaseChildActivityTest {
             @Override
             protected void initializeLabels() throws JSONException {
             }
+
+            @Override
+            protected void saveChild() {}
         };
         activity = spy(activity);
     }

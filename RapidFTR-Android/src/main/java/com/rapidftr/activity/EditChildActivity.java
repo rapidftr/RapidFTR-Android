@@ -19,7 +19,7 @@ public class EditChildActivity extends BaseChildActivity {
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AsyncTaskWithDialog.wrap(EditChildActivity.this, new SaveChildTask(), R.string.save_child_progress, R.string.save_child_success, R.string.save_child_invalid).execute();
+              saveChild();
             }
         });
     }
@@ -28,6 +28,11 @@ public class EditChildActivity extends BaseChildActivity {
     protected void initializeLabels() throws JSONException {
         setLabel(R.string.save);
         setTitle(child.getShortId());
+    }
+
+    @Override
+    protected void saveChild() {
+        AsyncTaskWithDialog.wrap(EditChildActivity.this, new SaveChildTask(), R.string.save_child_progress, R.string.save_child_success, R.string.save_child_invalid).execute();
     }
 
 }
