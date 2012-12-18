@@ -13,6 +13,7 @@ import com.rapidftr.R;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.ViewChildActivity;
 import com.rapidftr.model.Child;
+import com.rapidftr.task.ChildrenListThumbnailAsyncTask;
 import com.rapidftr.utils.CaptureHelper;
 import org.json.JSONException;
 
@@ -49,7 +50,7 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
             try {
                 setFields(String.valueOf(child.getShortId()), uniqueIdView);
                 setFields(String.valueOf(child.optString("name")), nameView);
-                imageView.setImageBitmap(captureHelper.getThumbnailOrDefault(child.optString("current_photo_key")));
+                new ChildrenListThumbnailAsyncTask(imageView, captureHelper).execute(child.optString("current_photo_key"));
                 view.setOnClickListener(clickListener(child));
             } catch (JSONException e) {
                 throw new RuntimeException(e);
