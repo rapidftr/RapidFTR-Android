@@ -11,7 +11,7 @@ import static android.graphics.Bitmap.createBitmap;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class ChildrenListThumbnailAsyncTaskTest {
+public class AssignThumbnailAsyncTaskTest {
 
     @Mock ImageView imageView;
     @Mock CaptureHelper captureHelper;
@@ -23,7 +23,7 @@ public class ChildrenListThumbnailAsyncTaskTest {
 
     @Test
     public void shouldUseCaptureHelperToLoadImage(){
-        ChildrenListThumbnailAsyncTask task = new ChildrenListThumbnailAsyncTask(imageView, captureHelper);
+        AssignThumbnailAsyncTask task = new AssignThumbnailAsyncTask(imageView, captureHelper);
 
         task.doInBackground("someFilename");
 
@@ -32,7 +32,7 @@ public class ChildrenListThumbnailAsyncTaskTest {
 
     @Test
     public void shouldAssignImageToViewOnPostExecute(){
-        ChildrenListThumbnailAsyncTask task = new ChildrenListThumbnailAsyncTask(imageView, captureHelper);
+        AssignThumbnailAsyncTask task = new AssignThumbnailAsyncTask(imageView, captureHelper);
 
         Bitmap bitmap = createBitmap(null);
         task.onPostExecute(bitmap);
