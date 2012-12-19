@@ -178,8 +178,8 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     private void saveAlertListener(final Class cls) {
-        if (this instanceof RegisterChildActivity && ((RegisterChildActivity)this).child.isValid()) {
-            final RegisterChildActivity activity = (RegisterChildActivity)this;
+        if ((this instanceof RegisterChildActivity && ((RegisterChildActivity)this).child.isValid()) || this instanceof EditChildActivity) {
+            final BaseChildActivity activity = (BaseChildActivity)this;
             DialogInterface.OnClickListener listener = createAlertDialog(cls, activity);
             saveOrDiscardOrCancelChild(listener);
         }else{
@@ -187,7 +187,7 @@ public abstract class RapidFtrActivity extends Activity {
         }
     }
 
-    private DialogInterface.OnClickListener createAlertDialog(final Class cls, final RegisterChildActivity activity) {
+    private DialogInterface.OnClickListener createAlertDialog(final Class cls, final BaseChildActivity activity) {
         return new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int selectedItem) {

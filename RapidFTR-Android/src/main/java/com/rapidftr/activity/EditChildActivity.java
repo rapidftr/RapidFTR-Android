@@ -19,7 +19,7 @@ public class EditChildActivity extends BaseChildActivity {
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              saveChild();
+                saveChild();
             }
         });
     }
@@ -35,4 +35,8 @@ public class EditChildActivity extends BaseChildActivity {
         AsyncTaskWithDialog.wrap(EditChildActivity.this, new SaveChildTask(), R.string.save_child_progress, R.string.save_child_success, R.string.save_child_invalid).execute();
     }
 
+    @Override
+    public void onBackPressed() {
+        showAlertDialog();
+    }
 }
