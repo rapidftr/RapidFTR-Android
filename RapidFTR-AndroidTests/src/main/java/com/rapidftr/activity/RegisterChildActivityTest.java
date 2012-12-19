@@ -1,6 +1,8 @@
 package com.rapidftr.activity;
 
 
+import com.rapidftr.R;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -88,7 +90,6 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         childPage.enterChildName("Test");
         solo.clickOnText("Search");
         solo.clickOnText("Discard");
-
         assertTrue(solo.waitForText("Go"));
     }
 
@@ -116,5 +117,10 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         solo.clickOnText("Cancel");
         assertTrue(solo.waitForText("Name"));
     }
-
+    
+    public void tesIfUserIsPromptedToSaveWhenLogoutIsPressed() {
+        childPage.enterChildName("Name");
+        solo.clickOnMenuItem(solo.getString(R.string.log_out));
+        assertTrue(solo.waitForText("Save"));
+    }
 }
