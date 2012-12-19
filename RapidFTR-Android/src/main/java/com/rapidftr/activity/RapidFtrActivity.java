@@ -49,7 +49,7 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     public void registerTabListener(View view) {
-        startActivity(new Intent(RapidFtrActivity.this, RegisterChildActivity.class));
+        saveAlertListener(RegisterChildActivity.class);
     }
 
     public void viewAllChildrenListener(View view) {
@@ -122,7 +122,8 @@ public abstract class RapidFtrActivity extends Activity {
                     taskToCancel.cancel(false);
                 return true;
             case R.id.logout:
-                    inject(LogOutService.class).attemptLogOut(this);
+                saveAlertListener(this.getClass());
+                inject(LogOutService.class).attemptLogOut(this);
                 return true;
         }
         return false;

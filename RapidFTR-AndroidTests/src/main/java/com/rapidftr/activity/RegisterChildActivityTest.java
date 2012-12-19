@@ -18,8 +18,8 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
     }
 
     @Override
-    public void tearDown() throws  Exception{
-        solo.goBackToActivity("MainActivity");
+    public void tearDown() throws Exception {
+//        solo.goBackToActivity("MainActivity");
         loginPage.logout();
         super.tearDown();
     }
@@ -70,6 +70,51 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         childPage.save();
         solo.waitForText("Saved Child Record Successfully");
         assertTrue(isEditedTextPresent(name));
+    }
+
+    public void testIfNavigatingAwayFromRegisterPromptsUserToSave() {
+        String name = "Test";
+        childPage.enterChildName(name);
+        solo.clickOnText("View All");
+        assertTrue(solo.waitForText("Save"));
+    }
+
+    public void testIfNavigatingAwayFromRegisterPageDoesnotPromptIfChildInvalid() throws InterruptedException {
+        solo.clickOnText("View All");
+        assertFalse(solo.waitForText("Choose an option"));
+    }
+
+    public void testIfDiscardTakesYouToTheNextActivity() throws InterruptedException {
+        childPage.enterChildName("Test");
+        solo.clickOnText("Search");
+        solo.clickOnText("Discard");
+
+        assertTrue(solo.waitForText("Go"));
+    }
+
+    public void testIfUserIsPromptedToSaveWhenLeavingEditPage() {
+        String name = "Test Edit Child";
+        childPage.selectFormSection("Automation Form");
+        childPage.registerChild();
+        childPage.selectEditChild();
+        childPage.selectFormSection("Basic Identity");
+        childPage.enterChildName(name);
+        solo.clickOnText("Search");
+        assertTrue(solo.waitForText("Go"));
+    }
+
+    public void testIfUserIsPromptedToSaveWhenBackButtonIsPressed() {
+        childPage.enterChildName("Name");
+        solo.goBack();
+        assertTrue(solo.waitForText("Save"));
+        solo.clickOnText("Cancel");
+    }
+
+    public void testIfCancelButtonLeavesTakesYouNowhere() {
+        childPage.enterChildName("Name");
+        solo.goBack();
+        solo.clickOnText("Cancel");
+        assertTrue(solo.waitForText("Name"));
     }
 
 }
