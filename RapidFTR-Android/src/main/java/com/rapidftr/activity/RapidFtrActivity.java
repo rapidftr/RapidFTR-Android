@@ -194,6 +194,7 @@ public abstract class RapidFtrActivity extends Activity {
                         switch (selectedItem) {
                             case 0:
                                 activity.saveChild();
+                                break;
                             case 1:
                                 startActivity(new Intent(RapidFtrActivity.this, cls));
                             case 2:
