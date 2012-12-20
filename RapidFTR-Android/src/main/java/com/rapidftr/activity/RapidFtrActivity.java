@@ -24,7 +24,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 public abstract class RapidFtrActivity extends Activity {
-    private @Getter @Setter Menu menu;
+    private
+    @Getter
+    @Setter
+    Menu menu;
 
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
@@ -49,7 +52,7 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     public void registerTabListener(View view) {
-        startActivity(new Intent(RapidFtrActivity.this, RegisterChildActivity.class));
+        saveAlertListener(RegisterChildActivity.class);
     }
 
     public void viewAllChildrenListener(View view) {
@@ -78,12 +81,13 @@ public abstract class RapidFtrActivity extends Activity {
         activityResultListeners.put(requestCode, listener);
     }
 
-    protected void saveOrDiscardOrCancelChild(DialogInterface.OnClickListener listener){
-            AlertDialog.Builder saveOrDiscard = new AlertDialog.Builder(this);
-            saveOrDiscard.setTitle("Choose an action").setCancelable(false);
-            saveOrDiscard.setItems(new String[]{"Save", "Discard", "Cancel"}, listener);
-            saveOrDiscard.create().show();
+    protected void saveOrDiscardOrCancelChild(DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder saveOrDiscard = new AlertDialog.Builder(this);
+        saveOrDiscard.setTitle("Choose an action").setCancelable(false);
+        saveOrDiscard.setItems(new String[]{"Save", "Discard", "Cancel"}, listener);
+        saveOrDiscard.create().show();
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -122,10 +126,38 @@ public abstract class RapidFtrActivity extends Activity {
                     taskToCancel.cancel(false);
                 return true;
             case R.id.logout:
+                if (this.getClass() == RegisterChildActivity.class || this.getClass() == EditChildActivity.class) {
+                    saveAlertListenerForLogout();
+                } else {
                     inject(LogOutService.class).attemptLogOut(this);
+                }
                 return true;
         }
         return false;
+    }
+
+    private void saveAlertListenerForLogout() {
+        final BaseChildActivity activity = (BaseChildActivity) this;
+        DialogInterface.OnClickListener listener = createAlertDialogForLogout(activity);
+        saveOrDiscardOrCancelChild(listener);
+
+    }
+
+    private DialogInterface.OnClickListener createAlertDialogForLogout(final BaseChildActivity activity) {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int selectedItem) {
+                switch (selectedItem) {
+                    case 0:
+                        activity.saveChild();
+                        break;
+                    case 1:
+                        inject(LogOutService.class).attemptLogOut(activity);
+                    case 2:
+                        break;
+                }
+            }
+        };
     }
 
     @Override
@@ -178,30 +210,29 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     private void saveAlertListener(final Class cls) {
-        if (this instanceof RegisterChildActivity && ((RegisterChildActivity)this).child.isValid()) {
-            final RegisterChildActivity activity = (RegisterChildActivity)this;
+        if ((this instanceof RegisterChildActivity && ((RegisterChildActivity) this).child.isValid()) || this instanceof EditChildActivity) {
+            final BaseChildActivity activity = (BaseChildActivity) this;
             DialogInterface.OnClickListener listener = createAlertDialog(cls, activity);
             saveOrDiscardOrCancelChild(listener);
-        }else{
+        } else {
             startActivity(new Intent(RapidFtrActivity.this, cls));
         }
     }
 
-    private DialogInterface.OnClickListener createAlertDialog(final Class cls, final RegisterChildActivity activity) {
+    private DialogInterface.OnClickListener createAlertDialog(final Class cls, final BaseChildActivity activity) {
         return new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int selectedItem) {
-                        switch (selectedItem) {
-                            case 0:
-                                activity.saveChild();
-                            case 1:
-                                startActivity(new Intent(RapidFtrActivity.this, cls));
-                            case 2:
-                                break;
-                        }
-                    }
-                };
+            @Override
+            public void onClick(DialogInterface dialog, int selectedItem) {
+                switch (selectedItem) {
+                    case 0:
+                        activity.saveChild();
+                        break;
+                    case 1:
+                        startActivity(new Intent(RapidFtrActivity.this, cls));
+                    case 2:
+                        break;
+                }
+            }
+        };
     }
-
-
 }

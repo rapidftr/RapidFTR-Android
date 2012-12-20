@@ -76,11 +76,9 @@ public class SelectBox extends BaseView {
 
     @Override
     public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);    //To change body of overridden methods use File | Settings | File Templates.
+        super.setEnabled(enabled);
 
         getSpinner().setEnabled(enabled);
         getSpinner().setClickable(enabled);
-        getSpinner().setFocusable(enabled);
-        getSpinner().setFocusableInTouchMode(enabled);
     }
 }
