@@ -13,7 +13,7 @@ before_install:
   - echo no | android create avd -n android2.2 -t android-8 --skin QVGA
 
 install: echo
-script: mvn clean install -P ci
+script: mvn clean install -P with-emulator
 
 notifications:
   email: false
