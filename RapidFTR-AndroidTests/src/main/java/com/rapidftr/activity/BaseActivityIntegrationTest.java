@@ -38,7 +38,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 //        } catch (Throwable throwable) {
 //            throwable.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 //        }
-//        solo.finishOpenedActivities();
+        solo.finishOpenedActivities();
 //        RapidFtrApplication.getApplicationInstance().setLoggedIn(false);
     }
 
