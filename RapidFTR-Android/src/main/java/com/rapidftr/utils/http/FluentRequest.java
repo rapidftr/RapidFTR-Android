@@ -131,7 +131,7 @@ public class FluentRequest {
                                 new ByteArrayBody(IOUtils.toByteArray(new CaptureHelper((RapidFtrApplication) context).getDecodedImageStream(param.getValue())),
                                         "image/jpg", param.getValue()+".jpg"));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        new RuntimeException(e);
                     }
                 }else{
                     multipartEntity.addPart(param.getKey(), new StringBody(param.getValue()));
