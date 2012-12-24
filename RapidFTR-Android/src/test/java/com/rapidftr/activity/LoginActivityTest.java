@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.utils.EncryptionUtil;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowHandler;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
@@ -141,5 +143,15 @@ public class LoginActivityTest {
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
         assertThat(loginActivity.getContext().getDbKey(), is("fa8f5e7599ed5402"));
+    }
+
+    @Test
+    public void shouldStoreEncryptedDbKeyAfterSuccessfulLogin() throws Exception {
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "{'db_key' : 'fa8f5e7599ed5402'}");
+        loginButton.performClick();
+        ShadowHandler.idleMainLooper();
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        String encryptedDBKey = sharedPreferences.getString(userName.getText().toString(), null);
+        assertThat("fa8f5e7599ed5402", is(EncryptionUtil.decrypt(password.getText().toString(), encryptedDBKey)));
     }
 }

@@ -10,6 +10,7 @@ import com.google.common.io.CharStreams;
 import com.rapidftr.R;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
+import com.rapidftr.utils.EncryptionUtil;
 import org.apache.http.HttpResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -160,14 +161,25 @@ public class LoginActivity extends RapidFtrActivity {
                     getContext().setPreference(USER_NAME, getEditText(R.id.username));
                     getContext().setPreference(SERVER_URL, getEditText(R.id.url));
                     getContext().setPreference(USER_ORG, getUserOrg(responseJSON));
+                    getContext().setPreference(getEditText(R.id.username),
+                            EncryptionUtil.encrypt(getEditText(R.id.password), getContext().getDbKey()));
                     new FormService(getContext()).getPublishedFormSections();
                 } catch (IOException e) {
+                    logError(e.getMessage());
+                } catch (Exception e) {
                     logError(e.getMessage());
                 }
                 goToHomeScreen();
             }
+            if(response == null && processOfflineLogin()){
+                goToHomeScreen();
+            }
             mProgressDialog.dismiss();
             makeToast(getToastMessage(statusCode));
+        }
+
+        private boolean processOfflineLogin() {
+            return false;  //To change body of created methods use File | Settings | File Templates.
         }
 
         private String getUserOrg(JSONObject responseJSON) {

@@ -7,6 +7,7 @@ import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 import com.rapidftr.utils.ApplicationInjector;
+import com.rapidftr.utils.EncryptionUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class RapidFtrApplication extends Application {
+
 
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum Preference {
@@ -59,7 +61,11 @@ public class RapidFtrApplication extends Application {
     }
 
     public void setPreference(Preference preference, String value) {
-        getSharedPreferences().edit().putString(preference.getKey(), value).commit();
+        setPreference(preference.getKey(), value);
+    }
+
+    public void setPreference(String key, String value){
+        getSharedPreferences().edit().putString(key, value).commit();
     }
 
     public void removePreference(Preference preference) {

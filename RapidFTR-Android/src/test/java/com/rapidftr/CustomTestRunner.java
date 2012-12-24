@@ -11,6 +11,8 @@ import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.utils.ApplicationInjector;
+import com.rapidftr.utils.ShadowBase64;
+import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.RobolectricTestRunner;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.runners.model.InitializationError;
@@ -65,5 +67,9 @@ public class CustomTestRunner extends RobolectricTestRunner {
         application.setDbKey("db_key");
         application.setFormSections(formSectionSeed);
         return application;
+    }
+
+    @Override protected void bindShadowClasses() {
+        Robolectric.bindShadowClass(ShadowBase64.class);
     }
 }

@@ -12,7 +12,6 @@ import android.util.Log;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import dalvik.system.DexFile;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 
