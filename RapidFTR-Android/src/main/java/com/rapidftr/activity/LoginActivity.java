@@ -130,6 +130,10 @@ public class LoginActivity extends RapidFtrActivity {
         return false;
     }
 
+    protected LoginAsyncTask getLoginAsyncTask(){
+        return new LoginAsyncTask();
+    }
+
     protected class LoginAsyncTask extends AsyncTask<String, Void, HttpResponse> {
 
         @Override
@@ -171,15 +175,21 @@ public class LoginActivity extends RapidFtrActivity {
                 }
                 goToHomeScreen();
             }
-            if(response == null && processOfflineLogin()){
+            if(response == null && processOfflineLogin(getEditText(R.id.username), getEditText(R.id.password))){
                 goToHomeScreen();
             }
             mProgressDialog.dismiss();
             makeToast(getToastMessage(statusCode));
         }
 
-        private boolean processOfflineLogin() {
-            return false;  //To change body of created methods use File | Settings | File Templates.
+        protected boolean processOfflineLogin(String userName, String password) {
+            try {
+                EncryptionUtil.decrypt(password, getContext().getPreference(userName));
+            } catch (Exception e) {
+               logError(e.getMessage());
+               return false;
+            }
+            return true;
         }
 
         private String getUserOrg(JSONObject responseJSON) {

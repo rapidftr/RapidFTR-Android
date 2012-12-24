@@ -1,7 +1,6 @@
 package com.rapidftr.activity;
 
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,10 +17,11 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
@@ -86,7 +86,7 @@ public class LoginActivityTest {
 
     @Test
     public void shouldSaveServerUrlAfterSuccessfulLogin(){
-        SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", MODE_PRIVATE);
         sharedPreferences.edit().putString("SERVER_URL", "").commit();
 
         serverUrl.setText("http://dev.rapidftr.com:3000");
@@ -99,7 +99,7 @@ public class LoginActivityTest {
     @Test
     public void shouldRestoreServerUrlOnLoad() {
         String url = "http://dev.rapidftr.com:3000";
-        SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", MODE_PRIVATE);
         sharedPreferences.edit().putString("SERVER_URL", "http://dev.rapidftr.com:3000").commit();
 
         loginActivity.onCreate(null);
@@ -153,5 +153,40 @@ public class LoginActivityTest {
         SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
         String encryptedDBKey = sharedPreferences.getString(userName.getText().toString(), null);
         assertThat("fa8f5e7599ed5402", is(EncryptionUtil.decrypt(password.getText().toString(), encryptedDBKey)));
+    }
+
+    @Test
+    public void shouldGotoHomeScreenOnSuccessfulOfflineLogin() {
+        loginActivity = spy(loginActivity);
+        LoginActivity.LoginAsyncTask loginAsyncTask = loginActivity.getLoginAsyncTask();
+        loginAsyncTask.onPreExecute();
+        loginAsyncTask = spy(loginAsyncTask);
+        doReturn(true).when(loginAsyncTask).processOfflineLogin(userName.getText().toString(), password.getText().toString());
+
+        loginAsyncTask.onPostExecute(null);
+
+        verify(loginActivity).goToHomeScreen();
+    }
+
+    @Test
+    public void shouldReturnTrueIfGivenPasswordIsCorrect() throws Exception {
+        String encryptedDBKey = EncryptionUtil.encrypt("password", "db_key_from_server");
+        LoginActivity spyLoginActivity = spy(loginActivity);
+        RapidFtrApplication application = mock(RapidFtrApplication.class);
+        doReturn(encryptedDBKey).when(application).getPreference(anyString());
+        doReturn(application).when(spyLoginActivity).getContext();
+        LoginActivity.LoginAsyncTask loginAsyncTask = spyLoginActivity.getLoginAsyncTask();
+        assertTrue(loginAsyncTask.processOfflineLogin("user_name", "password"));
+    }
+
+    @Test
+    public void shouldReturnFalseIfGivenPasswordIsInCorrect() throws Exception {
+        String encryptedDBKey = EncryptionUtil.encrypt("password", "db_key_from_server");
+        LoginActivity spyLoginActivity = spy(loginActivity);
+        RapidFtrApplication application = mock(RapidFtrApplication.class);
+        doReturn(encryptedDBKey).when(application).getPreference(anyString());
+        doReturn(application).when(spyLoginActivity).getContext();
+        LoginActivity.LoginAsyncTask loginAsyncTask = spyLoginActivity.getLoginAsyncTask();
+        assertFalse(loginAsyncTask.processOfflineLogin("user_name", "wrongpassword"));
     }
 }

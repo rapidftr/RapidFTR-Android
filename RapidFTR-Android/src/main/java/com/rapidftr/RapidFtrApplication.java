@@ -7,7 +7,6 @@ import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 import com.rapidftr.utils.ApplicationInjector;
-import com.rapidftr.utils.EncryptionUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -57,7 +56,11 @@ public class RapidFtrApplication extends Application {
     }
 
     public String getPreference(Preference preference) {
-        return getSharedPreferences().getString(preference.getKey(), null);
+        return getPreference(preference.getKey());
+    }
+
+    public String getPreference(String preferenceKey) {
+        return getSharedPreferences().getString(preferenceKey, null);
     }
 
     public void setPreference(Preference preference, String value) {
