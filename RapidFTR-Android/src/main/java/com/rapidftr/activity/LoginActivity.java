@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import com.google.common.io.CharStreams;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import com.rapidftr.utils.EncryptionUtil;
@@ -68,7 +69,7 @@ public class LoginActivity extends RapidFtrActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(getContext().isLoggedIn()){
+        if (getContext().isLoggedIn()) {
             goToHomeScreen();
         }
     }
@@ -131,7 +132,7 @@ public class LoginActivity extends RapidFtrActivity {
         return false;
     }
 
-    protected LoginAsyncTask getLoginAsyncTask(){
+    protected LoginAsyncTask getLoginAsyncTask() {
         return new LoginAsyncTask();
     }
 
@@ -158,42 +159,53 @@ public class LoginActivity extends RapidFtrActivity {
         @Override
         protected void onPostExecute(HttpResponse response) {
             int statusCode = response == null ? SC_NOT_FOUND : response.getStatusLine().getStatusCode();
+            RapidFtrApplication context = getContext();
             if (statusCode == SC_CREATED) {
-                getContext().setLoggedIn(true);
                 JSONObject responseJSON = responseJSON(response);
                 setDbKey(responseJSON);
-                try {
-                    getContext().setPreference(USER_NAME, getEditText(R.id.username));
-                    getContext().setPreference(SERVER_URL, getEditText(R.id.url));
-                    getContext().setPreference(USER_ORG, getUserOrg(responseJSON));
-                    getContext().setPreference(getEditText(R.id.username),
-                            EncryptionUtil.encrypt(getEditText(R.id.password), getContext().getDbKey()));
-                    new FormService(getContext()).getPublishedFormSections();
-                } catch (IOException e) {
-                    logError(e.getMessage());
-                } catch (Exception e) {
-                    logError(e.getMessage());
-                }
+                setPreferences(responseJSON);
+                setContext(context);
                 goToHomeScreen();
             }
-            if(response == null && processOfflineLogin(getEditText(R.id.username), getEditText(R.id.password))){
-                getContext().setLoggedIn(true);
+            if (response == null && processOfflineLogin(getEditText(R.id.username), getEditText(R.id.password))) {
+                setContext(context);
                 statusCode = HttpStatus.SC_CREATED;
                 goToHomeScreen();
-            }
-            else if(response == null){
+            } else if (response == null) {
                 statusCode = HttpStatus.SC_UNAUTHORIZED;
             }
             mProgressDialog.dismiss();
             makeToast(getToastMessage(statusCode));
         }
 
+        private void setContext(RapidFtrApplication context) {
+            try {
+                context.setLoggedIn(true);
+                context.setFormSectionsTemplate(context.getPreference(FORM_SECTION));
+            } catch (IOException e) {
+                logError(e.getMessage());
+            }
+        }
+
+        private void setPreferences(JSONObject responseJSON) {
+            try {
+                RapidFtrApplication context = getContext();
+                context.setPreference(USER_NAME, getEditText(R.id.username));
+                context.setPreference(SERVER_URL, getEditText(R.id.url));
+                context.setPreference(USER_ORG, getUserOrg(responseJSON));
+                context.setPreference(getEditText(R.id.username), EncryptionUtil.encrypt(getEditText(R.id.password), context.getDbKey()));
+                context.setPreference(FORM_SECTION, new FormService(context).getPublishedFormSections());
+            } catch (Exception e) {
+                logError(e.getMessage());
+            }
+        }
+
         protected boolean processOfflineLogin(String userName, String password) {
             try {
                 getContext().setDbKey(decryptedDBKey(userName, password));
             } catch (Exception e) {
-               logError(e.getMessage());
-               return false;
+                logError(e.getMessage());
+                return false;
             }
             return true;
         }

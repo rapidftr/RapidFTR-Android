@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.rapidftr.RapidFtrApplication.Preference.FORM_SECTION;
 import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
 import static org.hamcrest.CoreMatchers.*;
@@ -79,8 +80,9 @@ public class LoginActivityTest {
 
     @Test
     public void shouldLoginSuccessfullyForValidUserAndUrl() {
+        SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", MODE_PRIVATE);
+        sharedPreferences.edit().putString(FORM_SECTION.getKey(), "some form section").commit();
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "some response body");
-
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
@@ -194,14 +196,15 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldSetLoginAndDbkeyOnSuccessfulOfflineLogin() throws Exception {
+    public void shouldSetLoginDbkeyAndFormSectionOnSuccessfulOfflineLogin() throws Exception {
         String dbKey = "db_key_from_server";
+        String formSectionTemplate = "form section template";
         String encryptedDBKey = EncryptionUtil.encrypt("password", dbKey);
         LoginActivity spyLoginActivity = spy(loginActivity);
         RapidFtrApplication application = mock(RapidFtrApplication.class);
         doReturn(encryptedDBKey).when(application).getPreference(anyString());
         doReturn(application).when(spyLoginActivity).getContext();
-
+        doReturn(formSectionTemplate).when(application).getPreference(FORM_SECTION);
         LoginActivity.LoginAsyncTask loginAsyncTask = spy(spyLoginActivity.getLoginAsyncTask());
         doReturn(dbKey).when(loginAsyncTask).decryptedDBKey(anyString(), anyString());
         loginAsyncTask.onPreExecute();
@@ -209,10 +212,14 @@ public class LoginActivityTest {
 
         verify(application).setDbKey(dbKey);
         verify(application).setLoggedIn(true);
+        verify(application).setFormSectionsTemplate(formSectionTemplate);
     }
 
     private LoginActivity.LoginAsyncTask offlineLogin(boolean loginStatus) {
         loginActivity = spy(loginActivity);
+        RapidFtrApplication mockContext = mock(RapidFtrApplication.class);
+        doReturn(mockContext).when(loginActivity).getContext();
+        doReturn("form_section").when(mockContext).getPreference(FORM_SECTION);
         LoginActivity.LoginAsyncTask loginAsyncTask = loginActivity.getLoginAsyncTask();
         loginAsyncTask.onPreExecute();
         loginAsyncTask = spy(loginAsyncTask);

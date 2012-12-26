@@ -19,14 +19,13 @@ public class FormService {
         this.context = context;
     }
 
-    public void getPublishedFormSections() throws IOException {
+    public String getPublishedFormSections() throws IOException {
         HttpResponse formSectionsResponse = http()
                 .path("/published_form_sections")
                 .context(context)
                 .get();
 
-        String formSectionsTemplate = CharStreams.toString(new InputStreamReader(formSectionsResponse.getEntity().getContent()));
-        context.setFormSectionsTemplate(formSectionsTemplate);
+        return CharStreams.toString(new InputStreamReader(formSectionsResponse.getEntity().getContent()));
     }
 
 }

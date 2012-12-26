@@ -25,7 +25,8 @@ public class RapidFtrApplication extends Application {
     public enum Preference {
         USER_NAME("USER_NAME"),
         USER_ORG("USER_ORG"),
-        SERVER_URL("SERVER_URL");
+        SERVER_URL("SERVER_URL"),
+        FORM_SECTION("FORM_SECTION");
 
         private final @Getter String key;
     }
