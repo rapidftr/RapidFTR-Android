@@ -108,7 +108,6 @@ public class ViewChildActivity extends BaseChildActivity {
             try {
                 return service.sync(child);
             } catch (IOException e) {
-                makeToast(R.string.network_not_available);
                 throw new RuntimeException(e);
             } catch (JSONException e) {
                 throw new RuntimeException(e);
