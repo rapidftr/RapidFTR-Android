@@ -190,12 +190,16 @@ public class LoginActivity extends RapidFtrActivity {
 
         protected boolean processOfflineLogin(String userName, String password) {
             try {
-                EncryptionUtil.decrypt(password, getContext().getPreference(userName));
+                getContext().setDbKey(decryptedDBKey(userName, password));
             } catch (Exception e) {
                logError(e.getMessage());
                return false;
             }
             return true;
+        }
+
+        protected String decryptedDBKey(String userName, String password) throws Exception {
+            return EncryptionUtil.decrypt(password, getContext().getPreference(userName));
         }
 
         private String getUserOrg(JSONObject responseJSON) {

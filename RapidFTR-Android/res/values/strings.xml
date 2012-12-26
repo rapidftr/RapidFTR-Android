@@ -50,6 +50,7 @@
     <string name="sync_progress">Sync in progress</string>
     <string name="sync_success">Sync successful</string>
     <string name="sync_failure">Sync failed</string>
+    <string name="network_not_available">Network connection is not available, Please try again later</string>
 
     <string name="internal_error">An error occurred while performing this operation</string>
     <string name="fetch_child_error">An error occurred while fetching children, please try again</string>

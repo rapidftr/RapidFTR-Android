@@ -194,11 +194,21 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldSetLoginAndDbkeyOnSuccessfulOfflineLogin() {
-        LoginActivity.LoginAsyncTask loginAsyncTask = offlineLogin(true);
+    public void shouldSetLoginAndDbkeyOnSuccessfulOfflineLogin() throws Exception {
+        String dbKey = "db_key_from_server";
+        String encryptedDBKey = EncryptionUtil.encrypt("password", dbKey);
+        LoginActivity spyLoginActivity = spy(loginActivity);
+        RapidFtrApplication application = mock(RapidFtrApplication.class);
+        doReturn(encryptedDBKey).when(application).getPreference(anyString());
+        doReturn(application).when(spyLoginActivity).getContext();
+
+        LoginActivity.LoginAsyncTask loginAsyncTask = spy(spyLoginActivity.getLoginAsyncTask());
+        doReturn(dbKey).when(loginAsyncTask).decryptedDBKey(anyString(), anyString());
+        loginAsyncTask.onPreExecute();
         loginAsyncTask.onPostExecute(null);
 
-        assertTrue(loginActivity.getContext().isLoggedIn());
+        verify(application).setDbKey(dbKey);
+        verify(application).setLoggedIn(true);
     }
 
     private LoginActivity.LoginAsyncTask offlineLogin(boolean loginStatus) {

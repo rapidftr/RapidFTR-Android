@@ -14,6 +14,8 @@ import com.rapidftr.task.AsyncTaskWithDialog;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONException;
 
+import java.io.IOException;
+
 public class ViewChildActivity extends BaseChildActivity {
 
     @Override
@@ -105,13 +107,10 @@ public class ViewChildActivity extends BaseChildActivity {
         protected Child doInBackground(Child... children) {
             try {
                 return service.sync(child);
-            } catch (Exception e) {
-                try {
-                    child.setSyncLog(e.getMessage());
-                    repository.update(child);
-                } catch (JSONException jsonException) {
-                    logError(jsonException.getMessage());
-                }
+            } catch (IOException e) {
+                makeToast(R.string.network_not_available);
+                throw new RuntimeException(e);
+            } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
         }
