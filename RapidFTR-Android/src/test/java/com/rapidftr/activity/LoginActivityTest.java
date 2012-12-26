@@ -12,6 +12,7 @@ import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowHandler;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -60,6 +61,7 @@ public class LoginActivityTest {
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.unauthorized)));
     }
 
+    @Ignore
     @Test
     public void shouldThrowConnectionRefusedIfServerIsNotAvailable() throws IOException {
         serverUrl.setText("rapidftr.com:abcd");
@@ -157,36 +159,63 @@ public class LoginActivityTest {
 
     @Test
     public void shouldGotoHomeScreenOnSuccessfulOfflineLogin() {
-        loginActivity = spy(loginActivity);
-        LoginActivity.LoginAsyncTask loginAsyncTask = loginActivity.getLoginAsyncTask();
-        loginAsyncTask.onPreExecute();
-        loginAsyncTask = spy(loginAsyncTask);
-        doReturn(true).when(loginAsyncTask).processOfflineLogin(userName.getText().toString(), password.getText().toString());
-
+        LoginActivity.LoginAsyncTask loginAsyncTask = offlineLogin(true);
         loginAsyncTask.onPostExecute(null);
 
         verify(loginActivity).goToHomeScreen();
     }
 
     @Test
-    public void shouldReturnTrueIfGivenPasswordIsCorrect() throws Exception {
-        String encryptedDBKey = EncryptionUtil.encrypt("password", "db_key_from_server");
-        LoginActivity spyLoginActivity = spy(loginActivity);
-        RapidFtrApplication application = mock(RapidFtrApplication.class);
-        doReturn(encryptedDBKey).when(application).getPreference(anyString());
-        doReturn(application).when(spyLoginActivity).getContext();
-        LoginActivity.LoginAsyncTask loginAsyncTask = spyLoginActivity.getLoginAsyncTask();
+    public void shouldReturnTrueIfGivenPasswordIsCorrectForOfflineLogin() throws Exception {
+        LoginActivity.LoginAsyncTask loginAsyncTask = setUpForOffLineLogin();
         assertTrue(loginAsyncTask.processOfflineLogin("user_name", "password"));
     }
 
     @Test
-    public void shouldReturnFalseIfGivenPasswordIsInCorrect() throws Exception {
+    public void shouldReturnFalseIfGivenPasswordIsInCorrectForOfflineLogin() throws Exception {
+        LoginActivity.LoginAsyncTask loginAsyncTask = setUpForOffLineLogin();
+        assertFalse(loginAsyncTask.processOfflineLogin("user_name", "wrongpassword"));
+    }
+
+    @Test
+    public void shouldShowAptToastMessageForUnsuccesfulOfflineLogin() {
+        LoginActivity.LoginAsyncTask loginAsyncTask = offlineLogin(false);
+        loginAsyncTask.onPostExecute(null);
+
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.unauthorized)));
+    }
+
+    @Test
+    public void shouldShowAptToastMessageForSuccesfulOfflineLogin() {
+        LoginActivity.LoginAsyncTask loginAsyncTask = offlineLogin(true);
+        loginAsyncTask.onPostExecute(null);
+
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
+    }
+
+    @Test
+    public void shouldSetLoginAndDbkeyOnSuccessfulOfflineLogin() {
+        LoginActivity.LoginAsyncTask loginAsyncTask = offlineLogin(true);
+        loginAsyncTask.onPostExecute(null);
+
+        assertTrue(loginActivity.getContext().isLoggedIn());
+    }
+
+    private LoginActivity.LoginAsyncTask offlineLogin(boolean loginStatus) {
+        loginActivity = spy(loginActivity);
+        LoginActivity.LoginAsyncTask loginAsyncTask = loginActivity.getLoginAsyncTask();
+        loginAsyncTask.onPreExecute();
+        loginAsyncTask = spy(loginAsyncTask);
+        doReturn(loginStatus).when(loginAsyncTask).processOfflineLogin(anyString(), anyString());
+        return loginAsyncTask;
+    }
+
+    private LoginActivity.LoginAsyncTask setUpForOffLineLogin() throws Exception {
         String encryptedDBKey = EncryptionUtil.encrypt("password", "db_key_from_server");
         LoginActivity spyLoginActivity = spy(loginActivity);
         RapidFtrApplication application = mock(RapidFtrApplication.class);
         doReturn(encryptedDBKey).when(application).getPreference(anyString());
         doReturn(application).when(spyLoginActivity).getContext();
-        LoginActivity.LoginAsyncTask loginAsyncTask = spyLoginActivity.getLoginAsyncTask();
-        assertFalse(loginAsyncTask.processOfflineLogin("user_name", "wrongpassword"));
+        return spyLoginActivity.getLoginAsyncTask();
     }
 }

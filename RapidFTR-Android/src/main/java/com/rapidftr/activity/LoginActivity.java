@@ -12,6 +12,7 @@ import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import com.rapidftr.utils.EncryptionUtil;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -176,7 +177,12 @@ public class LoginActivity extends RapidFtrActivity {
                 goToHomeScreen();
             }
             if(response == null && processOfflineLogin(getEditText(R.id.username), getEditText(R.id.password))){
+                getContext().setLoggedIn(true);
+                statusCode = HttpStatus.SC_CREATED;
                 goToHomeScreen();
+            }
+            else if(response == null){
+                statusCode = HttpStatus.SC_UNAUTHORIZED;
             }
             mProgressDialog.dismiss();
             makeToast(getToastMessage(statusCode));
