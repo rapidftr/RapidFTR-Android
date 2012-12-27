@@ -92,6 +92,7 @@ public class LoginActivityTest {
     public void shouldSaveServerUrlAfterSuccessfulLogin(){
         SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", MODE_PRIVATE);
         sharedPreferences.edit().putString("SERVER_URL", "").commit();
+        sharedPreferences.edit().putString(FORM_SECTION.getKey(), "form_section").commit();
 
         serverUrl.setText("http://dev.rapidftr.com:3000");
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "some response body");
