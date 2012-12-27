@@ -5,6 +5,11 @@ env:
     - ANDROID_HOME=~/android-sdk-linux
     - secure: "eATae5kWD2tL3xtUdQjk4T5RWn4zv5OS4QXjwL9q/E4ntzge3rVPRGVSyS5/\nL/d48QLlliDzC6d7ycFVyEZC0OLzpHNER56vhP4YY9yfLygHr+NQJizPEiMJ\nPj5vUu9+qfOb3icQuQYDamuOCT7CxnVXSxVApfpFSSGz1YFpwfs="
 
+branches:
+  only:
+    - master
+    - release1
+
 before_install:
   - export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
   - wget http://dl.google.com/android/android-sdk_r21-linux.tgz
