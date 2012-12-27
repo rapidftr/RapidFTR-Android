@@ -213,10 +213,10 @@
                                 <phase>package</phase>
                                 <configuration>
                                     <tasks>
-                                        <copy file="${project.basedir}/target/${project.artifactId}.apk" tofile="${default.destination.directory}/${project.artifactId}${maven.build.timestamp}.apk"/>
-                                        <copy file="${project.basedir}/target/${project.artifactId}-aligned.apk" tofile="${default.destination.directory}/${project.artifactId}-aligned${maven.build.timestamp}.apk"/>
-                                        <copy file="${project.basedir}/target/${project.artifactId}.apk" tofile="${default.destination.directory}/latest/${project.artifactId}.apk"/>
-                                        <copy file="${project.basedir}/target/${project.artifactId}-aligned.apk" tofile="${default.destination.directory}/latest/${project.artifactId}-aligned.apk"/>
+                                        <copy file="${project.basedir}/target/${project.artifactId}.apk" tofile="${default.destination.directory}/${project.artifactId}-release1${maven.build.timestamp}.apk"/>
+                                        <copy file="${project.basedir}/target/${project.artifactId}-aligned.apk" tofile="${default.destination.directory}/${project.artifactId}-aligned-release1${maven.build.timestamp}.apk"/>
+                                        <copy file="${project.basedir}/target/${project.artifactId}.apk" tofile="${default.destination.directory}/latest/${project.artifactId}-release1.apk"/>
+                                        <copy file="${project.basedir}/target/${project.artifactId}-aligned.apk" tofile="${default.destination.directory}/latest/${project.artifactId}-aligned-release1.apk"/>
                                     </tasks>
                                 </configuration>
                                 <goals>
