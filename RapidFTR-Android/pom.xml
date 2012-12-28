@@ -17,6 +17,8 @@
     <properties>
         <local.repo.dir>${project.basedir}/../repo</local.repo.dir>
         <flurry_logging>true</flurry_logging>
+        <default.destination.directory>${project.basedir}/target/</default.destination.directory>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
     </properties>
 
     <dependencies>
@@ -102,6 +104,15 @@
                 <artifactId>android-maven-plugin</artifactId>
                 <inherited>true</inherited>
                 <extensions>true</extensions>
+                <configuration>
+                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                    <zipalign>
+                        <skip>false</skip>
+                        <verbose>true</verbose>
+                        <inputApk>${project.build.directory}/${project.artifactId}.apk</inputApk>
+                        <outputApk>${project.build.directory}/${project.artifactId}-aligned.apk</outputApk>
+                    </zipalign>
+                </configuration>
                 <executions>
                     <execution>
                         <id>alignApk</id>
@@ -112,7 +123,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>keytool-maven-plugin</artifactId>
@@ -146,6 +156,7 @@
 
     <profiles>
         <profile>
+            <id>run_proguard</id>
             <activation>
                 <property>
                     <name>RUN_PROGUARD</name>
@@ -176,6 +187,40 @@
                                 <phase>package</phase>
                                 <goals>
                                     <goal>zipalign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>move_artifacts</id>
+            <activation>
+                <property>
+                    <name>move_artifacts</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>copy</id>
+                                <phase>package</phase>
+                                <configuration>
+                                    <tasks>
+                                        <copy file="${project.basedir}/target/${project.artifactId}.apk" tofile="${default.destination.directory}/${project.artifactId}-release1${maven.build.timestamp}.apk"/>
+                                        <copy file="${project.basedir}/target/${project.artifactId}-aligned.apk" tofile="${default.destination.directory}/${project.artifactId}-aligned-release1${maven.build.timestamp}.apk"/>
+                                        <copy file="${project.basedir}/target/${project.artifactId}.apk" tofile="${default.destination.directory}/latest/${project.artifactId}-release1.apk"/>
+                                        <copy file="${project.basedir}/target/${project.artifactId}-aligned.apk" tofile="${default.destination.directory}/latest/${project.artifactId}-aligned-release1.apk"/>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
                                 </goals>
                             </execution>
                         </executions>
