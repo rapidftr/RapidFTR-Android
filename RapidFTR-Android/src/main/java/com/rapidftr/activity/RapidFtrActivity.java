@@ -139,8 +139,12 @@ public abstract class RapidFtrActivity extends Activity {
     private void saveAlertListenerForLogout() {
         final BaseChildActivity activity = (BaseChildActivity) this;
         DialogInterface.OnClickListener listener = createAlertDialogForLogout(activity);
-        saveOrDiscardOrCancelChild(listener);
-
+        if (activity.child.isValid()) {
+            saveOrDiscardOrCancelChild(listener);
+        }
+        else{
+        inject(LogOutService.class).attemptLogOut(activity);
+        }
     }
 
     private DialogInterface.OnClickListener createAlertDialogForLogout(final BaseChildActivity activity) {
