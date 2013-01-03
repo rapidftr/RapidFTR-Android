@@ -39,7 +39,7 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
     public void testErrorMessageOnNoSearchResultFound(){
         searchPage.navigateToSearchPage();
         searchPage.searchChild("InvalidChild");
-        assertTrue(isTextPresent("No Child Found"));
+        assertTrue(isTextPresent("No Record Found"));
 
     }
 
@@ -54,7 +54,7 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
         childPage.selectFormSection("Basic Identity");
         childPage.enterChildName("Edited Child");
         childPage.save();
-        solo.waitForText("Saved Child Record Successfully");
+        solo.waitForText("Saved Record Successfully");
 //        assertTrue(childPage.getChildName("Edited child"));
         assertTrue(isEditedTextPresent("Edited Child"));
         assertTrue(isTextPresent("Edited Child"));

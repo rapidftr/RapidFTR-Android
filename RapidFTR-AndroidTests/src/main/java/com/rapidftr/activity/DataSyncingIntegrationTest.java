@@ -16,15 +16,16 @@ import static com.rapidftr.utils.RapidFtrDateTime.now;
 import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
-    ChildRepository repository;
+
     RapidFtrApplication context;
+    ChildRepository repository;
     @Override
     public void setUp() throws Exception {
         super.setUp();
         loginPage.login();
         solo.waitForText("Login Successful");
-        context = RapidFtrApplication.getApplicationInstance();
-        repository = context.getInjector().getInstance(ChildRepository.class);
+        context=RapidFtrApplication.getApplicationInstance();
+        repository=context.getInjector().getInstance(ChildRepository.class);
         RapidFTRDatabase.deleteChildren();
     }
 
@@ -79,7 +80,16 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         solo.waitForText(solo.getString(R.string.logout_successful));
    }
 
+<<<<<<< HEAD
     private void seedDataToRepository(Child... children) throws JSONException {
+=======
+    public void estLatestDataTakenBasedOnTimeStamp(){
+
+    }
+
+    //    public void estCancelSyncAll
+    public void seedDataToRepository(Child... children) throws JSONException {
+>>>>>>> 9a6f933... Gowri: changed texts child to record in sync process and changed respec intergration tests
         for(Child child : children){
             repository = context.getInjector().getInstance(ChildRepository.class);
             repository.createOrUpdate(child);
@@ -87,14 +97,15 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         }
     }
 
-    private void seedDataOnServer(Child child) throws JSONException, IOException {
+    public void seedDataOnServer(Child child) throws JSONException, IOException {
         http()
-        .context(context)
-        .host(LoginPage.LOGIN_URL)
-        .config(HttpConnectionParams.CONNECTION_TIMEOUT, 15000)
-        .path(String.format("/children", child.getId()))
-        .param("child", child.toString())
-        .post();
+                .context(context)
+                .host(LoginPage.LOGIN_URL)
+                .config(HttpConnectionParams.CONNECTION_TIMEOUT, 15000)
+                .path(String.format("/children", child.getId()))
+                .param("child", child.toString())
+                .post();
     }
+
 
 }

@@ -70,7 +70,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         childPage.selectFormSection("Basic Identity");
         childPage.enterChildName(name);
         childPage.save();
-        solo.waitForText("Saved Child Record Successfully");
+        solo.waitForText("Saved Record Successfully");
         assertTrue(isEditedTextPresent(name));
     }
 
