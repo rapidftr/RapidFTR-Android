@@ -1,15 +1,19 @@
 package com.rapidftr.activity;
 
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.EncryptionUtil;
 import com.xtremelabs.robolectric.Robolectric;
+import com.xtremelabs.robolectric.shadows.ShadowActivity;
 import com.xtremelabs.robolectric.shadows.ShadowHandler;
+import com.xtremelabs.robolectric.shadows.ShadowIntent;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -19,9 +23,8 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.rapidftr.RapidFtrApplication.Preference.FORM_SECTION;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
+import static com.rapidftr.RapidFtrApplication.Preference.*;
+import static com.xtremelabs.robolectric.Robolectric.shadowOf;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -33,6 +36,7 @@ public class LoginActivityTest {
     private EditText serverUrl;
     private EditText userName;
     private EditText password;
+    private TextView signUp;
 
     private LoginActivity loginActivity;
 
@@ -44,8 +48,8 @@ public class LoginActivityTest {
         loginActivity.getContext().setDbKey(null);
         loginActivity.getContext().setFormSections(null);
         loginActivity.onCreate(null);
-
         loginButton = (Button) loginActivity.findViewById(R.id.login_button);
+        signUp = (TextView) loginActivity.findViewById(R.id.new_user_signup_link);
         serverUrl = (EditText) loginActivity.findViewById(R.id.url);
         serverUrl.setText("http://dev.rapidftr.com:3000");
         userName = (EditText) loginActivity.findViewById(R.id.username);
@@ -214,6 +218,16 @@ public class LoginActivityTest {
         verify(application).setDbKey(dbKey);
         verify(application).setLoggedIn(true);
         verify(application).setFormSectionsTemplate(formSectionTemplate);
+    }
+
+    @Test
+    public void shouldStartSignUpActivityWhenClickedOnSignUpLink(){
+        signUp.performClick();
+        ShadowActivity signupActivity = shadowOf(new LoginActivity());
+        Intent startedIntent = signupActivity.getNextStartedActivity();
+        ShadowIntent shadowIntent = shadowOf(startedIntent);
+
+        assertThat(shadowIntent.getComponent().getClassName(), equalTo("com.rapidftr.activity.SignupActivity"));
     }
 
     private LoginActivity.LoginAsyncTask offlineLogin(boolean loginStatus) {

@@ -72,7 +72,7 @@ public class ChildPage {
 
     public void save() {
         solo.clickOnButton("Save");
-        Assert.assertTrue(solo.waitForText("Saved child record successfully"));
+        Assert.assertTrue(solo.waitForText("Saved record successfully"));
         solo.waitForText("Edit");
     }
 

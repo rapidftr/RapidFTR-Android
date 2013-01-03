@@ -17,23 +17,6 @@
                    android:scaleType="fitCenter">
         </ImageView>
 
-        <TableLayout android:layout_width="match_parent"
-                      android:layout_height="wrap_content"
-                      android:orientation="horizontal"
-                      android:layout_marginTop="0dp">
-            <TableRow>
-                <TextView android:id="@+id/new_user_signup_text"
-                          android:text="@string/new_user"
-                          style="@style/links"/>
-                <TextView android:id="@+id/new_user_signup_link"
-                          android:text="@string/signup"
-                          style="@style/links"
-                          android:textColor="@color/links"
-                          android:linksClickable="true"
-                          android:onClick="signUp"/>
-            </TableRow>
-        </TableLayout>
-
         <EditText android:background="@drawable/textbox"
                   android:id="@+id/username"
                   android:hint="@string/username"
@@ -41,8 +24,7 @@
                   android:autoText="false"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:layout_margin="5dp"
-                  android:text="rapidftr"/>
+                  android:layout_margin="5dp"/>
 
         <EditText android:background="@drawable/textbox"
                   android:id="@+id/password"
@@ -50,42 +32,42 @@
                   android:inputType="textPassword"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:layout_margin="5dp"
-                  android:text="rapidftr"/>
+                  android:layout_margin="5dp"/>
 
+        <EditText android:background="@drawable/textbox"
+                  android:id="@+id/confirm_password"
+                  android:hint="@string/confirm"
+                  android:inputType="textPassword"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_margin="5dp"/>
 
         <EditText android:background="@drawable/textbox"
                   android:id="@+id/url"
-                  android:hint="@string/url"
-                  android:text="https://151.236.218.124:5001"
-                  android:inputType="textFilter|textUri|textVisiblePassword|textNoSuggestions"
+                  android:hint="@string/optional_url"
+                  android:inputType="textFilter|textNoSuggestions|textVisiblePassword"
+                  android:autoText="false"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_margin="5dp"/>
+
+        <EditText android:background="@drawable/textbox"
+                  android:id="@+id/organisation"
+                  android:hint="@string/organisation"
+                  android:inputType="textFilter|textNoSuggestions|textVisiblePassword"
                   android:autoText="false"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:layout_margin="5dp"/>
 
         <Button android:background="@drawable/button"
-                android:id="@+id/login_button"
-                android:text="@string/log_in"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                style="@style/button"/>
-
-        <TextView android:id="@+id/change_url"
-                  android:text="@string/change_url"
-                  android:linksClickable="true"
-                  style="@style/links"
-                  android:textColor="@color/links"
-                  android:visibility="gone"/>
-        <Button android:background="@drawable/button"
-                android:id="@+id/sign_up"
+                android:id="@+id/signup_button"
                 android:text="@string/signup"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 style="@style/button"
-                android:onClick="signUp"/>
+                android:onClick="createUser"/>
 
     </LinearLayout>
 </ScrollView>

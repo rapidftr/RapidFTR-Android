@@ -60,6 +60,10 @@ public class LoginActivity extends RapidFtrActivity {
         });
     }
 
+    public void signUp(View view) {
+        startActivity(new Intent(this, SignupActivity.class));
+    }
+
     @Override
     public void onBackPressed() {
         // Suppress the BACK key when this activity is running
@@ -89,17 +93,6 @@ public class LoginActivity extends RapidFtrActivity {
                 & validateTextFieldNotEmpty(R.id.url, R.string.url_required);
     }
 
-    protected boolean validateTextFieldNotEmpty(int id, int messageId) {
-        EditText editText = (EditText) findViewById(id);
-        String value = getEditText(id);
-
-        if (value == null || "".equals(value)) {
-            editText.setError(getString(messageId));
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     protected void toggleView(int field, int visibility) {
         View view = findViewById(field);
@@ -116,11 +109,6 @@ public class LoginActivity extends RapidFtrActivity {
 
     protected void goToHomeScreen() {
         startActivity(new Intent(this, MainActivity.class));
-    }
-
-    public String getEditText(int resId) {
-        CharSequence value = ((EditText) findViewById(resId)).getText();
-        return value == null ? null : value.toString().trim();
     }
 
     protected void setEditText(int resId, String text) {

@@ -4,16 +4,15 @@
     <string name="app_name">RapidFTR</string>
     <string name="camera_button">Go to camera</string>
 
-    <string name="log_in">Log In</string>
+    <string name="log_in">iniciar la sesión</string>
     <string name="log_out">Log Out</string>
-    <string name="confirm_logout_message">Records are still being sychronised. Logging out now will cancel this process, are you sure you want to log out?</string>
+    <string name="confirm_logout_message">Child records are still being sychronised. Logging out now will cancel this process, are you sure you want to log out?</string>
     <string name="logout_successful">You have been logged out successfully.</string>
     <string name="change_url">Change URL</string>
     <string name="register_child">Register Child</string>
     <string name="view_all_children">View All Children</string>
     <string name="search_for_a_child">Search for a Child</string>
     <string name="synchronize">Synchronize</string>
-    <string name="new_user">New to RapidFTR? </string>
 
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -21,10 +20,7 @@
 
     <string name="username_required">Username is required</string>
     <string name="password_required">Password is required</string>
-    <string name="organisation_required">Organisation is required</string>
-    <string name="confirm_password_required">Re-type password</string>
     <string name="url_required">Server URL is required</string>
-    <string name="password_mismatch">Password mismatch</string>
 
     <string name="loading_title"/>
     <string name="loading_message">Loading...</string>
@@ -35,28 +31,28 @@
     <string name="RapidFTRLogo">RapidFTR</string>
 
     <string name="new_registration">New Registration</string>
-    <string name="save_child_progress">Saving record</string>
+    <string name="save_child_progress">Saving child record</string>
     <string name="save_child_invalid">Please fill up at least one field</string>
-    <string name="save_child_success">Saved record successfully</string>
-    <string name="save_child_failure">Failed to save record!</string>
+    <string name="save_child_success">Saved child record successfully</string>
+    <string name="save_child_failure">Failed to save child record!</string>
 
     <string name="photo_capture">Capture Photo</string>
     <string name="photo_capture_error">An error occurred while capturing the photo</string>
     <string name="photo_view">View Photo</string>
     <string name="photo_view_error">An error occurred while loading the photo</string>
-    <string name="photo_not_captured">No photo captured for the record</string>
+    <string name="photo_not_captured">No photo captured for the child</string>
     <string name="photo_gallery_delete_error">Unable to delete photo from Gallery. Please go to Gallery and delete it manually</string>
 
     <string name="synchronize_all">Synchronize All</string>
     <string name="cancel_synchronize_all">Cancel Synchronize All</string>
-    <string name="synchronize_child">Synchronize This Record</string>
+    <string name="synchronize_child">Synchronize This Child</string>
     <string name="sync_progress">Sync in progress...</string>
     <string name="sync_success">Sync successful</string>
     <string name="sync_failure">Sync failed</string>
     <string name="network_not_available">Network connection is not available, Please try again later</string>
 
     <string name="internal_error">An error occurred while performing this operation</string>
-    <string name="fetch_child_error">An error occurred while fetching record(s), please try again</string>
+    <string name="fetch_child_error">An error occurred while fetching children, please try again</string>
     <string name="submit">Submit</string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
@@ -72,15 +68,11 @@
     <string name="synchronize_step_1">Step 1 of 3 - Syncing Form Sections...</string>
     <string name="synchronize_step_2">Step 2 of 3 - Sending records to server...</string>
     <string name="synchronize_step_3">Step 3 of 3 - Getting records from server...</string>
-    <string name="signup">Sign Up!</string>
-    <string name="confirm">Confirm Password</string>
-    <string name="organisation">Organisation</string>
-    <string name="optional_url">URL(Optional)</string>
 
     <string name="sync_complete">Sync complete.</string>
     <string name="sync_error">Error in syncing. Try again after some time.</string>
-    <string name="search_child">Search record by name/id</string>
+    <string name="search_child">Search Child by name/id</string>
     <string name="go">Go</string>
-    <string name="child_not_found">No Record Found</string>
+    <string name="child_not_found">No Child Found</string>
 
 </resources>
