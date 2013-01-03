@@ -9,8 +9,8 @@ import org.junit.runner.RunWith;
 import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
 public class LogOutServiceTest {
@@ -22,7 +22,7 @@ public class LogOutServiceTest {
         RapidFtrApplication context = mock(RapidFtrApplication.class);
         given(currentActivity.getContext()).willReturn(context);
         RapidFtrApplication.getApplicationInstance().setSyncTask(null);
-
+        doReturn("You have been logged out successfully.").when(currentActivity).getString(anyInt());
         service.attemptLogOut(currentActivity);
 
         verify(context).setLoggedIn(false);

@@ -4,7 +4,7 @@
     <string name="app_name">RapidFTR</string>
     <string name="camera_button">Go to camera</string>
 
-    <string name="log_in">Log In</string>
+    <string name="log_in">Connectez-vous</string>
     <string name="log_out">Log Out</string>
     <string name="confirm_logout_message">Child records are still being sychronised. Logging out now will cancel this process, are you sure you want to log out?</string>
     <string name="logout_successful">You have been logged out successfully.</string>
@@ -71,8 +71,6 @@
 
     <string name="sync_complete">Sync complete.</string>
     <string name="sync_error">Error in syncing. Try again after some time.</string>
-    <string name="search_child">Search Child by name/id</string>
-    <string name="go">Go</string>
-    <string name="child_not_found">No Child Found</string>
+
 
 </resources>

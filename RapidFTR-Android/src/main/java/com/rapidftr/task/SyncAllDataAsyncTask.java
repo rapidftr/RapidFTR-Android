@@ -74,11 +74,11 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
             int startProgressForDownloadingChildren = FORM_SECTION_PROGRESS + childrenToSyncWithServer.size();
             saveIncomingChildren(idsToDownload, startProgressForDownloadingChildren);
 
-            setProgressAndNotify("Sync complete.", MAX_PROGRESS);
+            setProgressAndNotify(context.getString(R.string.sync_complete), MAX_PROGRESS);
         } catch (Exception e) {
             notificationManager.cancel(NOTIFICATION_ID);
             Log.e("SyncAllDataTask", "Error in sync", e);
-            publishProgress("Error in syncing. Try again after some time.");
+            publishProgress(context.getString(R.string.sync_error));
             return false;
         }
         return true;
@@ -142,7 +142,7 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
     }
 
     private void initNotifiers() {
-        notification = new Notification(R.drawable.icon, "Syncing in progress...", currentTimeMillis());
+        notification = new Notification(R.drawable.icon, context.getString(R.string.sync_progress), currentTimeMillis());
         notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
     }
 

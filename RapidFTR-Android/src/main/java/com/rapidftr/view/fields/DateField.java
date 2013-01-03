@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.DatePicker;
+import com.rapidftr.R;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 
@@ -58,7 +59,7 @@ public class DateField extends TextField implements DatePickerDialog.OnDateSetLi
                 cal = new GregorianCalendar();
 
             DatePickerDialog dialog = new DatePickerDialog(getContext(), this, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-            dialog.setButton3("Clear", this);
+            dialog.setButton3(getContext().getString(R.string.clear), this);
             dialog.show();
         }
 

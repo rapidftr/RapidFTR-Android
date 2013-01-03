@@ -83,8 +83,8 @@ public abstract class RapidFtrActivity extends Activity {
 
     protected void saveOrDiscardOrCancelChild(DialogInterface.OnClickListener listener) {
         AlertDialog.Builder saveOrDiscard = new AlertDialog.Builder(this);
-        saveOrDiscard.setTitle("Choose an action").setCancelable(false);
-        saveOrDiscard.setItems(new String[]{"Save", "Discard", "Cancel"}, listener);
+        saveOrDiscard.setTitle(R.string.choose_action).setCancelable(false);
+        saveOrDiscard.setItems(new String[]{getString(R.string.save), getString(R.string.discard), getString(R.string.cancel)}, listener);
         saveOrDiscard.create().show();
     }
 

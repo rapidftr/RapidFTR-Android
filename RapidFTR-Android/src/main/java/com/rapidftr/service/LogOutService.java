@@ -29,7 +29,7 @@ public class LogOutService {
         RapidFtrApplication context = currentActivity.getContext();
         context.setLoggedIn(false);
         removeUserPreferences(context);
-        Toast.makeText(context, "You have been logged out successfully.", LENGTH_LONG).show();
+        Toast.makeText(context,currentActivity.getString(R.string.logout_successful), LENGTH_LONG).show();
         currentActivity.finish();
         currentActivity.startActivity(new Intent(currentActivity, LoginActivity.class));
     }
