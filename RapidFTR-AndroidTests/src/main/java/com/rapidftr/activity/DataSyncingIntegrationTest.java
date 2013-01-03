@@ -79,6 +79,11 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         solo.waitForText(solo.getString(R.string.logout_successful));
    }
 
+    public void estLatestDataTakenBasedOnTimeStamp(){
+
+    }
+
+//    public void estCancelSyncAll
     private void seedDataToRepository(Child... children) throws JSONException {
         for(Child child : children){
             repository = context.getInjector().getInstance(ChildRepository.class);
