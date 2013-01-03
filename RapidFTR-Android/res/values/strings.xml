@@ -46,13 +46,8 @@
 
     <string name="synchronize_all">Synchronize All</string>
     <string name="cancel_synchronize_all">Cancel Synchronize All</string>
-<<<<<<< HEAD
-    <string name="synchronize_child">Synchronize This Child</string>
-    <string name="sync_progress">Sync in progress</string>
-=======
     <string name="synchronize_child">Synchronize This Record</string>
     <string name="sync_progress">Sync in progress...</string>
->>>>>>> 9a6f933... Gowri: changed texts child to record in sync process and changed respec intergration tests
     <string name="sync_success">Sync successful</string>
     <string name="sync_failure">Sync failed</string>
 
@@ -70,13 +65,10 @@
     <string name="synchronize_step_2">Step 2 of 3 - Sending records to server...</string>
     <string name="synchronize_step_3">Step 3 of 3 - Getting records from server...</string>
 
-<<<<<<< HEAD
-=======
     <string name="sync_complete">Sync complete.</string>
     <string name="sync_error">Error in syncing. Try again after some time.</string>
     <string name="search_child">Search record by name/id</string>
     <string name="go">Go</string>
     <string name="child_not_found">No Record Found</string>
 
->>>>>>> 9a6f933... Gowri: changed texts child to record in sync process and changed respec intergration tests
 </resources>

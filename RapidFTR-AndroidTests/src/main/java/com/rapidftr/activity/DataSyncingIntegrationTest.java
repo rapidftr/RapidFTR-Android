@@ -80,16 +80,8 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         solo.waitForText(solo.getString(R.string.logout_successful));
    }
 
-<<<<<<< HEAD
     private void seedDataToRepository(Child... children) throws JSONException {
-=======
-    public void estLatestDataTakenBasedOnTimeStamp(){
-
-    }
-
     //    public void estCancelSyncAll
-    public void seedDataToRepository(Child... children) throws JSONException {
->>>>>>> 9a6f933... Gowri: changed texts child to record in sync process and changed respec intergration tests
         for(Child child : children){
             repository = context.getInjector().getInstance(ChildRepository.class);
             repository.createOrUpdate(child);

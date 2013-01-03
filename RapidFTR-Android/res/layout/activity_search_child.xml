@@ -54,7 +54,7 @@
                   android:visibility="gone"
                   android:layout_below="@id/search_bar">
 
-        <TextView android:text="No Child Found"
+        <TextView android:text="@string/child_not_found"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content">
         </TextView>
