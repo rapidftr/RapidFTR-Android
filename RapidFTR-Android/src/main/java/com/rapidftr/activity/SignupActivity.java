@@ -23,7 +23,13 @@ public class SignupActivity extends RapidFtrActivity {
     }
 
     public void createUser(View view) {
-        isValid();
+        if (isValid()) {
+            saveUserInDatabase();
+        }
+    }
+
+    private void saveUserInDatabase() {
+
     }
 
     protected boolean validatesPresenceOfMandatoryFields() {

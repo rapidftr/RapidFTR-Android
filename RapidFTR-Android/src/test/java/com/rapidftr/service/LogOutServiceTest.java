@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -27,6 +26,5 @@ public class LogOutServiceTest {
 
         verify(context).setLoggedIn(false);
         verify(context).removePreference(USER_NAME);
-        verify(context).removePreference(USER_ORG);
     }
 }
