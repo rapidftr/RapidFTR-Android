@@ -224,8 +224,8 @@ public class LoginActivityTest {
     @Test
     public void shouldStartSignUpActivityWhenClickedOnSignUpLink(){
         signUp.performClick();
-        ShadowActivity signupActivity = shadowOf(new LoginActivity());
-        Intent startedIntent = signupActivity.getNextStartedActivity();
+        ShadowActivity shadowActivity = shadowOf(new LoginActivity());
+        Intent startedIntent = shadowActivity.getNextStartedActivity();
         ShadowIntent shadowIntent = shadowOf(startedIntent);
 
         assertThat(shadowIntent.getComponent().getClassName(), equalTo("com.rapidftr.activity.SignupActivity"));

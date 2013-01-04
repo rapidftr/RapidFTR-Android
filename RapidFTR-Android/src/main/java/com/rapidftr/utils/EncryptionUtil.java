@@ -31,4 +31,13 @@ public class EncryptionUtil {
         kgen.init(128, secureRandom); // 192 and 256 bits may not be available
         return kgen.generateKey().getEncoded();
     }
+    
+    public static String  encryptWithoutASeed(String textToEncrypt) throws Exception {
+        return Base64.encodeToString(textToEncrypt.getBytes("UTF-8"), Base64.DEFAULT);
+    }
+
+    public static String  decryptWithoutASeed(String textToDecrypt) throws Exception {
+        return new String(Base64.decode(textToDecrypt, Base64.DEFAULT), "UTF-8");
+    }
+
 }

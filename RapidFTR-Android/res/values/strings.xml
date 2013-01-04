@@ -25,6 +25,7 @@
     <string name="confirm_password_required">Re-type password</string>
     <string name="url_required">Server URL is required</string>
     <string name="password_mismatch">Password mismatch</string>
+    <string name="full_name_required">Full name required</string>
 
     <string name="loading_title"/>
     <string name="loading_message">Loading...</string>
@@ -82,5 +83,6 @@
     <string name="search_child">Search record by name/id</string>
     <string name="go">Go</string>
     <string name="child_not_found">No Record Found</string>
+    <string name="full_name">Full Name</string>
 
 </resources>

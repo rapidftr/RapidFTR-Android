@@ -2,6 +2,7 @@ package com.rapidftr.model;
 
 import com.google.common.base.Strings;
 import com.rapidftr.database.Database;
+import com.rapidftr.utils.EncryptionUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,9 +14,14 @@ import java.io.IOException;
 public class User extends JSONObject {
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
-    public User(Boolean authenticated, String dbKey, String userOrg, String fullName) throws JSONException {
+    public User(Boolean authenticated, String dbKey, String userOrg, String fullName, String password) throws Exception {
         this(authenticated, dbKey, userOrg);
         setFullName(fullName);
+        setPassword(password);
+    }
+
+    private void setPassword(String password) throws Exception {
+        put(Database.UserTableColumn.encryptedPassword.getColumnName(), EncryptionUtil.encryptWithoutASeed(password));
     }
 
     public User(Boolean authenticated, String dbKey, String userOrg) throws JSONException {
