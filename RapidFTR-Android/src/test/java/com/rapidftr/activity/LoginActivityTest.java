@@ -223,9 +223,10 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldSetDbKeyForUnauthenticatedUsers() throws Exception {
+    public void shouldSetDbKeyAndUserNameForUnauthenticatedUsers() throws Exception {
 
         User user = new User(false, "org", "fullname", "password");
+        userName.setText("username");
         RapidFtrApplication application = mock(RapidFtrApplication.class);
         LoginActivity spyLoginActivity = spy(loginActivity);
 
@@ -234,6 +235,7 @@ public class LoginActivityTest {
         spyLoginActivity.getLoginAsyncTask().processOfflineLogin("username","password");
 
         verify(application).setDbKey(User.UNAUTHENTICATED_DB_KEY);
+        verify(application).setPreference(USER_NAME, "username");
     }
 
     @Test

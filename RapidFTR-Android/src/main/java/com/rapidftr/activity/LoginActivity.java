@@ -191,6 +191,7 @@ public class LoginActivity extends RapidFtrActivity {
 
         protected boolean processOfflineLogin(String userName, String password) {
             try {
+                getContext().setPreference(USER_NAME, getEditText(R.id.username));
                 String userJson = getContext().getPreference(userName);
                 User user = new User(userJson);
                 if(!user.isAuthenticated()){
