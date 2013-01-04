@@ -29,8 +29,7 @@
                           android:text="@string/signup"
                           style="@style/links"
                           android:textColor="@color/links"
-                          android:linksClickable="true"
-                          android:onClick="signUp"/>
+                          android:linksClickable="true"/>
             </TableRow>
         </TableLayout>
 
@@ -78,14 +77,6 @@
                   style="@style/links"
                   android:textColor="@color/links"
                   android:visibility="gone"/>
-        <Button android:background="@drawable/button"
-                android:id="@+id/sign_up"
-                android:text="@string/signup"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                style="@style/button"
-                android:onClick="signUp"/>
 
     </LinearLayout>
 </ScrollView>

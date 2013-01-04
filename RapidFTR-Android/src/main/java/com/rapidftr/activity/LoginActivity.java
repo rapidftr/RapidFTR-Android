@@ -37,6 +37,7 @@ public class LoginActivity extends RapidFtrActivity {
         }
         setContentView(R.layout.activity_login);
         toggleBaseUrl();
+        startActivityOn(R.id.new_user_signup_link,SignupActivity.class);
         findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 toggleView(R.id.url, View.VISIBLE);
