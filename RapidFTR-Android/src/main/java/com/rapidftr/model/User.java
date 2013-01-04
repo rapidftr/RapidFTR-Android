@@ -9,19 +9,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.UUID;
 
 
 public class User extends JSONObject {
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    public static final String UNAUTHENTICATED_DB_KEY = UUID.randomUUID().toString();
 
-    public User(Boolean authenticated, String dbKey, String userOrg, String fullName, String password) throws Exception {
-        this(authenticated, dbKey, userOrg);
+    public User(Boolean authenticated, String userOrg, String fullName, String password) throws Exception {
+        this(authenticated, UNAUTHENTICATED_DB_KEY, userOrg);
         setFullName(fullName);
         setPassword(password);
     }
 
     private void setPassword(String password) throws Exception {
-        put(Database.UserTableColumn.encryptedPassword.getColumnName(), EncryptionUtil.encryptWithoutASeed(password));
+        put(Database.UserTableColumn.encryptedPassword.getColumnName(), EncryptionUtil.encrypt(password, password));
     }
 
     public User(Boolean authenticated, String dbKey, String userOrg) throws JSONException {
@@ -78,7 +80,7 @@ public class User extends JSONObject {
         put(Database.UserTableColumn.organisation.getColumnName(), organisation);
     }
 
-    public Boolean getAuthenticated() {
+    public Boolean isAuthenticated() {
         return optBoolean(Database.UserTableColumn.authenticated.getColumnName());
     }
 
@@ -86,6 +88,9 @@ public class User extends JSONObject {
         put(Database.UserTableColumn.authenticated.getColumnName(), authenticated);
     }
 
+    public  String getEncryptedPassword(){
+        return optString(Database.UserTableColumn.encryptedPassword.getColumnName());
+    }
 
 
 }

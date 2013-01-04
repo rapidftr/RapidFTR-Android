@@ -202,23 +202,38 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldSetLoginDbkeyAndFormSectionOnSuccessfulOfflineLogin() throws Exception {
+    public void shouldSetLoginDbkeyAndFormSectionOnSuccessfulOfflineLoginForAuthenticatedUsers() throws Exception {
         String dbKey = "db_key_from_server";
         String formSectionTemplate = "form section template";
         String encryptedDBKey = EncryptionUtil.encrypt("password", dbKey);
+        User user = new User(true, encryptedDBKey, "org");
         LoginActivity spyLoginActivity = spy(loginActivity);
         RapidFtrApplication application = mock(RapidFtrApplication.class);
-        doReturn(encryptedDBKey).when(application).getPreference(anyString());
+        doReturn(user.toString()).when(application).getPreference(anyString());
         doReturn(application).when(spyLoginActivity).getContext();
         doReturn(formSectionTemplate).when(application).getPreference(FORM_SECTION);
         LoginActivity.LoginAsyncTask loginAsyncTask = spy(spyLoginActivity.getLoginAsyncTask());
-        doReturn(dbKey).when(loginAsyncTask).decryptedDBKey(anyString(), anyString());
+        doReturn(dbKey).when(loginAsyncTask).decryptDbKey(anyString(), anyString());
         loginAsyncTask.onPreExecute();
         loginAsyncTask.onPostExecute(null);
 
         verify(application).setDbKey(dbKey);
         verify(application).setLoggedIn(true);
         verify(application).setFormSectionsTemplate(formSectionTemplate);
+    }
+
+    @Test
+    public void shouldSetDbKeyForUnauthenticatedUsers() throws Exception {
+
+        User user = new User(false, "org", "fullname", "password");
+        RapidFtrApplication application = mock(RapidFtrApplication.class);
+        LoginActivity spyLoginActivity = spy(loginActivity);
+
+        doReturn(user.toString()).when(application).getPreference("username");
+        doReturn(application).when(spyLoginActivity).getContext();
+        spyLoginActivity.getLoginAsyncTask().processOfflineLogin("username","password");
+
+        verify(application).setDbKey(User.UNAUTHENTICATED_DB_KEY);
     }
 
     @Test
@@ -245,9 +260,10 @@ public class LoginActivityTest {
 
     private LoginActivity.LoginAsyncTask setUpForOffLineLogin() throws Exception {
         String encryptedDBKey = EncryptionUtil.encrypt("password", "db_key_from_server");
+        User user = new User(true, encryptedDBKey, "org");
         LoginActivity spyLoginActivity = spy(loginActivity);
         RapidFtrApplication application = mock(RapidFtrApplication.class);
-        doReturn(encryptedDBKey).when(application).getPreference(anyString());
+        doReturn(user.toString()).when(application).getPreference(anyString());
         doReturn(application).when(spyLoginActivity).getContext();
         return spyLoginActivity.getLoginAsyncTask();
     }

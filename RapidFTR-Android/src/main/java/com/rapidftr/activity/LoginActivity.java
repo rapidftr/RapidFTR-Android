@@ -191,7 +191,14 @@ public class LoginActivity extends RapidFtrActivity {
 
         protected boolean processOfflineLogin(String userName, String password) {
             try {
-                getContext().setDbKey(decryptedDBKey(userName, password));
+                String userJson = getContext().getPreference(userName);
+                User user = new User(userJson);
+                if(!user.isAuthenticated()){
+                    EncryptionUtil.decrypt(password, new User(userJson).getEncryptedPassword());
+                    getContext().setDbKey(user.getDbKey());
+                }else{
+                    getContext().setDbKey(decryptDbKey(user.getDbKey(), password));
+                }
             } catch (Exception e) {
                 logError(e.getMessage());
                 return false;
@@ -199,8 +206,8 @@ public class LoginActivity extends RapidFtrActivity {
             return true;
         }
 
-        protected String decryptedDBKey(String userName, String password) throws Exception {
-            return EncryptionUtil.decrypt(password, getContext().getPreference(userName));
+        protected String decryptDbKey(String encryptedDbKey, String password) throws Exception {
+            return EncryptionUtil.decrypt(password, encryptedDbKey);
         }
 
         private String getUserOrg(JSONObject responseJSON) {

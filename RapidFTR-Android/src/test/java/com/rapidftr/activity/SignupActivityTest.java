@@ -99,7 +99,7 @@ public class SignupActivityTest {
         User user= new User(sharedPreferences.getString("username", null));
         assertEquals("fullname",user.getFullName());
         assertEquals("organisation",user.getOrganisation());
-        assertEquals(false ,user.getAuthenticated());
+        assertEquals(false ,user.isAuthenticated());
     }
 
     @Test

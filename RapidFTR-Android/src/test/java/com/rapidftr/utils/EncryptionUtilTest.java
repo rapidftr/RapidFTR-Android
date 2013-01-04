@@ -9,9 +9,9 @@ import static org.junit.Assert.assertEquals;
 @RunWith(CustomTestRunner.class)
 public class EncryptionUtilTest {
     @Test
-    public void testEncryptAndDecryptOfPasswordResultsInSameHash() throws Exception {
-     String passwordHash = EncryptionUtil.encryptWithoutASeed("password");
-     String password = EncryptionUtil.decryptWithoutASeed(passwordHash);
-     assertEquals("password", password);
+    public void shouldBeAbleToEncryptAndDecryptPassword() throws Exception {
+        String passwordHash = EncryptionUtil.encrypt("password", "password");
+        String password = EncryptionUtil.decrypt("password", passwordHash);
+        assertEquals("password", password);
     }
 }

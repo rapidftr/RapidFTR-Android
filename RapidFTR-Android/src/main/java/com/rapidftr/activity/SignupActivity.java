@@ -8,8 +8,6 @@ import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.model.User;
 
-import java.util.UUID;
-
 public class SignupActivity extends RapidFtrActivity {
 
     @Override
@@ -36,7 +34,7 @@ public class SignupActivity extends RapidFtrActivity {
     }
 
     private void saveUserInSharedPreference() throws Exception {
-        User user = new User(false, UUID.randomUUID().toString(), getEditText(R.id.organisation), getEditText(R.id.full_name), getEditText(R.id.password));
+        User user = new User(false, getEditText(R.id.organisation), getEditText(R.id.full_name), getEditText(R.id.password));
         getContext().setPreference(getEditText(R.id.username), user.toString());
     }
 
