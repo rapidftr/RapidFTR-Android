@@ -1,13 +1,22 @@
 package com.rapidftr.activity;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.User;
+import com.xtremelabs.robolectric.shadows.ShadowActivity;
+import com.xtremelabs.robolectric.shadows.ShadowIntent;
+import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static com.xtremelabs.robolectric.Robolectric.shadowOf;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -74,5 +83,53 @@ public class SignupActivityTest {
 
         assertThat(signupActivity.isValid(), equalTo(false));
         verify(confirmPassword).setError(signupActivity.getString(R.string.password_mismatch));
+    }
+
+    @Test
+    public void shouldSaveUserDetailsInSharedPreferences() throws Exception {
+        signupActivity = spy(signupActivity);
+        doReturn("username").when(signupActivity).getEditText(R.id.username);
+        doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
+        doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
+        doReturn("text").when(signupActivity).getEditText(R.id.password);
+        doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
+
+        signupActivity.createUser(null);
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        User user= new User(sharedPreferences.getString("username", null));
+        assertEquals("fullname",user.getFullName());
+        assertEquals("organisation",user.getOrganisation());
+        assertEquals(false ,user.getAuthenticated());
+    }
+
+    @Test
+    public void shouldStartLoginActivityAfterSignup() throws Exception {
+        signupActivity = spy(signupActivity);
+        doReturn("username").when(signupActivity).getEditText(R.id.username);
+        doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
+        doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
+        doReturn("text").when(signupActivity).getEditText(R.id.password);
+        doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
+
+        signupActivity.createUser(null);
+        ShadowActivity signupActivity = shadowOf(new SignupActivity());
+        Intent startedIntent = signupActivity.getNextStartedActivity();
+        ShadowIntent shadowIntent = shadowOf(startedIntent);
+
+        assertThat(shadowIntent.getComponent().getClassName(), equalTo("com.rapidftr.activity.LoginActivity"));
+    }
+
+    @Test
+    public void shouldShowToastAfterRedirectedToLoginPage() throws Exception {
+        signupActivity = spy(signupActivity);
+        doReturn("username").when(signupActivity).getEditText(R.id.username);
+        doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
+        doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
+        doReturn("text").when(signupActivity).getEditText(R.id.password);
+        doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
+
+        signupActivity.createUser(null);
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo("You are registered. Login with the username username"));
+
     }
 }

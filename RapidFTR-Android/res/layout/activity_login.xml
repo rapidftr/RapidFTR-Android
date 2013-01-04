@@ -37,12 +37,11 @@
         <EditText android:background="@drawable/textbox"
                   android:id="@+id/username"
                   android:hint="@string/username"
-                  android:inputType="textFilter|textNoSuggestions|textVisiblePassword"
-                  android:autoText="false"
+                  android:inputType="textFilter"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:layout_margin="5dp"
-                  android:text="rapidftr"/>
+                  android:text="@string/rapidftr_username"/>
 
         <EditText android:background="@drawable/textbox"
                   android:id="@+id/password"
@@ -51,15 +50,14 @@
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:layout_margin="5dp"
-                  android:text="rapidftr"/>
+                  android:text="@string/rapidftr_username"/>
 
 
         <EditText android:background="@drawable/textbox"
                   android:id="@+id/url"
                   android:hint="@string/url"
-                  android:text="https://151.236.218.124:5001"
+                  android:text="@string/rapidftr_url"
                   android:inputType="textFilter|textUri|textVisiblePassword|textNoSuggestions"
-                  android:autoText="false"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:layout_margin="5dp"/>

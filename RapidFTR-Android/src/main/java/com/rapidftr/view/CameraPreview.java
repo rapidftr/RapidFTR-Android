@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.hardware.Camera;
+import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -59,7 +60,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                     FileOutputStream outStream;
                     try {
                         outStream = new FileOutputStream(String.format(
-                                "/sdcard/%d.jpg", System.currentTimeMillis()));
+                                Environment.getExternalStorageDirectory().getPath()+"/%d.jpg", System.currentTimeMillis()));
                         outStream.write(data);
                         outStream.close();
                         Log.d(TAG, "onPreviewFrame - wrote bytes: " + data.length);

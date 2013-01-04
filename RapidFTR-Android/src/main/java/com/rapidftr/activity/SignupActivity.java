@@ -1,9 +1,14 @@
 package com.rapidftr.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 import com.rapidftr.R;
+import com.rapidftr.model.User;
+
+import java.util.UUID;
 
 public class SignupActivity extends RapidFtrActivity {
 
@@ -22,20 +27,30 @@ public class SignupActivity extends RapidFtrActivity {
         return validatesPresenceOfMandatoryFields() && isPasswordSameAsConfirmPassword();
     }
 
-    public void createUser(View view) {
-        isValid();
+    public void createUser(View view) throws Exception {
+        if (isValid()) {
+            saveUserInSharedPreference();
+            startActivity(new Intent(this, LoginActivity.class));
+            Toast.makeText(this, "You are registered. Login with the username "+getEditText(R.id.username) , Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void saveUserInSharedPreference() throws Exception {
+        User user = new User(false, UUID.randomUUID().toString(), getEditText(R.id.organisation), getEditText(R.id.full_name), getEditText(R.id.password));
+        getContext().setPreference(getEditText(R.id.username), user.toString());
     }
 
     protected boolean validatesPresenceOfMandatoryFields() {
-        return validateTextFieldNotEmpty(R.id.username,R.string.username_required) &
-                validateTextFieldNotEmpty(R.id.password,R.string.password_required) &
-                validateTextFieldNotEmpty(R.id.confirm_password,R.string.confirm_password_required) &
-                validateTextFieldNotEmpty(R.id.organisation,R.string.organisation_required);
+        return validateTextFieldNotEmpty(R.id.full_name, R.string.full_name_required) &
+                validateTextFieldNotEmpty(R.id.username, R.string.username_required) &
+                validateTextFieldNotEmpty(R.id.password, R.string.password_required) &
+                validateTextFieldNotEmpty(R.id.confirm_password, R.string.confirm_password_required) &
+                validateTextFieldNotEmpty(R.id.organisation, R.string.organisation_required);
     }
 
-    private boolean isPasswordSameAsConfirmPassword(){
-        if(!getEditText(R.id.password).equals(getEditText(R.id.confirm_password))){
-            ((EditText)findViewById(R.id.confirm_password)).setError(getString(R.string.password_mismatch));
+    private boolean isPasswordSameAsConfirmPassword() {
+        if (!getEditText(R.id.password).equals(getEditText(R.id.confirm_password))) {
+            ((EditText) findViewById(R.id.confirm_password)).setError(getString(R.string.password_mismatch));
             return false;
         }
         return true;

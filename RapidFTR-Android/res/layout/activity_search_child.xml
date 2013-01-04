@@ -14,7 +14,6 @@
                   android:id="@+id/search_bar"
                   android:layout_width="fill_parent"
                   android:orientation="horizontal"
-                  android:layout_below="@id/nav_bar"
                   android:weightSum="5"
                   android:layout_height="wrap_content"
                    android:padding="5dp"
@@ -39,7 +38,6 @@
     </LinearLayout>
 
     <ListView
-            android:layout_below="@id/search_text"
             android:id="@+id/child_list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
@@ -51,8 +49,7 @@
                   android:layout_height="0dip"
                   style="@style/no_child_text"
                   android:gravity="center_horizontal"
-                  android:visibility="gone"
-                  android:layout_below="@id/search_bar">
+                  android:visibility="gone">
 
         <TextView android:text="@string/child_not_found"
                   android:layout_width="wrap_content"

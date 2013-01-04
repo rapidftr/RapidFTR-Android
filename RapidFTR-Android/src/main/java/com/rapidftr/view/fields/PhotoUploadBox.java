@@ -131,7 +131,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
             new EncryptImageAsyncTask(getContext(), captureHelper, bitmap, fileName, this).execute();
             child.put(formField.getId(), fileName);
         } catch (Exception e) {
-            Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG);
+            Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG).show();
         }
     }
 

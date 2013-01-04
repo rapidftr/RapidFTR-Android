@@ -13,7 +13,7 @@
                android:singleLine="true"
                android:editable="true"
                android:layout_weight="6"
-               android:padding="5px"
+               android:padding="5dip"
                android:inputType="number|numberDecimal"
             />
 

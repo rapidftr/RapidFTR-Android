@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.User;
 import com.rapidftr.utils.EncryptionUtil;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowActivity;
@@ -160,8 +161,8 @@ public class LoginActivityTest {
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
         SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-        String encryptedDBKey = sharedPreferences.getString(userName.getText().toString(), null);
-        assertThat("fa8f5e7599ed5402", is(EncryptionUtil.decrypt(password.getText().toString(), encryptedDBKey)));
+        User user = new User(sharedPreferences.getString(userName.getText().toString(), null));
+        assertThat("fa8f5e7599ed5402", is(EncryptionUtil.decrypt(password.getText().toString(), user.getDbKey())));
     }
 
     @Test
@@ -223,8 +224,8 @@ public class LoginActivityTest {
     @Test
     public void shouldStartSignUpActivityWhenClickedOnSignUpLink(){
         signUp.performClick();
-        ShadowActivity signupActivity = shadowOf(new LoginActivity());
-        Intent startedIntent = signupActivity.getNextStartedActivity();
+        ShadowActivity shadowActivity = shadowOf(new LoginActivity());
+        Intent startedIntent = shadowActivity.getNextStartedActivity();
         ShadowIntent shadowIntent = shadowOf(startedIntent);
 
         assertThat(shadowIntent.getComponent().getClassName(), equalTo("com.rapidftr.activity.SignupActivity"));

@@ -9,6 +9,7 @@ import android.widget.EditText;
 import com.google.common.io.CharStreams;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.User;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import com.rapidftr.utils.EncryptionUtil;
@@ -37,6 +38,7 @@ public class LoginActivity extends RapidFtrActivity {
         }
         setContentView(R.layout.activity_login);
         toggleBaseUrl();
+        startActivityOn(R.id.new_user_signup_link,SignupActivity.class);
         findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 toggleView(R.id.url, View.VISIBLE);
@@ -180,8 +182,7 @@ public class LoginActivity extends RapidFtrActivity {
                 RapidFtrApplication context = getContext();
                 context.setPreference(USER_NAME, getEditText(R.id.username));
                 context.setPreference(SERVER_URL, getEditText(R.id.url));
-                context.setPreference(USER_ORG, getUserOrg(responseJSON));
-                context.setPreference(getEditText(R.id.username), EncryptionUtil.encrypt(getEditText(R.id.password), context.getDbKey()));
+                context.setPreference(getEditText(R.id.username), (new User(true, EncryptionUtil.encrypt(getEditText(R.id.password), context.getDbKey()), getUserOrg(responseJSON))).toString());
                 context.setPreference(FORM_SECTION, new FormService(context).getPublishedFormSections());
             } catch (Exception e) {
                 logError(e.getMessage());

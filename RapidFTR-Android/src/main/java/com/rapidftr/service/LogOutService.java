@@ -13,7 +13,6 @@ import com.rapidftr.task.SyncAllDataAsyncTask;
 
 import static android.widget.Toast.LENGTH_LONG;
 import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
 
 public class LogOutService {
 
@@ -36,7 +35,6 @@ public class LogOutService {
 
     private void removeUserPreferences(RapidFtrApplication context) {
         context.removePreference(USER_NAME);
-        context.removePreference(USER_ORG);
     }
 
     private void cancelSync(RapidFtrApplication context) {

@@ -18,6 +18,15 @@
         </ImageView>
 
         <EditText android:background="@drawable/textbox"
+                  android:id="@+id/full_name"
+                  android:hint="@string/full_name"
+                  android:inputType="textFilter|textNoSuggestions|textVisiblePassword"
+                  android:autoText="false"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_margin="5dp"/>
+
+        <EditText android:background="@drawable/textbox"
                   android:id="@+id/username"
                   android:hint="@string/username"
                   android:inputType="textFilter|textNoSuggestions|textVisiblePassword"
@@ -38,15 +47,6 @@
                   android:id="@+id/confirm_password"
                   android:hint="@string/confirm"
                   android:inputType="textPassword"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:layout_margin="5dp"/>
-
-        <EditText android:background="@drawable/textbox"
-                  android:id="@+id/url"
-                  android:hint="@string/optional_url"
-                  android:inputType="textFilter|textNoSuggestions|textVisiblePassword"
-                  android:autoText="false"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:layout_margin="5dp"/>
