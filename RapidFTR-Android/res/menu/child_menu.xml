@@ -4,13 +4,11 @@
 
     <item android:id="@+id/synchronize_child"
           android:title="@string/synchronize_child" />
-
     <item android:id="@+id/logout"
           android:title="@string/log_out" />
-
     <item android:id="@+id/synchronize_log"
           android:title="@string/synchronize_log"
           android:visible="false"/>
-
-
+    <item android:id="@+id/info" android:icon="@drawable/ic_info"
+          android:title="@string/info"/>
 </menu>

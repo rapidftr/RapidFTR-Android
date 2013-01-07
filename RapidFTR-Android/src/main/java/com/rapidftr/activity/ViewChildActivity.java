@@ -1,5 +1,6 @@
 package com.rapidftr.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -80,6 +81,9 @@ public class ViewChildActivity extends BaseChildActivity {
                 return true;
             case R.id.logout:
                 inject(LogOutService.class).attemptLogOut(this);
+                return true;
+            case R.id.info:
+                startActivity(new Intent(this, InfoActivity.class));
                 return true;
         }
         return false;

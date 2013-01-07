@@ -133,6 +133,10 @@ public abstract class RapidFtrActivity extends Activity {
                     inject(LogOutService.class).attemptLogOut(this);
                 }
                 return true;
+            case R.id.info:
+                startActivity(new Intent(this, InfoActivity.class));
+                return true;
+
         }
         return false;
     }

@@ -8,4 +8,6 @@
               android:title="@string/cancel_synchronize_all"/>
     <item android:id="@+id/logout"
           android:title="@string/log_out"/>
+    <item android:id="@+id/info" android:icon="@drawable/ic_info"
+          android:title="@string/info"/>
 </menu>

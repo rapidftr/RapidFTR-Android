@@ -86,5 +86,8 @@
     <string name="child_not_found">No Record Found</string>
 
     <string name="this_is_audio_upload_box">This is an audio upload box</string>
+    <string name="info">Info</string>
+
+    <string name="info_text">RapidFTR is supported in the following languages:</string>
 
 </resources>

@@ -29,14 +29,14 @@ public class CustomTestRunner extends RobolectricTestRunner {
 
     public static List<FormSection> formSectionSeed = Arrays.asList(
         new FormSection("Section 1", 1, true, "Section Help 1", Arrays.asList(
-            new FormField("f1", true, null, true, "text_field", "Field 1", "Help 1", null, null),
-            new FormField("f2", true, null, true, "textarea", "Field 2", "Help 2", null, null),
-            new FormField("f3", true, null, true, "numeric_field", "Field 3", "Help 3", null, null)
+            new FormField("f1", null, true, "text_field", "Field 1", "Help 1", null, null),
+            new FormField("f2", null, true, "textarea", "Field 2", "Help 2", null, null),
+            new FormField("f3", null, true, "numeric_field", "Field 3", "Help 3", null, null)
         )),
         new FormSection("Section 2", 2, true, "Section Help 2", Arrays.asList(
-            new FormField("f4", true, null, true, "radio_button", "Field 4", "Help 4", Arrays.asList("radio1", "radio2", "radio3"), null),
-            new FormField("f5", true, null, true, "check_boxes", "Field 5", "Help 5", Arrays.asList("check1", "check2", "check3"), null),
-            new FormField("f6", true, null, true, "date_field", "Field 6", "Help 6", null, null)
+            new FormField("f4", null, true, "radio_button", "Field 4", "Help 4", Arrays.asList("radio1", "radio2", "radio3"), null),
+            new FormField("f5", null, true, "check_boxes", "Field 5", "Help 5", Arrays.asList("check1", "check2", "check3"), null),
+            new FormField("f6", null, true, "date_field", "Field 6", "Help 6", null, null)
         ))
     );
 
