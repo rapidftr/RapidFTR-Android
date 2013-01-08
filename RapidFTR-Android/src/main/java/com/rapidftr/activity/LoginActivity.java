@@ -13,6 +13,7 @@ import com.rapidftr.model.User;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import com.rapidftr.utils.EncryptionUtil;
+import com.rapidftr.utils.NetworkStatus;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
@@ -91,8 +92,7 @@ public class LoginActivity extends RapidFtrActivity {
 
     public boolean isValid() {
         return validateTextFieldNotEmpty(R.id.username, R.string.username_required)
-                & validateTextFieldNotEmpty(R.id.password, R.string.password_required)
-                & validateTextFieldNotEmpty(R.id.url, R.string.url_required);
+                & validateTextFieldNotEmpty(R.id.password, R.string.password_required);
     }
 
 
@@ -139,15 +139,20 @@ public class LoginActivity extends RapidFtrActivity {
         @Override
         protected HttpResponse doInBackground(String... params) {
             try {
-                return new LoginService().login(getApplicationContext(), params[0], params[1], params[2]);
+                return NetworkStatus.isOnline(getContext())? onlineLogin(params) : null ;
             } catch (Exception error) {
                 logError(error.getMessage());
                 return null;
             }
         }
 
+        private HttpResponse onlineLogin(String[] params) throws IOException {
+            return new LoginService().login(getApplicationContext(), params[0], params[1], params[2]);
+        }
+
         @Override
         protected void onPostExecute(HttpResponse response) {
+            mProgressDialog.dismiss();
             int statusCode = response == null ? SC_NOT_FOUND : response.getStatusLine().getStatusCode();
             RapidFtrApplication context = getContext();
             if (statusCode == SC_CREATED) {
@@ -164,7 +169,6 @@ public class LoginActivity extends RapidFtrActivity {
             } else if (response == null) {
                 statusCode = HttpStatus.SC_UNAUTHORIZED;
             }
-            mProgressDialog.dismiss();
             makeToast(getToastMessage(statusCode));
         }
 
@@ -181,6 +185,7 @@ public class LoginActivity extends RapidFtrActivity {
             try {
                 RapidFtrApplication context = getContext();
                 context.setPreference(USER_NAME, getEditText(R.id.username));
+                context.setPreference(USER_ORG, getUserOrg(responseJSON));
                 context.setPreference(SERVER_URL, getEditText(R.id.url));
                 context.setPreference(getEditText(R.id.username), (new User(true, EncryptionUtil.encrypt(getEditText(R.id.password), context.getDbKey()), getUserOrg(responseJSON))).toString());
                 context.setPreference(FORM_SECTION, new FormService(context).getPublishedFormSections());

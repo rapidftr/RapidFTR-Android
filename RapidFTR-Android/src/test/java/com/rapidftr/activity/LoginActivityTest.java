@@ -125,12 +125,10 @@ public class LoginActivityTest {
         loginActivity = spy(loginActivity);
         doReturn(userName).when(loginActivity).findViewById(R.id.username);
         doReturn(password).when(loginActivity).findViewById(R.id.password);
-        doReturn(serverUrl).when(loginActivity).findViewById(R.id.url);
 
         assertThat(loginActivity.isValid(), equalTo(false));
         verify(userName).setError(loginActivity.getString(R.string.username_required));
         verify(password).setError(loginActivity.getString(R.string.password_required));
-        verify(serverUrl).setError(loginActivity.getString(R.string.url_required));
     }
 
     @Test

@@ -24,7 +24,6 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
           loginPage.login("","","");
           assertTrue(loginPage.getUserNameRequiredMessage().equals("Username is required"));
           assertTrue(loginPage.getPasswordRequiredMEssage().equals("Password is required"));
-          assertTrue(loginPage.getURLRequiredMessage().equals("Server URL is required"));
     }
 
      public void testUserAbleToSeeLastSuccessfulLoginUrl() {

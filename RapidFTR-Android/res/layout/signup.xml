@@ -17,13 +17,14 @@
                    android:scaleType="fitCenter">
         </ImageView>
 
-        <EditText android:background="@drawable/textbox"
-                  android:id="@+id/full_name"
-                  android:hint="@string/full_name"
-                  android:inputType="textFilter|textNoSuggestions|textVisiblePassword"
-                  android:autoText="false"
-                  android:layout_width="fill_parent"
+        <TextView android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
+                  android:text="@string/mandatory"
+                  android:layout_margin="5dp"/>
+
+        <TextView android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/username_label"
                   android:layout_margin="5dp"/>
 
         <EditText android:background="@drawable/textbox"
@@ -35,6 +36,11 @@
                   android:layout_height="wrap_content"
                   android:layout_margin="5dp"/>
 
+        <TextView android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/password_label"
+                  android:layout_margin="5dp"/>
+
         <EditText android:background="@drawable/textbox"
                   android:id="@+id/password"
                   android:hint="@string/password"
@@ -43,12 +49,36 @@
                   android:layout_height="wrap_content"
                   android:layout_margin="5dp"/>
 
+        <TextView android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/confirm_label"
+                  android:layout_margin="5dp"/>
+
         <EditText android:background="@drawable/textbox"
                   android:id="@+id/confirm_password"
                   android:hint="@string/confirm"
                   android:inputType="textPassword"
                   android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
+                  android:layout_margin="5dp"/>
+
+        <TextView android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/full_name_label"
+                  android:layout_margin="5dp"/>
+
+        <EditText android:background="@drawable/textbox"
+                  android:id="@+id/full_name"
+                  android:hint="@string/full_name"
+                  android:inputType="textFilter|textNoSuggestions|textVisiblePassword"
+                  android:autoText="false"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_margin="5dp"/>
+
+        <TextView android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:text="@string/organisation_label"
                   android:layout_margin="5dp"/>
 
         <EditText android:background="@drawable/textbox"

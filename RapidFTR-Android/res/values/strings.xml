@@ -13,6 +13,7 @@
     <string name="synchronize">Synchronize</string>
     <string name="new_user">New to RapidFTR? </string>
     <string name="full_name_required">Full name required</string>
+    <string name="username_taken">Username taken. Please choose a different username</string>
     <string name="full_name">Full Name</string>
 
     <string name="username">Username</string>
@@ -75,7 +76,7 @@
     <string name="synchronize_step_2">Step 2 of 3 - Sending records to server&#8230;</string>
     <string name="synchronize_step_3">Step 3 of 3 - Getting records from server&#8230;</string>
     <string name="signup">Sign Up!</string>
-    <string name="confirm">Confirm Password</string>
+    <string name="confirm">Re-enter Password</string>
     <string name="organisation">Organisation</string>
     <string name="optional_url">URL(Optional)</string>
 
@@ -89,5 +90,11 @@
     <string name="info">Info</string>
 
     <string name="info_text">RapidFTR is supported in the following languages:</string>
+    <string name="full_name_label">Full name:</string>
+    <string name="username_label">Username:</string>
+    <string name="password_label">Password:</string>
+    <string name="confirm_label">Re-enter Password:</string>
+    <string name="organisation_label">Organisation:</string>
+    <string name="mandatory">All fields are mandatory</string>
 
 </resources>

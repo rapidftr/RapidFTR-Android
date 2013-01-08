@@ -1,4 +1,5 @@
 <resources>
     <color name="white">#ffffff</color>
     <color name="tab_partition">#31353f</color>
+    <color name="red">#FF0000</color>
 </resources>

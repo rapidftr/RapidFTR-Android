@@ -25,11 +25,21 @@ public class SignupActivity extends RapidFtrActivity {
         return validatesPresenceOfMandatoryFields() && isPasswordSameAsConfirmPassword();
     }
 
+    protected boolean isUsernameTakenInMobile(String username) {
+        return getContext().getPreference(username)!=null;
+    }
+
     public void createUser(View view) throws Exception {
         if (isValid()) {
-            saveUserInSharedPreference();
-            startActivity(new Intent(this, LoginActivity.class));
-            Toast.makeText(this, "You are registered. Login with the username "+getEditText(R.id.username) , Toast.LENGTH_LONG).show();
+            if (!isUsernameTakenInMobile(getEditText(R.id.username))) {
+                saveUserInSharedPreference();
+                startActivity(new Intent(this, LoginActivity.class));
+                Toast.makeText(this, "You are registered. Login with the username " + getEditText(R.id.username), Toast.LENGTH_LONG).show();
+            } else {
+                EditText editText= (EditText) findViewById(R.id.username);
+                editText.setError(getString(R.string.username_taken));
+                Toast.makeText(this, "Username taken. Please choose a different username", Toast.LENGTH_LONG).show();
+            }
         }
     }
 

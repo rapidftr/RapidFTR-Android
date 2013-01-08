@@ -1,6 +1,7 @@
 package com.rapidftr.model;
 
 import com.rapidftr.CustomTestRunner;
+import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -22,4 +23,10 @@ public class UserTest {
         assertNotNull(user.getDbKey());
         assertEquals("dbkey", user.getDbKey());
     }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldRaiseRuntimeExceptionForInvalidUsers() throws JSONException {
+        new User(null);
+    }
+
 }

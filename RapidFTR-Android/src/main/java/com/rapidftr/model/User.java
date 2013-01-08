@@ -34,7 +34,14 @@ public class User extends JSONObject {
 
 
     public User(String jsonContent) throws JSONException {
-        super(Strings.nullToEmpty(jsonContent).trim().length() == 0 ? "{}" : jsonContent);
+        super(validateJson(jsonContent));
+    }
+
+    private static String validateJson(String jsonContent) {
+        if(Strings.nullToEmpty(jsonContent).trim().length() != 0 ){
+            return jsonContent;
+        }
+        throw new RuntimeException("Invalid User details");
     }
 
     public boolean equals(Object other) {

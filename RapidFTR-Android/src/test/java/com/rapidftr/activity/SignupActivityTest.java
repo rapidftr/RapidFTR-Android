@@ -33,6 +33,7 @@ public class SignupActivityTest {
     public void setup(){
         signupActivity = new SignupActivity();
         signupActivity.onCreate(null);
+        signupActivity = spy(signupActivity);
         userName = (EditText)signupActivity.findViewById(R.id.username);
         password = (EditText)signupActivity.findViewById(R.id.password);
         confirmPassword = (EditText)signupActivity.findViewById(R.id.confirm_password);
@@ -47,7 +48,6 @@ public class SignupActivityTest {
         organisation = mock(EditText.class);
         confirmPassword = mock(EditText.class);
 
-        signupActivity = spy(signupActivity);
         doReturn(userName).when(signupActivity).findViewById(R.id.username);
         doReturn(password).when(signupActivity).findViewById(R.id.password);
         doReturn(organisation).when(signupActivity).findViewById(R.id.organisation);
@@ -72,8 +72,6 @@ public class SignupActivityTest {
         userName.setText("user");
         organisation.setText("org");
 
-        signupActivity = spy(signupActivity);
-
         doReturn(userName).when(signupActivity).findViewById(R.id.username);
         doReturn(confirmPassword).when(signupActivity).findViewById(R.id.confirm_password);
         doReturn(organisation).when(signupActivity).findViewById(R.id.organisation);
@@ -87,7 +85,6 @@ public class SignupActivityTest {
 
     @Test
     public void shouldSaveUserDetailsInSharedPreferences() throws Exception {
-        signupActivity = spy(signupActivity);
         doReturn("username").when(signupActivity).getEditText(R.id.username);
         doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
         doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
@@ -104,7 +101,6 @@ public class SignupActivityTest {
 
     @Test
     public void shouldStartLoginActivityAfterSignup() throws Exception {
-        signupActivity = spy(signupActivity);
         doReturn("username").when(signupActivity).getEditText(R.id.username);
         doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
         doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
@@ -121,7 +117,6 @@ public class SignupActivityTest {
 
     @Test
     public void shouldShowToastAfterRedirectedToLoginPage() throws Exception {
-        signupActivity = spy(signupActivity);
         doReturn("username").when(signupActivity).getEditText(R.id.username);
         doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
         doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
@@ -130,6 +125,23 @@ public class SignupActivityTest {
 
         signupActivity.createUser(null);
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo("You are registered. Login with the username username"));
+    }
 
+    @Test
+    public void shouldCheckIfUsernameIsAlreadyTakenInMobile() throws Exception {
+        signupActivity.getContext().setPreference("username","user details");
+        userName  = mock(EditText.class);
+
+        doReturn(userName).when(signupActivity).findViewById(R.id.username);
+        doReturn("username").when(signupActivity).getEditText(R.id.username);
+        doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
+        doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
+        doReturn("text").when(signupActivity).getEditText(R.id.password);
+        doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
+
+        signupActivity.createUser(null);
+        assertEquals(true,signupActivity.isUsernameTakenInMobile("username"));
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(signupActivity.getString(R.string.username_taken)));
+        verify(userName).setError(signupActivity.getString(R.string.username_taken));
     }
 }
