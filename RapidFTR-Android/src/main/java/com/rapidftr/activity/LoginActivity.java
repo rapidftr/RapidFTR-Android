@@ -153,6 +153,7 @@ public class LoginActivity extends RapidFtrActivity {
         @Override
         protected void onPostExecute(HttpResponse response) {
             mProgressDialog.dismiss();
+            String userName = getEditText(R.id.username);
             int statusCode = response == null ? SC_NOT_FOUND : response.getStatusLine().getStatusCode();
             RapidFtrApplication context = getContext();
             if (statusCode == SC_CREATED) {
@@ -162,7 +163,7 @@ public class LoginActivity extends RapidFtrActivity {
                 setContext(context);
                 goToHomeScreen();
             }
-            if (response == null && processOfflineLogin(getEditText(R.id.username), getEditText(R.id.password))) {
+            if ((response == null || isUserSignedUpOnMobile(userName)) && processOfflineLogin(userName, getEditText(R.id.password))) {
                 setContext(context);
                 statusCode = HttpStatus.SC_CREATED;
                 goToHomeScreen();
@@ -244,6 +245,9 @@ public class LoginActivity extends RapidFtrActivity {
             return jsonObject;
         }
 
+        public boolean isUserSignedUpOnMobile(String userName) {
+            return getContext().getPreference(userName)!=null;
+        }
     }
 
 

@@ -1,8 +1,10 @@
 package com.rapidftr.activity;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -244,6 +246,27 @@ public class LoginActivityTest {
         ShadowIntent shadowIntent = shadowOf(startedIntent);
 
         assertThat(shadowIntent.getComponent().getClassName(), equalTo("com.rapidftr.activity.SignupActivity"));
+    }
+
+    @Test
+    public void shouldAllowUnauthenticatedUserToLoginIntoTheMobileWhenTheMobileIsOnline() throws Exception {
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401,"User not authorized");
+        User user1 = new User(false, "organisation", "user1", "password");
+        userName.setText("user1"); password.setText("password");
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        sharedPreferences.edit().putString("user1", user1.toString()).commit();
+        sharedPreferences.edit().putString(FORM_SECTION.getKey(), "some form section").commit();
+        loginButton.performClick();
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
+    }
+
+    @Test
+    public void shouldNotAllowUserToLoginIfTheNetworkIsNotAvailableAndUserIsNotAuthorizedOnMobile(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        shadowOf(connectivityManager.getActiveNetworkInfo()).setConnectionStatus(false);
+        userName.setText("user_not_present"); password.setText("some_random_password");
+        loginButton.performClick();
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.unauthorized)));
     }
 
     private LoginActivity.LoginAsyncTask offlineLogin(boolean loginStatus) {
