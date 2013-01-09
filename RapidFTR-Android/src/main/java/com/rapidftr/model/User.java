@@ -1,6 +1,7 @@
 package com.rapidftr.model;
 
 import com.google.common.base.Strings;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.utils.EncryptionUtil;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -17,9 +18,22 @@ public class User extends JSONObject {
     public static final String UNAUTHENTICATED_DB_KEY = UUID.randomUUID().toString();
 
     public User(Boolean authenticated, String userOrg, String fullName, String password) throws Exception {
-        this(authenticated, UNAUTHENTICATED_DB_KEY, userOrg);
+        this(authenticated, getUnAuthKey(), userOrg);
         setFullName(fullName);
         setPassword(password);
+    }
+
+    private static String getUnAuthKey() throws JSONException {
+        for(Object value : RapidFtrApplication.getApplicationInstance().getSharedPreferences().getAll().values().toArray()) {
+
+            if(value.toString().contains("db_key") && value.toString().contains("authenticated") && value.toString().contains("organisation")){
+                JSONObject jsonObject = new JSONObject(value.toString());
+                if(!jsonObject.optBoolean("authenticated")) {
+                    return jsonObject.optString("db_key");
+                }
+            }
+        }
+        return UNAUTHENTICATED_DB_KEY;
     }
 
     private void setPassword(String password) throws Exception {

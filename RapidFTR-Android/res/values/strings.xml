@@ -96,5 +96,6 @@
     <string name="confirm_label">Re-enter Password:</string>
     <string name="organisation_label">Organisation:</string>
     <string name="mandatory">All fields are mandatory</string>
+    <string name="registered">You are registered. Login with the username </string>
 
 </resources>

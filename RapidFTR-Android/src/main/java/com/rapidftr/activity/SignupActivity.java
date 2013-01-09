@@ -26,7 +26,7 @@ public class SignupActivity extends RapidFtrActivity {
     }
 
     protected boolean isUsernameTakenInMobile(String username) {
-        return getContext().getPreference(username)!=null;
+        return getContext().getPreference(username) != null;
     }
 
     public void createUser(View view) throws Exception {
@@ -34,11 +34,11 @@ public class SignupActivity extends RapidFtrActivity {
             if (!isUsernameTakenInMobile(getEditText(R.id.username))) {
                 saveUserInSharedPreference();
                 startActivity(new Intent(this, LoginActivity.class));
-                Toast.makeText(this, "You are registered. Login with the username " + getEditText(R.id.username), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.registered) + " " + getEditText(R.id.username), Toast.LENGTH_LONG).show();
             } else {
-                EditText editText= (EditText) findViewById(R.id.username);
+                EditText editText = (EditText) findViewById(R.id.username);
                 editText.setError(getString(R.string.username_taken));
-                Toast.makeText(this, "Username taken. Please choose a different username", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.username_taken), Toast.LENGTH_LONG).show();
             }
         }
     }
