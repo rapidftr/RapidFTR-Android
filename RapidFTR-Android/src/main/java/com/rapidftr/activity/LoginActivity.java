@@ -14,12 +14,14 @@ import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import com.rapidftr.utils.EncryptionUtil;
 import com.rapidftr.utils.NetworkStatus;
+import lombok.Cleanup;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import static com.rapidftr.RapidFtrApplication.Preference.*;
@@ -39,7 +41,7 @@ public class LoginActivity extends RapidFtrActivity {
         }
         setContentView(R.layout.activity_login);
         toggleBaseUrl();
-        startActivityOn(R.id.new_user_signup_link,SignupActivity.class);
+        startActivityOn(R.id.new_user_signup_link, SignupActivity.class);
         findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 toggleView(R.id.url, View.VISIBLE);
@@ -139,7 +141,7 @@ public class LoginActivity extends RapidFtrActivity {
         @Override
         protected HttpResponse doInBackground(String... params) {
             try {
-                return NetworkStatus.isOnline(getContext())? onlineLogin(params) : null ;
+                return NetworkStatus.isOnline(getContext()) ? onlineLogin(params) : null;
             } catch (Exception error) {
                 logError(error.getMessage());
                 return null;
@@ -164,6 +166,7 @@ public class LoginActivity extends RapidFtrActivity {
                 goToHomeScreen();
             }
             if ((response == null || isUserSignedUpOnMobile(userName)) && processOfflineLogin(userName, getEditText(R.id.password))) {
+                setOfflinePreferences();
                 setContext(context);
                 statusCode = HttpStatus.SC_CREATED;
                 goToHomeScreen();
@@ -171,6 +174,16 @@ public class LoginActivity extends RapidFtrActivity {
                 statusCode = HttpStatus.SC_UNAUTHORIZED;
             }
             makeToast(getToastMessage(statusCode));
+        }
+
+        private void setOfflinePreferences() {
+            if (getContext().getPreference(FORM_SECTION) == null) {
+                try {
+                    getContext().setPreference(FORM_SECTION, getFormSectionsFromRawResource());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
         private void setContext(RapidFtrApplication context) {
@@ -200,10 +213,10 @@ public class LoginActivity extends RapidFtrActivity {
                 getContext().setPreference(USER_NAME, getEditText(R.id.username));
                 String userJson = getContext().getPreference(userName);
                 User user = new User(userJson);
-                if(!user.isAuthenticated()){
+                if (!user.isAuthenticated()) {
                     EncryptionUtil.decrypt(password, new User(userJson).getEncryptedPassword());
                     getContext().setDbKey(user.getDbKey());
-                }else{
+                } else {
                     getContext().setDbKey(decryptDbKey(user.getDbKey(), password));
                 }
             } catch (Exception e) {
@@ -246,8 +259,13 @@ public class LoginActivity extends RapidFtrActivity {
         }
 
         public boolean isUserSignedUpOnMobile(String userName) {
-            return getContext().getPreference(userName)!=null;
+            return getContext().getPreference(userName) != null;
         }
+    }
+
+    private String getFormSectionsFromRawResource() throws IOException {
+        @Cleanup InputStream in = RapidFtrApplication.getApplicationInstance().getResources().openRawResource(R.raw.form_sections);
+        return CharStreams.toString(new InputStreamReader(in));
     }
 
 

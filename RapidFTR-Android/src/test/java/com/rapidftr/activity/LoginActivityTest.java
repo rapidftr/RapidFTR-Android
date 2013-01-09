@@ -269,6 +269,20 @@ public class LoginActivityTest {
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.unauthorized)));
     }
 
+    @Test
+    public void shouldLoadFormSectionsFromLocalResourcesWhenFormSectionsAreNotInMemory() throws Exception {
+        ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        userName.setText("user1"); password.setText("password");
+        User user1 = new User(false, "organisation", "user1", "password");
+        shadowOf(connectivityManager.getActiveNetworkInfo()).setConnectionStatus(false);
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        sharedPreferences.edit().putString("user1", user1.toString()).commit();
+        assertNull(sharedPreferences.getString(FORM_SECTION.getKey() , null));
+        loginButton.performClick();
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
+        assertNotNull(sharedPreferences.getString(FORM_SECTION.getKey() , null));
+    }
+
     private LoginActivity.LoginAsyncTask offlineLogin(boolean loginStatus) {
         loginActivity = spy(loginActivity);
         RapidFtrApplication mockContext = mock(RapidFtrApplication.class);
