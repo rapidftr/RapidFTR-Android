@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,7 +68,13 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     protected void makeToast(int resId) {
-        Toast.makeText(getContext(), getText(resId), Toast.LENGTH_LONG).show();
+        makeToast(getText(resId).toString());
+    }
+
+    protected void makeToast(String text){
+        Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.show();
     }
 
     protected Injector getInjector() {
