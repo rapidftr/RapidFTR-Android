@@ -124,7 +124,7 @@ public class SignupActivityTest {
         doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
 
         signupActivity.createUser(null);
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo("You are registered. Login with the username username"));
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(signupActivity.getString(R.string.registered)+"username"));
     }
 
     @Test

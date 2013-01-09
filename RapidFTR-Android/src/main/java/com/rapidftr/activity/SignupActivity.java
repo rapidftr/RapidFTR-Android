@@ -34,7 +34,7 @@ public class SignupActivity extends RapidFtrActivity {
             if (!isUsernameTakenInMobile(getEditText(R.id.username))) {
                 saveUserInSharedPreference();
                 startActivity(new Intent(this, LoginActivity.class));
-                Toast.makeText(this, getString(R.string.registered) + " " + getEditText(R.id.username), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.registered) + getEditText(R.id.username), Toast.LENGTH_LONG).show();
             } else {
                 EditText editText = (EditText) findViewById(R.id.username);
                 editText.setError(getString(R.string.username_taken));

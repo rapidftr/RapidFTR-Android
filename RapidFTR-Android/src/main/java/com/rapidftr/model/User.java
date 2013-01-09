@@ -26,7 +26,7 @@ public class User extends JSONObject {
     private static String getUnAuthKey() throws JSONException {
         for(Object value : RapidFtrApplication.getApplicationInstance().getSharedPreferences().getAll().values().toArray()) {
 
-            if(value.toString().contains("db_key") && value.toString().contains("authenticated") && value.toString().contains("organisation")){
+            if(value !=null && value.toString().contains("db_key") && value.toString().contains("authenticated") && value.toString().contains("organisation")){
                 JSONObject jsonObject = new JSONObject(value.toString());
                 if(!jsonObject.optBoolean("authenticated")) {
                     return jsonObject.optString("db_key");
