@@ -1,14 +1,16 @@
 package com.rapidftr.repository;
 
+import android.content.SharedPreferences;
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -24,7 +26,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.*;
@@ -114,11 +115,15 @@ public class ChildRepositoryTest {
     }
 
     @Test
-    public void shouldReturnMatchedChildRecords() throws JSONException, IOException {
+    public void shouldReturnMatchedChildRecords() throws Exception{
         Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ] }");
         Child child4 = new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
+        User user1 = new User(true, "organisation", "user1", "password");
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        sharedPreferences.edit().putString("user1", user1.toString()).commit();
+
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
         repository.createOrUpdate(child3);
@@ -130,7 +135,25 @@ public class ChildRepositoryTest {
         assertThat(child4, equalTo(children.get(1)));
     }
 
+    @Test
+    public void shouldNotReturnChildrenCreatedByOtherUnAuthorizedUsers() throws Exception {
+        User user1 = new User(false, "organisation", "user1", "password");
+        User user2 = new User(false, "organisation", "user2", "password");
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        sharedPreferences.edit().putString("user1", user1.toString()).commit();
+        sharedPreferences.edit().putString("user2", user2.toString()).commit();
+        sharedPreferences.edit().putString(USER_NAME,"user1");
 
+        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+
+        repository.createOrUpdate(child1);
+        repository.createOrUpdate(child2);
+
+        List<Child> children = repository.getMatchingChildren("hiLd");
+        assertEquals(1, children.size());
+    }
+    
     @Test
     public void shouldCorrectlyGetSyncedStateWhenGettingAllRecords() throws JSONException, IOException {
         Child syncedChild = new Child("syncedID", "user1", null, true);
@@ -141,18 +164,6 @@ public class ChildRepositoryTest {
         List<Child> all = repository.getChildrenByOwner();
         assertThat(all.get(0).isSynced(), is(true));
         assertThat(all.get(1).isSynced(), is(false));
-    }
-
-    @Test
-    @Ignore // This expectation is no longer true, All users will be able to see all records
-    public void shouldOnlyReturnsOwnRecords() throws JSONException {
-        repository.createOrUpdate(new Child("id1", "user1", null));
-
-        ChildRepository anotherUsersRepository = new ChildRepository("user2", session);
-        anotherUsersRepository.createOrUpdate(new Child("id2", "user2", null));
-
-        assertThat(repository.exists("id2"), is(false));
-        assertThat(anotherUsersRepository.exists("id1"), is(false));
     }
 
     @Test
