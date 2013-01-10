@@ -40,6 +40,7 @@
 
     <style name="Theme.RapidFTRtheme" parent="AppTheme">
         <item name="android:editTextStyle">@style/TextView</item>
+        <item name="android:textColorPrimaryInverse">@android:color/primary_text_light</item>
     </style>
 
     <style name="TextView" parent="@android:style/Widget.EditText">
