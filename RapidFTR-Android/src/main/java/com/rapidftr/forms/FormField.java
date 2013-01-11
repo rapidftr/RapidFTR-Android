@@ -4,8 +4,9 @@ import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
@@ -26,13 +27,26 @@ public class FormField {
     private String type;
 
     @JsonProperty("display_name")
-    private String displayName;
+    private HashMap<String, String> displayName;
+
+    public String getDisplayName(){
+        return displayName != null ? displayName.get(Locale.getDefault().getLanguage()) : null;
+    }
 
     @JsonProperty("help_text")
-    private String helpText;
+    private HashMap<String, String> helpText;
+    public String getHelpText(){
+        return helpText != null ? helpText.get(Locale.getDefault().getLanguage()) : null;
+    }
+
 
     @JsonProperty("option_strings")
-    private List<String> optionStrings = new ArrayList<String>();
+    private HashMap<String, List<String>> optionStrings = new HashMap<String, List<String>>();
+
+    public List<String> getOptionStrings(){
+        return optionStrings != null ? optionStrings.get(Locale.getDefault().getLanguage()) : null;
+    }
+
 
     private Object value;
 

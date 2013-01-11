@@ -15,6 +15,8 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -36,15 +38,15 @@ public class FormSectionViewTest {
         child = new Child();
 
         section = new FormSection();
-        section.setName("Test Section");
-        section.setHelpText("Help Section");
+        section.setName(new HashMap<String, String>(){{put("en", "Test Section");}});
+        section.setHelpText(new HashMap<String, String>(){{put("en", "Help Section");}});
 
         view.initialize(section, child);
         field = new FormField();
         field.setId("test_field");
-        field.setDisplayName("Test Field");
-        field.setHelpText("Help Field");
-        field.setOptionStrings(new ArrayList<String> ());
+        field.setDisplayName(new HashMap<String, String>(){{put("en", "Test Field");}});
+        field.setHelpText(new HashMap<String, String>(){{put("en", "Help Field");}});
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en",  new ArrayList<String>());}});
     }
 
     @Test

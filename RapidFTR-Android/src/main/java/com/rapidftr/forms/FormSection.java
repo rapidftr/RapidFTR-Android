@@ -5,7 +5,9 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
@@ -14,15 +16,24 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor(suppressConstructorProperties = true)
 public class FormSection implements Comparable<FormSection> {
+    @JsonProperty("name")
+    private HashMap<String, String> name;
 
-    private String name;
+    public String getName(){
+        return name != null ? name.get(Locale.getDefault().getLanguage()) : null;
+    }
 
     private int order;
 
     private boolean enabled;
 
     @JsonProperty("help_text")
-    private String helpText;
+    private HashMap<String, String> helpText;
+
+    public String getHelpText(){
+        return helpText != null ? helpText.get(Locale.getDefault().getLanguage()) : null;
+    }
+
 
     private List<FormField> fields = new ArrayList<FormField>();
 
@@ -33,7 +44,7 @@ public class FormSection implements Comparable<FormSection> {
     }
 
     public String toString() {
-        return name;
+        return name.get(Locale.getDefault().getLanguage());
     }
 
 }

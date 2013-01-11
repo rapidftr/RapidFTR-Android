@@ -20,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.security.Security;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
@@ -28,15 +29,15 @@ import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 public class CustomTestRunner extends RobolectricTestRunner {
 
     public static List<FormSection> formSectionSeed = Arrays.asList(
-        new FormSection("Section 1", 1, true, "Section Help 1", Arrays.asList(
-            new FormField("f1", null, true, "text_field", "Field 1", "Help 1", null, null),
-            new FormField("f2", null, true, "textarea", "Field 2", "Help 2", null, null),
-            new FormField("f3", null, true, "numeric_field", "Field 3", "Help 3", null, null)
+        new FormSection(new HashMap<String, String>(){{put("en", "Section 1");}}, 1, true, new HashMap<String, String>(){{put("en", "Section Help 1");}}, Arrays.asList(
+            new FormField("f1", null, true, "text_field", new HashMap<String, String>(){{put("en", "Field 1");}}, new HashMap<String, String>(){{put("en", "Help 1");}}, null, null),
+            new FormField("f2", null, true, "textarea", new HashMap<String, String>(){{put("en", "Field 2");}}, new HashMap<String, String>(){{put("en", "Help 2");}}, null, null),
+            new FormField("f3", null, true, "numeric_field", new HashMap<String, String>(){{put("en", "Field 3");}}, new HashMap<String, String>(){{put("en", "Help 3");}}, null, null)
         )),
-        new FormSection("Section 2", 2, true, "Section Help 2", Arrays.asList(
-            new FormField("f4", null, true, "radio_button", "Field 4", "Help 4", Arrays.asList("radio1", "radio2", "radio3"), null),
-            new FormField("f5", null, true, "check_boxes", "Field 5", "Help 5", Arrays.asList("check1", "check2", "check3"), null),
-            new FormField("f6", null, true, "date_field", "Field 6", "Help 6", null, null)
+            new FormSection(new HashMap<String, String>(){{put("en", "Section 2");}}, 1, true, new HashMap<String, String>(){{put("en", "Section Help 2");}}, Arrays.asList(
+            new FormField("f4", null, true, "radio_button", new HashMap<String, String>(){{put("en", "Field 4");}}, new HashMap<String, String>(){{put("en", "Help 4");}}, new HashMap<String, List<String>>(){{put("en", Arrays.asList("radio1", "radio2", "radio3"));}}, null),
+            new FormField("f5", null, true, "check_boxes", new HashMap<String, String>(){{put("en", "Field 5");}}, new HashMap<String, String>(){{put("en", "Help 5");}}, new HashMap<String, List<String>>(){{put("en", Arrays.asList("check1", "check2", "check3"));}}, null),
+            new FormField("f6", null, true, "date_field", new HashMap<String, String>(){{put("en", "Field 6");}}, new HashMap<String, String>(){{put("en", "Help 6");}}, null, null)
         ))
     );
 
