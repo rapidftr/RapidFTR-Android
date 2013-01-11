@@ -20,7 +20,7 @@
     <string name="password">Password</string>
     <string name="url">URL</string>
 
-    <string name="rapidftr_url">https://151.236.218.124:5001</string>
+    <string name="rapidftr_url">https://test.rapidftr.com</string>
     <string name="rapidftr_username">rapidftr</string>
 
     <string name="username_required">Username is required</string>
