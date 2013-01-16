@@ -38,9 +38,11 @@ public class LogOutService {
     }
 
     private void cancelSync(RapidFtrApplication context) {
-        context.getSyncTask().cancel(true);
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(SyncAllDataAsyncTask.NOTIFICATION_ID);
+	    if (context.getSyncTask() != null) {
+	        context.getSyncTask().cancel(true);
+	        NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+	        notificationManager.cancel(SyncAllDataAsyncTask.NOTIFICATION_ID);
+	    }
     }
 
     private void createAlertDialog(final RapidFtrActivity currentActivity) {
