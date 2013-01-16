@@ -40,7 +40,7 @@ public class FormField {
     }
 
 
-    @JsonProperty("option_strings")
+    @JsonProperty("option_strings_text")
     private HashMap<String, List<String>> optionStrings = new HashMap<String, List<String>>();
 
     public List<String> getOptionStrings(){
