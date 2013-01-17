@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -40,6 +41,16 @@ public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
     public void testHaveHelpText() {
         view.initialize(field, child);
         assertThat(view.getHelpText().getText().toString(), equalTo(field.getHelpText()));
+    }
+
+    @Test
+    public void testShouldNotReturnNULLIfNoTranslationsAvailable() {
+        Locale.setDefault(new Locale("fr"));
+
+        view.initialize(field, child);
+        assertThat(view.getLabel().getText().toString(), equalTo(""));
+        Locale.setDefault(new Locale("en"));
+
     }
 
 }
