@@ -2,19 +2,10 @@ package com.rapidftr.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.pages.ChildPage;
 import com.rapidftr.activity.pages.LoginPage;
 import com.rapidftr.activity.pages.SearchChildrenPage;
 import com.rapidftr.activity.pages.ViewAllChildrenPage;
-import com.rapidftr.model.Child;
-import com.rapidftr.repository.ChildRepository;
-import org.apache.http.params.HttpConnectionParams;
-import org.json.JSONException;
-
-import java.io.IOException;
-
-import static com.rapidftr.utils.http.FluentRequest.http;
 
 public abstract class BaseActivityIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
@@ -84,6 +75,18 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
         return sb.toString();
     }
 
+   public void waitUntilTextDisappears(String text) throws Exception{
+       assertTrue(solo.searchText(text,true));
+      for(int i=0;i<10;i++){
+          if(solo.searchText(text,true)){
+              Thread.sleep(2);
+          }else{
+              break;
+          }
 
+      }
+
+
+   }
 
 }

@@ -18,7 +18,7 @@ public class ChildPage {
 
     public Solo solo;
     int formPosition ;
-    List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012");
+    List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 1", "Select 1", "Radio 3", "1", "20", "10", "2012");
     private int nameHashCode = "name".hashCode();
 
     public ChildPage(Solo solo) {
@@ -56,6 +56,7 @@ public class ChildPage {
         }
         solo.clickOnText(adapter.getItem(formPosition).toString());
         solo.waitForText(formSectionName);
+        solo.sleep(3);
     }
 
     public void verifyFields(List fieldNames, boolean visible) {
@@ -79,14 +80,15 @@ public class ChildPage {
     public void enterAutomationFormDetails(List automationFormData) {
         solo.enterText(0, automationFormData.get(0).toString());
         solo.enterText(1, automationFormData.get(1).toString());
+        solo.scrollDown();
         int checkBoxCount=solo.getCurrentCheckBoxes().size();
         for(int i=0;i<checkBoxCount;i++){
             if (solo.getCurrentCheckBoxes().get(i).getText().toString().equals(automationFormData.get(2).toString())) {
-                solo.waitForText(solo.getCurrentCheckBoxes().get(i).getText().toString(), 1, 20000, true);
+                solo.waitForText(solo.getCurrentCheckBoxes().get(i).getText().toString(), 1,2000, true);
                 solo.clickOnCheckBox(i);
             }
         }
-        solo.clickOnText(automationFormData.get(4).toString(), 1, true);
+//        solo.clickOnText(automationFormData.get(4).toString(),1,true);
     }
 
     public void verifyRegisterChildDetail(List automationFormData,String formName) {

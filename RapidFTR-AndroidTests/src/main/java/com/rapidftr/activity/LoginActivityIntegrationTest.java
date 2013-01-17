@@ -2,6 +2,7 @@ package com.rapidftr.activity;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
+import android.test.suitebuilder.annotation.Smoke;
 import com.rapidftr.R;
 import com.rapidftr.activity.pages.LoginPage;
 
@@ -34,6 +35,7 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
          assertTrue(loginPage.getUrl().equals(LOGIN_URL));
     }
 
+    @Smoke
     public void testCannotNavigateBackToLoginPageOnceLoggedIn(){
         loginPage.login();
         solo.waitForText("Login Successful");
@@ -42,7 +44,8 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         loginPage.logout();
     }
 
-    public void testUserIsAlertedWhenAttemptingToLogoutWhileSyncInProgress() throws InterruptedException {
+
+    public void estUserIsAlertedWhenAttemptingToLogoutWhileSyncInProgress() throws InterruptedException {
         loginPage.login();
         solo.waitForText("Login Successful");
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
@@ -55,12 +58,15 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         solo.assertCurrentActivity("should log out and go to login page", LoginActivity.class);
     }
 
+
+    @Smoke
     public void estUserAbleToLoginOfflineAfterOneSuccessfulLogin(){
         loginPage.login();
         solo.waitForText("Login Successful");
         boolean wifi=false;
         turnWifi(wifi);
         System.out.println("hello");
+        loginPage.logout();
     }
 
 
