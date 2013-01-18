@@ -223,7 +223,7 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldSetDbKeyAndUserNameForUnauthenticatedUsers() throws Exception {
+    public void shouldSetDbKeyUserOrgAndUserNameForUnauthenticatedUsers() throws Exception {
 
         User user = new User(false, "org", "fullname", "password");
         userName.setText("username");
@@ -236,6 +236,21 @@ public class LoginActivityTest {
 
         verify(application).setDbKey(User.UNAUTHENTICATED_DB_KEY);
         verify(application).setPreference(USER_NAME, "username");
+        verify(application).setPreference(USER_ORG, "org");
+    }
+
+    @Test
+    public void shouldCheckIfUserCredentialsAreStoredInSharedPreferenceInOfflineLogin() throws Exception {
+        ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        userName.setText("user1"); password.setText("password");
+        User user1 = new User(false, "organisation", "user1", "password");
+        shadowOf(connectivityManager.getActiveNetworkInfo()).setConnectionStatus(false);
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        sharedPreferences.edit().putString("user1", user1.toString()).commit();
+        loginButton.performClick();
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
+        assertEquals(sharedPreferences.getString(USER_NAME.getKey(),null), "user1");
+        assertEquals(sharedPreferences.getString(USER_ORG.getKey(),null), "organisation");
     }
 
     @Test

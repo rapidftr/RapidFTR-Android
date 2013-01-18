@@ -216,6 +216,7 @@ public class LoginActivity extends RapidFtrActivity {
                 if (!user.isAuthenticated()) {
                     EncryptionUtil.decrypt(password, new User(userJson).getEncryptedPassword());
                     getContext().setDbKey(user.getDbKey());
+                    getContext().setPreference(USER_ORG,user.getOrganisation());
                 } else {
                     getContext().setDbKey(decryptDbKey(user.getDbKey(), password));
                 }
