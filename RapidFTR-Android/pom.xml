@@ -194,6 +194,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>move_artifacts</id>
             <activation>

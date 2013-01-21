@@ -84,28 +84,8 @@
     <profiles>
         <profile>
             <id>with-emulator</id>
-            <!-- Start emulator in no-window mode, Stop emulator only if running in CI, in Dev box let the emulator keep running -->
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                        <artifactId>android-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>stopEmulator</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>emulator-stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <emulator>
-                                <options>-no-window -no-skin</options>
-                                <executable>emulator-arm</executable>
-                            </emulator>
-                        </configuration>
-                    </plugin>
                     <plugin>
                         <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                         <artifactId>android-maven-plugin</artifactId>
@@ -117,11 +97,19 @@
                                     <goal>emulator-start</goal>
                                 </goals>
                             </execution>
+                            <execution>
+                                <id>stopEmulator</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>emulator-stop</goal>
+                                </goals>
+                            </execution>
                         </executions>
                         <configuration>
                             <emulator>
                                 <avd>android2.2</avd>
-                                <wait>60000</wait>
+                                <wait>90000</wait>
+                                <options>-no-window -no-skin</options>
                             </emulator>
                         </configuration>
                     </plugin>
