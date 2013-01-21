@@ -5,7 +5,7 @@ import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.task.SyncAllDataAsyncTask;
+import com.rapidftr.task.SynchronisationAsyncTask;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -58,7 +58,7 @@ public class RapidFtrActivityTest {
     @Test
     public void shouldCancelTheAsyncTaskIfCancelSynMenuIsClicked(){
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
-        SyncAllDataAsyncTask mockAsyncTask = mock(SyncAllDataAsyncTask.class);
+        SynchronisationAsyncTask mockAsyncTask = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
 
         RapidFtrActivity mainActivity = new MainActivity();
@@ -85,7 +85,7 @@ public class RapidFtrActivityTest {
     @Test
     public void shouldSetTheMenuBasedOnAsynTask(){
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
-        SyncAllDataAsyncTask mockAsyncTask = mock(SyncAllDataAsyncTask.class);
+        SynchronisationAsyncTask mockAsyncTask = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
 
         Menu mockMenu = mock(Menu.class);
@@ -109,7 +109,7 @@ public class RapidFtrActivityTest {
     @Test
     public void shouldPromptUserWhenAttemptingToLogOutWhileSyncIsActive(){
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
-        SyncAllDataAsyncTask mockAsyncTask = mock(SyncAllDataAsyncTask.class);
+        SynchronisationAsyncTask mockAsyncTask = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
 
         RapidFtrActivity mainActivity = new MainActivity();
@@ -124,7 +124,7 @@ public class RapidFtrActivityTest {
     @Test
     public void shouldSetCurrentContextWhileCreatingMenu(){
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
-        SyncAllDataAsyncTask mockSyncAll = mock(SyncAllDataAsyncTask.class);
+        SynchronisationAsyncTask mockSyncAll = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockSyncAll);
 
         RapidFtrActivity mainActivity = new MainActivity();

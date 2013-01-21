@@ -111,7 +111,7 @@ public class ChildRepository implements Closeable {
     }
 
     private String convertToString(JSONArray existingHistories, List<Child.History> histories) throws JSONException {
-        StringBuffer json = new StringBuffer("[");
+        StringBuilder json = new StringBuilder("[");
         for (int i = 0; existingHistories != null && (i < existingHistories.length()); i++) {
             json.append(existingHistories.get(i)).append(",");
         }
@@ -135,8 +135,14 @@ public class ChildRepository implements Closeable {
         return toChildren(cursor);
     }
 
+    public List<Child> currentUsersUnsyncedRecords() throws JSONException {
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE synced = ? AND child_owner = ?", new String[]{falseValue.getColumnValue(), userName});
+        return toChildren(cursor);
+    }
+
+
     public HashMap<String, String> getAllIdsAndRevs() throws JSONException {
-        HashMap<String, String> idRevs = new HashMap();
+        HashMap<String, String> idRevs = new HashMap<String, String>();
         @Cleanup Cursor cursor = session.rawQuery("SELECT "
                 + Database.ChildTableColumn.internal_id.getColumnName() + ", "
                 + Database.ChildTableColumn.internal_rev.getColumnName()

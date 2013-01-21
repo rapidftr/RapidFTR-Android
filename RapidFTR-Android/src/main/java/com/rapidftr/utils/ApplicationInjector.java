@@ -13,6 +13,8 @@ import com.rapidftr.service.ChildService;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SyncAllDataAsyncTask;
+import com.rapidftr.task.SyncUnverifiedUsersDataAsyncTask;
+import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.utils.http.FluentRequest;
 import org.json.JSONException;
 
@@ -27,6 +29,7 @@ public class ApplicationInjector extends AbstractModule {
         bind(ChildRepository.class);
         bind(FormService.class);
         bind(SyncAllDataAsyncTask.class);
+        bind(SyncUnverifiedUsersDataAsyncTask.class);
         bind(FluentRequest.class);
         bind(ChildService.class);
         bind(LogOutService.class);

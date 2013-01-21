@@ -53,10 +53,10 @@ public class SyncAllDataAsyncTaskTest {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-        SyncAllDataAsyncTask syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
-        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        SyncAllDataAsyncTask syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
+        syncTask.setContext(rapidFtrActivity);
 
-        syncAllDataAsyncTask.execute();
+        syncTask.execute();
         verify(formService).getPublishedFormSections();
         verify(childService).sync(child1);
         verify(childService).sync(child2);
@@ -64,13 +64,13 @@ public class SyncAllDataAsyncTaskTest {
 
     @Test
     public void shouldNotSyncFormsIfTaskIsCancelled() throws Exception {
-        SyncAllDataAsyncTask syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
-        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        SyncAllDataAsyncTask syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
+        syncTask.setContext(rapidFtrActivity);
 
-        syncAllDataAsyncTask = spy(syncAllDataAsyncTask);
-        doReturn(true).when(syncAllDataAsyncTask).isCancelled();
+        syncTask = spy(syncTask);
+        doReturn(true).when(syncTask).isCancelled();
 
-        syncAllDataAsyncTask.doInBackground();
+        syncTask.doInBackground();
 
         verify(formService, never()).getPublishedFormSections();
     }
@@ -80,32 +80,32 @@ public class SyncAllDataAsyncTaskTest {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-        SyncAllDataAsyncTask syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
-        syncAllDataAsyncTask.setContext(rapidFtrActivity);
-        syncAllDataAsyncTask = spy(syncAllDataAsyncTask);
-        doReturn(true).when(syncAllDataAsyncTask).isCancelled();
+        SyncAllDataAsyncTask syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
+        syncTask.setContext(rapidFtrActivity);
+        syncTask = spy(syncTask);
+        doReturn(true).when(syncTask).isCancelled();
 
-        syncAllDataAsyncTask.onPreExecute();
-        syncAllDataAsyncTask.doInBackground();
+        syncTask.onPreExecute();
+        syncTask.doInBackground();
         verify(childService, never()).sync(child1);
         verify(childService, never()).sync(child2);
     }
 
     @Test
     public void shouldNotGetIncomingChildrenFromServerIfCancelled() throws Exception {
-        SyncAllDataAsyncTask syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
-        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        SyncAllDataAsyncTask syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
+        syncTask.setContext(rapidFtrActivity);
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
         HashMap<String, String> serverIDRevs = createServerIdRevMap();
 
         given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
 
-        syncAllDataAsyncTask = spy(syncAllDataAsyncTask);
-        doReturn(true).when(syncAllDataAsyncTask).isCancelled();
+        syncTask = spy(syncTask);
+        doReturn(true).when(syncTask).isCancelled();
 
-        syncAllDataAsyncTask.onPreExecute();
-        syncAllDataAsyncTask.doInBackground();
+        syncTask.onPreExecute();
+        syncTask.doInBackground();
 
         verify(childService).getChild(any(String.class));
         verify(childRepository, never()).createOrUpdate((Child) any());
@@ -130,9 +130,9 @@ public class SyncAllDataAsyncTaskTest {
         given(childRepository.exists("1234")).willReturn(true);
         given(childRepository.exists("5678")).willReturn(false);
 
-        SyncAllDataAsyncTask syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
-        syncAllDataAsyncTask.setContext(rapidFtrActivity);
-        syncAllDataAsyncTask.execute();
+        SyncAllDataAsyncTask syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
+        syncTask.setContext(rapidFtrActivity);
+        syncTask.execute();
 
         verify(childService).getChild("qwerty0987");
         verify(childRepository).update(child1);
@@ -141,38 +141,38 @@ public class SyncAllDataAsyncTaskTest {
 
     @Test
     public void shouldToggleMenuOnPreExecute(){
-        SyncAllDataAsyncTask syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
-        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        SyncAllDataAsyncTask syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
+        syncTask.setContext(rapidFtrActivity);
 
-        syncAllDataAsyncTask.onPreExecute();
+        syncTask.onPreExecute();
         verify(syncAll).setVisible(false);
         verify(cancelSyncAll).setVisible(true);
     }
 
     @Test
     public void shouldToggleMenuOnCancelAndOnPostExecute(){
-        SyncAllDataAsyncTask syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
-        syncAllDataAsyncTask.setContext(rapidFtrActivity);
-        syncAllDataAsyncTask.onPreExecute();
+        SyncAllDataAsyncTask syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
+        syncTask.setContext(rapidFtrActivity);
+        syncTask.onPreExecute();
 
-        syncAllDataAsyncTask.onCancelled();
+        syncTask.onCancelled();
         verify(syncAll).setVisible(true);
         verify(cancelSyncAll).setVisible(false);
 
-        syncAllDataAsyncTask.onPreExecute();
+        syncTask.onPreExecute();
         verify(syncAll).setVisible(true);
         verify(cancelSyncAll).setVisible(false);
     }
 
     @Test
     public void shouldNotCallSetProgressAndNotifyIfCancelled(){
-        SyncAllDataAsyncTask syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
-        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        SyncAllDataAsyncTask syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
+        syncTask.setContext(rapidFtrActivity);
 
-        syncAllDataAsyncTask = spy(syncAllDataAsyncTask);
-        doReturn(true).when(syncAllDataAsyncTask).isCancelled();
+        syncTask = spy(syncTask);
+        doReturn(true).when(syncTask).isCancelled();
 
-        syncAllDataAsyncTask.onPreExecute();
+        syncTask.onPreExecute();
         verify(notificationManager, never()).notify(anyInt(), (Notification) anyObject());
     }
 
@@ -189,9 +189,9 @@ public class SyncAllDataAsyncTaskTest {
         given(childService.getChild("qwerty0987")).willReturn(mock(Child.class));
         given(childService.getChild("abcd1234")).willReturn(mock(Child.class));
 
-        SyncAllDataAsyncTask syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
-        syncAllDataAsyncTask.setContext(rapidFtrActivity);
-        syncAllDataAsyncTask.execute();
+        SyncAllDataAsyncTask syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository);
+        syncTask.setContext(rapidFtrActivity);
+        syncTask.execute();
 
         verify(formService).getPublishedFormSections();
         verify(childService).sync(child1);

@@ -20,10 +20,16 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.User;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SyncAllDataAsyncTask;
+import com.rapidftr.task.SyncUnverifiedUsersDataAsyncTask;
+import com.rapidftr.task.SynchronisationAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
+import org.json.JSONException;
+
+import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 
 public abstract class RapidFtrActivity extends Activity {
     private
@@ -115,7 +121,7 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     private void setContextToSyncTask() {
-        SyncAllDataAsyncTask syncTask = (SyncAllDataAsyncTask) RapidFtrApplication.getApplicationInstance().getSyncTask();
+        SynchronisationAsyncTask syncTask = RapidFtrApplication.getApplicationInstance().getSyncTask();
         if (syncTask != null)
             syncTask.setContext(this);
     }
@@ -124,10 +130,16 @@ public abstract class RapidFtrActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.synchronize_all:
-                SyncAllDataAsyncTask task = inject(SyncAllDataAsyncTask.class);
-                task.setContext(this);
-                task.execute();
-                return true;
+                String userName = getContext().getPreference(USER_NAME);
+                try {
+                    User user = new User(getContext().getPreference(userName));
+                    SynchronisationAsyncTask task = user.isAuthenticated() ? inject(SyncAllDataAsyncTask.class) : inject(SyncUnverifiedUsersDataAsyncTask.class);
+                    task.setContext(this);
+                    task.execute();
+                    return true;
+                }catch (JSONException e) {
+                    return false;
+                }
             case R.id.cancel_synchronize_all:
                 AsyncTask taskToCancel = RapidFtrApplication.getApplicationInstance().getSyncTask();
                 if (taskToCancel != null)

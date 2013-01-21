@@ -204,6 +204,18 @@ public class ChildRepositoryTest {
         assertThat(children, hasItems(child1));
     }
 
+    @Test
+    public void shouldReturnAllUnSyncedRecordsForGivenUser() throws JSONException {
+        Child child1 = new Child("id1", "user1", null);
+        Child child2 = new Child("id2", "user2", null);
+        repository.createOrUpdate(child1);
+        repository.createOrUpdate(child2);
+
+        List<Child> children = repository.currentUsersUnsyncedRecords();
+        assertThat(children.size(), equalTo(1));
+        assertThat(children, hasItems(child1));
+    }
+
     @Test(expected = JSONException.class)
     public void shouldRaiseRuntimeExceptionIfTheRequiredChildPropertiesAreNotPopulated() throws RuntimeException, JSONException {
         Child child = new Child();
