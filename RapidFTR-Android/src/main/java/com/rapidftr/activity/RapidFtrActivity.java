@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -25,11 +26,9 @@ import com.rapidftr.task.SyncAllDataAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
 
-public abstract class RapidFtrActivity extends Activity {
-    private
-    @Getter
-    @Setter
-    Menu menu;
+public abstract class RapidFtrActivity extends FragmentActivity {
+
+    private @Getter @Setter Menu menu;
 
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
