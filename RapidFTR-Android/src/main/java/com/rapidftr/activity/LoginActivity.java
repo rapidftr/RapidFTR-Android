@@ -9,15 +9,19 @@ import android.widget.EditText;
 import com.google.common.io.CharStreams;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.User;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import com.rapidftr.utils.EncryptionUtil;
+import com.rapidftr.utils.NetworkStatus;
+import lombok.Cleanup;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import static com.rapidftr.RapidFtrApplication.Preference.*;
@@ -37,6 +41,7 @@ public class LoginActivity extends RapidFtrActivity {
         }
         setContentView(R.layout.activity_login);
         toggleBaseUrl();
+        startActivityOn(R.id.new_user_signup_link, SignupActivity.class);
         findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 toggleView(R.id.url, View.VISIBLE);
@@ -58,6 +63,10 @@ public class LoginActivity extends RapidFtrActivity {
                 }
             }
         });
+    }
+
+    public void signUp(View view) {
+        startActivity(new Intent(this, SignupActivity.class));
     }
 
     @Override
@@ -85,21 +94,9 @@ public class LoginActivity extends RapidFtrActivity {
 
     public boolean isValid() {
         return validateTextFieldNotEmpty(R.id.username, R.string.username_required)
-                & validateTextFieldNotEmpty(R.id.password, R.string.password_required)
-                & validateTextFieldNotEmpty(R.id.url, R.string.url_required);
+                & validateTextFieldNotEmpty(R.id.password, R.string.password_required);
     }
 
-    protected boolean validateTextFieldNotEmpty(int id, int messageId) {
-        EditText editText = (EditText) findViewById(id);
-        String value = getEditText(id);
-
-        if (value == null || "".equals(value)) {
-            editText.setError(getString(messageId));
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     protected void toggleView(int field, int visibility) {
         View view = findViewById(field);
@@ -116,11 +113,6 @@ public class LoginActivity extends RapidFtrActivity {
 
     protected void goToHomeScreen() {
         startActivity(new Intent(this, MainActivity.class));
-    }
-
-    public String getEditText(int resId) {
-        CharSequence value = ((EditText) findViewById(resId)).getText();
-        return value == null ? null : value.toString().trim();
     }
 
     protected void setEditText(int resId, String text) {
@@ -149,15 +141,21 @@ public class LoginActivity extends RapidFtrActivity {
         @Override
         protected HttpResponse doInBackground(String... params) {
             try {
-                return new LoginService().login(getApplicationContext(), params[0], params[1], params[2]);
+                return NetworkStatus.isOnline(getContext()) ? onlineLogin(params) : null;
             } catch (Exception error) {
                 logError(error.getMessage());
                 return null;
             }
         }
 
+        private HttpResponse onlineLogin(String[] params) throws IOException {
+            return new LoginService().login(getApplicationContext(), params[0], params[1], params[2]);
+        }
+
         @Override
         protected void onPostExecute(HttpResponse response) {
+            mProgressDialog.dismiss();
+            String userName = getEditText(R.id.username);
             int statusCode = response == null ? SC_NOT_FOUND : response.getStatusLine().getStatusCode();
             RapidFtrApplication context = getContext();
             if (statusCode == SC_CREATED) {
@@ -167,15 +165,25 @@ public class LoginActivity extends RapidFtrActivity {
                 setContext(context);
                 goToHomeScreen();
             }
-            if (response == null && processOfflineLogin(getEditText(R.id.username), getEditText(R.id.password))) {
+            if ((response == null || isUserSignedUpOnMobile(userName)) && processOfflineLogin(userName, getEditText(R.id.password))) {
+                setOfflinePreferences();
                 setContext(context);
                 statusCode = HttpStatus.SC_CREATED;
                 goToHomeScreen();
             } else if (response == null) {
                 statusCode = HttpStatus.SC_UNAUTHORIZED;
             }
-            mProgressDialog.dismiss();
             makeToast(getToastMessage(statusCode));
+        }
+
+        private void setOfflinePreferences() {
+            if (getContext().getPreference(FORM_SECTION) == null) {
+                try {
+                    getContext().setPreference(FORM_SECTION, getFormSectionsFromRawResource());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
         private void setContext(RapidFtrApplication context) {
@@ -191,9 +199,9 @@ public class LoginActivity extends RapidFtrActivity {
             try {
                 RapidFtrApplication context = getContext();
                 context.setPreference(USER_NAME, getEditText(R.id.username));
-                context.setPreference(SERVER_URL, getEditText(R.id.url));
                 context.setPreference(USER_ORG, getUserOrg(responseJSON));
-                context.setPreference(getEditText(R.id.username), EncryptionUtil.encrypt(getEditText(R.id.password), context.getDbKey()));
+                context.setPreference(SERVER_URL, getEditText(R.id.url));
+                context.setPreference(getEditText(R.id.username), (new User(true, EncryptionUtil.encrypt(getEditText(R.id.password), context.getDbKey()), getUserOrg(responseJSON))).toString());
                 context.setPreference(FORM_SECTION, new FormService(context).getPublishedFormSections());
             } catch (Exception e) {
                 logError(e.getMessage());
@@ -202,7 +210,16 @@ public class LoginActivity extends RapidFtrActivity {
 
         protected boolean processOfflineLogin(String userName, String password) {
             try {
-                getContext().setDbKey(decryptedDBKey(userName, password));
+                getContext().setPreference(USER_NAME, getEditText(R.id.username));
+                String userJson = getContext().getPreference(userName);
+                User user = new User(userJson);
+                if (!user.isAuthenticated()) {
+                    EncryptionUtil.decrypt(password, new User(userJson).getEncryptedPassword());
+                    getContext().setDbKey(user.getDbKey());
+                    getContext().setPreference(USER_ORG,user.getOrganisation());
+                } else {
+                    getContext().setDbKey(decryptDbKey(user.getDbKey(), password));
+                }
             } catch (Exception e) {
                 logError(e.getMessage());
                 return false;
@@ -210,8 +227,8 @@ public class LoginActivity extends RapidFtrActivity {
             return true;
         }
 
-        protected String decryptedDBKey(String userName, String password) throws Exception {
-            return EncryptionUtil.decrypt(password, getContext().getPreference(userName));
+        protected String decryptDbKey(String encryptedDbKey, String password) throws Exception {
+            return EncryptionUtil.decrypt(password, encryptedDbKey);
         }
 
         private String getUserOrg(JSONObject responseJSON) {
@@ -242,6 +259,14 @@ public class LoginActivity extends RapidFtrActivity {
             return jsonObject;
         }
 
+        public boolean isUserSignedUpOnMobile(String userName) {
+            return getContext().getPreference(userName) != null;
+        }
+    }
+
+    private String getFormSectionsFromRawResource() throws IOException {
+        @Cleanup InputStream in = RapidFtrApplication.getApplicationInstance().getResources().openRawResource(R.raw.form_sections);
+        return CharStreams.toString(new InputStreamReader(in));
     }
 
 

@@ -14,14 +14,13 @@
                   android:id="@+id/search_bar"
                   android:layout_width="fill_parent"
                   android:orientation="horizontal"
-                  android:layout_below="@id/nav_bar"
                   android:weightSum="5"
                   android:layout_height="wrap_content"
                    android:padding="5dp"
                 android:background="#999999">
         <EditText
                 android:id="@+id/search_text"
-                android:hint="Search Child by name/id"
+                android:hint="@string/search_child"
                 android:layout_weight="4"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
@@ -29,7 +28,7 @@
                 style="@style/TextView">
         </EditText>
         <Button android:id="@+id/search_btn"
-                android:text="Go"
+                android:text="@string/go"
                 android:layout_weight="1"
                 android:layout_width="0dip"
                 android:layout_height="wrap_content"
@@ -39,7 +38,6 @@
     </LinearLayout>
 
     <ListView
-            android:layout_below="@id/search_text"
             android:id="@+id/child_list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
@@ -51,10 +49,9 @@
                   android:layout_height="0dip"
                   style="@style/no_child_text"
                   android:gravity="center_horizontal"
-                  android:visibility="gone"
-                  android:layout_below="@id/search_bar">
+                  android:visibility="gone">
 
-        <TextView android:text="No Child Found"
+        <TextView android:text="@string/child_not_found"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content">
         </TextView>

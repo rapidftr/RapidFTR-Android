@@ -9,9 +9,11 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -66,7 +68,13 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     protected void makeToast(int resId) {
-        Toast.makeText(getContext(), getText(resId), Toast.LENGTH_LONG).show();
+        makeToast(getText(resId).toString());
+    }
+
+    protected void makeToast(String text){
+        Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.show();
     }
 
     protected Injector getInjector() {
@@ -83,8 +91,8 @@ public abstract class RapidFtrActivity extends Activity {
 
     protected void saveOrDiscardOrCancelChild(DialogInterface.OnClickListener listener) {
         AlertDialog.Builder saveOrDiscard = new AlertDialog.Builder(this);
-        saveOrDiscard.setTitle("Choose an action").setCancelable(false);
-        saveOrDiscard.setItems(new String[]{"Save", "Discard", "Cancel"}, listener);
+        saveOrDiscard.setTitle(getString(R.string.choose_action)).setCancelable(false);
+        saveOrDiscard.setItems(new String[]{getString(R.string.save), getString(R.string.discard), getString(R.string.cancel)}, listener);
         saveOrDiscard.create().show();
     }
 
@@ -132,32 +140,12 @@ public abstract class RapidFtrActivity extends Activity {
                     inject(LogOutService.class).attemptLogOut(this);
                 }
                 return true;
+            case R.id.info:
+                startActivity(new Intent(this, InfoActivity.class));
+                return true;
+
         }
         return false;
-    }
-
-    private void saveAlertListenerForLogout() {
-        final BaseChildActivity activity = (BaseChildActivity) this;
-        DialogInterface.OnClickListener listener = createAlertDialogForLogout(activity);
-        saveOrDiscardOrCancelChild(listener);
-
-    }
-
-    private DialogInterface.OnClickListener createAlertDialogForLogout(final BaseChildActivity activity) {
-        return new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int selectedItem) {
-                switch (selectedItem) {
-                    case 0:
-                        activity.saveChild();
-                        break;
-                    case 1:
-                        inject(LogOutService.class).attemptLogOut(activity);
-                    case 2:
-                        break;
-                }
-            }
-        };
     }
 
     @Override
@@ -209,6 +197,23 @@ public abstract class RapidFtrActivity extends Activity {
         menu.getItem(1).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() != null);
     }
 
+    protected boolean validateTextFieldNotEmpty(int id, int messageId) {
+        EditText editText = (EditText) findViewById(id);
+        String value = getEditText(id);
+
+        if (value == null || "".equals(value)) {
+            editText.setError(getString(messageId));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    protected String getEditText(int resId) {
+        CharSequence value = ((EditText) findViewById(resId)).getText();
+        return value == null ? null : value.toString().trim();
+    }
+
     private void saveAlertListener(final Class cls) {
         if ((this instanceof RegisterChildActivity && ((RegisterChildActivity) this).child.isValid()) || this instanceof EditChildActivity) {
             final BaseChildActivity activity = (BaseChildActivity) this;
@@ -235,4 +240,34 @@ public abstract class RapidFtrActivity extends Activity {
             }
         };
     }
+
+    private void saveAlertListenerForLogout() {
+        final BaseChildActivity activity = (BaseChildActivity) this;
+        DialogInterface.OnClickListener listener = createAlertDialogForLogout(activity);
+        if (activity.child.isValid()) {
+            saveOrDiscardOrCancelChild(listener);
+        }
+        else{
+            inject(LogOutService.class).attemptLogOut(activity);
+        }
+    }
+
+    private DialogInterface.OnClickListener createAlertDialogForLogout(final BaseChildActivity activity) {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int selectedItem) {
+                switch (selectedItem) {
+                    case 0:
+                        activity.saveChild();
+                        break;
+                    case 1:
+                        inject(LogOutService.class).attemptLogOut(activity);
+                    case 2:
+                        break;
+                }
+            }
+        };
+    }
+
+
 }

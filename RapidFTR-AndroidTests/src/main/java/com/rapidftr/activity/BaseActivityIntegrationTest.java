@@ -75,5 +75,18 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
         return sb.toString();
     }
 
+   public void waitUntilTextDisappears(String text) throws Exception{
+       assertTrue(solo.searchText(text,true));
+      for(int i=0;i<10;i++){
+          if(solo.searchText(text,true)){
+              Thread.sleep(2);
+          }else{
+              break;
+          }
+
+      }
+
+
+   }
 
 }

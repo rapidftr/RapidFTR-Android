@@ -53,6 +53,17 @@ public enum Database {
     }
 
     @RequiredArgsConstructor(suppressConstructorProperties = true)
+    public enum UserTableColumn{
+        fullName("full_name"),
+        dbKey("db_key"),
+        organisation("organisation"),
+        authenticated("authenticated"),
+        encryptedPassword("encrypted_password");
+        private @Getter final String columnName;
+
+    }
+
+    @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum ChildTableColumn {
         id("id"),
         name("name"),

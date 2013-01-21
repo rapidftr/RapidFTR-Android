@@ -12,8 +12,7 @@
             android:layout_height="60dp"
             android:scaleType="fitCenter"
             style="@style/childphoto"
-            android:background="#aaaaaa"
-            />
+            android:background="#aaaaaa"/>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="fill_parent"
                   android:layout_toRightOf="@id/thumbnail"

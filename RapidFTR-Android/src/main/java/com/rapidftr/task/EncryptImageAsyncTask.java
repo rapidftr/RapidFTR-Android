@@ -46,7 +46,7 @@ public class EncryptImageAsyncTask extends AsyncTask<Void, Integer, Boolean> {
         }
 
 	    if (!result) {
-		    Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG);
+		    Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG).show();
 	    }
     }
 

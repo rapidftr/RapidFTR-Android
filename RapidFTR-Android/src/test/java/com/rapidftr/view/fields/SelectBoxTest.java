@@ -10,8 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -26,7 +25,7 @@ public class SelectBoxTest extends BaseViewSpec<SelectBox> {
 
     @Test
     public void testAdapterShouldPrependEmptyOptionForEmptyList() {
-        field.setOptionStrings(new ArrayList<String>());
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", new ArrayList<String>());}});
         view.initialize(field, child);
 
         assertThat(view.getSpinner().getAdapter().getCount(), equalTo(1));
@@ -35,7 +34,7 @@ public class SelectBoxTest extends BaseViewSpec<SelectBox> {
 
     @Test
     public void testAdapterShouldPrependEmptyOptionForExistingList() {
-        field.setOptionStrings(Arrays.asList("one"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one"));}});
         view.initialize(field, child);
 
         assertThat(view.getSpinner().getAdapter().getCount(), equalTo(2));
@@ -44,14 +43,14 @@ public class SelectBoxTest extends BaseViewSpec<SelectBox> {
 
     @Test
     public void testAdapterShouldNotPrependEmptyOptionIfAlreadyEmpty() {
-        field.setOptionStrings(Arrays.asList("", "one"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("", "one"));}});
         view.initialize(field, child);
         assertThat(view.getSpinner().getAdapter().getCount(), equalTo(2));
     }
 
     @Test
     public void testAdapter() {
-        field.setOptionStrings(Arrays.asList("one", "two", "three"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one", "two", "three"));}});
         view.initialize(field, child);
 
         assertThat(view.getSpinner().getAdapter().getCount(), equalTo(4));
@@ -63,7 +62,7 @@ public class SelectBoxTest extends BaseViewSpec<SelectBox> {
 
     @Test
     public void testShouldStoreSelectedValueInChildJSONObject() throws JSONException {
-        field.setOptionStrings(Arrays.asList("one", "two", "three"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one", "two", "three"));}});
         view.initialize(field, child);
 
         Spinner spinner = view.getSpinner();
@@ -75,6 +74,35 @@ public class SelectBoxTest extends BaseViewSpec<SelectBox> {
         String option2 = (String) spinner.getAdapter().getItem(2);
         spinner.setSelection(2);
         assertEquals(option2, child.get(field.getId()));
+    }
+
+    @Test
+    public void testShouldSetTranslations() {
+        HashMap<String, List<String>> optionStringsHash = new HashMap<String, List<String>>();
+        optionStringsHash.put("en", Arrays.asList("one", "two"));
+        optionStringsHash.put("fr", Arrays.asList("oneInFrench", "twoInFrench"));
+        field.setOptionStrings(optionStringsHash);
+
+        Locale.setDefault(new Locale("fr"));
+
+        view.initialize(field, child);
+
+        assertThat(view.getSpinner().getAdapter().getItem(1).toString(), equalTo("oneInFrench"));
+        assertThat(view.getSpinner().getAdapter().getItem(2).toString(), equalTo("twoInFrench"));
+
+        Locale.setDefault(new Locale("en"));
+
+    }
+
+    @Test
+    public void testShouldNotReturnNULLIfOptionTranslationsNotAvailable() {
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one"));}});
+        Locale.setDefault(new Locale("fr"));
+
+        view.initialize(field, child);
+        assertThat(view.getSpinner().getAdapter().getItem(0).toString(), equalTo(""));
+        Locale.setDefault(new Locale("en"));
+
     }
 
 }

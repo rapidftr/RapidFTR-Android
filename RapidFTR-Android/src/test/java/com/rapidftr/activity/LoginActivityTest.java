@@ -1,15 +1,22 @@
 package com.rapidftr.activity;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.User;
 import com.rapidftr.utils.EncryptionUtil;
 import com.xtremelabs.robolectric.Robolectric;
+import com.xtremelabs.robolectric.shadows.ShadowActivity;
 import com.xtremelabs.robolectric.shadows.ShadowHandler;
+import com.xtremelabs.robolectric.shadows.ShadowIntent;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -19,9 +26,8 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.rapidftr.RapidFtrApplication.Preference.FORM_SECTION;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
+import static com.rapidftr.RapidFtrApplication.Preference.*;
+import static com.xtremelabs.robolectric.Robolectric.shadowOf;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -33,6 +39,7 @@ public class LoginActivityTest {
     private EditText serverUrl;
     private EditText userName;
     private EditText password;
+    private TextView signUp;
 
     private LoginActivity loginActivity;
 
@@ -44,8 +51,8 @@ public class LoginActivityTest {
         loginActivity.getContext().setDbKey(null);
         loginActivity.getContext().setFormSections(null);
         loginActivity.onCreate(null);
-
         loginButton = (Button) loginActivity.findViewById(R.id.login_button);
+        signUp = (TextView) loginActivity.findViewById(R.id.new_user_signup_link);
         serverUrl = (EditText) loginActivity.findViewById(R.id.url);
         serverUrl.setText("http://dev.rapidftr.com:3000");
         userName = (EditText) loginActivity.findViewById(R.id.username);
@@ -120,12 +127,10 @@ public class LoginActivityTest {
         loginActivity = spy(loginActivity);
         doReturn(userName).when(loginActivity).findViewById(R.id.username);
         doReturn(password).when(loginActivity).findViewById(R.id.password);
-        doReturn(serverUrl).when(loginActivity).findViewById(R.id.url);
 
         assertThat(loginActivity.isValid(), equalTo(false));
         verify(userName).setError(loginActivity.getString(R.string.username_required));
         verify(password).setError(loginActivity.getString(R.string.password_required));
-        verify(serverUrl).setError(loginActivity.getString(R.string.url_required));
     }
 
     @Test
@@ -156,8 +161,8 @@ public class LoginActivityTest {
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
         SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-        String encryptedDBKey = sharedPreferences.getString(userName.getText().toString(), null);
-        assertThat("fa8f5e7599ed5402", is(EncryptionUtil.decrypt(password.getText().toString(), encryptedDBKey)));
+        User user = new User(sharedPreferences.getString(userName.getText().toString(), null));
+        assertThat("fa8f5e7599ed5402", is(EncryptionUtil.decrypt(password.getText().toString(), user.getDbKey())));
     }
 
     @Test
@@ -197,23 +202,100 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldSetLoginDbkeyAndFormSectionOnSuccessfulOfflineLogin() throws Exception {
+    public void shouldSetLoginDbkeyAndFormSectionOnSuccessfulOfflineLoginForAuthenticatedUsers() throws Exception {
         String dbKey = "db_key_from_server";
         String formSectionTemplate = "form section template";
         String encryptedDBKey = EncryptionUtil.encrypt("password", dbKey);
+        User user = new User(true, encryptedDBKey, "org");
         LoginActivity spyLoginActivity = spy(loginActivity);
         RapidFtrApplication application = mock(RapidFtrApplication.class);
-        doReturn(encryptedDBKey).when(application).getPreference(anyString());
+        doReturn(user.toString()).when(application).getPreference(anyString());
         doReturn(application).when(spyLoginActivity).getContext();
         doReturn(formSectionTemplate).when(application).getPreference(FORM_SECTION);
         LoginActivity.LoginAsyncTask loginAsyncTask = spy(spyLoginActivity.getLoginAsyncTask());
-        doReturn(dbKey).when(loginAsyncTask).decryptedDBKey(anyString(), anyString());
+        doReturn(dbKey).when(loginAsyncTask).decryptDbKey(anyString(), anyString());
         loginAsyncTask.onPreExecute();
         loginAsyncTask.onPostExecute(null);
 
         verify(application).setDbKey(dbKey);
         verify(application).setLoggedIn(true);
         verify(application).setFormSectionsTemplate(formSectionTemplate);
+    }
+
+    @Test
+    public void shouldSetDbKeyUserOrgAndUserNameForUnauthenticatedUsers() throws Exception {
+
+        User user = new User(false, "org", "fullname", "password");
+        userName.setText("username");
+        RapidFtrApplication application = mock(RapidFtrApplication.class);
+        LoginActivity spyLoginActivity = spy(loginActivity);
+
+        doReturn(user.toString()).when(application).getPreference("username");
+        doReturn(application).when(spyLoginActivity).getContext();
+        spyLoginActivity.getLoginAsyncTask().processOfflineLogin("username","password");
+
+        verify(application).setDbKey(User.UNAUTHENTICATED_DB_KEY);
+        verify(application).setPreference(USER_NAME, "username");
+        verify(application).setPreference(USER_ORG, "org");
+    }
+
+    @Test
+    public void shouldCheckIfUserCredentialsAreStoredInSharedPreferenceInOfflineLogin() throws Exception {
+        ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        userName.setText("user1"); password.setText("password");
+        User user1 = new User(false, "organisation", "user1", "password");
+        shadowOf(connectivityManager.getActiveNetworkInfo()).setConnectionStatus(false);
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        sharedPreferences.edit().putString("user1", user1.toString()).commit();
+        loginButton.performClick();
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
+        assertEquals(sharedPreferences.getString(USER_NAME.getKey(),null), "user1");
+        assertEquals(sharedPreferences.getString(USER_ORG.getKey(),null), "organisation");
+    }
+
+    @Test
+    public void shouldStartSignUpActivityWhenClickedOnSignUpLink(){
+        signUp.performClick();
+        ShadowActivity shadowActivity = shadowOf(new LoginActivity());
+        Intent startedIntent = shadowActivity.getNextStartedActivity();
+        ShadowIntent shadowIntent = shadowOf(startedIntent);
+
+        assertThat(shadowIntent.getComponent().getClassName(), equalTo("com.rapidftr.activity.SignupActivity"));
+    }
+
+    @Test
+    public void shouldAllowUnauthenticatedUserToLoginIntoTheMobileWhenTheMobileIsOnline() throws Exception {
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401,"User not authorized");
+        User user1 = new User(false, "organisation", "user1", "password");
+        userName.setText("user1"); password.setText("password");
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        sharedPreferences.edit().putString("user1", user1.toString()).commit();
+        sharedPreferences.edit().putString(FORM_SECTION.getKey(), "some form section").commit();
+        loginButton.performClick();
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
+    }
+
+    @Test
+    public void shouldNotAllowUserToLoginIfTheNetworkIsNotAvailableAndUserIsNotAuthorizedOnMobile(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        shadowOf(connectivityManager.getActiveNetworkInfo()).setConnectionStatus(false);
+        userName.setText("user_not_present"); password.setText("some_random_password");
+        loginButton.performClick();
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.unauthorized)));
+    }
+
+    @Test
+    public void shouldLoadFormSectionsFromLocalResourcesWhenFormSectionsAreNotInMemory() throws Exception {
+        ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        userName.setText("user1"); password.setText("password");
+        User user1 = new User(false, "organisation", "user1", "password");
+        shadowOf(connectivityManager.getActiveNetworkInfo()).setConnectionStatus(false);
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        sharedPreferences.edit().putString("user1", user1.toString()).commit();
+        assertNull(sharedPreferences.getString(FORM_SECTION.getKey() , null));
+        loginButton.performClick();
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
+        assertNotNull(sharedPreferences.getString(FORM_SECTION.getKey() , null));
     }
 
     private LoginActivity.LoginAsyncTask offlineLogin(boolean loginStatus) {
@@ -230,9 +312,10 @@ public class LoginActivityTest {
 
     private LoginActivity.LoginAsyncTask setUpForOffLineLogin() throws Exception {
         String encryptedDBKey = EncryptionUtil.encrypt("password", "db_key_from_server");
+        User user = new User(true, encryptedDBKey, "org");
         LoginActivity spyLoginActivity = spy(loginActivity);
         RapidFtrApplication application = mock(RapidFtrApplication.class);
-        doReturn(encryptedDBKey).when(application).getPreference(anyString());
+        doReturn(user.toString()).when(application).getPreference(anyString());
         doReturn(application).when(spyLoginActivity).getContext();
         return spyLoginActivity.getLoginAsyncTask();
     }

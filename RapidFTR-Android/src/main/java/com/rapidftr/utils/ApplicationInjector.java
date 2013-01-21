@@ -14,8 +14,8 @@ import com.rapidftr.service.FormService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 import com.rapidftr.utils.http.FluentRequest;
+import org.json.JSONException;
 
-import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
 import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 
 public class ApplicationInjector extends AbstractModule {
@@ -42,10 +42,10 @@ public class ApplicationInjector extends AbstractModule {
         return application.getDbKey();
     }
 
-    @Provides @Named("DB_NAME")
-    public String getDBName(RapidFtrApplication application) {
-        String serverUrl = application.getPreference(SERVER_URL);
-        return serverUrl.replaceAll("^.+//", "").replaceAll("\\W+", "_");
+    @Provides
+    @Named("DB_NAME")
+    public String getDBName(RapidFtrApplication application) throws JSONException {
+        return "DB-" + application.getDbKey().hashCode();
     }
 
     @Provides

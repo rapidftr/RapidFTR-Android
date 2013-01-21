@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -25,7 +27,7 @@ public class RadioButtonsTest extends BaseViewSpec<RadioButtons> {
 
     @Test
     public void testCreateSingleOption() {
-        field.setOptionStrings(Arrays.asList("one"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one"));}});
         view.initialize(field, child);
 
         RadioButton button = (RadioButton) view.getRadioGroup().findViewWithTag("one");
@@ -35,7 +37,7 @@ public class RadioButtonsTest extends BaseViewSpec<RadioButtons> {
 
     @Test
     public void testCreateMultipleOptions() {
-        field.setOptionStrings(Arrays.asList("one", "two", "three"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one", "two", "three"));}});
         view.initialize(field, child);
 
         assertThat(view.getRadioGroup().getChildCount(), equalTo(3));
@@ -46,7 +48,7 @@ public class RadioButtonsTest extends BaseViewSpec<RadioButtons> {
 
     @Test
     public void testCheckRadioButtonToStoreValueInChildJSONArray() throws JSONException {
-        field.setOptionStrings(Arrays.asList("one", "two", "three"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one", "two", "three"));}});
         view.initialize(field, child);
 
         RadioButton button1 = (RadioButton) view.getRadioGroup().findViewWithTag("one");

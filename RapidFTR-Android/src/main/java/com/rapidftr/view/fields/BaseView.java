@@ -50,7 +50,6 @@ public abstract class BaseView extends LinearLayout {
     protected void initialize() throws JSONException {
         getLabel().setText(formField.getDisplayName());
         getHelpText().setText(formField.getHelpText());
-        this.setVisibility(formField.isEnabled() ? VISIBLE : GONE);
     }
 
 }

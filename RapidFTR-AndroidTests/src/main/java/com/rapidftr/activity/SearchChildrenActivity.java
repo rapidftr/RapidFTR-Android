@@ -3,6 +3,7 @@ package com.rapidftr.activity;
 
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import junit.framework.Assert;
 import org.json.JSONException;
 
 import com.rapidftr.RapidFtrApplication;
@@ -13,7 +14,8 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
     public void setUp() throws Exception {
         super.setUp();
         loginPage.login();
-        solo.waitForText("Login Successful");
+        Assert.assertTrue(solo.waitForText("Login Successful"));
+        waitUntilTextDisappears("Login Successful");
     }
 
     @Override
@@ -39,7 +41,7 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
     public void testErrorMessageOnNoSearchResultFound(){
         searchPage.navigateToSearchPage();
         searchPage.searchChild("InvalidChild");
-        assertTrue(isTextPresent("No Child Found"));
+        assertTrue(isTextPresent("No Record Found"));
 
     }
 
@@ -54,7 +56,7 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
         childPage.selectFormSection("Basic Identity");
         childPage.enterChildName("Edited Child");
         childPage.save();
-        solo.waitForText("Saved Child Record Successfully");
+        solo.waitForText("Saved Record Successfully");
 //        assertTrue(childPage.getChildName("Edited child"));
         assertTrue(isEditedTextPresent("Edited Child"));
         assertTrue(isTextPresent("Edited Child"));

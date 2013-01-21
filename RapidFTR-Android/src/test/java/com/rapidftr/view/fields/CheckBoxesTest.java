@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -26,7 +28,7 @@ public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
 
     @Test
     public void testCreateSingleCheckBox() {
-        field.setOptionStrings(Arrays.asList("one"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one"));}});
         view.initialize(field, child);
 
         CheckBox box = (CheckBox) view.getCheckBoxGroup().getChildAt(0);
@@ -36,7 +38,7 @@ public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
 
     @Test
     public void testCreateMultipleCheckBoxes() {
-        field.setOptionStrings(Arrays.asList("one", "two", "three"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one", "two", "three"));}});
         view.initialize(field, child);
 
         assertThat(view.getCheckBoxGroup().getChildCount(), equalTo(3));
@@ -48,7 +50,7 @@ public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
     @Test
     public void testStoreCheckedValueIntoChildJSONObject() throws JSONException {
 
-        field.setOptionStrings(Arrays.asList("one", "two", "three"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one", "two", "three"));}});
         view.initialize(field, child);
 
         CheckBox checkBox1 = checkCheckBoxAtIndex(0, true);
@@ -64,7 +66,7 @@ public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
     @Test
     public void testRemoveUncheckedCheckBoxValuesFromChildJSONObject() throws JSONException {
 
-        field.setOptionStrings(Arrays.asList("one", "two", "three"));
+        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", Arrays.asList("one", "two", "three"));}});
         view.initialize(field, child);
 
         CheckBox checkBox1 = checkCheckBoxAtIndex(0, true);
