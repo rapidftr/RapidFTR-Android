@@ -12,6 +12,7 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.User;
+import com.rapidftr.task.LoginAsyncTask;
 import com.rapidftr.utils.EncryptionUtil;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowActivity;
@@ -166,80 +167,6 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldGotoHomeScreenOnSuccessfulOfflineLogin() {
-        LoginActivity.LoginAsyncTask loginAsyncTask = offlineLogin(true);
-        loginAsyncTask.onPostExecute(null);
-
-        verify(loginActivity).goToHomeScreen();
-    }
-
-    @Test
-    public void shouldReturnTrueIfGivenPasswordIsCorrectForOfflineLogin() throws Exception {
-        LoginActivity.LoginAsyncTask loginAsyncTask = setUpForOffLineLogin();
-        assertTrue(loginAsyncTask.processOfflineLogin("user_name", "password"));
-    }
-
-    @Test
-    public void shouldReturnFalseIfGivenPasswordIsInCorrectForOfflineLogin() throws Exception {
-        LoginActivity.LoginAsyncTask loginAsyncTask = setUpForOffLineLogin();
-        assertFalse(loginAsyncTask.processOfflineLogin("user_name", "wrongpassword"));
-    }
-
-    @Test
-    public void shouldShowAptToastMessageForUnsuccesfulOfflineLogin() {
-        LoginActivity.LoginAsyncTask loginAsyncTask = offlineLogin(false);
-        loginAsyncTask.onPostExecute(null);
-
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.unauthorized)));
-    }
-
-    @Test
-    public void shouldShowAptToastMessageForSuccesfulOfflineLogin() {
-        LoginActivity.LoginAsyncTask loginAsyncTask = offlineLogin(true);
-        loginAsyncTask.onPostExecute(null);
-
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
-    }
-
-    @Test
-    public void shouldSetLoginDbkeyAndFormSectionOnSuccessfulOfflineLoginForAuthenticatedUsers() throws Exception {
-        String dbKey = "db_key_from_server";
-        String formSectionTemplate = "form section template";
-        String encryptedDBKey = EncryptionUtil.encrypt("password", dbKey);
-        User user = new User(true, encryptedDBKey, "org");
-        LoginActivity spyLoginActivity = spy(loginActivity);
-        RapidFtrApplication application = mock(RapidFtrApplication.class);
-        doReturn(user.toString()).when(application).getPreference(anyString());
-        doReturn(application).when(spyLoginActivity).getContext();
-        doReturn(formSectionTemplate).when(application).getPreference(FORM_SECTION);
-        LoginActivity.LoginAsyncTask loginAsyncTask = spy(spyLoginActivity.getLoginAsyncTask());
-        doReturn(dbKey).when(loginAsyncTask).decryptDbKey(anyString(), anyString());
-        loginAsyncTask.onPreExecute();
-        loginAsyncTask.onPostExecute(null);
-
-        verify(application).setDbKey(dbKey);
-        verify(application).setLoggedIn(true);
-        verify(application).setFormSectionsTemplate(formSectionTemplate);
-    }
-
-    @Test
-    public void shouldSetDbKeyUserOrgAndUserNameForUnauthenticatedUsers() throws Exception {
-
-        User user = new User(false, "org", "fullname", "password");
-        userName.setText("username");
-        RapidFtrApplication application = mock(RapidFtrApplication.class);
-        LoginActivity spyLoginActivity = spy(loginActivity);
-
-        doReturn(user.toString()).when(application).getPreference("username");
-        doReturn(application).when(spyLoginActivity).getContext();
-        spyLoginActivity.getLoginAsyncTask().processOfflineLogin("username","password");
-
-        verify(application).setDbKey(User.UNAUTHENTICATED_DB_KEY);
-        verify(application).setPreference(USER_NAME, "username");
-        verify(application).setPreference(USER_ORG, "org");
-    }
-
-    @Test
     public void shouldCheckIfUserCredentialsAreStoredInSharedPreferenceInOfflineLogin() throws Exception {
         ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         userName.setText("user1"); password.setText("password");
@@ -298,25 +225,4 @@ public class LoginActivityTest {
         assertNotNull(sharedPreferences.getString(FORM_SECTION.getKey() , null));
     }
 
-    private LoginActivity.LoginAsyncTask offlineLogin(boolean loginStatus) {
-        loginActivity = spy(loginActivity);
-        RapidFtrApplication mockContext = mock(RapidFtrApplication.class);
-        doReturn(mockContext).when(loginActivity).getContext();
-        doReturn("form_section").when(mockContext).getPreference(FORM_SECTION);
-        LoginActivity.LoginAsyncTask loginAsyncTask = loginActivity.getLoginAsyncTask();
-        loginAsyncTask.onPreExecute();
-        loginAsyncTask = spy(loginAsyncTask);
-        doReturn(loginStatus).when(loginAsyncTask).processOfflineLogin(anyString(), anyString());
-        return loginAsyncTask;
-    }
-
-    private LoginActivity.LoginAsyncTask setUpForOffLineLogin() throws Exception {
-        String encryptedDBKey = EncryptionUtil.encrypt("password", "db_key_from_server");
-        User user = new User(true, encryptedDBKey, "org");
-        LoginActivity spyLoginActivity = spy(loginActivity);
-        RapidFtrApplication application = mock(RapidFtrApplication.class);
-        doReturn(user.toString()).when(application).getPreference(anyString());
-        doReturn(application).when(spyLoginActivity).getContext();
-        return spyLoginActivity.getLoginAsyncTask();
-    }
 }

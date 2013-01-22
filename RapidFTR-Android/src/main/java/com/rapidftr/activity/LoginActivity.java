@@ -2,23 +2,14 @@ package com.rapidftr.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import com.google.common.io.CharStreams;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.model.User;
-import com.rapidftr.service.FormService;
-import com.rapidftr.service.LoginService;
-import com.rapidftr.utils.EncryptionUtil;
-import com.rapidftr.utils.NetworkStatus;
+import com.rapidftr.task.LoginAsyncTask;
 import lombok.Cleanup;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,8 +17,6 @@ import java.io.InputStreamReader;
 
 import static com.rapidftr.RapidFtrApplication.Preference.*;
 import static com.rapidftr.utils.http.HttpUtils.getToastMessage;
-import static org.apache.http.HttpStatus.SC_CREATED;
-import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 
 public class LoginActivity extends RapidFtrActivity {
 
@@ -36,9 +25,8 @@ public class LoginActivity extends RapidFtrActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getContext().isLoggedIn()) {
-            goToHomeScreen();
-        }
+        goToHomeScreenIfLoggedIn();
+
         setContentView(R.layout.activity_login);
         toggleBaseUrl();
         startActivityOn(R.id.new_user_signup_link, SignupActivity.class);
@@ -54,7 +42,7 @@ public class LoginActivity extends RapidFtrActivity {
                     if (isValid()) {
                         String username = getEditText(R.id.username);
                         String password = getEditText(R.id.password);
-                        String baseUrl = getBaseUrl();
+                        String baseUrl  = getEditText(R.id.url);
                         login(username, password, baseUrl);
                     }
                 } catch (IOException e) {
@@ -78,9 +66,7 @@ public class LoginActivity extends RapidFtrActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (getContext().isLoggedIn()) {
-            goToHomeScreen();
-        }
+        goToHomeScreenIfLoggedIn();
     }
 
     private void toggleBaseUrl() {
@@ -103,16 +89,13 @@ public class LoginActivity extends RapidFtrActivity {
         view.setVisibility(visibility);
     }
 
-    protected String getBaseUrl() {
-        return getEditText(R.id.url);
-    }
-
     protected void login(String username, String password, String baseUrl) throws IOException {
-        new LoginAsyncTask().execute(username, password, baseUrl);
+        new LoginAsyncTask(this).execute(username, password, baseUrl);
     }
 
-    protected void goToHomeScreen() {
-        startActivity(new Intent(this, MainActivity.class));
+    protected void goToHomeScreenIfLoggedIn() {
+        if (getContext().isLoggedIn())
+            startActivity(new Intent(this, MainActivity.class));
     }
 
     protected void setEditText(int resId, String text) {
@@ -123,151 +106,5 @@ public class LoginActivity extends RapidFtrActivity {
     protected boolean shouldEnsureLoggedIn() {
         return false;
     }
-
-    protected LoginAsyncTask getLoginAsyncTask() {
-        return new LoginAsyncTask();
-    }
-
-    protected class LoginAsyncTask extends AsyncTask<String, Void, HttpResponse> {
-
-        @Override
-        protected void onPreExecute() {
-            mProgressDialog = new ProgressDialog(LoginActivity.this);
-            mProgressDialog.setMessage(getString(R.string.loading_message));
-            mProgressDialog.setCancelable(false);
-            mProgressDialog.show();
-        }
-
-        @Override
-        protected HttpResponse doInBackground(String... params) {
-            try {
-                return NetworkStatus.isOnline(getContext()) ? onlineLogin(params) : null;
-            } catch (Exception error) {
-                logError(error.getMessage());
-                return null;
-            }
-        }
-
-        private HttpResponse onlineLogin(String[] params) throws IOException {
-            return new LoginService().login(getApplicationContext(), params[0], params[1], params[2]);
-        }
-
-        @Override
-        protected void onPostExecute(HttpResponse response) {
-            mProgressDialog.dismiss();
-            String userName = getEditText(R.id.username);
-            int statusCode = response == null ? SC_NOT_FOUND : response.getStatusLine().getStatusCode();
-            RapidFtrApplication context = getContext();
-            if (statusCode == SC_CREATED) {
-                JSONObject responseJSON = responseJSON(response);
-                setDbKey(responseJSON);
-                setPreferences(responseJSON);
-                setContext(context);
-                goToHomeScreen();
-            }
-            if ((response == null || isUserSignedUpOnMobile(userName)) && processOfflineLogin(userName, getEditText(R.id.password))) {
-                setOfflinePreferences();
-                setContext(context);
-                statusCode = HttpStatus.SC_CREATED;
-                goToHomeScreen();
-            } else if (response == null) {
-                statusCode = HttpStatus.SC_UNAUTHORIZED;
-            }
-            makeToast(getToastMessage(statusCode));
-        }
-
-        private void setOfflinePreferences() {
-            if (getContext().getPreference(FORM_SECTION) == null) {
-                try {
-                    getContext().setPreference(FORM_SECTION, getFormSectionsFromRawResource());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
-        private void setContext(RapidFtrApplication context) {
-            try {
-                context.setLoggedIn(true);
-                context.setFormSectionsTemplate(context.getPreference(FORM_SECTION));
-            } catch (IOException e) {
-                logError(e.getMessage());
-            }
-        }
-
-        private void setPreferences(JSONObject responseJSON) {
-            try {
-                RapidFtrApplication context = getContext();
-                context.setPreference(USER_NAME, getEditText(R.id.username));
-                context.setPreference(USER_ORG, getUserOrg(responseJSON));
-                context.setPreference(SERVER_URL, getEditText(R.id.url));
-                context.setPreference(getEditText(R.id.username), (new User(true, EncryptionUtil.encrypt(getEditText(R.id.password), context.getDbKey()), getUserOrg(responseJSON))).toString());
-                context.setPreference(FORM_SECTION, new FormService(context).getPublishedFormSections());
-            } catch (Exception e) {
-                logError(e.getMessage());
-            }
-        }
-
-        protected boolean processOfflineLogin(String userName, String password) {
-            try {
-                getContext().setPreference(USER_NAME, getEditText(R.id.username));
-                String userJson = getContext().getPreference(userName);
-                User user = new User(userJson);
-                if (!user.isAuthenticated()) {
-                    EncryptionUtil.decrypt(password, new User(userJson).getEncryptedPassword());
-                    getContext().setDbKey(user.getDbKey());
-                    getContext().setPreference(USER_ORG,user.getOrganisation());
-                } else {
-                    getContext().setDbKey(decryptDbKey(user.getDbKey(), password));
-                }
-            } catch (Exception e) {
-                logError(e.getMessage());
-                return false;
-            }
-            return true;
-        }
-
-        protected String decryptDbKey(String encryptedDbKey, String password) throws Exception {
-            return EncryptionUtil.decrypt(password, encryptedDbKey);
-        }
-
-        private String getUserOrg(JSONObject responseJSON) {
-            try {
-                return responseJSON != null ? responseJSON.get("user_org").toString() : null;
-            } catch (JSONException e) {
-                return null;
-            }
-        }
-
-        protected void setDbKey(JSONObject responseJSON) {
-            try {
-                String db_key = responseJSON.get("db_key").toString();
-                getContext().setDbKey(db_key);
-            } catch (Exception e) {
-                logError(e.getMessage());
-            }
-        }
-
-        private JSONObject responseJSON(HttpResponse response) {
-            JSONObject jsonObject = null;
-            try {
-                String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
-                jsonObject = new JSONObject(responseAsString);
-            } catch (Exception e) {
-                logError(e.getMessage());
-            }
-            return jsonObject;
-        }
-
-        public boolean isUserSignedUpOnMobile(String userName) {
-            return getContext().getPreference(userName) != null;
-        }
-    }
-
-    private String getFormSectionsFromRawResource() throws IOException {
-        @Cleanup InputStream in = RapidFtrApplication.getApplicationInstance().getResources().openRawResource(R.raw.form_sections);
-        return CharStreams.toString(new InputStreamReader(in));
-    }
-
 
 }
