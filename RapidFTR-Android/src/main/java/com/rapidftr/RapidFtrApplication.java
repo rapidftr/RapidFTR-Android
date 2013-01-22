@@ -6,12 +6,14 @@ import android.os.AsyncTask;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.model.User;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.utils.ApplicationInjector;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -75,6 +77,14 @@ public class RapidFtrApplication extends Application {
 
     public void removePreference(Preference preference) {
         getSharedPreferences().edit().remove(preference.getKey()).commit();
+    }
+
+    public String getUserName() {
+        return getPreference(Preference.USER_NAME);
+    }
+
+    public User getUser() throws JSONException {
+        return new User(getPreference(getUserName()));
     }
 
     public void setFormSectionsTemplate(String formSectionResponse) throws IOException {

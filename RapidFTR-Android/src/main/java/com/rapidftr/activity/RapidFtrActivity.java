@@ -130,16 +130,10 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.synchronize_all:
-                String userName = getContext().getPreference(USER_NAME);
-                try {
-                    User user = new User(getContext().getPreference(userName));
-                    SynchronisationAsyncTask task = user.isAuthenticated() ? inject(SyncAllDataAsyncTask.class) : inject(SyncUnverifiedUsersDataAsyncTask.class);
-                    task.setContext(this);
-                    task.execute();
-                    return true;
-                }catch (JSONException e) {
-                    return false;
-                }
+                SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
+                task.setContext(this);
+                task.execute();
+                return true;
             case R.id.cancel_synchronize_all:
                 AsyncTask taskToCancel = RapidFtrApplication.getApplicationInstance().getSyncTask();
                 if (taskToCancel != null)
