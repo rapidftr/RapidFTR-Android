@@ -2,10 +2,12 @@ package com.rapidftr.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -261,6 +263,24 @@ public class Child extends JSONObject implements Parcelable {
     public boolean isNew() {
         return !has(internal_id.getColumnName());
     }
+
+    public String getAudio(String key) {
+        try {
+            return getString(key);
+        } catch (JSONException e) {
+            Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
+        }
+        return null;
+    }
+
+    public void setAudio(String key, String audioPath) {
+        try {
+            put(key, audioPath);
+        } catch (JSONException e) {
+            Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
+        }
+    }
+
 
     public class History extends JSONObject implements Parcelable {
         public static final String HISTORIES = "histories";

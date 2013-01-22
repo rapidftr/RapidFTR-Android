@@ -27,29 +27,29 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
-public class CaptureHelperTest {
+public class PhotoCaptureHelperTest {
 
     RapidFtrApplication application;
-    CaptureHelper captureHelper;
+    PhotoCaptureHelper photoCaptureHelper;
 
     @Before
     public void setUp() {
         application = spy(new RapidFtrApplication());
-        captureHelper = spy(new CaptureHelper(application));
+        photoCaptureHelper = spy(new PhotoCaptureHelper(application));
     }
 
     @Test
     public void testCaptureUnderNoMedia() {
-        String path = captureHelper.getPhotoDir().getAbsolutePath();
+        String path = photoCaptureHelper.getDir().getAbsolutePath();
         assertThat(path, endsWith("/.nomedia"));
     }
 
     @Test
     public void testCaptureUnderSDCard() {
         File file = Environment.getExternalStorageDirectory();
-        doReturn(file).when(captureHelper).getExternalStorageDir();
+        doReturn(file).when(photoCaptureHelper).getExternalStorageDir();
 
-        File result = captureHelper.getPhotoDir();
+        File result = photoCaptureHelper.getDir();
         assertThat(result.getParentFile(), equalTo(file));
 
     }
@@ -58,12 +58,12 @@ public class CaptureHelperTest {
     public void testCaptureUnderInternalStorage() {
         File file = mock(File.class);
         doReturn(false).when(file).canWrite();
-        doReturn(file).when(captureHelper).getExternalStorageDir();
+        doReturn(file).when(photoCaptureHelper).getExternalStorageDir();
 
         File file2 = new File(Environment.getExternalStorageDirectory(), "internal");
         doReturn(file2).when(application).getDir("capture", Context.MODE_PRIVATE);
 
-        File result = captureHelper.getPhotoDir();
+        File result = photoCaptureHelper.getDir();
         assertThat(result.getParentFile(), equalTo(file2));
     }
 
@@ -74,15 +74,15 @@ public class CaptureHelperTest {
 
     @Test
     public void testCatureFileUnderCaptureDir() {
-        String path = captureHelper.getPhotoDir().getAbsolutePath();
-        String file = captureHelper.getTempCaptureFile().getAbsolutePath();
+        String path = photoCaptureHelper.getDir().getAbsolutePath();
+        String file = photoCaptureHelper.getTempCaptureFile().getAbsolutePath();
         assertThat(file, startsWith(path));
     }
 
     @Test
     public void testSaveCaptureTimeInSharedPreferences() {
         long time1 = System.currentTimeMillis();
-        captureHelper.setCaptureTime();
+        photoCaptureHelper.setCaptureTime();
         long time2 = System.currentTimeMillis();
 
         long time = application.getSharedPreferences().getLong("capture_start_time", 0);
@@ -95,55 +95,55 @@ public class CaptureHelperTest {
         expected.setTimeInMillis(500);
 
         application.getSharedPreferences().edit().putLong("capture_start_time", 500).commit();
-        Calendar actual = captureHelper.getCaptureTime();
+        Calendar actual = photoCaptureHelper.getCaptureTime();
 
         assertThat(actual, equalTo(expected));
     }
 
     @Test
     public void testReturnDefaultThumbnail() throws Exception {
-        doThrow(RuntimeException.class).when(captureHelper).loadThumbnail("random_file");
-        Bitmap bitmap = captureHelper.getThumbnailOrDefault("random_file");
-        assertTrue(sameBitmap(bitmap, captureHelper.getDefaultThumbnail()));
+        doThrow(RuntimeException.class).when(photoCaptureHelper).loadThumbnail("random_file");
+        Bitmap bitmap = photoCaptureHelper.getThumbnailOrDefault("random_file");
+        assertTrue(sameBitmap(bitmap, photoCaptureHelper.getDefaultThumbnail()));
     }
 
     @Test
     public void testReturnOriginalThumbnail() throws Exception {
         Bitmap expected = mock(Bitmap.class);
-        doReturn(expected).when(captureHelper).loadThumbnail("random_file");
+        doReturn(expected).when(photoCaptureHelper).loadThumbnail("random_file");
 
-        Bitmap actual = captureHelper.getThumbnailOrDefault("random_file");
+        Bitmap actual = photoCaptureHelper.getThumbnailOrDefault("random_file");
         assertThat(actual, equalTo(expected));
     }
 
     @Test
     public void testSaveThumbnailShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
-        doReturn(expected).when(captureHelper).scaleImageTo(original, 96, 96);
-        doNothing().when(captureHelper).save(expected, "random_file_thumb");
+        doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 96, 96);
+        doNothing().when(photoCaptureHelper).save(expected, "random_file_thumb");
 
-        captureHelper.saveThumbnail(original, "random_file");
-        verify(captureHelper).save(expected, "random_file_thumb");
+        photoCaptureHelper.saveThumbnail(original, "random_file");
+        verify(photoCaptureHelper).save(expected, "random_file_thumb");
     }
 
     @Test
     public void testSaveActualImageShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
-        doReturn(expected).when(captureHelper).scaleImageTo(original, 300, 300);
-        doNothing().when(captureHelper).save(expected, "random_file");
+        doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 300, 300);
+        doNothing().when(photoCaptureHelper).save(expected, "random_file");
 
-        captureHelper.savePhoto(original, "random_file");
-        verify(captureHelper).save(expected, "random_file");
+        photoCaptureHelper.savePhoto(original, "random_file");
+        verify(photoCaptureHelper).save(expected, "random_file");
     }
 
     @Test
     public void testSavePhotoAndCompress() throws Exception {
         Bitmap bitmap = mock(Bitmap.class);
-        File file = new File(captureHelper.getPhotoDir(), "random_file.jpg");
+        File file = new File(photoCaptureHelper.getDir(), "random_file.jpg");
         OutputStream out = mock(OutputStream.class);
 
-        doReturn(out).when(captureHelper).getCipherOutputStream(eq(file));
-        captureHelper.save(bitmap, "random_file");
+        doReturn(out).when(photoCaptureHelper).getCipherOutputStream(eq(file));
+        photoCaptureHelper.save(bitmap, "random_file");
         verify(bitmap).compress(Bitmap.CompressFormat.JPEG, 85, out);
         verify(out).close();
     }

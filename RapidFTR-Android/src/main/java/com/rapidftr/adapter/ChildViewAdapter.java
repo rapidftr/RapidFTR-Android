@@ -15,7 +15,7 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.ViewChildActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.task.AssignThumbnailAsyncTask;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import org.json.JSONException;
 
 import java.util.List;
@@ -26,14 +26,14 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
     private Context context;
     private int textViewResourceId;
     private List<Child> children;
-    private CaptureHelper captureHelper;
+    private PhotoCaptureHelper photoCaptureHelper;
 
     public ChildViewAdapter(Context context, int textViewResourceId, List<Child> children) {
         super(context, textViewResourceId, children);
         this.context = context;
         this.textViewResourceId = textViewResourceId;
         this.children = children;
-        this.captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
+        this.photoCaptureHelper = new PhotoCaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
     private void assignThumbnail(Child child, ImageView imageView) {
         String current_photo_key = child.optString("current_photo_key");
         if (cancelPotentialDownload(current_photo_key, imageView)) {
-            AssignThumbnailAsyncTask task = new AssignThumbnailAsyncTask(imageView, captureHelper);
+            AssignThumbnailAsyncTask task = new AssignThumbnailAsyncTask(imageView, photoCaptureHelper);
                 ThumbnailDrawable drawable = new ThumbnailDrawable(task);
                 imageView.setImageDrawable(drawable);
                 task.execute(current_photo_key);

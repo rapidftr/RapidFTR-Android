@@ -8,7 +8,7 @@ import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
@@ -139,16 +139,16 @@ public class ChildService {
         }
         HttpResponse httpResponse = getPhoto(child);
         Bitmap bitmap = BitmapFactory.decodeStream(httpResponse.getEntity().getContent());
-        CaptureHelper captureHelper = new CaptureHelper(context);
-        savePhoto(bitmap, captureHelper, current_photo_key);
+        PhotoCaptureHelper photoCaptureHelper = new PhotoCaptureHelper(context);
+        savePhoto(bitmap, photoCaptureHelper, current_photo_key);
 
     }
 
-    private void savePhoto(Bitmap bitmap, CaptureHelper captureHelper, String current_photo_key) throws IOException {
+    private void savePhoto(Bitmap bitmap, PhotoCaptureHelper photoCaptureHelper, String current_photo_key) throws IOException {
         if(bitmap!=null && !current_photo_key.equals("")){
             try {
-                captureHelper.saveThumbnail(bitmap, current_photo_key);
-                captureHelper.savePhoto(bitmap, current_photo_key);
+                photoCaptureHelper.saveThumbnail(bitmap, current_photo_key);
+                photoCaptureHelper.savePhoto(bitmap, current_photo_key);
             } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
             }
