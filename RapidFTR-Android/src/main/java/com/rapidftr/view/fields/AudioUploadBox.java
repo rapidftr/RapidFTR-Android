@@ -62,13 +62,12 @@ public class AudioUploadBox extends BaseView {
         mRecorder.stop();
         mRecorder.release();
         findViewById(R.id.play_record).setVisibility(VISIBLE);
-        child.setAudio(formField.getId(), getFileName());
-        mRecorder = null;
+        child.put(formField.getId(), getFileName());
     }
 
     protected void playRecording(View view) {
         try {
-            mPlayer.setDataSource(child.getAudio(formField.getId()));
+            mPlayer.setDataSource(child.getString(formField.getId()));
             mPlayer.prepare();
             mPlayer.start();
         } catch (IOException e) {
@@ -84,7 +83,7 @@ public class AudioUploadBox extends BaseView {
         Button stop = (Button)findViewById(R.id.stop_record);
         Button play = (Button)findViewById(R.id.play_record);
 
-        if(child.getAudio(formField.getId()) != null){
+        if(child.getString(formField.getId()) != null){
             play.setVisibility(VISIBLE);
         }
 
@@ -107,8 +106,6 @@ public class AudioUploadBox extends BaseView {
                 playRecording(view);
             }
         });
-
-
     }
 
     protected void setMediaRecorder(MediaRecorder mediaRecorder){
@@ -118,6 +115,4 @@ public class AudioUploadBox extends BaseView {
     protected void setMediaPlayer(MediaPlayer mediaPlayer){
         mPlayer = mediaPlayer;
     }
-
-
 }

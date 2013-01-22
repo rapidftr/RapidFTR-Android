@@ -78,7 +78,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         view.stopRecording(view);
         verify(mediaRecorder).stop();
         verify(mediaRecorder).release();
-        assertEquals("audio_file_name", child.getAudio(field.getId()));
+        assertEquals("audio_file_name", child.getAudio());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         view.initialize(field, child);
         doReturn("audio_file_name").when(view).getFileName();
         view.playRecording(view);
-        verify(mediaPlayer).setDataSource(child.getAudio(field.getId()));
+        verify(mediaPlayer).setDataSource(child.getAudio());
         verify(mediaPlayer).prepare();
         verify(mediaPlayer).start();
     }
