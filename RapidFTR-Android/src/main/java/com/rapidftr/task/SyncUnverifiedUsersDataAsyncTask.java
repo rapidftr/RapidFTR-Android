@@ -19,13 +19,15 @@ public class SyncUnverifiedUsersDataAsyncTask extends SynchronisationAsyncTask {
         super(formService, childService, childRepository);
     }
 
+    //WIP
     protected void sync() throws JSONException, IOException {
-        List<Child> childrenToSyncWithServer = childRepository.currentUsersUnsyncedRecords();
-        setProgressBarParameters(Lists.<String>newArrayList(), childrenToSyncWithServer);
 
-        getFormSections();
-//        sendChildrenToServer(childrenToSyncWithServer);
-        setProgressAndNotify(context.getString(R.string.sync_complete), MAX_PROGRESS);
+//        List<Child> childrenToSyncWithServer = childRepository.currentUsersUnsyncedRecords();
+//        setProgressBarParameters(Lists.<String>newArrayList(), childrenToSyncWithServer);
+//
+//        getFormSections();
+////        sendChildrenToServer(childrenToSyncWithServer);
+//        setProgressAndNotify(context.getString(R.string.sync_complete), MAX_PROGRESS);
     }
 
 
