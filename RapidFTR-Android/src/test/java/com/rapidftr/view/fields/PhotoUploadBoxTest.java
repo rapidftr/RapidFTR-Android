@@ -9,7 +9,7 @@ import com.rapidftr.R;
 import com.rapidftr.activity.BaseChildActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONException;
 import org.junit.Assert;
@@ -27,21 +27,21 @@ import static org.mockito.Mockito.*;
 @RunWith(CustomTestRunner.class)
 public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
 
-    protected CaptureHelper captureHelper;
+    protected PhotoCaptureHelper photoCaptureHelper;
     protected Bitmap bitmap;
     protected ImageView imageView;
 
     @Before
     public void setUp() throws IOException {
-        captureHelper = mock(CaptureHelper.class);
+        photoCaptureHelper = mock(PhotoCaptureHelper.class);
         bitmap = mock(Bitmap.class);
         imageView = mock(ImageView.class);
 
         view = spy((PhotoUploadBox) LayoutInflater.from(new RegisterChildActivity()).inflate(R.layout.form_photo_upload_box, null));
         doReturn(imageView).when(view).getImageView();
-        when(captureHelper.getCapture()).thenReturn(bitmap);
+        when(photoCaptureHelper.getCapture()).thenReturn(bitmap);
 
-        view.captureHelper = captureHelper;
+        view.photoCaptureHelper = photoCaptureHelper;
     }
 
     @Test
@@ -98,10 +98,10 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
         view.initialize(field, child);
         RapidFtrActivity activity = (RapidFtrActivity) view.getContext();
         doCallRealMethod().when(view).saveCapture();
-        doNothing().when(captureHelper).savePhoto(bitmap,"");
+        doNothing().when(photoCaptureHelper).savePhoto(bitmap,"");
         activity.onActivityResult(PhotoUploadBox.CAPTURE_IMAGE_REQUEST, Activity.RESULT_OK, null);
         verify(view).saveCapture();
-        verify(captureHelper).savePhoto(bitmap, "name");
+        verify(photoCaptureHelper).savePhoto(bitmap, "name");
     }
 
     @Test
@@ -114,9 +114,9 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
 
     @Test
     public void shouldSetCaptureTimeWhenStartCapture() throws Exception {
-        doCallRealMethod().when(captureHelper).getTempCaptureFile();
+        doCallRealMethod().when(photoCaptureHelper).getTempCaptureFile();
         view.startCapture();
-        verify(captureHelper).setCaptureTime();
+        verify(photoCaptureHelper).setCaptureTime();
     }
 
     @Test
@@ -133,21 +133,21 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     public void testSaveCaptureShouldSaveBitmap() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
         view.saveCapture();
-        verify(captureHelper).savePhoto(eq(bitmap), anyString());
+        verify(photoCaptureHelper).savePhoto(eq(bitmap), anyString());
     }
 
     @Test
     public void testSaveShouldDeleteCaptures() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
         view.saveCapture();
-        verify(captureHelper).deleteCaptures();
+        verify(photoCaptureHelper).deleteCaptures();
     }
 
     @Test
     public void testSaveCaptureShouldSaveThumbnail() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
         view.saveCapture();
-        verify(captureHelper).saveThumbnail(eq(bitmap), anyString());
+        verify(photoCaptureHelper).saveThumbnail(eq(bitmap), anyString());
     }
 
     @Test
@@ -164,7 +164,7 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     public void testPaintThumbnail() throws JSONException, IOException {
         view.initialize(field, child);
         child.put(field.getId(), "test_image");
-        when(captureHelper.getThumbnailOrDefault("test_image")).thenReturn(bitmap);
+        when(photoCaptureHelper.getThumbnailOrDefault("test_image")).thenReturn(bitmap);
 
         view.repaint();
         verify(imageView).setImageBitmap(bitmap);

@@ -6,20 +6,20 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.view.fields.PhotoUploadBox;
 
 public class EncryptImageAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 
-    private CaptureHelper captureHelper;
+    private PhotoCaptureHelper photoCaptureHelper;
     private Bitmap bitmap;
     private String fileName;
     private PhotoUploadBox photoUploadBox;
     private Context context;
 
-    public EncryptImageAsyncTask(Context context, CaptureHelper captureHelper, Bitmap bitmap, String fileName, PhotoUploadBox photoUploadBox) {
+    public EncryptImageAsyncTask(Context context, PhotoCaptureHelper photoCaptureHelper, Bitmap bitmap, String fileName, PhotoUploadBox photoUploadBox) {
         this.context = context;
-        this.captureHelper = captureHelper;
+        this.photoCaptureHelper = photoCaptureHelper;
         this.bitmap = bitmap;
         this.fileName = fileName;
         this.photoUploadBox = photoUploadBox;
@@ -28,8 +28,8 @@ public class EncryptImageAsyncTask extends AsyncTask<Void, Integer, Boolean> {
     @Override
     protected Boolean doInBackground(Void... bitmaps) {
         try {
-            captureHelper.saveThumbnail(bitmap, fileName);
-            captureHelper.savePhoto(bitmap, fileName);
+            photoCaptureHelper.saveThumbnail(bitmap, fileName);
+            photoCaptureHelper.savePhoto(bitmap, fileName);
             return true;
         } catch (Exception e) {
 	        return false;

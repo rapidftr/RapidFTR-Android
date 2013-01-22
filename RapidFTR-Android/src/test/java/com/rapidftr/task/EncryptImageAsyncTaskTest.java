@@ -5,7 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import com.rapidftr.CustomTestRunner;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.view.fields.PhotoUploadBox;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
 public class EncryptImageAsyncTaskTest {
-    private CaptureHelper captureHelper = mock(CaptureHelper.class);
+    private PhotoCaptureHelper photoCaptureHelper = mock(PhotoCaptureHelper.class);
     private Context context = new Activity();
     private Bitmap bitmap = mock(Bitmap.class);
     private PhotoUploadBox photoUploadBox = mock(PhotoUploadBox.class);
@@ -24,11 +24,11 @@ public class EncryptImageAsyncTaskTest {
     @Test
     public void testEncryptAndSaveImage() throws Exception {
         String fileName = "random";
-        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, captureHelper, bitmap, fileName, photoUploadBox);
+        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, photoCaptureHelper, bitmap, fileName, photoUploadBox);
         AsyncTask<Void, Integer, Boolean> task = asyncTask.execute();
         assertTrue(task.get());
-        verify(captureHelper).saveThumbnail(bitmap, fileName);
-        verify(captureHelper).savePhoto(bitmap, fileName);
+        verify(photoCaptureHelper).saveThumbnail(bitmap, fileName);
+        verify(photoCaptureHelper).savePhoto(bitmap, fileName);
         verify(bitmap).recycle();
         verify(photoUploadBox).repaint();
     }
@@ -36,12 +36,12 @@ public class EncryptImageAsyncTaskTest {
     @Test
     public void testEncryptShouldReturnFalseIfSaveFails() throws Exception {
         String fileName = "random";
-        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, captureHelper, bitmap, fileName, photoUploadBox);
-        doThrow(new RuntimeException()).when(captureHelper).saveThumbnail(bitmap, fileName);
+        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, photoCaptureHelper, bitmap, fileName, photoUploadBox);
+        doThrow(new RuntimeException()).when(photoCaptureHelper).saveThumbnail(bitmap, fileName);
         AsyncTask<Void, Integer, Boolean> task = asyncTask.execute();
         assertFalse(task.get());
-        verify(captureHelper).saveThumbnail(bitmap, fileName);
-        verify(captureHelper,never()).savePhoto(bitmap, fileName);
+        verify(photoCaptureHelper).saveThumbnail(bitmap, fileName);
+        verify(photoCaptureHelper,never()).savePhoto(bitmap, fileName);
         verify(bitmap).recycle();
         verify(photoUploadBox).repaint();
     }

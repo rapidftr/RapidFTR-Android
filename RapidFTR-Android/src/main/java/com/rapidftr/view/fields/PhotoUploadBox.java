@@ -18,7 +18,7 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.activity.ViewPhotoActivity;
 import com.rapidftr.task.EncryptImageAsyncTask;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import org.json.JSONException;
 
 import java.util.UUID;
@@ -29,17 +29,17 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
 
     public static final int CAPTURE_IMAGE_REQUEST = 100;
 
-    protected CaptureHelper captureHelper;
+    protected PhotoCaptureHelper photoCaptureHelper;
     private boolean enabled;
 
     public PhotoUploadBox(Context context) {
         super(context);
-        captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
+        photoCaptureHelper = new PhotoCaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     public PhotoUploadBox(Context context, AttributeSet attrs) {
         super(context, attrs);
-        captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
+        photoCaptureHelper = new PhotoCaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     @Override
@@ -115,20 +115,20 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
 
     public void startCapture() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(captureHelper.getTempCaptureFile()));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoCaptureHelper.getTempCaptureFile()));
 
         RapidFtrActivity context = (RapidFtrActivity) getContext();
-        captureHelper.setCaptureTime();
+        photoCaptureHelper.setCaptureTime();
         context.startActivityForResult(intent, CAPTURE_IMAGE_REQUEST);
     }
 
     public void saveCapture() {
         try {
-            Bitmap bitmap = captureHelper.getCapture();
-            captureHelper.deleteCaptures();
+            Bitmap bitmap = photoCaptureHelper.getCapture();
+            photoCaptureHelper.deleteCaptures();
             String fileName = createCaptureFileName();
             Log.e("REGISTER", "start of async task ");
-            new EncryptImageAsyncTask(getContext(), captureHelper, bitmap, fileName, this).execute();
+            new EncryptImageAsyncTask(getContext(), photoCaptureHelper, bitmap, fileName, this).execute();
             child.put(formField.getId(), fileName);
         } catch (Exception e) {
             Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG).show();
@@ -150,7 +150,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     public void repaint() throws JSONException {
         Log.e("PhotoUploadBox",child.toString());
         Log.e("PhotoUploadBox-ID",child.optString(formField.getId()));
-        Bitmap bitmap = captureHelper.getThumbnailOrDefault(child.optString(formField.getId()));
+        Bitmap bitmap = photoCaptureHelper.getThumbnailOrDefault(child.optString(formField.getId()));
         getImageView().setImageBitmap(bitmap);
         getImageCaption().setText((getContext() instanceof RegisterChildActivity) ? R.string.photo_capture : R.string.photo_view);
     }

@@ -8,10 +8,39 @@
 
     <include layout="@layout/form_label" />
 
-    <TextView
-            android:text="This is an audio upload box"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+    <TableLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:layout_marginTop="0dp">
+        <TableRow android:layout_width="fill_parent">
+        <Button android:background="@drawable/button"
+                android:id="@+id/start_record"
+                android:text="@string/start_record"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                style="@style/button"/>
+
+        <Button android:background="@drawable/button"
+                android:id="@+id/stop_record"
+                android:text="@string/stop_record"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:visibility="invisible"
+                style="@style/button"/>
+
+        <Button android:background="@drawable/button"
+                android:id="@+id/play_record"
+                android:text="@string/play_record"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:visibility="invisible"
+                style="@style/button"/>
+
+        </TableRow>
+    </TableLayout>
 
     <include layout="@layout/form_help_text" />
 
