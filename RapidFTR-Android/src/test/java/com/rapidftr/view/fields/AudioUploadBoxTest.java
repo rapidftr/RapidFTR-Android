@@ -78,7 +78,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         view.stopRecording(view);
         verify(mediaRecorder).stop();
         verify(mediaRecorder).release();
-        assertEquals("audio_file_name", child.getAudio());
+        assertEquals("audio_file_name", child.getString(field.getId()));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         view.initialize(field, child);
         doReturn("audio_file_name").when(view).getFileName();
         view.playRecording(view);
-        verify(mediaPlayer).setDataSource(child.getAudio());
+        verify(mediaPlayer).setDataSource(child.getString(field.getId()));
         verify(mediaPlayer).prepare();
         verify(mediaPlayer).start();
     }
@@ -102,7 +102,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     @Test
     public void shouldEnablePlayButtonIfThereIsAnAudioFileAvailableForGivenUser(){
         Child givenChild = new Child();
-        givenChild.setAudio(field.getId(), "some_audio_file");
+        givenChild.put(field.getId(), "some_audio_file");
         view.initialize(field, givenChild);
         Button play = (Button) view.findViewById(R.id.play_record);
         assertEquals(VISIBLE, play.getVisibility());

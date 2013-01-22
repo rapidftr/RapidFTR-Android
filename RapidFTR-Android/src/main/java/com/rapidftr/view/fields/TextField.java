@@ -56,12 +56,7 @@ public class TextField extends BaseView {
 
             @Override
             public void afterTextChanged(Editable s) {
-                try {
-                    child.put(formField.getId(), s.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
+                child.put(formField.getId(), s.toString());
             }
         });
     }

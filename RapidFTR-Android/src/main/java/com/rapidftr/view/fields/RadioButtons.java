@@ -48,17 +48,12 @@ public class RadioButtons extends BaseView {
         radioButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    child.put(formField.getId(), radioButton.getText());
-                    for (int i = 0; i < getRadioGroup().getChildCount(); i++) {
-                        RadioButton button = (RadioButton) getRadioGroup().getChildAt(i);
-                        if (!button.getText().equals(radioButton.getText())) {
-                            button.setChecked(false);
-                        }
+                child.put(formField.getId(), radioButton.getText());
+                for (int i = 0; i < getRadioGroup().getChildCount(); i++) {
+                    RadioButton button = (RadioButton) getRadioGroup().getChildAt(i);
+                    if (!button.getText().equals(radioButton.getText())) {
+                        button.setChecked(false);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
                 }
             }
 

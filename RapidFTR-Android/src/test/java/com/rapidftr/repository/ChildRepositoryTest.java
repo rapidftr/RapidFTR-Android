@@ -216,13 +216,6 @@ public class ChildRepositoryTest {
         assertThat(children, hasItems(child1));
     }
 
-    @Test(expected = JSONException.class)
-    public void shouldRaiseRuntimeExceptionIfTheRequiredChildPropertiesAreNotPopulated() throws RuntimeException, JSONException {
-        Child child = new Child();
-        assertThat(child.isSynced(), is(false));
-        repository.createOrUpdate(child);
-    }
-
     @Test
     public void shouldReturnTrueWhenAChildWithTheGivenIdExistsInTheDatabase() {
         assertThat(repository.exists("1234"), is(false));
