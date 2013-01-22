@@ -73,7 +73,7 @@ public class RapidFtrApplication extends Application {
     }
 
     public void removePreference(Preference preference) {
-        getSharedPreferences().edit().remove(preference.getKey());
+        getSharedPreferences().edit().remove(preference.getKey()).commit();
     }
 
     public void setFormSectionsTemplate(String formSectionResponse) throws IOException {

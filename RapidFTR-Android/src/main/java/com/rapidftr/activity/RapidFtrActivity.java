@@ -1,6 +1,5 @@
 package com.rapidftr.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -106,10 +105,12 @@ public abstract class RapidFtrActivity extends FragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if(getContext().isLoggedIn()) {
         getMenuInflater().inflate(R.menu.options_menu, menu);
         setMenu(menu);
         toggleSync(menu);
         setContextToSyncTask();
+        }
         return getContext().isLoggedIn();
     }
 

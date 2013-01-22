@@ -87,6 +87,7 @@ public class RapidFtrActivityTest {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         SyncAllDataAsyncTask mockAsyncTask = mock(SyncAllDataAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
+        instance.setLoggedIn(true);
 
         Menu mockMenu = mock(Menu.class);
         MenuItem syncAllMenuItem = mock(MenuItem.class);
@@ -126,6 +127,7 @@ public class RapidFtrActivityTest {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         SyncAllDataAsyncTask mockSyncAll = mock(SyncAllDataAsyncTask.class);
         instance.setSyncTask(mockSyncAll);
+        instance.setLoggedIn(true);
 
         RapidFtrActivity mainActivity = new MainActivity();
         Menu mockMenu = mock(Menu.class);
