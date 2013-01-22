@@ -140,7 +140,6 @@ public class ChildRepository implements Closeable {
         return toChildren(cursor);
     }
 
-
     public HashMap<String, String> getAllIdsAndRevs() throws JSONException {
         HashMap<String, String> idRevs = new HashMap<String, String>();
         @Cleanup Cursor cursor = session.rawQuery("SELECT "

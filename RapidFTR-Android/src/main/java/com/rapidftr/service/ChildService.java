@@ -172,4 +172,12 @@ public class ChildService {
         }
         return idRevMapping;
     }
+
+    public void syncUnverified(Child child) throws IOException {
+        fluentRequest
+                .path("/children/sync_unverified")
+                .context(context)
+                .param("child", child.toString())
+                .post();
+    }
 }

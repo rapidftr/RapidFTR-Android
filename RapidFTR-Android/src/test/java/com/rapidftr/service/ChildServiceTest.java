@@ -6,6 +6,7 @@ import com.rapidftr.database.Database;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.http.FluentRequest;
+import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,7 +77,6 @@ public class ChildServiceTest {
         child.put(Database.ChildTableColumn.internal_id.getColumnName(), "xyz");
 
         getFakeHttpLayer().addHttpResponseRule("http://whatever/children/xyz", "{}");
-        getFakeHttpLayer().setDefaultHttpResponse(200,"{}");
         new ChildService(mockContext(), repository, fluentRequest).sync(child);
     }
 
@@ -139,7 +139,14 @@ public class ChildServiceTest {
         assertEquals("1-ec347c93b262e7db0e306b77f22c2e19", child.get("_rev"));
 
         verify(mockFluentRequest).path("/children/0369c92c8e2245e680dc9a580202e285");
+    }
 
+    @Test
+    public void shouldSyncUnverifiedChild() throws Exception {
+        FluentRequest mockFluentRequest = spy(new FluentRequest());
+        getFakeHttpLayer().addHttpResponseRule("POST", "http://whatever/children/sync_unverified", new TestHttpResponse(200, "{}"));
+
+        new ChildService(mockContext(), repository, mockFluentRequest).syncUnverified(mock(Child.class));
     }
 
     private RapidFtrApplication mockContext() {

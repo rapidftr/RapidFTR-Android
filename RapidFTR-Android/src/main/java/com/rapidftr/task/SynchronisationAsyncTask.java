@@ -31,7 +31,7 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
 
     public static final int NOTIFICATION_ID = 1010;
     private FormService formService;
-    private ChildService childService;
+    ChildService childService;
     ChildRepository childRepository;
     RapidFtrActivity context;
     protected static int MAX_PROGRESS;
