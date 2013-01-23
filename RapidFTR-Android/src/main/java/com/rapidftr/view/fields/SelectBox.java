@@ -40,36 +40,21 @@ public class SelectBox extends BaseView {
         getSpinner().setAdapter(optionsAdapter);
 
         if (child.has(formField.getId())) {
-            try {
-                String formFieldValue = child.getString(formField.getId());
-                if (selectOptions.contains(formFieldValue)) {
-                    getSpinner().setSelection(selectOptions.indexOf(formFieldValue));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
+            String formFieldValue = child.getString(formField.getId());
+            if (selectOptions.contains(formFieldValue)) {
+                getSpinner().setSelection(selectOptions.indexOf(formFieldValue));
             }
         }
 
         getSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                try {
-                    child.put(formField.getId(), getSpinner().getAdapter().getItem(position));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
+                child.put(formField.getId(), getSpinner().getAdapter().getItem(position));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                try {
-                    child.put(formField.getId(), "");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
+                child.put(formField.getId(), "");
             }
         });
     }

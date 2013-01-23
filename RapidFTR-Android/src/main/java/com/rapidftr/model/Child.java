@@ -80,6 +80,15 @@ public class Child extends JSONObject implements Parcelable {
         setSynced(synced);
     }
 
+    public String getString(String key){
+        try {
+            return super.getString(key);
+        } catch (JSONException e) {
+            Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
+        }
+        return null;
+    }
+
     @Override
     public JSONArray names() {
         JSONArray names = super.names();
@@ -87,13 +96,18 @@ public class Child extends JSONObject implements Parcelable {
     }
 
     @Override
-    public JSONObject put(String key, Object value) throws JSONException {
+    public JSONObject put(String key, Object value) {
         if (value != null && value instanceof String) {
             value = Strings.emptyToNull(((String) value).trim());
         } else if (value != null && value instanceof JSONArray && ((JSONArray) value).length() == 0) {
             value = null;
         }
-        return super.put(key, value);
+        try {
+            return super.put(key, value);
+        } catch (JSONException e) {
+            Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
+        }
+        return null;
     }
 
     @Override
@@ -263,24 +277,6 @@ public class Child extends JSONObject implements Parcelable {
     public boolean isNew() {
         return !has(internal_id.getColumnName());
     }
-
-    public String getAudio(String key) {
-        try {
-            return getString(key);
-        } catch (JSONException e) {
-            Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
-        }
-        return null;
-    }
-
-    public void setAudio(String key, String audioPath) {
-        try {
-            put(key, audioPath);
-        } catch (JSONException e) {
-            Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
-        }
-    }
-
 
     public class History extends JSONObject implements Parcelable {
         public static final String HISTORIES = "histories";

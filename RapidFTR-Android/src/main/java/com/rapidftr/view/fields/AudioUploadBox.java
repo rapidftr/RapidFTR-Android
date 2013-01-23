@@ -1,6 +1,7 @@
 package com.rapidftr.view.fields;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.util.AttributeSet;
@@ -21,6 +22,7 @@ public class AudioUploadBox extends BaseView {
     private MediaPlayer mPlayer = new MediaPlayer();
 
     private AudioCaptureHelper audioCaptureHelper;
+    Resources resources = RapidFtrApplication.getApplicationInstance().getResources();
 
     public AudioUploadBox(Context context) {
         super(context);
@@ -43,7 +45,8 @@ public class AudioUploadBox extends BaseView {
             Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
             new RuntimeException(e);
         }
-        ((Button)findViewById(R.id.stop_record)).setVisibility(VISIBLE);
+        ((Button) findViewById(R.id.start_record)).setBackgroundDrawable(resources.getDrawable(R.drawable.record));
+        ((Button) findViewById(R.id.stop_record)).setBackgroundDrawable(resources.getDrawable(R.drawable.stop_active));
         mRecorder.start();
     }
 
@@ -59,18 +62,27 @@ public class AudioUploadBox extends BaseView {
     }
 
     protected void stopRecording(View view) {
+        findViewById(R.id.stop_record).setBackgroundDrawable(resources.getDrawable(R.drawable.stop));
         mRecorder.stop();
         mRecorder.release();
-        findViewById(R.id.play_record).setVisibility(VISIBLE);
-        child.setAudio(formField.getId(), getFileName());
-        mRecorder = null;
+        findViewById(R.id.start_record).setBackgroundDrawable(resources.getDrawable(R.drawable.record_active));
+        findViewById(R.id.play_record).setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
+        child.put(formField.getId(), getFileName());
     }
 
     protected void playRecording(View view) {
         try {
-            mPlayer.setDataSource(child.getAudio(formField.getId()));
+            final Button play = (Button)findViewById(R.id.play_record);
+            play.setBackgroundDrawable(resources.getDrawable(R.drawable.play));
+            mPlayer.setDataSource(child.getString(formField.getId()));
             mPlayer.prepare();
             mPlayer.start();
+            mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    play.setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
+                }
+            });
         } catch (IOException e) {
             Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
             new RuntimeException(e);
@@ -80,44 +92,51 @@ public class AudioUploadBox extends BaseView {
     @Override
     protected void initialize() throws JSONException {
         super.initialize();
-        Button start = (Button)findViewById(R.id.start_record);
-        Button stop = (Button)findViewById(R.id.stop_record);
-        Button play = (Button)findViewById(R.id.play_record);
+        if (child.getString(formField.getId()) != null) {
+            findViewById(R.id.play_record).setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
+        }
+    }
 
-        if(child.getAudio(formField.getId()) != null){
-            play.setVisibility(VISIBLE);
+    private void setListeners(boolean canRecord) {
+        Button start = (Button) findViewById(R.id.start_record);
+        Button stop = (Button) findViewById(R.id.stop_record);
+        if (canRecord) {
+            start.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startRecording(view);
+                }
+            });
+            stop.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    stopRecording(view);
+                }
+            });
+        }else {
+            start.setBackgroundDrawable(resources.getDrawable(R.drawable.record));
+            stop.setBackgroundDrawable(resources.getDrawable(R.drawable.stop));
         }
 
-        start.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startRecording(view);
-            }
-        });
-        stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                stopRecording(view);
-            }
-        });
-
-        play.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.play_record).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 playRecording(view);
             }
         });
-
-
     }
 
-    protected void setMediaRecorder(MediaRecorder mediaRecorder){
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        setListeners(enabled);
+    }
+
+    protected void setMediaRecorder(MediaRecorder mediaRecorder) {
         mRecorder = mediaRecorder;
     }
 
-    protected void setMediaPlayer(MediaPlayer mediaPlayer){
+    protected void setMediaPlayer(MediaPlayer mediaPlayer) {
         mPlayer = mediaPlayer;
     }
-
-
 }
