@@ -107,7 +107,7 @@
                         </executions>
                         <configuration>
                             <emulator>
-                                <avd>android2.2</avd>
+                                <avd>rapidftr</avd>
                                 <wait>90000</wait>
                                 <options>-no-window -no-skin</options>
                             </emulator>
