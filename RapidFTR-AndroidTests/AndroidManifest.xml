@@ -3,6 +3,7 @@
           package="com.rapidftr.tests"
           android:versionCode="1"
           android:versionName="1.0">
+
     <application android:debuggable="true">
         <uses-library android:name="android.test.runner"/>
     </application>
@@ -11,5 +12,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <instrumentation android:targetPackage="com.rapidftr" android:name="android.test.InstrumentationTestRunner" android:label="Integration Tests"/>
-</manifest> 
+
+    <instrumentation android:targetPackage="com.rapidftr" android:name="com.rapidftr.RandomizingTestRunner" android:label="Integration Tests"/>
+</manifest>
