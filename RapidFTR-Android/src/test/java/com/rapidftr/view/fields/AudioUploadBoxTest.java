@@ -39,22 +39,25 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
-    public void shouldCallStartRecordingWhenStartButtonIsClicked(){
+    public void shouldCallCorrespondingMethodsWhenButtonsAreClickedAndSetEnabledIsTrue(){
         view.initialize(field, child);
+        view.setEnabled(true);
         view.findViewById(R.id.start_record).performClick();
         verify(view).startRecording(Matchers.<View>anyObject());
-    }
-
-    @Test
-    public void shouldCallStopRecordingWhenStopButtonIsClicked(){
-        view.initialize(field, child);
         view.findViewById(R.id.stop_record).performClick();
         verify(view).stopRecording(Matchers.<View>anyObject());
+        view.findViewById(R.id.play_record).performClick();
+        verify(view).playRecording(Matchers.<View>anyObject());
     }
 
     @Test
-    public void shouldCallPlayRecordingWhenPlayButtonIsClicked(){
+    public void shouldNotCallCorrespondingMethodsButtonAreClickedAndSetEnabledIsFalse(){
         view.initialize(field, child);
+        view.setEnabled(false);
+        view.findViewById(R.id.start_record).performClick();
+        verify(view, never()).startRecording(Matchers.<View>anyObject());
+        view.findViewById(R.id.stop_record).performClick();
+        verify(view, never()).stopRecording(Matchers.<View>anyObject());
         view.findViewById(R.id.play_record).performClick();
         verify(view).playRecording(Matchers.<View>anyObject());
     }
