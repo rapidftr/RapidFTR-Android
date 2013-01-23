@@ -14,12 +14,13 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.utils.AudioCaptureHelper;
 import org.json.JSONException;
 
+import java.io.File;
 import java.io.IOException;
 
 public class AudioUploadBox extends BaseView {
 
-    private MediaRecorder mRecorder = new MediaRecorder();
-    private MediaPlayer mPlayer = new MediaPlayer();
+    private MediaRecorder mRecorder = null;
+    private MediaPlayer mPlayer = null;
 
     private AudioCaptureHelper audioCaptureHelper;
     Resources resources = RapidFtrApplication.getApplicationInstance().getResources();
@@ -35,19 +36,37 @@ public class AudioUploadBox extends BaseView {
     }
 
     protected void startRecording(View view) {
+        disableButton(findViewById(R.id.start_record), R.drawable.record);
+        disableButton(findViewById(R.id.play_record), R.drawable.play);
+        enableButton(findViewById(R.id.stop_record), R.drawable.stop_active);
+        mRecorder = getMediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         try {
-            mRecorder.setOutputFile(getFileName());
+            mRecorder.setOutputFile(getNewFileName());
             mRecorder.prepare();
         } catch (IOException e) {
             Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
             new RuntimeException(e);
         }
-        ((Button) findViewById(R.id.start_record)).setBackgroundDrawable(resources.getDrawable(R.drawable.record));
-        ((Button) findViewById(R.id.stop_record)).setBackgroundDrawable(resources.getDrawable(R.drawable.stop_active));
         mRecorder.start();
+    }
+
+    protected void disableButton(View button, int drawable) {
+        button.setEnabled(false);
+        button.setBackgroundDrawable(resources.getDrawable(drawable));
+    }
+
+    protected void enableButton(View button, int drawable) {
+        button.setEnabled(true);
+        button.setBackgroundDrawable(resources.getDrawable(drawable));
+    }
+
+    protected String getNewFileName(){
+        String fileName = getFileName();
+        deleteFileIfExists(fileName);
+        return fileName;
     }
 
     protected String getFileName() {
@@ -61,26 +80,39 @@ public class AudioUploadBox extends BaseView {
         return fileName;
     }
 
+    protected void deleteFileIfExists(String fileName) {
+        File file = new File(fileName);
+        if(file.exists()){
+            file.delete();
+        }
+    }
+
     protected void stopRecording(View view) {
-        findViewById(R.id.stop_record).setBackgroundDrawable(resources.getDrawable(R.drawable.stop));
+        disableButton(findViewById(R.id.stop_record), R.drawable.stop);
+        enableButton(findViewById(R.id.start_record), R.drawable.record_active);
+        enableButton(findViewById(R.id.play_record), R.drawable.play_active);
         mRecorder.stop();
         mRecorder.release();
-        findViewById(R.id.start_record).setBackgroundDrawable(resources.getDrawable(R.drawable.record_active));
-        findViewById(R.id.play_record).setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
+        mRecorder = null;
         child.put(formField.getId(), getFileName());
     }
 
     protected void playRecording(View view) {
         try {
-            final Button play = (Button)findViewById(R.id.play_record);
-            play.setBackgroundDrawable(resources.getDrawable(R.drawable.play));
+            final View play = findViewById(R.id.play_record);
+            final View record = findViewById(R.id.start_record);
+            disableButton(play, R.drawable.play);
+            disableButton(record, R.drawable.record);
+            mPlayer = getMediaPlayer();
             mPlayer.setDataSource(child.getString(formField.getId()));
             mPlayer.prepare();
             mPlayer.start();
             mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    play.setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
+                    enableButton(record, R.drawable.record_active);
+                    enableButton(play, R.drawable.play_active);
+                    mPlayer.release();
                 }
             });
         } catch (IOException e) {
@@ -132,11 +164,11 @@ public class AudioUploadBox extends BaseView {
         setListeners(enabled);
     }
 
-    protected void setMediaRecorder(MediaRecorder mediaRecorder) {
-        mRecorder = mediaRecorder;
+    protected MediaRecorder getMediaRecorder() {
+        return new MediaRecorder();
     }
 
-    protected void setMediaPlayer(MediaPlayer mediaPlayer) {
-        mPlayer = mediaPlayer;
+    protected MediaPlayer getMediaPlayer() {
+        return new MediaPlayer();
     }
 }
