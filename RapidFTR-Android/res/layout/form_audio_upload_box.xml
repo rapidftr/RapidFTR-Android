@@ -25,14 +25,16 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:enabled="false"/>
 
         <Button android:background="@drawable/play"
                 android:id="@+id/play_record"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:enabled="false"/>
 
         </TableRow>
     </TableLayout>
