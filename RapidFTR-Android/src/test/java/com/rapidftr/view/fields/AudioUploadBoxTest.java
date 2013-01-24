@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.model.Child;
 import org.junit.Before;
@@ -84,15 +85,16 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
 
     @Test
     public void shouldStopRecordingWhenStopRecordMethodHasBeenCalled(){
-        doReturn("audio_file_name").when(view).getFileName();
         view.initialize(field, child);
         doReturn(mediaRecorder).when(view).getMediaRecorder();
         View play = mock(Button.class);
         View record = mock(Button.class);
         View stop = mock(Button.class);
+        String fileName = view.getFileName();
         doReturn(play).when(view).findViewById(R.id.play_record);
         doReturn(record).when(view).findViewById(R.id.start_record);
         doReturn(stop).when(view).findViewById(R.id.stop_record);
+        doReturn(fileName).when(view).getFileName();
         view.startRecording(view);
         view.stopRecording(view);
         verify(mediaRecorder).stop();
@@ -100,24 +102,36 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         verify(view).enableButton(play, R.drawable.play_active);
         verify(view).enableButton(record, R.drawable.record_active);
         verify(view).disableButton(stop, R.drawable.stop);
-        assertEquals("audio_file_name", child.getString(field.getId()));
+        assertEquals(fileName, child.getString(field.getId()));
     }
 
     @Test
     public void shouldPlayRecordWhenPlayMethodHasBeenCalled() throws IOException {
         view.initialize(field, child);
-        doReturn("audio_file_name").when(view).getNewFileName();
+        doReturn("audio_file_name").when(view).getFileName();
         doReturn(mediaPlayer).when(view).getMediaPlayer();
         View record = mock(Button.class);
         View play = mock(Button.class);
         doReturn(record).when(view).findViewById(R.id.start_record);
         doReturn(play).when(view).findViewById(R.id.play_record);
+
         view.playRecording(view);
-        verify(view).disableButton(play, R.drawable.play);
+        verify(play).setBackgroundDrawable(RapidFtrApplication.getApplicationInstance().getResources().getDrawable(R.drawable.pause_active));
         verify(view).disableButton(record, R.drawable.record);
         verify(mediaPlayer).setDataSource(child.getString(field.getId()));
         verify(mediaPlayer).prepare();
         verify(mediaPlayer).start();
+    }
+
+    @Test
+    public void shouldPauseIfMediaPlayerIsPlaying(){
+        view.initialize(field, child);
+        doReturn(mediaPlayer).when(view).getMediaPlayer();
+        doReturn(true).when(mediaPlayer).isPlaying();
+        view.playRecording(view);
+
+        view.playRecording(view);
+        verify(mediaPlayer).pause();
     }
 
     @Test
@@ -138,11 +152,11 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
-    public void shouldDeleteExistingFileIfGetNewFileNameHasBeenCalled(){
-        doReturn("audio_file_name").when(view).getFileName();
-        String newFileName = view.getNewFileName();
-        verify(view).deleteFileIfExists("audio_file_name");
-        assertEquals("audio_file_name", newFileName);
+    public void shouldGiveUniqueFileName(){
+        view.initialize(field, child);
+        String fileName1 = view.getFileName();
+        String fileName2 = view.getFileName();
+        assertFalse(fileName1.equals(fileName2));
     }
 
 }

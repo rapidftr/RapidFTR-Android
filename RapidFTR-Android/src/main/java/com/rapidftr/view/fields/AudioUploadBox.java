@@ -14,25 +14,30 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.utils.AudioCaptureHelper;
 import org.json.JSONException;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 public class AudioUploadBox extends BaseView {
 
     private MediaRecorder mRecorder = null;
     private MediaPlayer mPlayer = null;
+    private String fileName = null;
 
     private AudioCaptureHelper audioCaptureHelper;
     Resources resources = RapidFtrApplication.getApplicationInstance().getResources();
 
     public AudioUploadBox(Context context) {
         super(context);
-        audioCaptureHelper = new AudioCaptureHelper(((RapidFtrActivity) context).getContext());
+        audioCaptureHelper = getHelper(context);
     }
 
     public AudioUploadBox(Context context, AttributeSet attrs) {
         super(context, attrs);
-        audioCaptureHelper = new AudioCaptureHelper(((RapidFtrActivity) context).getContext());
+        audioCaptureHelper = getHelper(context);
+    }
+
+    protected AudioCaptureHelper getHelper(Context context) {
+        return new AudioCaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     protected void startRecording(View view) {
@@ -44,7 +49,7 @@ public class AudioUploadBox extends BaseView {
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         try {
-            mRecorder.setOutputFile(getNewFileName());
+            mRecorder.setOutputFile(getFileName());
             mRecorder.prepare();
         } catch (IOException e) {
             Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
@@ -63,28 +68,18 @@ public class AudioUploadBox extends BaseView {
         button.setBackgroundDrawable(resources.getDrawable(drawable));
     }
 
-    protected String getNewFileName(){
-        String fileName = getFileName();
-        deleteFileIfExists(fileName);
-        return fileName;
-    }
-
     protected String getFileName() {
-        String fileName = null;
         try {
-            fileName = audioCaptureHelper.getDir().getAbsolutePath() + child.getUniqueId() + formField.getId();
+            String newFileName = null;
+            while(newFileName == null || (fileName !=null && fileName.equals(newFileName))){
+               newFileName = audioCaptureHelper.getDir().getAbsolutePath() + child.getUniqueId() + new Date().getTime();
+            }
+            fileName = newFileName;
         } catch (JSONException e) {
             Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
             new RuntimeException(e);
         }
         return fileName;
-    }
-
-    protected void deleteFileIfExists(String fileName) {
-        File file = new File(fileName);
-        if(file.exists()){
-            file.delete();
-        }
     }
 
     protected void stopRecording(View view) {
@@ -94,15 +89,20 @@ public class AudioUploadBox extends BaseView {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
-        child.put(formField.getId(), getFileName());
+        child.put(formField.getId(), fileName);
     }
 
     protected void playRecording(View view) {
         try {
             final View play = findViewById(R.id.play_record);
             final View record = findViewById(R.id.start_record);
-            disableButton(play, R.drawable.play);
+            if(mPlayer != null && mPlayer.isPlaying()){
+                play.setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
+                mPlayer.pause();
+                return;
+            }
             disableButton(record, R.drawable.record);
+            play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
             mPlayer = getMediaPlayer();
             mPlayer.setDataSource(child.getString(formField.getId()));
             mPlayer.prepare();
@@ -125,7 +125,7 @@ public class AudioUploadBox extends BaseView {
     protected void initialize() throws JSONException {
         super.initialize();
         if (child.getString(formField.getId()) != null) {
-            findViewById(R.id.play_record).setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
+            enableButton(findViewById(R.id.play_record), R.drawable.play_active);
         }
     }
 
@@ -146,8 +146,8 @@ public class AudioUploadBox extends BaseView {
                 }
             });
         }else {
-            start.setBackgroundDrawable(resources.getDrawable(R.drawable.record));
-            stop.setBackgroundDrawable(resources.getDrawable(R.drawable.stop));
+            disableButton(start, R.drawable.record);
+            disableButton(stop, R.drawable.stop);
         }
 
         findViewById(R.id.play_record).setOnClickListener(new OnClickListener() {
