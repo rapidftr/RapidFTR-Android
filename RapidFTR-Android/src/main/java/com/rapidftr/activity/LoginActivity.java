@@ -5,29 +5,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import com.google.common.io.CharStreams;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.LoginAsyncTask;
-import lombok.Cleanup;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
-import static com.rapidftr.RapidFtrApplication.Preference.*;
-import static com.rapidftr.utils.http.HttpUtils.getToastMessage;
+import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
 
 public class LoginActivity extends RapidFtrActivity {
-
-    protected ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getContext().isLoggedIn()) {
-            goToHomeScreen();
-        }
+        goToHomeScreenIfLoggedIn();
+
         setContentView(R.layout.activity_login);
         toggleBaseUrl();
         startActivityOn(R.id.new_user_signup_link, SignupActivity.class);
@@ -43,7 +34,7 @@ public class LoginActivity extends RapidFtrActivity {
                     if (isValid()) {
                         String username = getEditText(R.id.username);
                         String password = getEditText(R.id.password);
-                        String baseUrl = getBaseUrl();
+                        String baseUrl = getEditText(R.id.url);
                         login(username, password, baseUrl);
                     }
                 } catch (IOException e) {
@@ -67,9 +58,7 @@ public class LoginActivity extends RapidFtrActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (getContext().isLoggedIn()) {
-            goToHomeScreen();
-        }
+        goToHomeScreenIfLoggedIn();
     }
 
     private void toggleBaseUrl() {
@@ -92,16 +81,14 @@ public class LoginActivity extends RapidFtrActivity {
         view.setVisibility(visibility);
     }
 
-    protected String getBaseUrl() {
-        return getEditText(R.id.url);
-    }
-
     protected void login(String username, String password, String baseUrl) throws IOException {
         new LoginAsyncTask(this).execute(username, password, baseUrl);
     }
 
-    public void goToHomeScreen() {
-        startActivity(new Intent(this, MainActivity.class));
+    protected void goToHomeScreenIfLoggedIn() {
+        if (getContext().isLoggedIn()){
+            startActivity(new Intent(this, MainActivity.class));
+        }
     }
 
     protected void setEditText(int resId, String text) {
