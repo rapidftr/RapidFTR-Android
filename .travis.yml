@@ -7,8 +7,8 @@ env:
     - secure: "eATae5kWD2tL3xtUdQjk4T5RWn4zv5OS4QXjwL9q/E4ntzge3rVPRGVSyS5/\nL/d48QLlliDzC6d7ycFVyEZC0OLzpHNER56vhP4YY9yfLygHr+NQJizPEiMJ\nPj5vUu9+qfOb3icQuQYDamuOCT7CxnVXSxVApfpFSSGz1YFpwfs="
   matrix:
     - ANDROID_SDKS=android-8            ANDROID_TARGET=android-8  ANDROID_ABI=armeabi
-    - ANDROID_SDKS=android-10           ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
-    - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a
+#    - ANDROID_SDKS=android-10           ANDROID_TARGET=android-10 ANDROID_ABI=armeabi
+#    - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a
 
 branches:
   only:
