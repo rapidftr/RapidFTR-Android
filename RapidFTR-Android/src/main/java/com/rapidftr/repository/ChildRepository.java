@@ -8,7 +8,6 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Child;
-import com.rapidftr.model.User;
 import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
 import org.json.JSONArray;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
@@ -65,18 +63,17 @@ public class ChildRepository implements Closeable {
     public List<Child> getMatchingChildren(String subString) throws JSONException {
         String searchString = String.format("%%%s%%", subString);
         RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE "+ fetchByOwner(context) +" (name LIKE ? or id LIKE ?)" , new String[]{searchString, searchString});
+	    String query = "SELECT child_json, synced FROM children WHERE "+ fetchByOwner(context) +" (name LIKE ? or id LIKE ?)";
+        @Cleanup Cursor cursor = session.rawQuery(query, new String[]{searchString, searchString});
         return toChildren(cursor);
     }
 
     private String fetchByOwner(RapidFtrApplication context) throws JSONException {
-        String owner = "";
-        String userName = context.getPreference(USER_NAME);
-        User user = new User(context.getPreference(userName));
-        if (!user.isAuthenticated()) {
-            owner = " child_owner = '" + userName + "' AND ";
-        }
-        return owner;
+	    if (!context.getCurrentUser().isAuthenticated()) {
+            return  " child_owner = '" + userName + "' AND ";
+        } else {
+		    return "";
+	    }
     }
 
     public void createOrUpdate(Child child) throws JSONException {

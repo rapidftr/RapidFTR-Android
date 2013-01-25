@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -68,15 +69,6 @@ public class BaseChildActivityTest {
 
         activity.onCreate(bundle);
         assertThat(activity.child, equalTo(child));
-    }
-
-    @Test
-    public void testInitializeFormSections() throws JSONException {
-        List<FormSection> formSections = (List<FormSection>) mock(List.class);
-        RapidFtrApplication.getApplicationInstance().setFormSections(formSections);
-
-        activity.initializeData(null);
-        assertThat(activity.formSections, equalTo(formSections));
     }
 
     @Test

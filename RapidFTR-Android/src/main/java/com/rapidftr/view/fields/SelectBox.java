@@ -31,7 +31,7 @@ public class SelectBox extends BaseView {
     protected void initialize() throws JSONException {
         super.initialize();
 
-        List<String> selectOptions = new ArrayList<String>( formField.getOptionStrings() );
+        List<String> selectOptions = new ArrayList<String>( formField.getLocalizedOptionStrings() );
         if (selectOptions.size() == 0 || !Strings.isNullOrEmpty(selectOptions.get(0))) {
             selectOptions.add(0, "");
         }

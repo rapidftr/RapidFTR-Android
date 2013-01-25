@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static com.rapidftr.CustomTestRunner.createUser;
 import static com.xtremelabs.robolectric.Robolectric.shadowOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -85,18 +86,12 @@ public class SignupActivityTest {
 
     @Test
     public void shouldSaveUserDetailsInSharedPreferences() throws Exception {
-        doReturn("username").when(signupActivity).getEditText(R.id.username);
-        doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
-        doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
-        doReturn("text").when(signupActivity).getEditText(R.id.password);
-        doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
-
+	    User user = spy(createUser());
+	    doNothing().when(user).save();
+	    doReturn(user).when(signupActivity).buildUser();
+	    doReturn(true).when(signupActivity).isValid();
         signupActivity.createUser(null);
-        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-        User user= new User(sharedPreferences.getString("username", null));
-        assertEquals("fullname",user.getFullName());
-        assertEquals("organisation",user.getOrganisation());
-        assertEquals(false ,user.isAuthenticated());
+	    verify(user).save();
     }
 
     @Test
@@ -129,7 +124,7 @@ public class SignupActivityTest {
 
     @Test
     public void shouldCheckIfUsernameIsAlreadyTakenInMobile() throws Exception {
-        signupActivity.getContext().setPreference("username","user details");
+        signupActivity.getContext().getSharedPreferences().edit().putString("user_username","{}").commit();
         userName  = mock(EditText.class);
 
         doReturn(userName).when(signupActivity).findViewById(R.id.username);
@@ -140,7 +135,6 @@ public class SignupActivityTest {
         doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
 
         signupActivity.createUser(null);
-        assertEquals(true,signupActivity.isUsernameTakenInMobile("username"));
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(signupActivity.getString(R.string.username_taken)));
         verify(userName).setError(signupActivity.getString(R.string.username_taken));
     }

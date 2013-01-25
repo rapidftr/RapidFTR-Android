@@ -8,15 +8,16 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.User;
 import com.rapidftr.task.SyncAllDataAsyncTask;
-import com.rapidftr.task.SyncUnverifiedUsersDataAsyncTask;
+import com.rapidftr.task.SyncUnverifiedDataAsyncTask;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import org.json.JSONException;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
+import java.io.IOException;
+
+import static com.rapidftr.CustomTestRunner.createUser;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -35,30 +36,35 @@ public class ApplicationInjectorTest {
     }
 
     @Test
-    public void testUserName() {
-        application.setPreference(USER_NAME, "test");
+    public void testUserName() throws IOException {
+	    User user = createUser();
+	    application.setCurrentUser(user);
         String result = injector.getInstance(Key.get(String.class, Names.named("USER_NAME")));
-        assertThat(result, equalTo("test"));
+        assertThat(result, equalTo(user.getUserName()));
     }
 
     @Test
-    public void testDbNameForAuthenticatedUser() throws JSONException {
+    public void testDbNameForAuthenticatedUser() throws JSONException, IOException {
+	    User user = createUser();
+	    application.setCurrentUser(user);
         String result = injector.getInstance(Key.get(String.class, Names.named("DB_NAME")));
-        assertEquals(result, "DB-" + application.getDbKey().hashCode());
+        assertEquals(result, "DB-" + user.getDbKey().hashCode());
     }
 
     @Test
     public void testReturnVerifiedSyncTask() throws Exception {
-        application.setPreference("testUser", new User(true, "test", "test", "test").toString());
-        application.setPreference(USER_NAME, "testUser");
+	    User user = createUser();
+	    user.setAuthenticated(true);
+	    application.setCurrentUser(user);
         assertThat(application.getInjector().getInstance(SynchronisationAsyncTask.class), instanceOf(SyncAllDataAsyncTask.class));
     }
 
     @Test
     public void testReturnUnverifiedSyncTask() throws Exception {
-        application.setPreference("testUser", new User(false, "test", "test", "test").toString());
-        application.setPreference(USER_NAME, "testUser");
-        assertThat(application.getInjector().getInstance(SynchronisationAsyncTask.class), instanceOf(SyncUnverifiedUsersDataAsyncTask.class));
+	    User user = createUser();
+	    user.setAuthenticated(false);
+	    application.setCurrentUser(user);
+        assertThat(application.getInjector().getInstance(SynchronisationAsyncTask.class), instanceOf(SyncUnverifiedDataAsyncTask.class));
     }
 
 }

@@ -9,6 +9,9 @@ import com.rapidftr.task.SynchronisationAsyncTask;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
+
+import static com.rapidftr.CustomTestRunner.createUser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -19,9 +22,9 @@ import static org.mockito.Mockito.*;
 public class RapidFtrActivityTest {
 
     @Test
-    public void shouldNotRenderMenuWhenUserIsNotLoggedIn(){
+    public void shouldNotRenderMenuWhenUserIsNotLoggedIn() throws IOException {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
-        instance.setLoggedIn(false);
+        instance.setCurrentUser(null);
         RapidFtrActivity loginActivity = new LoginActivity();
 
         Menu menu = mock(Menu.class);
@@ -32,9 +35,9 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldRenderMenuWhenUserIsLoggedIn(){
+    public void shouldRenderMenuWhenUserIsLoggedIn() throws IOException {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
-        instance.setLoggedIn(true);
+        instance.setCurrentUser(createUser());
         RapidFtrActivity loginActivity = new LoginActivity();
         Menu menu = mock(Menu.class);
         doReturn(mock(MenuItem.class)).when(menu).getItem(anyInt());
@@ -44,9 +47,9 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldFinishActivityOnLogout(){
+    public void shouldFinishActivityOnLogout() throws IOException {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
-        instance.setLoggedIn(true);
+        instance.setCurrentUser(createUser());
         RapidFtrActivity loginActivity = new LoginActivity();
         MenuItem menuItem = mock(MenuItem.class);
         given(menuItem.getItemId()).willReturn(R.id.logout);
@@ -83,11 +86,11 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldSetTheMenuBasedOnAsynTask(){
+    public void shouldSetTheMenuBasedOnAsynTask() throws IOException {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         SynchronisationAsyncTask mockAsyncTask = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
-        instance.setLoggedIn(true);
+        instance.setCurrentUser(createUser());
 
         Menu mockMenu = mock(Menu.class);
         MenuItem syncAllMenuItem = mock(MenuItem.class);
@@ -123,16 +126,16 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldSetCurrentContextWhileCreatingMenu(){
+    public void shouldSetCurrentContextWhileCreatingMenu() throws IOException {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         SynchronisationAsyncTask mockSyncAll = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockSyncAll);
-        instance.setLoggedIn(true);
+        instance.setCurrentUser(createUser());
 
         RapidFtrActivity mainActivity = new MainActivity();
         Menu mockMenu = mock(Menu.class);
         when(mockMenu.getItem(anyInt())).thenReturn(mock(MenuItem.class));
-        mainActivity.onCreateOptionsMenu(mockMenu);
-        verify(mockSyncAll).setContext(mainActivity);
+	    mainActivity.onCreateOptionsMenu(mockMenu);
+	    verify(mockSyncAll).setContext(mainActivity);
     }
 }

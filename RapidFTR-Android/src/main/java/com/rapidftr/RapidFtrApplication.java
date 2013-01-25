@@ -2,49 +2,47 @@ package com.rapidftr;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.util.Log;
+import com.google.common.io.CharStreams;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.User;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.utils.ApplicationInjector;
+import lombok.Cleanup;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.ListIterator;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
+import java.util.*;
 
 public class RapidFtrApplication extends Application {
 
 
-    @RequiredArgsConstructor(suppressConstructorProperties = true)
-    public enum Preference {
-        USER_NAME("USER_NAME"),
-        USER_ORG("USER_ORG"),
-        SERVER_URL("SERVER_URL"),
-        FORM_SECTION("FORM_SECTION");
-
-        private final @Getter String key;
-    }
-
     public static final String SHARED_PREFERENCES_FILE = "RAPIDFTR_PREFERENCES";
     public static final String APP_IDENTIFIER = "RapidFTR";
+	public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
-    private static @Getter RapidFtrApplication applicationInstance;
+	public static final String CURRENT_USER_PREF = "CURRENT_USER";
+	public static final String SERVER_URL_PREF = "SERVER_URL";
+	public static final String FORM_SECTIONS_PREF = "FORM_SECTION";
+
+	private static @Getter RapidFtrApplication applicationInstance;
 
     private @Getter final Injector injector;
 
-    private @Getter @Setter List<FormSection> formSections;
-    private @Getter @Setter boolean loggedIn;
-    private @Getter @Setter String dbKey;
-    private @Getter @Setter SynchronisationAsyncTask syncTask;
+    protected @Getter List<FormSection> formSections;
+	protected @Getter User currentUser;
+    protected @Getter @Setter SynchronisationAsyncTask syncTask;
 
     public RapidFtrApplication() {
         this(Guice.createInjector(new ApplicationInjector()));
@@ -59,41 +57,70 @@ public class RapidFtrApplication extends Application {
         return getSharedPreferences(SHARED_PREFERENCES_FILE, MODE_PRIVATE);
     }
 
-    public String getPreference(Preference preference) {
-        return getPreference(preference.getKey());
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		try {
+			reloadFormSections();
+			reloadCurrentUser();
+		} catch (IOException e) {
+			Log.e(APP_IDENTIFIER, "Failed to load form sections", e);
+		}
+	}
+
+    public void setFormSections(String formSectionResponse) throws IOException {
+	    getSharedPreferences().edit().putString(FORM_SECTIONS_PREF, formSectionResponse).commit();
+	    reloadFormSections();
     }
 
-    public String getPreference(String preferenceKey) {
-        return getSharedPreferences().getString(preferenceKey, null);
-    }
+	public void setFormSections(List<FormSection> formSections) throws IOException {
+		setFormSections(JSON_MAPPER.writeValueAsString(formSections.toArray()));
+	}
 
-    public void setPreference(Preference preference, String value) {
-        setPreference(preference.getKey(), value);
-    }
+	protected void reloadFormSections() throws IOException {
+		String formSections = getSharedPreferences().getString(FORM_SECTIONS_PREF, null);
+		if (formSections == null) {
+			@Cleanup InputStream in = getResources().openRawResource(R.raw.form_sections);
+			formSections = CharStreams.toString(new InputStreamReader(in));
+		}
 
-    public void setPreference(String key, String value){
-        getSharedPreferences().edit().putString(key, value).commit();
-    }
+		this.formSections = Arrays.asList(JSON_MAPPER.readValue(formSections, FormSection[].class));
+	}
 
-    public void removePreference(Preference preference) {
-        getSharedPreferences().edit().remove(preference.getKey()).commit();
-    }
+	protected void setCurrentUser(String user) throws IOException {
+		getSharedPreferences().edit().putString(CURRENT_USER_PREF, user).commit();
+		reloadCurrentUser();
+	}
 
-    public String getUserName() {
-        return getPreference(Preference.USER_NAME);
-    }
+	public void setCurrentUser(User user) throws IOException {
+		setCurrentUser(JSON_MAPPER.writeValueAsString(user));
+		if (user != null && user.getServerUrl() != null)
+			getSharedPreferences().edit().putString(SERVER_URL_PREF, user.getServerUrl()).commit();
+	}
 
-    public User getUser() throws JSONException {
-        return new User(getPreference(getUserName()));
-    }
+	protected void reloadCurrentUser() throws IOException {
+		String currentUser = getSharedPreferences().getString(CURRENT_USER_PREF, null);
+		this.currentUser = currentUser == null ? null : JSON_MAPPER.readValue(currentUser, User.class);
+	}
 
-    public void setFormSectionsTemplate(String formSectionResponse) throws IOException {
-        formSections = Arrays.asList(new ObjectMapper().readValue(formSectionResponse, FormSection[].class));
-        Collections.sort(formSections);
+	public boolean isLoggedIn() {
+		return getCurrentUser() != null;
+	}
 
-        ListIterator<FormSection> iterator = formSections.listIterator();
-        while (iterator.hasNext())
-            if (!iterator.next().isEnabled())
-                iterator.remove();
-    }
+	public String getDbKey() {
+		return isLoggedIn() ? getCurrentUser().getDbKey() : null;
+	}
+
+	public String getUserName() {
+		return isLoggedIn() ? getCurrentUser().getUserName() : null;
+	}
+
+	public String getUserOrganisation() {
+		return isLoggedIn() ? getCurrentUser().getOrganisation() : null;
+	}
+
+	public String getServerUrl() {
+		return getSharedPreferences().getString(SERVER_URL_PREF, null);
+	}
+
 }

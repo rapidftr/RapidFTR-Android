@@ -17,9 +17,6 @@ import org.json.JSONException;
 
 import java.util.List;
 
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
-
 public abstract class BaseChildActivity extends RapidFtrActivity {
 
     public static final int CLOSE_ACTIVITY = 999;
@@ -119,8 +116,8 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
 
         if (child.isNew())
         {
-            child.setOwner(getContext().getPreference(USER_NAME));
-            child.setOrganisation(getContext().getPreference(USER_ORG));
+            child.setOwner(getContext().getUserName());
+            child.setOrganisation(getContext().getUserOrganisation());
         }
         child.generateUniqueId();
         child.setSynced(false);

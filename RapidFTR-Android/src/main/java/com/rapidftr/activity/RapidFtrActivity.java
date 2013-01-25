@@ -20,16 +20,10 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.model.User;
 import com.rapidftr.service.LogOutService;
-import com.rapidftr.task.SyncAllDataAsyncTask;
-import com.rapidftr.task.SyncUnverifiedUsersDataAsyncTask;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONException;
-
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 
 public abstract class RapidFtrActivity extends FragmentActivity {
 
@@ -112,10 +106,10 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if(getContext().isLoggedIn()) {
-        getMenuInflater().inflate(R.menu.options_menu, menu);
-        setMenu(menu);
-        toggleSync(menu);
-        setContextToSyncTask();
+	        getMenuInflater().inflate(R.menu.options_menu, menu);
+	        setMenu(menu);
+	        toggleSync(menu);
+	        setContextToSyncTask();
         }
         return getContext().isLoggedIn();
     }

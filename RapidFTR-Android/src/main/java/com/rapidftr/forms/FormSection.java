@@ -3,11 +3,9 @@ package com.rapidftr.forms;
 import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
@@ -16,26 +14,26 @@ import java.util.Locale;
 @NoArgsConstructor
 @AllArgsConstructor(suppressConstructorProperties = true)
 public class FormSection implements Comparable<FormSection> {
+
     @JsonProperty("name")
-    private HashMap<String, String> name;
+    protected Map<String, String> name = new HashMap<String, String>();
 
-    public String getName(){
-        return name != null ? name.get(Locale.getDefault().getLanguage()) : null;
-    }
+    protected int order;
 
-    private int order;
-
-    private boolean enabled;
+    protected boolean enabled;
 
     @JsonProperty("help_text")
-    private HashMap<String, String> helpText;
+    protected Map<String, String> helpText = new HashMap<String, String>();
 
-    public String getHelpText(){
+	protected List<FormField> fields = new ArrayList<FormField>();
+
+	public String getLocalizedName() {
+		return name != null ? name.get(Locale.getDefault().getLanguage()) : null;
+	}
+
+    public String getLocalizedHelpText() {
         return helpText != null ? helpText.get(Locale.getDefault().getLanguage()) : null;
     }
-
-
-    private List<FormField> fields = new ArrayList<FormField>();
 
     @Override
     public int compareTo(FormSection other) {

@@ -4,10 +4,7 @@ import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
@@ -28,28 +25,27 @@ public class FormField {
     private String type;
 
     @JsonProperty("display_name")
-    private HashMap<String, String> displayName;
+    private Map<String, String> displayName;
 
-    public String getDisplayName(){
+	@JsonProperty("help_text")
+	private Map<String, String> helpText;
+
+	@JsonProperty("option_strings_text")
+	private Map<String, List<String>> optionStrings = new HashMap<String, List<String>>();
+
+	private Object value;
+
+    public String getLocalizedDisplayName(){
         return displayName != null ? displayName.get(Locale.getDefault().getLanguage()) : "";
     }
 
-    @JsonProperty("help_text")
-    private HashMap<String, String> helpText;
-    public String getHelpText(){
+    public String getLocalizedHelpText(){
         return helpText != null ? helpText.get(Locale.getDefault().getLanguage()) : "";
     }
 
-
-    @JsonProperty("option_strings_text")
-    private HashMap<String, List<String>> optionStrings = new HashMap<String, List<String>>();
-
-    public List<String> getOptionStrings(){
+    public List<String> getLocalizedOptionStrings(){
         String locale = Locale.getDefault().getLanguage();
-        return optionStrings.get(locale) != null ? optionStrings.get(locale) : new ArrayList<String>();
+        return (optionStrings != null && optionStrings.get(locale) != null) ? optionStrings.get(locale) : new ArrayList<String>();
     }
-
-
-    private Object value;
 
 }
