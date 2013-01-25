@@ -3,6 +3,7 @@ package com.rapidftr;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.util.Log;
+import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -88,12 +89,17 @@ public class RapidFtrApplication extends Application {
 	}
 
 	protected void setCurrentUser(String user) throws IOException {
-		getSharedPreferences().edit().putString(CURRENT_USER_PREF, user).commit();
+		if (Strings.emptyToNull(user) == null) {
+			getSharedPreferences().edit().remove(CURRENT_USER_PREF).commit();
+		} else {
+			getSharedPreferences().edit().putString(CURRENT_USER_PREF, user).commit();
+		}
+
 		reloadCurrentUser();
 	}
 
 	public void setCurrentUser(User user) throws IOException {
-		setCurrentUser(JSON_MAPPER.writeValueAsString(user));
+		setCurrentUser(user == null ? null : user.asJSON());
 		if (user != null && user.getServerUrl() != null)
 			getSharedPreferences().edit().putString(SERVER_URL_PREF, user.getServerUrl()).commit();
 	}
@@ -105,22 +111,6 @@ public class RapidFtrApplication extends Application {
 
 	public boolean isLoggedIn() {
 		return getCurrentUser() != null;
-	}
-
-	public String getDbKey() {
-		return isLoggedIn() ? getCurrentUser().getDbKey() : null;
-	}
-
-	public String getUserName() {
-		return isLoggedIn() ? getCurrentUser().getUserName() : null;
-	}
-
-	public String getUserOrganisation() {
-		return isLoggedIn() ? getCurrentUser().getOrganisation() : null;
-	}
-
-	public String getServerUrl() {
-		return getSharedPreferences().getString(SERVER_URL_PREF, null);
 	}
 
 }

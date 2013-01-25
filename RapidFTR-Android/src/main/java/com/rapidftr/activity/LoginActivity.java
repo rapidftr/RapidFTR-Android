@@ -86,6 +86,7 @@ public class LoginActivity extends RapidFtrActivity {
 
     protected void goToHomeScreenIfLoggedIn() {
         if (getContext().isLoggedIn()){
+	        finish();
             startActivity(new Intent(this, MainActivity.class));
         }
     }

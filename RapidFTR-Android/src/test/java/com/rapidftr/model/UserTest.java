@@ -4,18 +4,85 @@ import android.content.SharedPreferences;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import org.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import static com.rapidftr.CustomTestRunner.createUser;
+import static com.rapidftr.model.User.UNAUTHENTICATED_DB_KEY;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 @RunWith(CustomTestRunner.class)
 public class UserTest {
 
+	User user;
+
+	@Before
+	public void setUp() throws IOException {
+		user = spy(createUser());
+		doReturn("{}").when(user).asJSON();
+	}
+
 	@Test
-	public void testOne() {
+	public void shouldSavePlainTextPasswordForUnverified() throws IOException, GeneralSecurityException {
+		user.setAuthenticated(false);
+		user.save();
+		verify(user).setUnauthenticatedPassword(user.getPassword());
+	}
+
+	@Test
+	public void shouldSetUnauthenticatedDbKeyForUnverifiedUsers() throws IOException, GeneralSecurityException {
+		user.setAuthenticated(false);
+		user.save();
+		verify(user).setDbKey(User.getUnauthenticatedDbKeyDbKey());
+	}
+
+	@Test
+	public void shouldReturnUnauthenticatedDbKeyWhenPresent() {
+		RapidFtrApplication.getApplicationInstance().getSharedPreferences().edit().putString(UNAUTHENTICATED_DB_KEY, "abcd").commit();
+		assertThat(User.getUnauthenticatedDbKeyDbKey(), equalTo("abcd"));
+	}
+
+	@Test
+	public void shouldCreateAndStoreUnauthenticatedDbKeyWhenNotPresent() {
+		RapidFtrApplication.getApplicationInstance().getSharedPreferences().edit().remove(UNAUTHENTICATED_DB_KEY).commit();
+		String dbKey = User.createUnauthenticatedDbKey();
+		assertThat(User.getUnauthenticatedDbKeyDbKey(), equalTo(dbKey));
+	}
+
+	@Test
+	public void shouldSaveUnauthenticatedDbKeyForUnauthenticatedUsers() throws IOException, GeneralSecurityException {
+		User user = spy(createUser());
+		user.setAuthenticated(false);
+		user.setUnauthenticatedPassword(null);
+
+		doReturn("{}").when(user).asJSON();
+		user.save();
+		assertThat(user.getUnauthenticatedPassword(), equalTo(user.getPassword()));
+	}
+
+	@Test
+	public void shouldReadDataFromServerResponse() throws IOException {
+		User user = new User("testUser", "testPassword");
+		String json = "{  \"session\":  {  \"link\":  {  \"rel\":  \"session\",  \"uri\":  \"/sessions/83407cc8a01fb202f25458476e5cb36d\"  },  \"token\":  \"83407cc8a01fb202f25458476e5cb36d\"  },  \"db_key\":  \"6127d30bea89f2fb\",  \"organisation\":  \"N/A\"  }";
+		user.read(json);
+		assertThat(user.getDbKey(), equalTo("6127d30bea89f2fb"));
+		assertThat(user.getOrganisation(), equalTo("N/A"));
+	}
+
+	@Test
+	public void shouldSaveEncryptedUserDataToSharedPreference() {
+	}
+
+	@Test
+	public void shouldLoadUserDataFromSharedPreference() {
 	}
 
 //    @Test

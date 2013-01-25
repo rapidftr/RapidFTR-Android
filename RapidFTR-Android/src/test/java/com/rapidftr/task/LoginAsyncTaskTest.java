@@ -8,6 +8,7 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.User;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,7 @@ import java.security.GeneralSecurityException;
 import static com.rapidftr.CustomTestRunner.createUser;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
@@ -38,15 +40,29 @@ public class LoginAsyncTaskTest {
         loginAsyncTask = spy(new LoginAsyncTask(activity));
     }
 
-//    @Test
-//    public void shouldSaveCurrentUserWhenSuccess() throws IOException, GeneralSecurityException {
-//	    User user = spy(createUser());
-//	    doNothing().when(user).save();
-//        loginAsyncTask.onPostExecute(user);
-//	    verify(user).save();
-//	    verify(application).setCurrentUser(user);
-//	    verify(loginAsyncTask).goToHomeScreen();
-//    }
+	@Test
+	public void shouldCallOnlineLoginIfNetworkIsUp() throws IOException, JSONException {
+		doReturn(true).when(loginAsyncTask).isOnline();
+		loginAsyncTask.doInBackground("", "", "");
+		verify(loginAsyncTask).doOnlineLogin();
+	}
+
+	@Test
+	public void shouldCallOfflineLoginIfNetworkIsDown() throws GeneralSecurityException, IOException {
+		doReturn(false).when(loginAsyncTask).isOnline();
+		loginAsyncTask.doInBackground("", "", "");
+		verify(loginAsyncTask).doOfflineLogin();
+	}
+
+    @Test
+    public void shouldSaveCurrentUserWhenSuccess() throws IOException, GeneralSecurityException {
+	    User user = spy(createUser());
+	    doReturn("{}").when(user).asJSON();
+        loginAsyncTask.onPostExecute(user);
+	    verify(user).save();
+	    verify(application).setCurrentUser(user);
+	    verify(loginAsyncTask).goToHomeScreen();
+    }
 
     @Test
     public void shouldCheckOfflineLogin() throws Exception {

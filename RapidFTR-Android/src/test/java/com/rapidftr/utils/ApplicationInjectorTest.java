@@ -44,14 +44,6 @@ public class ApplicationInjectorTest {
     }
 
     @Test
-    public void testDbNameForAuthenticatedUser() throws JSONException, IOException {
-	    User user = createUser();
-	    application.setCurrentUser(user);
-        String result = injector.getInstance(Key.get(String.class, Names.named("DB_NAME")));
-        assertEquals(result, "DB-" + user.getDbKey().hashCode());
-    }
-
-    @Test
     public void testReturnVerifiedSyncTask() throws Exception {
 	    User user = createUser();
 	    user.setAuthenticated(true);

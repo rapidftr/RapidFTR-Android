@@ -20,6 +20,7 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.User;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import lombok.Getter;
@@ -148,6 +149,10 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         return false;
     }
 
+	protected User getCurrentUser() {
+		return getContext().getCurrentUser();
+	}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -214,7 +219,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         return value == null ? null : value.toString().trim();
     }
 
-    private void saveAlertListener(final Class cls) {
+    protected void saveAlertListener(final Class cls) {
         if ((this instanceof RegisterChildActivity && ((RegisterChildActivity) this).child.isValid()) || this instanceof EditChildActivity) {
             final BaseChildActivity activity = (BaseChildActivity) this;
             DialogInterface.OnClickListener listener = createAlertDialog(cls, activity);
@@ -224,7 +229,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         }
     }
 
-    private DialogInterface.OnClickListener createAlertDialog(final Class cls, final BaseChildActivity activity) {
+    protected DialogInterface.OnClickListener createAlertDialog(final Class cls, final BaseChildActivity activity) {
         return new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int selectedItem) {
@@ -241,7 +246,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         };
     }
 
-    private void saveAlertListenerForLogout() {
+    protected void saveAlertListenerForLogout() {
         final BaseChildActivity activity = (BaseChildActivity) this;
         DialogInterface.OnClickListener listener = createAlertDialogForLogout(activity);
         if (activity.child.isValid()) {
@@ -252,7 +257,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         }
     }
 
-    private DialogInterface.OnClickListener createAlertDialogForLogout(final BaseChildActivity activity) {
+    protected DialogInterface.OnClickListener createAlertDialogForLogout(final BaseChildActivity activity) {
         return new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int selectedItem) {

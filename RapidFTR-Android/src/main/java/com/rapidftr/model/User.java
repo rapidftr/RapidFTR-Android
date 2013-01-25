@@ -8,6 +8,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -62,8 +63,12 @@ public class User {
 		this(userName, password, authenticated, serverUrl, null, null, null, null);
 	}
 
+	public String getDbName() {
+		return getDbKey() == null ? null : ("DB-" + getDbKey().hashCode());
+	}
+
 	public String asJSON() throws IOException {
-		return JSON_MAPPER.writeValueAsString(this);
+		return getJsonMapper().writeValueAsString(this);
 	}
 
 	public String asEncryptedJSON() throws IOException, GeneralSecurityException {
@@ -74,7 +79,7 @@ public class User {
 	}
 
 	public User read(String json) throws IOException {
-		JSON_MAPPER.readerForUpdating(this).readValues(json);
+		getJsonMapper().readerForUpdating(this).readValue(json);
 		return this;
 	}
 
@@ -85,7 +90,7 @@ public class User {
 	}
 
 	public void save() throws IOException, GeneralSecurityException {
-		if (this.isAuthenticated()) {
+		if (!this.isAuthenticated()) {
 			this.setUnauthenticatedPassword(this.getPassword());
 			this.setDbKey(getUnauthenticatedDbKeyDbKey());
 		}
@@ -95,6 +100,10 @@ public class User {
 
 	public boolean exists() {
 		return getSharedPreferences().contains(prefKey(userName));
+	}
+
+	protected ObjectMapper getJsonMapper() {
+		return JSON_MAPPER;
 	}
 
 	protected static SharedPreferences getSharedPreferences() {

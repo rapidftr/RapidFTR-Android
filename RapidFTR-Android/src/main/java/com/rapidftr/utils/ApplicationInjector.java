@@ -36,19 +36,8 @@ public class ApplicationInjector extends AbstractModule {
     }
 
     @Provides @Named("USER_NAME")
-    public String getUserName(RapidFtrApplication application) {
-        return application.getUserName();
-    }
-
-    @Provides @Named("DB_KEY")
-    public String getDBKey(RapidFtrApplication application) {
-        return application.getDbKey();
-    }
-
-    @Provides
-    @Named("DB_NAME")
-    public String getDBName(RapidFtrApplication application) throws JSONException {
-        return "DB-" + application.getDbKey().hashCode();
+    public String getUserName(User user) {
+        return user.getUserName();
     }
 
     @Provides
@@ -63,7 +52,7 @@ public class ApplicationInjector extends AbstractModule {
 
     @Provides
     public User getUser(RapidFtrApplication application) throws JSONException {
-        return application.getCurrentUser();
+        return application.isLoggedIn() ? application.getCurrentUser() : null;
     }
 
     @Provides
