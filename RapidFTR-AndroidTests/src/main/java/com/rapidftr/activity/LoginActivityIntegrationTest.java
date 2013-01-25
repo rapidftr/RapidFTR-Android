@@ -15,11 +15,15 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         assertTrue(solo.waitForText("Incorrect username or password"));
     }
 
-    public void testIncorrectServer() {
+    public void estIncorrectServer() {
         loginPage.login(USERNAME, PASSWORD, LoginPage.LOGIN_URL+":abc");
-        solo.waitForText("Unable to connect to the server, please contact your system administrator");
-        loginPage.logout();
+        assertTrue(solo.waitForText("Unable to connect to the server, please contact your system administrator"));
     }
+
+	public void testIncorrectServer() {
+		loginPage.login(USERNAME, PASSWORD, LoginPage.LOGIN_URL+":abc");
+		assertTrue(solo.waitForText("Incorrect username or password"));
+	}
 
     public void testNoLoginDetailsErrorMessages(){
           loginPage.login("","","");

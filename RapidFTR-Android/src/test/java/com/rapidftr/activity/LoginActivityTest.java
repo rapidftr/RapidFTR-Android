@@ -1,19 +1,14 @@
 package com.rapidftr.activity;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.model.User;
-import com.rapidftr.task.LoginAsyncTask;
-import com.rapidftr.utils.EncryptionUtil;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowActivity;
 import com.xtremelabs.robolectric.shadows.ShadowHandler;
@@ -27,10 +22,11 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.rapidftr.RapidFtrApplication.Preference.*;
+import static com.rapidftr.RapidFtrApplication.FORM_SECTIONS_PREF;
+import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static com.xtremelabs.robolectric.Robolectric.shadowOf;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
@@ -47,11 +43,10 @@ public class LoginActivityTest {
     @Before
     public void setUp() throws Exception {
         loginActivity = new LoginActivity();
-        loginActivity.getContext().setPreference(USER_NAME, null);
-        loginActivity.getContext().setPreference(USER_ORG, null);
-        loginActivity.getContext().setDbKey(null);
-        loginActivity.getContext().setFormSections(null);
+	    loginActivity.getContext().setCurrentUser(null);
+        loginActivity.getContext().setFormSections((String) null);
         loginActivity.onCreate(null);
+
         loginButton = (Button) loginActivity.findViewById(R.id.login_button);
         signUp = (TextView) loginActivity.findViewById(R.id.new_user_signup_link);
         serverUrl = (EditText) loginActivity.findViewById(R.id.url);
@@ -88,25 +83,10 @@ public class LoginActivityTest {
 
     @Test
     public void shouldLoginSuccessfullyForValidUserAndUrl() {
-        SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", MODE_PRIVATE);
-        sharedPreferences.edit().putString(FORM_SECTION.getKey(), "some form section").commit();
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "some response body");
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "{}");
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
-    }
-
-    @Test
-    public void shouldSaveServerUrlAfterSuccessfulLogin(){
-        SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", MODE_PRIVATE);
-        sharedPreferences.edit().putString("SERVER_URL", "").commit();
-        sharedPreferences.edit().putString(FORM_SECTION.getKey(), "form_section").commit();
-
-        serverUrl.setText("http://dev.rapidftr.com:3000");
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "some response body");
-
-        loginButton.performClick();
-        assertThat(sharedPreferences.getString("SERVER_URL", ""), equalTo(serverUrl.getText().toString()));
     }
 
     @Test
@@ -141,88 +121,12 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldNotStoreTheDbKeyWhenFailingToLogin() {
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(404, "{'db_key' : 'fa8f5e7599ed5402'}");
-        loginButton.performClick();
-        ShadowHandler.idleMainLooper();
-        assertThat(loginActivity.getContext().getDbKey(), is(nullValue()));
-    }
-
-    @Test
-    public void shouldStoreTheDbKeyInMemoryAfterSuccessfulLogin() {
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "{'db_key' : 'fa8f5e7599ed5402'}");
-        loginButton.performClick();
-        ShadowHandler.idleMainLooper();
-        assertThat(loginActivity.getContext().getDbKey(), is("fa8f5e7599ed5402"));
-    }
-
-    @Test
-    public void shouldStoreEncryptedDbKeyAfterSuccessfulLogin() throws Exception {
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "{'db_key' : 'fa8f5e7599ed5402'}");
-        loginButton.performClick();
-        ShadowHandler.idleMainLooper();
-        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-        User user = new User(sharedPreferences.getString(userName.getText().toString(), null));
-        assertThat("fa8f5e7599ed5402", is(EncryptionUtil.decrypt(password.getText().toString(), user.getDbKey())));
-    }
-
-    @Test
-    public void shouldCheckIfUserCredentialsAreStoredInSharedPreferenceInOfflineLogin() throws Exception {
-        ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        userName.setText("user1"); password.setText("password");
-        User user1 = new User(false, "organisation", "user1", "password");
-        shadowOf(connectivityManager.getActiveNetworkInfo()).setConnectionStatus(false);
-        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-        sharedPreferences.edit().putString("user1", user1.toString()).commit();
-        loginButton.performClick();
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
-        assertEquals(sharedPreferences.getString(USER_NAME.getKey(),null), "user1");
-        assertEquals(sharedPreferences.getString(USER_ORG.getKey(),null), "organisation");
-    }
-
-    @Test
     public void shouldStartSignUpActivityWhenClickedOnSignUpLink(){
         signUp.performClick();
         ShadowActivity shadowActivity = shadowOf(new LoginActivity());
         Intent startedIntent = shadowActivity.getNextStartedActivity();
         ShadowIntent shadowIntent = shadowOf(startedIntent);
-
         assertThat(shadowIntent.getComponent().getClassName(), equalTo("com.rapidftr.activity.SignupActivity"));
-    }
-
-    @Test
-    public void shouldAllowUnauthenticatedUserToLoginIntoTheMobileWhenTheMobileIsOnline() throws Exception {
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401,"User not authorized");
-        User user1 = new User(false, "organisation", "user1", "password");
-        userName.setText("user1"); password.setText("password");
-        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-        sharedPreferences.edit().putString("user1", user1.toString()).commit();
-        sharedPreferences.edit().putString(FORM_SECTION.getKey(), "some form section").commit();
-        loginButton.performClick();
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
-    }
-
-    @Test
-    public void shouldNotAllowUserToLoginIfTheNetworkIsNotAvailableAndUserIsNotAuthorizedOnMobile(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        shadowOf(connectivityManager.getActiveNetworkInfo()).setConnectionStatus(false);
-        userName.setText("user_not_present"); password.setText("some_random_password");
-        loginButton.performClick();
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.unauthorized)));
-    }
-
-    @Test
-    public void shouldLoadFormSectionsFromLocalResourcesWhenFormSectionsAreNotInMemory() throws Exception {
-        ConnectivityManager connectivityManager = (ConnectivityManager) loginActivity.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        userName.setText("user1"); password.setText("password");
-        User user1 = new User(false, "organisation", "user1", "password");
-        shadowOf(connectivityManager.getActiveNetworkInfo()).setConnectionStatus(false);
-        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-        sharedPreferences.edit().putString("user1", user1.toString()).commit();
-        assertNull(sharedPreferences.getString(FORM_SECTION.getKey() , null));
-        loginButton.performClick();
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
-        assertNotNull(sharedPreferences.getString(FORM_SECTION.getKey() , null));
     }
 
 }

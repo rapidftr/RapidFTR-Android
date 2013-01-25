@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static com.rapidftr.CustomTestRunner.createUser;
 import static com.rapidftr.model.Child.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static org.hamcrest.CoreMatchers.is;
@@ -120,9 +121,6 @@ public class ChildRepositoryTest {
         Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ] }");
         Child child4 = new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
-        User user1 = new User(true, "organisation", "user1", "password");
-        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-        sharedPreferences.edit().putString("user1", user1.toString()).commit();
 
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
@@ -137,15 +135,14 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldNotReturnChildrenCreatedByOtherUnAuthorizedUsers() throws Exception {
-        User user1 = new User(false, "organisation", "user1", "password");
-        User user2 = new User(false, "organisation", "user2", "password");
-        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-        sharedPreferences.edit().putString("user1", user1.toString()).commit();
-        sharedPreferences.edit().putString("user2", user2.toString()).commit();
-        sharedPreferences.edit().putString(USER_NAME,"user1");
+        User user1 = createUser("user1");
+	    user1.setAuthenticated(false);
+        User user2 = createUser("user2");
+	    user2.setAuthenticated(false);
+	    RapidFtrApplication.getApplicationInstance().setCurrentUser(user1);
 
-        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child1 = new Child("id1", user1.getUserName(), "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child2 = new Child("id2", user2.getUserName(), "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
 
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);

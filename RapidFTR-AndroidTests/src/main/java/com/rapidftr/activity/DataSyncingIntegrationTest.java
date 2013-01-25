@@ -1,7 +1,6 @@
 package com.rapidftr.activity;
 
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.pages.LoginPage;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
@@ -17,15 +16,14 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
-    RapidFtrApplication context;
     ChildRepository repository;
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        loginPage.login();
+	    loginPage.login();
         solo.waitForText("Login Successful");
-        context=RapidFtrApplication.getApplicationInstance();
-        repository=context.getInjector().getInstance(ChildRepository.class);
+        repository = application.getInjector().getInstance(ChildRepository.class);
         RapidFTRDatabase.deleteChildren();
     }
 
@@ -87,7 +85,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
     //    public void estCancelSyncAll
     public void seedDataToRepository(Child... children) throws JSONException {
         for(Child child : children){
-            repository = context.getInjector().getInstance(ChildRepository.class);
+            repository = application.getInjector().getInstance(ChildRepository.class);
             repository.createOrUpdate(child);
 //            repository.close();
         }
@@ -95,7 +93,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     public void seedDataOnServer(Child child) throws JSONException, IOException {
         http()
-                .context(context)
+                .context(application)
                 .host(LoginPage.LOGIN_URL)
                 .config(HttpConnectionParams.CONNECTION_TIMEOUT, 15000)
                 .path(String.format("/children", child.getId()))

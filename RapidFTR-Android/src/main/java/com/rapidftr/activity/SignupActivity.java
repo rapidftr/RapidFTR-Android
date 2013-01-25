@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.model.User;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 public class SignupActivity extends RapidFtrActivity {
 
@@ -25,28 +27,30 @@ public class SignupActivity extends RapidFtrActivity {
         return validatesPresenceOfMandatoryFields() && isPasswordSameAsConfirmPassword();
     }
 
-    protected boolean isUsernameTakenInMobile(String username) {
-        return getContext().getPreference(username) != null;
-    }
-
-    public void createUser(View view) throws Exception {
+    public void createUser(View view) throws IOException, GeneralSecurityException {
         if (isValid()) {
-            if (!isUsernameTakenInMobile(getEditText(R.id.username))) {
-                saveUserInSharedPreference();
-                startActivity(new Intent(this, LoginActivity.class));
-                makeToast(getString(R.string.registered) + " "+ getEditText(R.id.username));
+	        User user = buildUser();
+            if (user.exists()) {
+	            EditText editText = (EditText) findViewById(R.id.username);
+	            editText.setError(getString(R.string.username_taken));
+	            makeToast(getString(R.string.username_taken));
             } else {
-                EditText editText = (EditText) findViewById(R.id.username);
-                editText.setError(getString(R.string.username_taken));
-                makeToast(getString(R.string.username_taken));
+	            user.save();
+	            startActivity(new Intent(this, LoginActivity.class));
+	            makeToast(getString(R.string.registered) + " "+ getEditText(R.id.username));
             }
         }
     }
 
-    private void saveUserInSharedPreference() throws Exception {
-        User user = new User(false, getEditText(R.id.organisation), getEditText(R.id.full_name), getEditText(R.id.password));
-        getContext().setPreference(getEditText(R.id.username), user.toString());
-    }
+	protected User buildUser() {
+		User user = new User(getEditText(R.id.username));
+		user.setAuthenticated(false);
+		user.setFullName(getEditText(R.id.full_name));
+		user.setPassword(getEditText(R.id.password));
+		user.setUnauthenticatedPassword(getEditText(R.id.password));
+		user.setOrganisation(getEditText(R.id.organisation));
+		return user;
+	}
 
     protected boolean validatesPresenceOfMandatoryFields() {
         return validateTextFieldNotEmpty(R.id.full_name, R.string.full_name_required) &

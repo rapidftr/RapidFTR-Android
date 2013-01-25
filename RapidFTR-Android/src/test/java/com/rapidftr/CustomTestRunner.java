@@ -10,6 +10,7 @@ import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.model.User;
 import com.rapidftr.utils.ApplicationInjector;
 import com.rapidftr.utils.ShadowBase64;
 import com.xtremelabs.robolectric.Robolectric;
@@ -23,8 +24,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
+import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 public class CustomTestRunner extends RobolectricTestRunner {
 
@@ -63,14 +66,28 @@ public class CustomTestRunner extends RobolectricTestRunner {
     @Override
     protected Application createApplication() {
         RapidFtrApplication application = new RapidFtrApplication(INJECTOR);
-        application.setPreference(SERVER_URL, "http://1.2.3.4:5");
-        application.setPreference(USER_NAME, "user1");
-        application.setDbKey("db_key");
-        application.setFormSections(formSectionSeed);
+	    try {
+		    application.getSharedPreferences().edit().putString(SERVER_URL_PREF, "http://1.2.3.4:5");
+		    application.setFormSections(formSectionSeed);
+		    application.setCurrentUser(createUser());
+	    } catch (Exception e) {
+		    throw new RuntimeException(e);
+	    }
         return application;
     }
 
     @Override protected void bindShadowClasses() {
         Robolectric.bindShadowClass(ShadowBase64.class);
     }
+
+	private static long userId = 0;
+
+	public static User createUser() {
+		return createUser("user" + (++userId));
+	}
+
+	public static User createUser(String userName) {
+		return new User(userName, "testPassword", true, "localhost:3000", "testDbKey", "Test Organisation", "Test Name", "testPassword");
+	}
+
 }

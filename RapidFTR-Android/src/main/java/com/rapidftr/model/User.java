@@ -1,117 +1,128 @@
 package com.rapidftr.model;
 
-import com.google.common.base.Strings;
+import android.content.SharedPreferences;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.database.Database;
 import com.rapidftr.utils.EncryptionUtil;
+import lombok.*;
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.UUID;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode(of = { "userName", "password" })
+@AllArgsConstructor(suppressConstructorProperties = true)
+@NoArgsConstructor
+public class User {
 
-public class User extends JSONObject {
-    public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-    public static final String UNAUTHENTICATED_DB_KEY = UUID.randomUUID().toString();
+	public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+	public static final String UNAUTHENTICATED_DB_KEY = "UNAUTHENTICATED_DB_KEY";
 
-    public User(Boolean authenticated, String userOrg, String fullName, String password) throws Exception {
-        this(authenticated, getUnAuthKey(), userOrg);
-        setFullName(fullName);
-        setPassword(password);
-    }
+	@Getter @JsonProperty("user_name")
+	protected String userName;
 
-    private static String getUnAuthKey() throws JSONException {
-        for(Object value : RapidFtrApplication.getApplicationInstance().getSharedPreferences().getAll().values().toArray()) {
+	@Getter @Setter @JsonIgnore
+	protected String password;
 
-            if(value !=null && value.toString().contains("db_key") && value.toString().contains("authenticated") && value.toString().contains("organisation")){
-                JSONObject jsonObject = new JSONObject(value.toString());
-                if(!jsonObject.optBoolean("authenticated")) {
-                    return jsonObject.optString("db_key");
-                }
-            }
-        }
-        return UNAUTHENTICATED_DB_KEY;
-    }
+	@Getter @Setter @JsonProperty("authenticated")
+	protected boolean authenticated;
 
-    private void setPassword(String password) throws Exception {
-        put(Database.UserTableColumn.encryptedPassword.getColumnName(), EncryptionUtil.encrypt(password, password));
-    }
+	@Getter @Setter @JsonProperty("server_url")
+	protected String serverUrl;
 
-    public User(Boolean authenticated, String dbKey, String userOrg) throws JSONException {
-        setAuthenticated(authenticated);
-        setDbKey(dbKey);
-        setOrganisation(userOrg);
-    }
+	@Getter @Setter @JsonProperty("db_key")
+	protected String dbKey;
 
+	@Getter @Setter @JsonProperty("organisation")
+	protected String organisation;
 
-    public User(String jsonContent) throws JSONException {
-        super(validateJson(jsonContent));
-    }
+	@Getter @Setter @JsonProperty("full_name")
+	protected String fullName;
 
-    private static String validateJson(String jsonContent) {
-        if(Strings.nullToEmpty(jsonContent).trim().length() != 0 ){
-            return jsonContent;
-        }
-        throw new RuntimeException("Invalid User details");
-    }
+	@Getter @Setter @JsonProperty("unauthenticated_password")
+	protected String unauthenticatedPassword;
 
-    public boolean equals(Object other) {
-        try {
-            return (other != null && other instanceof JSONObject) && JSON_MAPPER.readTree(toString()).equals(JSON_MAPPER.readTree(other.toString()));
-        } catch (IOException e) {
-            return false;
-        }
-    }
+	public User(String userName) {
+		this(userName, null, false, null, null, null, null, null);
+	}
 
-    @Override
-    public JSONObject put(String key, Object value) throws JSONException {
-        if (value != null && value instanceof String) {
-            value = Strings.emptyToNull(((String) value).trim());
-        } else if (value != null && value instanceof JSONArray && ((JSONArray) value).length() == 0) {
-            value = null;
-        }
-        return super.put(key, value);
-    }
+	public User(String userName, String password) {
+		this(userName, password, false, null, null, null, null, null);
+	}
 
+	public User(String userName, String password, boolean authenticated) {
+		this(userName, password, authenticated, null, null, null, null, null);
+	}
 
-    public String getFullName() {
-        return optString(Database.UserTableColumn.fullName.getColumnName());
-    }
+	public User(String userName, String password, boolean authenticated, String serverUrl) {
+		this(userName, password, authenticated, serverUrl, null, null, null, null);
+	}
 
-    public void setFullName(String fullName) throws JSONException {
-        put(Database.UserTableColumn.fullName.getColumnName(), fullName);
-    }
+	public String getDbName() {
+		return getDbKey() == null ? null : ("DB-" + getDbKey().hashCode());
+	}
 
-    public String getDbKey() {
-        return optString(Database.UserTableColumn.dbKey.getColumnName());
-    }
+	public String asJSON() throws IOException {
+		return getJsonMapper().writeValueAsString(this);
+	}
 
-    public void setDbKey(String dbKey) throws JSONException {
-        put(Database.UserTableColumn.dbKey.getColumnName(), dbKey);
-    }
+	public String asEncryptedJSON() throws IOException, GeneralSecurityException {
+		if (this.password == null)
+			throw new GeneralSecurityException("User password not available to encrypt");
+		else
+			return EncryptionUtil.encrypt(this.password, this.asJSON());
+	}
 
-    public String getOrganisation() {
-        return optString(Database.UserTableColumn.organisation.getColumnName());
-    }
+	public User read(String json) throws IOException {
+		getJsonMapper().readerForUpdating(this).readValue(json);
+		return this;
+	}
 
-    public void setOrganisation(String organisation) throws JSONException {
-        put(Database.UserTableColumn.organisation.getColumnName(), organisation);
-    }
+	public User load() throws GeneralSecurityException, IOException {
+		String encryptedJson = getSharedPreferences().getString(prefKey(userName), null);
+		String json = EncryptionUtil.decrypt(password, encryptedJson);
+		return read(json);
+	}
 
-    public Boolean isAuthenticated() {
-        return optBoolean(Database.UserTableColumn.authenticated.getColumnName());
-    }
+	public void save() throws IOException, GeneralSecurityException {
+		if (!this.isAuthenticated()) {
+			this.setUnauthenticatedPassword(this.getPassword());
+			this.setDbKey(getUnauthenticatedDbKeyDbKey());
+		}
 
-    public void setAuthenticated(Boolean authenticated) throws JSONException {
-        put(Database.UserTableColumn.authenticated.getColumnName(), authenticated);
-    }
+		getSharedPreferences().edit().putString(prefKey(userName), asEncryptedJSON()).commit();
+	}
 
-    public  String getEncryptedPassword(){
-        return optString(Database.UserTableColumn.encryptedPassword.getColumnName());
-    }
+	public boolean exists() {
+		return getSharedPreferences().contains(prefKey(userName));
+	}
 
+	protected ObjectMapper getJsonMapper() {
+		return JSON_MAPPER;
+	}
+
+	protected static SharedPreferences getSharedPreferences() {
+		return RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+	}
+
+	protected static String getUnauthenticatedDbKeyDbKey() {
+		String dbKey = getSharedPreferences().getString(UNAUTHENTICATED_DB_KEY, null);
+		return dbKey != null ? dbKey : createUnauthenticatedDbKey();
+	}
+
+	protected static String createUnauthenticatedDbKey() {
+		String dbKey = UUID.randomUUID().toString();
+		getSharedPreferences().edit().putString(UNAUTHENTICATED_DB_KEY, dbKey).commit();
+		return dbKey;
+	}
+
+	protected static String prefKey(String userName) {
+		return "user_" + userName;
+	}
 
 }

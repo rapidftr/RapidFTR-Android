@@ -4,7 +4,6 @@ import android.app.NotificationManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
-import com.rapidftr.R;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
@@ -23,7 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
-public class SyncUnverifiedUsersDataAsyncTaskTest {
+public class SyncUnverifiedDataAsyncTaskTest {
 
     @Mock private FormService formService;
     @Mock private ChildService childService;
@@ -34,7 +33,7 @@ public class SyncUnverifiedUsersDataAsyncTaskTest {
     @Mock private MenuItem syncAll;
     @Mock private MenuItem cancelSyncAll;
 
-    SyncUnverifiedUsersDataAsyncTask task;
+    SyncUnverifiedDataAsyncTask task;
 
     @Before
     public void setUp() throws Exception {
@@ -48,7 +47,7 @@ public class SyncUnverifiedUsersDataAsyncTaskTest {
         when(rapidFtrActivity.getSystemService(Matchers.<String>any())).thenReturn(notificationManager);
         when(rapidFtrActivity.getPackageName()).thenReturn("package");
 
-        task = new SyncUnverifiedUsersDataAsyncTask(formService, childService, childRepository);
+        task = new SyncUnverifiedDataAsyncTask(formService, childService, childRepository);
         task.setContext(rapidFtrActivity);
     }
 

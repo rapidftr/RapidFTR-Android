@@ -2,6 +2,7 @@ package com.rapidftr.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.pages.ChildPage;
 import com.rapidftr.activity.pages.LoginPage;
 import com.rapidftr.activity.pages.SearchChildrenPage;
@@ -14,6 +15,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     public ViewAllChildrenPage viewAllChildrenPage;
     public ChildPage childPage;
     public SearchChildrenPage searchPage;
+	public RapidFtrApplication application;
 
 
     final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -29,6 +31,11 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
         viewAllChildrenPage = new ViewAllChildrenPage(solo);
         childPage = new ChildPage(solo);
         searchPage= new SearchChildrenPage(solo);
+	    application = RapidFtrApplication.getApplicationInstance();
+
+	    if (application.isLoggedIn()) {
+		    loginPage.logout();
+	    }
     }
 
     @Override

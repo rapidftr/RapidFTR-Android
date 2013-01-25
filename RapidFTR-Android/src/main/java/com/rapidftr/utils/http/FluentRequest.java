@@ -5,8 +5,8 @@ import android.net.Uri;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.IOUtils;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import lombok.Cleanup;
 import lombok.Getter;
 import org.apache.http.client.HttpClient;
@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
+import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
 public class FluentRequest {
 
@@ -194,7 +194,7 @@ public class FluentRequest {
     }
 
     public String getBaseUrl(Context context) {
-        return ((RapidFtrApplication) context.getApplicationContext()).getPreference(SERVER_URL);
+        return ((RapidFtrApplication) context.getApplicationContext()).getSharedPreferences().getString(SERVER_URL_PREF, null);
     }
 
     public int getConnectionTimeout(Context context) {

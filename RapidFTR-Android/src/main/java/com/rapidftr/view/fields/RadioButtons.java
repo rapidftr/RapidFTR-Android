@@ -27,7 +27,7 @@ public class RadioButtons extends BaseView {
     protected void initialize() {
         try {
             super.initialize();
-            for (String options : formField.getOptionStrings())
+            for (String options : formField.getLocalizedOptionStrings())
                 getRadioGroup().addView(createRadioButton(options));
         } catch (JSONException e) {
             e.printStackTrace();
