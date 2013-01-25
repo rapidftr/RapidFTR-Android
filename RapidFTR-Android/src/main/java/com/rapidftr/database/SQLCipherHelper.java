@@ -2,8 +2,8 @@ package com.rapidftr.database;
 
 import android.content.Context;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.rapidftr.database.migration.Migrations;
+import com.rapidftr.model.User;
 import lombok.Getter;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
@@ -15,11 +15,11 @@ public class SQLCipherHelper extends SQLiteOpenHelper implements DatabaseHelper 
     protected @Getter final DatabaseSession session;
 
     @Inject
-    public SQLCipherHelper(@Named("DB_NAME") String dbName, @Named("DB_KEY") String dbKey, Context context) {
-        super(context, dbName, null, DB_VERSION);
+    public SQLCipherHelper(User user, Context context) {
+        super(context, user.getDbName(), null, DB_VERSION);
         SQLiteDatabase.loadLibs(context);
 
-        this.session = new SQLCipherSession(getWritableDatabase(dbKey));
+        this.session = new SQLCipherSession(getWritableDatabase(user.getDbKey()));
     }
 
     @Override

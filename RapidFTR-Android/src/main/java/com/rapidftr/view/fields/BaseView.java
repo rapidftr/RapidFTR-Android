@@ -48,8 +48,8 @@ public abstract class BaseView extends LinearLayout {
     }
 
     protected void initialize() throws JSONException {
-        getLabel().setText(formField.getDisplayName());
-        getHelpText().setText(formField.getHelpText());
+        getLabel().setText(formField.getLocalizedDisplayName());
+        getHelpText().setText(formField.getLocalizedHelpText());
     }
 
 }

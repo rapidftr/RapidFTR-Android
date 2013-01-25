@@ -12,10 +12,10 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.List;
 
-public class SyncUnverifiedUsersDataAsyncTask extends SynchronisationAsyncTask {
+public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
 
     @Inject
-    public SyncUnverifiedUsersDataAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository) {
+    public SyncUnverifiedDataAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository) {
         super(formService, childService, childRepository);
     }
 

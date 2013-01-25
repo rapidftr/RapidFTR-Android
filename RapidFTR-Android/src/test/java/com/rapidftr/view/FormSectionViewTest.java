@@ -51,8 +51,8 @@ public class FormSectionViewTest {
 
     @Test
     public void shouldRenderFormSection() {
-        assertThat(view.getLabel().getText().toString(), equalTo(section.getName()));
-        assertThat(view.getHelpText().getText().toString(), equalTo(section.getHelpText()));
+        assertThat(view.getLabel().getText().toString(), equalTo(section.getLocalizedName()));
+        assertThat(view.getHelpText().getText().toString(), equalTo(section.getLocalizedHelpText()));
         assertThat(view.getContainer().getChildCount(), equalTo(0));
     }
 

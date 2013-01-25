@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -12,33 +13,33 @@ import com.rapidftr.activity.LoginActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.task.SynchronisationAsyncTask;
 
+import java.io.IOException;
+
 import static android.widget.Toast.LENGTH_LONG;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
+import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
 public class LogOutService {
 
     public void attemptLogOut(RapidFtrActivity currentActivity) {
-        if (RapidFtrApplication.getApplicationInstance().getSyncTask() != null) {
-            createAlertDialog(currentActivity);
-        } else {
-            logOut(currentActivity);
-        }
+	    if (currentActivity.getContext().getSyncTask() != null)
+		    createAlertDialog(currentActivity);
+	    else
+	        logOut(currentActivity);
     }
 
     private void logOut(RapidFtrActivity currentActivity) {
-        RapidFtrApplication context = currentActivity.getContext();
-        context.setLoggedIn(false);
-        removeUserPreferences(context);
-        Toast.makeText(context,currentActivity.getString(R.string.logout_successful), LENGTH_LONG).show();
-        currentActivity.finish();
-        currentActivity.startActivity(new Intent(currentActivity, LoginActivity.class));
+	    try {
+		    RapidFtrApplication context = currentActivity.getContext();
+		    context.setCurrentUser(null);
+		    Toast.makeText(context, R.string.logout_successful, LENGTH_LONG).show();
+		    currentActivity.finish();
+		    currentActivity.startActivity(new Intent(currentActivity, LoginActivity.class));
+	    } catch (IOException e) {
+		    Log.e(APP_IDENTIFIER, "Failed to logout", e);
+	    }
     }
 
-    private void removeUserPreferences(RapidFtrApplication context) {
-        context.removePreference(USER_NAME);
-    }
-
-    private void cancelSync(RapidFtrApplication context) {
+    protected void cancelSync(RapidFtrApplication context) {
 	    if (context.getSyncTask() != null) {
             context.getSyncTask().cancel(true);
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -46,7 +47,7 @@ public class LogOutService {
         }
     }
 
-    private void createAlertDialog(final RapidFtrActivity currentActivity) {
+    protected void createAlertDialog(final RapidFtrActivity currentActivity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(currentActivity);
 
         builder.setTitle(R.string.log_out);

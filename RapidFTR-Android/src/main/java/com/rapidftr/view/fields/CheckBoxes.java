@@ -29,7 +29,7 @@ public class CheckBoxes extends BaseView {
     protected void initialize() {
         try {
             super.initialize();
-            for (String option : formField.getOptionStrings())
+            for (String option : formField.getLocalizedOptionStrings())
                 getCheckBoxGroup().addView(createCheckBoxFor(option));
         } catch (JSONException e) {
             e.printStackTrace();

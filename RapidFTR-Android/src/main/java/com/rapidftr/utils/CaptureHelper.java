@@ -56,7 +56,7 @@ public class CaptureHelper {
      * Reference: http://nelenkov.blogspot.in/2012/04/using-password-based-encryption-on.html
      */
     protected Cipher getCipher(int mode, String fileName) throws GeneralSecurityException {
-        String password = application.getDbKey();
+        String password = application.getCurrentUser().getDbKey();
         int iterationCount = 100, saltLength = 8, keyLength = 256;
 
         SecureRandom random = new SecureRandom();

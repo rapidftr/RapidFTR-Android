@@ -52,8 +52,8 @@ public class FormSectionView extends ScrollView {
     }
 
     protected void initialize() {
-        getLabel().setText(formSection.getName());
-        getHelpText().setText(formSection.getHelpText());
+        getLabel().setText(formSection.getLocalizedName());
+        getHelpText().setText(formSection.getLocalizedHelpText());
         for (FormField field : formSection.getFields()) {
             BaseView fieldView = createFormField(field);
             if (fieldView != null)

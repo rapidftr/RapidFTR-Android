@@ -19,7 +19,7 @@ import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Map;
 
-import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
+import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -151,7 +151,7 @@ public class ChildServiceTest {
 
     private RapidFtrApplication mockContext() {
         RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();
-        context.setPreference(SERVER_URL, "whatever");
+        context.getSharedPreferences().edit().putString(SERVER_URL_PREF, "whatever").commit();
         return context;
     }
 

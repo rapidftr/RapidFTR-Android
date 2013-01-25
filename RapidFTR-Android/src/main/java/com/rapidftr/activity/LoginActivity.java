@@ -1,6 +1,5 @@
 package com.rapidftr.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,7 +9,7 @@ import com.rapidftr.task.LoginAsyncTask;
 
 import java.io.IOException;
 
-import static com.rapidftr.RapidFtrApplication.Preference.SERVER_URL;
+import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
 public class LoginActivity extends RapidFtrActivity {
 
@@ -62,7 +61,7 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     private void toggleBaseUrl() {
-        String preferencesUrl = getContext().getPreference(SERVER_URL);
+        String preferencesUrl = getContext().getSharedPreferences().getString(SERVER_URL_PREF, null);
         if (preferencesUrl != null && !preferencesUrl.equals("")) {
             setEditText(R.id.url, preferencesUrl);
             toggleView(R.id.url, View.GONE);
@@ -87,6 +86,7 @@ public class LoginActivity extends RapidFtrActivity {
 
     protected void goToHomeScreenIfLoggedIn() {
         if (getContext().isLoggedIn()){
+	        finish();
             startActivity(new Intent(this, MainActivity.class));
         }
     }

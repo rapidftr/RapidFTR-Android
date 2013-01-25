@@ -22,14 +22,9 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.User;
 import com.rapidftr.service.LogOutService;
-import com.rapidftr.task.SyncAllDataAsyncTask;
-import com.rapidftr.task.SyncUnverifiedUsersDataAsyncTask;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
-import org.json.JSONException;
-
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 
 public abstract class RapidFtrActivity extends FragmentActivity {
 
@@ -112,10 +107,10 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if(getContext().isLoggedIn()) {
-        getMenuInflater().inflate(R.menu.options_menu, menu);
-        setMenu(menu);
-        toggleSync(menu);
-        setContextToSyncTask();
+	        getMenuInflater().inflate(R.menu.options_menu, menu);
+	        setMenu(menu);
+	        toggleSync(menu);
+	        setContextToSyncTask();
         }
         return getContext().isLoggedIn();
     }
@@ -153,6 +148,10 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         }
         return false;
     }
+
+	protected User getCurrentUser() {
+		return getContext().getCurrentUser();
+	}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,7 +219,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         return value == null ? null : value.toString().trim();
     }
 
-    private void saveAlertListener(final Class cls) {
+    protected void saveAlertListener(final Class cls) {
         if ((this instanceof RegisterChildActivity && ((RegisterChildActivity) this).child.isValid()) || this instanceof EditChildActivity) {
             final BaseChildActivity activity = (BaseChildActivity) this;
             DialogInterface.OnClickListener listener = createAlertDialog(cls, activity);
@@ -230,7 +229,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         }
     }
 
-    private DialogInterface.OnClickListener createAlertDialog(final Class cls, final BaseChildActivity activity) {
+    protected DialogInterface.OnClickListener createAlertDialog(final Class cls, final BaseChildActivity activity) {
         return new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int selectedItem) {
@@ -247,7 +246,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         };
     }
 
-    private void saveAlertListenerForLogout() {
+    protected void saveAlertListenerForLogout() {
         final BaseChildActivity activity = (BaseChildActivity) this;
         DialogInterface.OnClickListener listener = createAlertDialogForLogout(activity);
         if (activity.child.isValid()) {
@@ -258,7 +257,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         }
     }
 
-    private DialogInterface.OnClickListener createAlertDialogForLogout(final BaseChildActivity activity) {
+    protected DialogInterface.OnClickListener createAlertDialogForLogout(final BaseChildActivity activity) {
         return new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int selectedItem) {

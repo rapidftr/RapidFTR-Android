@@ -6,7 +6,8 @@ import com.rapidftr.activity.RapidFtrActivity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
+import java.io.IOException;
+
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -15,16 +16,14 @@ import static org.mockito.Mockito.*;
 public class LogOutServiceTest {
 
     @Test
-    public void shouldUpdateContextOnLogout(){
+    public void shouldUpdateContextOnLogout() throws IOException {
         LogOutService service = new LogOutService();
-        RapidFtrActivity currentActivity = mock(RapidFtrActivity.class);
-        RapidFtrApplication context = mock(RapidFtrApplication.class);
+        RapidFtrApplication context = spy(RapidFtrApplication.getApplicationInstance());
+	    RapidFtrActivity currentActivity = mock(RapidFtrActivity.class);
         given(currentActivity.getContext()).willReturn(context);
-        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
+        context.setSyncTask(null);
         doReturn("You have been logged out successfully.").when(currentActivity).getString(anyInt());
         service.attemptLogOut(currentActivity);
-
-        verify(context).setLoggedIn(false);
-        verify(context).removePreference(USER_NAME);
+        verify(context).setCurrentUser(null);
     }
 }
