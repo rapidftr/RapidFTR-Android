@@ -1,8 +1,7 @@
 package com.rapidftr.activity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
@@ -26,9 +25,13 @@ import com.rapidftr.task.SynchronisationAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
 
+import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
+
 public abstract class RapidFtrActivity extends FragmentActivity {
 
-    private @Getter @Setter Menu menu;
+	public static final String LOGOUT_INTENT_FILTER = "com.rapidftr.LOGOUT_INTENT";
+
+    protected @Getter @Setter Menu menu;
 
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
@@ -62,7 +65,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
 
     protected void logError(String message) {
         if (message != null) {
-            Log.e(RapidFtrApplication.APP_IDENTIFIER, message);
+            Log.e(APP_IDENTIFIER, message);
         }
     }
 
@@ -157,9 +160,23 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeExceptionHandler();
+	    initializeLogoutHandler();
     }
 
-    protected boolean shouldEnsureLoggedIn() {
+	protected void initializeLogoutHandler() {
+		if (shouldEnsureLoggedIn()) {
+			IntentFilter intentFilter = new IntentFilter(LOGOUT_INTENT_FILTER);
+			registerReceiver(new BroadcastReceiver() {
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					Log.d(APP_IDENTIFIER, "Logout event received");
+					finish();
+				}
+			}, intentFilter);
+		}
+	}
+
+	protected boolean shouldEnsureLoggedIn() {
         return true;
     }
 
@@ -175,7 +192,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(final Thread thread, final Throwable throwable) {
-                Log.e(RapidFtrApplication.APP_IDENTIFIER, throwable.getMessage(), throwable);
+                Log.e(APP_IDENTIFIER, throwable.getMessage(), throwable);
 
                 new Thread(new Runnable() {
                     @Override
