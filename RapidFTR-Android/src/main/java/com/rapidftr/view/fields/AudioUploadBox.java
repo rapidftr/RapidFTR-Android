@@ -40,7 +40,7 @@ public class AudioUploadBox extends BaseView {
         return new AudioCaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
-    protected void startRecording(View view) {
+    protected void startRecording(final View view) {
         disableButton(findViewById(R.id.start_record), R.drawable.record);
         disableButton(findViewById(R.id.play_record), R.drawable.play);
         enableButton(findViewById(R.id.stop_record), R.drawable.stop_active);
@@ -48,6 +48,15 @@ public class AudioUploadBox extends BaseView {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mRecorder.setMaxDuration(60000);
+        mRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+            @Override
+            public void onInfo(MediaRecorder mr, int what, int extra) {
+                if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+                    stopRecording(view);
+                }
+            }
+        });
         try {
             mRecorder.setOutputFile(getFileName());
             mRecorder.prepare();
