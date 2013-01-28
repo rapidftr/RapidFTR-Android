@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -78,6 +79,16 @@ public class DateFieldTest extends BaseViewSpec<DateField> {
          view.initialize(field, child);
          view.onDateSet(null, 2012, 11, 31);
           assertThat(view.getText(), equalTo("31 Dec 2012"));
+    }
+
+
+    @Test
+    public void testShouldStoreDateInChildJSONObjectAccordingToLocale(){
+        Locale.setDefault(new Locale("fr"));
+        view.initialize(field, child);
+        view.onDateSet(null, 2012, 0, 31);
+        assertThat(view.getText(), equalTo("31 janv. 2012"));
+        Locale.setDefault(new Locale("en"));
     }
 
 }
