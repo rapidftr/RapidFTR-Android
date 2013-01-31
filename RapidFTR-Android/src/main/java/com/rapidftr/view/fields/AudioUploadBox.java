@@ -19,9 +19,9 @@ import java.util.Date;
 
 public class AudioUploadBox extends BaseView {
 
-    private MediaRecorder mRecorder = null;
-    private MediaPlayer mPlayer = null;
-    private String fileName = null;
+    private MediaRecorder mRecorder;
+    private MediaPlayer mPlayer;
+    private String fileName;
 
     private AudioCaptureHelper audioCaptureHelper;
     Resources resources = RapidFtrApplication.getApplicationInstance().getResources();
@@ -109,6 +109,10 @@ public class AudioUploadBox extends BaseView {
                 play.setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
                 mPlayer.pause();
                 return;
+            } else if(mPlayer != null){
+                play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
+                mPlayer.start();
+                return;
             }
             disableButton(record, R.drawable.record);
             play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
@@ -122,6 +126,7 @@ public class AudioUploadBox extends BaseView {
                     enableButton(record, R.drawable.record_active);
                     enableButton(play, R.drawable.play_active);
                     mPlayer.release();
+                    mPlayer = null;
                 }
             });
         } catch (IOException e) {
@@ -178,6 +183,8 @@ public class AudioUploadBox extends BaseView {
     }
 
     protected MediaPlayer getMediaPlayer() {
-        return new MediaPlayer();
+        if(mPlayer == null)
+            mPlayer = new MediaPlayer();
+        return mPlayer;
     }
 }
