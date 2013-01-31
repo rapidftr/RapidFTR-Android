@@ -11,9 +11,8 @@ import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.SQLCipherHelper;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
-import com.rapidftr.service.FormService;
-import com.rapidftr.service.LogOutService;
+import com.rapidftr.service.*;
+import com.rapidftr.task.RegisterUnverifiedUserAsyncTask;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 import com.rapidftr.task.SyncUnverifiedDataAsyncTask;
 import com.rapidftr.task.SynchronisationAsyncTask;
@@ -29,10 +28,13 @@ public class ApplicationInjector extends AbstractModule {
         bind(ChildRepository.class);
         bind(FormService.class);
         bind(SyncAllDataAsyncTask.class);
+        bind(RegisterUserService.class);
+        bind(RegisterUnverifiedUserAsyncTask.class);
         bind(SyncUnverifiedDataAsyncTask.class);
         bind(FluentRequest.class);
         bind(ChildService.class);
         bind(LogOutService.class);
+        bind(LoginService.class);
     }
 
     @Provides @Named("USER_NAME")

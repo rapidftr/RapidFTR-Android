@@ -7,6 +7,7 @@ import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.JSONArrays;
@@ -173,11 +174,12 @@ public class ChildService {
         return idRevMapping;
     }
 
-    public void syncUnverified(Child child) throws IOException {
+    public void syncUnverified(Child child, User currentUser) throws IOException {
         fluentRequest
                 .path("/children/sync_unverified")
                 .context(context)
                 .param("child", child.toString())
+                .param("user", currentUser.asJSON())
                 .post();
     }
 }

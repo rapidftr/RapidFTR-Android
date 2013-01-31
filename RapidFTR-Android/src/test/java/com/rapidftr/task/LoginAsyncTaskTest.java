@@ -41,7 +41,7 @@ public class LoginAsyncTaskTest {
     }
 
 	@Test
-	public void shouldCallOnlineLoginIfNetworkIsUp() throws IOException, JSONException {
+	public void shouldCallOnlineLoginIfNetworkIsUp() throws IOException, JSONException, GeneralSecurityException {
 		doReturn(true).when(loginAsyncTask).isOnline();
 		loginAsyncTask.doInBackground("", "", "");
 		verify(loginAsyncTask).doOnlineLogin();

@@ -51,7 +51,21 @@ public class User {
 		this(userName, null, false, null, null, null, null, null);
 	}
 
-	public User(String userName, String password) {
+    @Override
+    public String toString() {
+        return "User{" +
+                "userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", authenticated=" + authenticated +
+                ", serverUrl='" + serverUrl + '\'' +
+                ", dbKey='" + dbKey + '\'' +
+                ", organisation='" + organisation + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", unauthenticatedPassword='" + unauthenticatedPassword + '\'' +
+                '}';
+    }
+
+    public User(String userName, String password) {
 		this(userName, password, false, null, null, null, null, null);
 	}
 

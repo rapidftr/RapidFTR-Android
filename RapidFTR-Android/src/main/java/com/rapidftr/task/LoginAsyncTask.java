@@ -67,10 +67,10 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 		return isOnline() ? doOnlineLogin() : doOfflineLogin();
 	}
 
-	protected User doOnlineLogin() throws IOException, JSONException {
+	protected User doOnlineLogin() throws IOException, JSONException, GeneralSecurityException {
 		HttpResponse response = new LoginService().login(application, userName, password, url);
 		if (response == null || response.getStatusLine() == null || response.getStatusLine().getStatusCode() != SC_CREATED)
-			return null;
+			return doOfflineLogin();
 
 		String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
 		User user = new User(this.userName, this.password, true, this.url);

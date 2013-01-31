@@ -4,6 +4,7 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
@@ -145,8 +146,9 @@ public class ChildServiceTest {
     public void shouldSyncUnverifiedChild() throws Exception {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         getFakeHttpLayer().addHttpResponseRule("POST", "http://whatever/children/sync_unverified", new TestHttpResponse(200, "{}"));
+        User user = mock(User.class);
 
-        new ChildService(mockContext(), repository, mockFluentRequest).syncUnverified(mock(Child.class));
+        new ChildService(mockContext(), repository, mockFluentRequest).syncUnverified(mock(Child.class), user);
     }
 
     private RapidFtrApplication mockContext() {
