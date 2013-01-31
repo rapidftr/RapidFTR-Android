@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.activity.BaseChildActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.utils.AudioCaptureHelper;
 import org.json.JSONException;
@@ -22,17 +23,20 @@ public class AudioUploadBox extends BaseView {
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
     private String fileName;
+    private BaseChildActivity context;
 
     private AudioCaptureHelper audioCaptureHelper;
     Resources resources = RapidFtrApplication.getApplicationInstance().getResources();
 
     public AudioUploadBox(Context context) {
         super(context);
+        this.context = (BaseChildActivity) context;
         audioCaptureHelper = getHelper(context);
     }
 
     public AudioUploadBox(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = (BaseChildActivity) context;
         audioCaptureHelper = getHelper(context);
     }
 
@@ -179,12 +183,15 @@ public class AudioUploadBox extends BaseView {
     }
 
     protected MediaRecorder getMediaRecorder() {
-        return new MediaRecorder();
+        MediaRecorder mediaRecorder = new MediaRecorder();
+        context.setMediaRecorder(mediaRecorder);
+        return mediaRecorder;
     }
 
     protected MediaPlayer getMediaPlayer() {
         if(mPlayer == null)
             mPlayer = new MediaPlayer();
+        context.setMediaPlayer(mPlayer);
         return mPlayer;
     }
 }
