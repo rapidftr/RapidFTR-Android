@@ -1,7 +1,10 @@
 package com.rapidftr.utils;
 
 import com.rapidftr.RapidFtrApplication;
-import lombok.RequiredArgsConstructor;
+import com.rapidftr.model.Child;
+import org.json.JSONException;
+
+import java.io.*;
 
 public class AudioCaptureHelper extends CaptureHelper{
 
@@ -9,4 +12,10 @@ public class AudioCaptureHelper extends CaptureHelper{
         super(context);
     }
 
+    public void saveAudio(Child child, InputStream inputStream, String fileExtension) throws JSONException, IOException {
+        File file = new File(getDir(), child.optString("recorded_audio")+fileExtension);
+        IOUtils.copy(inputStream, new FileOutputStream(file));
+        if (!file.exists())
+            file.createNewFile();
+    }
 }

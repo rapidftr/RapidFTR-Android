@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.http.FluentRequest;
@@ -47,7 +48,7 @@ public class ChildService {
         String path = child.isNew() ? "/children" : String.format("/children/%s", child.get(internal_id.getColumnName()));
 
         fluentRequest.path(path).context(context).param("child", child.values().toString());
-        addPhotoToTheRequest(child);
+        addMultiMediaFileToTheRequest(child);
         FluentResponse response = null;
         try {
         response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
@@ -64,20 +65,25 @@ public class ChildService {
             child = new Child(source);
             child.setSynced(true);
             child.remove("_attachments");
+            child.remove("audio_attachments");
             repository.update(child);
             setPhoto(child);
+            setAudio(child);
             return child;
         } else {
             throw new SyncFailedException(child.getUniqueId());
         }
     }
 
-    private void addPhotoToTheRequest(Child child) throws JSONException {
+    private void addMultiMediaFileToTheRequest(Child child) throws JSONException {
         if (child.opt("current_photo_key") != null && !child.optString("current_photo_key").equals("")) {
             List<Object> photoKeys = getPhotoKeys(child);
             if (!photoKeys.contains(child.optString("current_photo_key"))) {
                 fluentRequest.param("current_photo_key", child.optString("current_photo_key"));
             }
+        }
+        if (child.opt("recorded_audio") != null && !child.optString("recorded_audio").equals("")) {
+            fluentRequest.param("recorded_audio", child.optString("recorded_audio"));
         }
     }
 
@@ -144,6 +150,11 @@ public class ChildService {
 
     }
 
+    public void setAudio(Child child) throws IOException, JSONException {
+        HttpResponse response = getAudio(child);
+        AudioCaptureHelper audioCaptureHelper  = new AudioCaptureHelper(context);
+        audioCaptureHelper.saveAudio(child, response.getEntity().getContent(), response.getEntity().getContentType().getValue());
+    }
     private void savePhoto(Bitmap bitmap, PhotoCaptureHelper photoCaptureHelper, String current_photo_key) throws IOException {
         if(bitmap!=null && !current_photo_key.equals("")){
             try {
@@ -160,6 +171,14 @@ public class ChildService {
                     .path(String.format("/children/%s/photo/%s", child.optString("_id"), child.optString("current_photo_key")))
                     .context(context)
                     .get();
+    }
+
+    public HttpResponse getAudio(Child child) throws IOException {
+        return fluentRequest
+                .path(String.format("/children/%s/audio/%s", child.optString("_id"), child.optString("recorded_audio")))
+                .context(context)
+                .get();
+
     }
 
     public HashMap<String,String> getAllIdsAndRevs() throws IOException {

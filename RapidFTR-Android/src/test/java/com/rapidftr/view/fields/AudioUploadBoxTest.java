@@ -10,6 +10,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.model.Child;
+import com.rapidftr.utils.AudioCaptureHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @RunWith(CustomTestRunner.class)
 public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
 
+    RapidFtrApplication application;
+    AudioCaptureHelper audioCaptureHelper;
     @Mock
     MediaRecorder mediaRecorder;
 
@@ -35,6 +38,8 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     public void setUp() {
         initMocks(this);
         view = spy((AudioUploadBox) LayoutInflater.from(new RegisterChildActivity()).inflate(R.layout.form_audio_upload_box, null));
+        application = spy(new RapidFtrApplication());
+        audioCaptureHelper = spy(new AudioCaptureHelper(application));
     }
 
     @Test
@@ -76,9 +81,9 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         verify(view).disableButton(play, R.drawable.play);
         verify(view).enableButton(stop, R.drawable.stop_active);
         verify(mediaRecorder).setAudioSource(MediaRecorder.AudioSource.MIC);
-        verify(mediaRecorder).setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        verify(mediaRecorder).setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
         verify(mediaRecorder).setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        verify(mediaRecorder).setOutputFile("audio_file_name");
+        verify(mediaRecorder).setOutputFile(audioCaptureHelper.getDir().getAbsolutePath()+"/audio_file_name");
         verify(mediaRecorder).prepare();
         verify(mediaRecorder).start();
     }

@@ -114,6 +114,17 @@ public class ChildServiceTest {
     }
 
     @Test
+    public void shouldFetchAudioFromServer() throws JSONException, IOException, GeneralSecurityException {
+        FluentRequest mockFluentRequest = spy(new FluentRequest());
+        Child child = new Child("id1", "user1", "{ '_id' : '1234abcd' ,'recorded_audio' : 'audio_file_name'}");
+        getFakeHttpLayer().setDefaultHttpResponse(200, "audio stream");
+
+        new ChildService(mockContext(), repository, mockFluentRequest).getAudio(child);
+
+        verify(mockFluentRequest).path("/children/1234abcd/audio/audio_file_name");
+    }
+
+    @Test
     public void shouldFetchAllIdRevs() throws IOException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
 
