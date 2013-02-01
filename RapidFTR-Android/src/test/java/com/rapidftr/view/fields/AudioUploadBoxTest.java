@@ -124,14 +124,13 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
-    public void shouldPauseIfMediaPlayerIsPlaying(){
+    public void shouldNotIntialiseMediaPlayerWhenItIsInPausedState(){
         view.initialize(field, child);
         doReturn(mediaPlayer).when(view).getMediaPlayer();
-        doReturn(true).when(mediaPlayer).isPlaying();
+        doReturn(false).when(mediaPlayer).isPlaying();
         view.playRecording(view);
 
-        view.playRecording(view);
-        verify(mediaPlayer).pause();
+        verify(mediaPlayer).start();
     }
 
     @Test
