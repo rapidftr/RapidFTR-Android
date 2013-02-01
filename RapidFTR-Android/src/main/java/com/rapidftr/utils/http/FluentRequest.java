@@ -5,13 +5,13 @@ import android.net.Uri;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.IOUtils;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import lombok.Cleanup;
 import lombok.Getter;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.conn.ClientConnectionManager;
@@ -124,8 +124,10 @@ public class FluentRequest {
         return executeUnenclosed(new HttpDelete(uri.build().toString()));
     }
 
+
     protected FluentResponse executeMultiPart(HttpEntityEnclosingRequestBase request) throws IOException{
         MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+        List<FormSection> formSections =  RapidFtrApplication.getApplicationInstance().getFormSections();
         if (params.size() > 0) {
             for (Map.Entry<String, String> param : params.entrySet()){
                 if(param.getKey().equals("photo_keys")){

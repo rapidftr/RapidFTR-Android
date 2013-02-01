@@ -1,21 +1,16 @@
 package com.rapidftr.activity;
 
-import android.content.Intent;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.User;
-import com.xtremelabs.robolectric.shadows.ShadowActivity;
-import com.xtremelabs.robolectric.shadows.ShadowIntent;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static com.rapidftr.CustomTestRunner.createUser;
-import static com.xtremelabs.robolectric.Robolectric.shadowOf;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 

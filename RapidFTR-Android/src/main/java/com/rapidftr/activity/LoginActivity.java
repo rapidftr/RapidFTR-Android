@@ -1,7 +1,6 @@
 package com.rapidftr.activity;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -48,6 +47,7 @@ public class LoginActivity extends RapidFtrActivity {
     public void signUp(View view) {
         startActivity(new Intent(this, SignupActivity.class));
     }
+
 
     @Override
     protected void onResume() {

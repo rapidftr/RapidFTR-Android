@@ -148,6 +148,13 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.change_password:
+                if (this.getClass() == RegisterChildActivity.class || this.getClass() == EditChildActivity.class) {
+                    saveAlertListener(ChangePasswordActivity.class);
+                } else {
+                    startActivity(new Intent(this, ChangePasswordActivity.class));
+                }
+                return true;
             case R.id.synchronize_all:
                 if (isNullOrEmpty(getCurrentUser().getServerUrl())) {
                     getServerAndSync();
