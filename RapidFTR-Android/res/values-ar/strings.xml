@@ -4,14 +4,14 @@
 
     <string name="log_in">تسجيل الدخول</string>
     <string name="log_out">تسجيل الخروج</string>
-    <string name="confirm_logout_message">Records are still being sychronised. Logging out now will cancel this process, are you sure you want to log out?</string>
+    <string name="confirm_logout_message">جاري تزامن السجلات. تسجيل الخروج سيلغي هذه العملية، هل أنت متأكد من أنك تريد تسجيل الخروج؟</string>
     <string name="logout_successful">تم تسجيل الخروج بنجاح</string>
     <string name="change_url">تغيير الرابط</string>
     <string name="register_child">تسجيل طفل</string>
     <string name="view_all_children">عرض كل الأطفال</string>
     <string name="search_for_a_child">البحث عن طفل</string>
-    <string name="synchronize">Synchronize</string>
-    <string name="new_user">New to RapidFTR? </string>
+    <string name="synchronize">تزامن</string>
+    <string name="new_user">جديد في RapidFTR? </string>
     <string name="full_name_required">الإسم الكامل ضروري</string>
     <string name="full_name">الإسم الكامل</string>
 
@@ -62,20 +62,20 @@
     <string name="submit">تسليم</string>
     <string name="edit">تعديل</string>
     <string name="save">حفظ</string>
-    <string name="choose_action">Choose an action</string>
-    <string name="discard">Discard</string>
+    <string name="choose_action">إختيار إجراء</string>
+    <string name="discard">إلغاء</string>
     <string name="cancel">إلغاء</string>
-    <string name="clear">Clear</string>
+    <string name="clear">مسح</string>
 
     <string name="register_tab_name">تسجيل</string>
     <string name="view_all_tab_name">عرض الكل</string>
     <string name="search_tab_name">بحث</string>
     <string name="synchronize_log">خطأ في التزامن</string>
-    <string name="synchronize_step_1">Step 1 of 3 - Syncing Form Sections&#8230;</string>
-    <string name="synchronize_step_2">Step 2 of 3 - Sending records to server&#8230;</string>
-    <string name="synchronize_step_3">Step 3 of 3 - Getting records from server&#8230;</string>
-    <string name="signup">Sign Up!</string>
-    <string name="confirm">Confirm Password</string>
+    <string name="synchronize_step_1">خطوة ١ من ٣ - التزامن من الأقسام&#8230;</string>
+    <string name="synchronize_step_2">خطوة ٢ من ٣ - إرسال السجلات إلى المخدم&#8230;</string>
+    <string name="synchronize_step_3">خطوة ٣ من ٣ - إستعادة السجلات من المخدم&#8230;</string>
+    <string name="signup">إشترك!</string>
+    <string name="confirm">أكد كلمة السر</string>
     <string name="organisation">المنظمة</string>
     <string name="optional_url">الرابط (إختياري)</string>
 
