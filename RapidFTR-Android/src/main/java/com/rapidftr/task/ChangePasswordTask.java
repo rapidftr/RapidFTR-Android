@@ -2,6 +2,7 @@ package com.rapidftr.task;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 import com.google.inject.Inject;
 import com.rapidftr.R;
@@ -25,10 +26,10 @@ public class ChangePasswordTask extends AsyncTask<String, Boolean, Boolean> {
 
 
     @Inject
-    public ChangePasswordTask(ChangePasswordService changePasswordService, String username, RapidFtrApplication context) {
+    public ChangePasswordTask(ChangePasswordService changePasswordService, RapidFtrApplication context) {
         this.changePasswordService = changePasswordService;
-        this.username = username;
         this.context = context;
+        this.username = context.getCurrentUser().getUserName();
     }
 
     @Override
@@ -52,7 +53,7 @@ public class ChangePasswordTask extends AsyncTask<String, Boolean, Boolean> {
                 User user = new User(this.username, this.currentPassword).load();
                 user.setPassword(newPassword);
             } catch (Exception e) {
-
+                Log.e("ChangePasswordTask",e.getMessage());
             }
             Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.password_change_success, Toast.LENGTH_LONG).show();
         } else {

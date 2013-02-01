@@ -107,7 +107,6 @@
     <string name="stop_record">Stop</string>
     <string name="play_record">Play</string>
     <string name="forgot_password">Request password reset</string>
-    <string name="reset_password">Reset password</string>
 
     <string name="network_down">Connection to the server lost, the sync process has been cancelled</string>
     <string name="temp_sync_error">Error occurred while syncing the record with the server, please try again.</string>

@@ -33,7 +33,7 @@ public class ChangePasswordTaskTest {
     public void setUp() throws Exception {
         application = spy(RapidFtrApplication.getApplicationInstance());
         changePasswordService = mock(ChangePasswordService.class);
-        changePasswordTask = spy(new ChangePasswordTask(changePasswordService, "user", application));
+        changePasswordTask = spy(new ChangePasswordTask(changePasswordService, application));
     }
 
     @Test
