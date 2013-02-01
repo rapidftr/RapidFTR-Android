@@ -155,12 +155,12 @@ public class BaseChildActivityTest {
     }
 
     @Test
-    public void shouldReleaseMediaRecorderAndPlayerOnPauseIfPresent(){
+    public void shouldReleaseMediaRecorderAndPlayerOnStopIfPresent(){
         MediaPlayer mediaPlayer = mock(MediaPlayer.class);
         MediaRecorder mediaRecorder = mock(MediaRecorder.class);
         activity.setMediaPlayer(mediaPlayer);
         activity.setMediaRecorder(mediaRecorder);
-        activity.onPause();
+        activity.onStop();
         verify(mediaPlayer).release();
         verify(mediaRecorder).release();
         assertNull(activity.getMediaPlayer());

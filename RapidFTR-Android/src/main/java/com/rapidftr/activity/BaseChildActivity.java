@@ -54,7 +54,7 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
     }
 
     @Override
-    protected void onPause(){
+    protected void onStop(){
         super.onPause();
         if(mediaPlayer != null){
             mediaPlayer.release();
