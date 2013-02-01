@@ -9,8 +9,8 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.AudioCaptureHelper;
-import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.JSONArrays;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
 import org.apache.http.HttpResponse;
@@ -48,7 +48,9 @@ public class ChildService {
         String path = child.isNew() ? "/children" : String.format("/children/%s", child.get(internal_id.getColumnName()));
 
         fluentRequest.path(path).context(context).param("child", child.values().toString());
-        addMultiMediaFileToTheRequest(child);
+        if(child.has("attachments")){
+            addMultiMediaFilesToTheRequest(child);
+        }
         FluentResponse response = null;
         try {
         response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
@@ -63,28 +65,38 @@ public class ChildService {
         if (response != null && response.isSuccess()) {
             String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
             child = new Child(source);
-            child.setSynced(true);
-            child.remove("_attachments");
-            child.remove("audio_attachments");
+            setChildAttributes(child);
             repository.update(child);
-            setPhoto(child);
-            setAudio(child);
+            setMedia(child);
             return child;
         } else {
             throw new SyncFailedException(child.getUniqueId());
         }
     }
 
-    private void addMultiMediaFileToTheRequest(Child child) throws JSONException {
+    private void setMedia(Child child) throws IOException, JSONException {
+        setPhoto(child);
+        setAudio(child);
+    }
+
+    private void setChildAttributes(Child child) {
+        child.setSynced(true);
+        child.remove("attachments");
+        child.remove("_attachments");
+        child.remove("audio_attachments");
+    }
+
+    private void addMultiMediaFilesToTheRequest(Child child) throws JSONException {
         if (child.opt("current_photo_key") != null && !child.optString("current_photo_key").equals("")) {
             List<Object> photoKeys = getPhotoKeys(child);
             if (!photoKeys.contains(child.optString("current_photo_key"))) {
                 fluentRequest.param("current_photo_key", child.optString("current_photo_key"));
             }
         }
-        if (child.opt("recorded_audio") != null && !child.optString("recorded_audio").equals("")) {
+        if(child.optAttachmentValue("recorded_audio")!=""){
             fluentRequest.param("recorded_audio", child.optString("recorded_audio"));
         }
+        child.remove("attachments");
     }
 
     private List<Object> getPhotoKeys(Child child) throws JSONException {
@@ -151,9 +163,13 @@ public class ChildService {
     }
 
     public void setAudio(Child child) throws IOException, JSONException {
+        String recorded_audio = child.optString("recorded_audio");
+        if(recorded_audio == null || recorded_audio.equals("") ){
+            return;
+        }
         HttpResponse response = getAudio(child);
         AudioCaptureHelper audioCaptureHelper  = new AudioCaptureHelper(context);
-        audioCaptureHelper.saveAudio(child, response.getEntity().getContent(), response.getEntity().getContentType().getValue());
+        audioCaptureHelper.saveAudio(child, response.getEntity().getContent());
     }
     private void savePhoto(Bitmap bitmap, PhotoCaptureHelper photoCaptureHelper, String current_photo_key) throws IOException {
         if(bitmap!=null && !current_photo_key.equals("")){
@@ -175,7 +191,7 @@ public class ChildService {
 
     public HttpResponse getAudio(Child child) throws IOException {
         return fluentRequest
-                .path(String.format("/children/%s/audio/%s", child.optString("_id"), child.optString("recorded_audio")))
+                .path(String.format("/children/%s/audio", child.optString("_id")))
                 .context(context)
                 .get();
 

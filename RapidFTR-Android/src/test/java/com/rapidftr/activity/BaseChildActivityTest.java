@@ -2,12 +2,13 @@ package com.rapidftr.activity;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.widget.Spinner;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
@@ -19,12 +20,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -151,6 +152,19 @@ public class BaseChildActivityTest {
         BaseChildActivity.SaveChildTask saveChildTask = activity.getSaveChildTask();
         saveChildTask.onPostExecute(null);
         verify(activity, never()).view();
+    }
+
+    @Test
+    public void shouldReleaseMediaRecorderAndPlayerOnStopIfPresent(){
+        MediaPlayer mediaPlayer = mock(MediaPlayer.class);
+        MediaRecorder mediaRecorder = mock(MediaRecorder.class);
+        activity.setMediaPlayer(mediaPlayer);
+        activity.setMediaRecorder(mediaRecorder);
+        activity.onStop();
+        verify(mediaPlayer).release();
+        verify(mediaRecorder).release();
+        assertNull(activity.getMediaPlayer());
+        assertNull(activity.getMediaRecorder());
     }
 
 }

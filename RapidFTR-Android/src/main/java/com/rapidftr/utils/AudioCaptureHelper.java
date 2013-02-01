@@ -12,10 +12,15 @@ public class AudioCaptureHelper extends CaptureHelper{
         super(context);
     }
 
-    public void saveAudio(Child child, InputStream inputStream, String fileExtension) throws JSONException, IOException {
-        File file = new File(getDir(), child.optString("recorded_audio")+fileExtension);
-        IOUtils.copy(inputStream, new FileOutputStream(file));
-        if (!file.exists())
-            file.createNewFile();
+    public void saveAudio(Child child, InputStream inputStream) throws JSONException, IOException {
+        File file = new File(getDir(), child.optString("recorded_audio"));
+        if (!file.exists()){
+            IOUtils.copy(inputStream, new FileOutputStream(file));
+        }
     }
+    
+    public String getCompleteFileName(String fileName){
+        return getDir().getAbsolutePath() + "/"+ fileName;
+    }
+    
 }

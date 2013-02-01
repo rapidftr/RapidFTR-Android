@@ -121,7 +121,7 @@ public class ChildServiceTest {
 
         new ChildService(mockContext(), repository, mockFluentRequest).getAudio(child);
 
-        verify(mockFluentRequest).path("/children/1234abcd/audio/audio_file_name");
+        verify(mockFluentRequest).path("/children/1234abcd/audio");
     }
 
     @Test

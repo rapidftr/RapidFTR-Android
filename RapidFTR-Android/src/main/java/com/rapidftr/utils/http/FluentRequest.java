@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
+import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.IOUtils;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import lombok.Cleanup;
@@ -133,7 +134,7 @@ public class FluentRequest {
                 }else if(param.getKey().equals("recorded_audio")){
                     try {
                         multipartEntity.addPart("child[audio]",
-                                new ByteArrayBody(IOUtils.toByteArray(new FileInputStream(new File(param.getValue()))),
+                                new ByteArrayBody(IOUtils.toByteArray(new FileInputStream(new File(new AudioCaptureHelper((RapidFtrApplication) context).getCompleteFileName(param.getValue())))),
                                         "audio/amr", param.getValue()+".amr"));
                     } catch (Exception e) {
                         new RuntimeException(e);

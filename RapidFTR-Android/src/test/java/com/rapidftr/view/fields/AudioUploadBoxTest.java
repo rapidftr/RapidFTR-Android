@@ -107,8 +107,12 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         verify(view).enableButton(play, R.drawable.play_active);
         verify(view).enableButton(record, R.drawable.record_active);
         verify(view).disableButton(stop, R.drawable.stop);
+        verify(child).setAttachments(field.getId(),fileName);
         assertEquals(fileName, child.getString(field.getId()));
     }
+
+    @Test
+    public void shouldAddAudioToAttachmentsWhenStopRecordMethodHasBeenCalled() {}
 
     @Test
     public void shouldPlayRecordWhenPlayMethodHasBeenCalled() throws IOException {
@@ -123,20 +127,19 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         view.playRecording(view);
         verify(play).setBackgroundDrawable(RapidFtrApplication.getApplicationInstance().getResources().getDrawable(R.drawable.pause_active));
         verify(view).disableButton(record, R.drawable.record);
-        verify(mediaPlayer).setDataSource(child.getString(field.getId()));
+        verify(mediaPlayer).setDataSource(audioCaptureHelper.getCompleteFileName(child.getString(field.getId())));
         verify(mediaPlayer).prepare();
         verify(mediaPlayer).start();
     }
 
     @Test
-    public void shouldPauseIfMediaPlayerIsPlaying(){
+    public void shouldNotIntialiseMediaPlayerWhenItIsInPausedState(){
         view.initialize(field, child);
         doReturn(mediaPlayer).when(view).getMediaPlayer();
-        doReturn(true).when(mediaPlayer).isPlaying();
+        doReturn(false).when(mediaPlayer).isPlaying();
         view.playRecording(view);
 
-        view.playRecording(view);
-        verify(mediaPlayer).pause();
+        verify(mediaPlayer).start();
     }
 
     @Test
