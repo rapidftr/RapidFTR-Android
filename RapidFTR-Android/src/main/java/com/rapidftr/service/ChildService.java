@@ -36,6 +36,8 @@ public class ChildService {
     private RapidFtrApplication context;
     private ChildRepository repository;
     private FluentRequest fluentRequest;
+    private List<Object> photoKeys;
+    private String audioKey;
 
     @Inject
     public ChildService(RapidFtrApplication context, ChildRepository repository, FluentRequest fluentRequest) {
@@ -103,11 +105,13 @@ public class ChildService {
 
     private List<Object> getPhotoKeys(Child child) throws JSONException {
         JSONArray array = child.has("photo_keys") ? child.getJSONArray("photo_keys") : new JSONArray();
-        return JSONArrays.asList(array);
+        photoKeys = JSONArrays.asList(array);
+        return photoKeys;
     }
 
     private String getAudioKey(Child child) throws JSONException{
-       return (child.has("audio_attachments") && child.getJSONObject("audio_attachments").has("original"))? child.getJSONObject("audio_attachments").optString("original") : "";
+       audioKey =  (child.has("audio_attachments") && child.getJSONObject("audio_attachments").has("original"))? child.getJSONObject("audio_attachments").optString("original") : "";
+       return audioKey;
     }
 
     public void setPrimaryPhoto(Child child, String currentPhotoKey) throws JSONException, IOException {
@@ -158,26 +162,27 @@ public class ChildService {
         }));
     }
 
-    public void setPhoto(Child child) throws IOException {
+    public void setPhoto(Child child) throws IOException, JSONException {
         String current_photo_key = child.optString("current_photo_key");
-        if(current_photo_key == null || current_photo_key.equals("") ){
-            return;
-        }
-        HttpResponse httpResponse = getPhoto(child);
-        Bitmap bitmap = BitmapFactory.decodeStream(httpResponse.getEntity().getContent());
-        PhotoCaptureHelper photoCaptureHelper = new PhotoCaptureHelper(context);
-        savePhoto(bitmap, photoCaptureHelper, current_photo_key);
+        if (!current_photo_key.equals("")) {
+            if (photoKeys== null || !photoKeys.contains(current_photo_key)) {
+                HttpResponse httpResponse = getPhoto(child);
+                Bitmap bitmap = BitmapFactory.decodeStream(httpResponse.getEntity().getContent());
+                PhotoCaptureHelper photoCaptureHelper = new PhotoCaptureHelper(context);
+                savePhoto(bitmap, photoCaptureHelper, current_photo_key);
 
+            }
+        }
     }
 
     public void setAudio(Child child) throws IOException, JSONException {
-        String recorded_audio = child.optString("recorded_audio");
-        if(recorded_audio == null || recorded_audio.equals("") ){
-            return;
+        if(!child.optString("recorded_audio").equals("")){
+            if(audioKey == null || !audioKey.equals(child.optString("recorded_audio"))){
+                HttpResponse response = getAudio(child);
+                AudioCaptureHelper audioCaptureHelper  = new AudioCaptureHelper(context);
+                audioCaptureHelper.saveAudio(child, response.getEntity().getContent());
+            }
         }
-        HttpResponse response = getAudio(child);
-        AudioCaptureHelper audioCaptureHelper  = new AudioCaptureHelper(context);
-        audioCaptureHelper.saveAudio(child, response.getEntity().getContent());
     }
     private void savePhoto(Bitmap bitmap, PhotoCaptureHelper photoCaptureHelper, String current_photo_key) throws IOException {
         if(bitmap!=null && !current_photo_key.equals("")){
