@@ -174,7 +174,6 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
                 break;
             }
             try {
-                incomingChild.setSynced(true);
                 if (childRepository.exists(incomingChild.getUniqueId())) {
                     childRepository.update(incomingChild);
                 } else {

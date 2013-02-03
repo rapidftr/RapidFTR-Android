@@ -71,8 +71,6 @@ public enum Database {
         owner("child_owner"),
         synced("synced"),
         syncLog("syncLog"),
-        attachments("attachments"),
-
 
         internal_id("_id", true, false),
         internal_rev("_rev", true, false),

@@ -176,26 +176,6 @@ public class Child extends JSONObject implements Parcelable {
         put(last_updated_at.getColumnName(), lastUpdatedAt);
     }
 
-    public String getAttachments(){
-        return (optString(attachments.getColumnName(), "") == "") ?  "{}" :  optString(attachments.getColumnName());
-    }
-
-    public void setAttachments(String key, String value) {
-        try {
-            put(attachments.getColumnName(), new JSONObject(getAttachments()).putOpt(key,value));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String optAttachmentValue(String key){
-        try {
-            return new JSONObject(getAttachments()).optString(key,"");
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public String getSyncLog()  throws JSONException {
         return optString(syncLog.getColumnName(),null);
     }

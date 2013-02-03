@@ -233,12 +233,4 @@ public class ChildTest {
         assertThat(child.isNew(), is(false));
     }
     
-    @Test
-    public void shouldSetAttachmentsAsJSON() throws JSONException {
-        Child child = new Child();
-        child.setAttachments("audio", "value");
-        child.setAttachments("photo", "photoValue");
-        assertEquals(child.getAttachments(), "{\"audio\":\"value\",\"photo\":\"photoValue\"}");
-    }
-
 }

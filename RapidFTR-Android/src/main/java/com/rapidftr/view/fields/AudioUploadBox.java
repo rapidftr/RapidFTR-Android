@@ -103,7 +103,6 @@ public class AudioUploadBox extends BaseView {
         mRecorder.release();
         mRecorder = null;
         child.put(formField.getId(), fileName);
-        child.setAttachments(formField.getId(),fileName);
     }
 
     protected void playRecording(View view) {

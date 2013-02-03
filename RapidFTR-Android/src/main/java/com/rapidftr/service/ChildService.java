@@ -46,12 +46,10 @@ public class ChildService {
 
     public Child sync(Child child) throws IOException, JSONException {
         String path = child.isNew() ? "/children" : String.format("/children/%s", child.get(internal_id.getColumnName()));
-
+        addMultiMediaFilesToTheRequest(child);
+        removeUnusedParametersBeforeSync(child);
         fluentRequest.path(path).context(context).param("child", child.values().toString());
-        if(child.has("attachments")){
-            addMultiMediaFilesToTheRequest(child);
-        }
-        FluentResponse response = null;
+        FluentResponse response;
         try {
         response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
         }
@@ -81,9 +79,7 @@ public class ChildService {
 
     private void setChildAttributes(Child child) {
         child.setSynced(true);
-        child.remove("attachments");
         child.remove("_attachments");
-        child.remove("audio_attachments");
     }
 
     private void addMultiMediaFilesToTheRequest(Child child) throws JSONException {
@@ -93,15 +89,25 @@ public class ChildService {
                 fluentRequest.param("current_photo_key", child.optString("current_photo_key"));
             }
         }
-        if(child.optAttachmentValue("recorded_audio")!=""){
-            fluentRequest.param("recorded_audio", child.optString("recorded_audio"));
+        if(child.opt("recorded_audio") != null && !child.optString("recorded_audio").equals("")){
+            if(!getAudioKey(child).equals(child.optString("recorded_audio"))){
+                fluentRequest.param("recorded_audio", child.optString("recorded_audio"));
+            }
         }
-        child.remove("attachments");
+    }
+
+    private void removeUnusedParametersBeforeSync(Child child) {
+        child.remove("photo_keys");
+        child.remove("audio_attachments");
     }
 
     private List<Object> getPhotoKeys(Child child) throws JSONException {
         JSONArray array = child.has("photo_keys") ? child.getJSONArray("photo_keys") : new JSONArray();
         return JSONArrays.asList(array);
+    }
+
+    private String getAudioKey(Child child) throws JSONException{
+       return (child.has("audio_attachments") && child.getJSONObject("audio_attachments").has("original"))? child.getJSONObject("audio_attachments").optString("original") : "";
     }
 
     public void setPrimaryPhoto(Child child, String currentPhotoKey) throws JSONException, IOException {
@@ -132,7 +138,9 @@ public class ChildService {
                 .get();
 
         String childrenJson = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
-        return new Child(childrenJson);
+        Child child = new Child(childrenJson);
+        setChildAttributes(child);
+        return child;
     }
 
     private List<Child> convertToChildRecords(String childrenJson) throws IOException {
