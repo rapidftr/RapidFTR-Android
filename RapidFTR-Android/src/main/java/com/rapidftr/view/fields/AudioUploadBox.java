@@ -50,7 +50,7 @@ public class AudioUploadBox extends BaseView {
         enableButton(findViewById(R.id.stop_record), R.drawable.stop_active);
         mRecorder = getMediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         mRecorder.setMaxDuration(60000);
         mRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
@@ -62,7 +62,7 @@ public class AudioUploadBox extends BaseView {
             }
         });
         try {
-            mRecorder.setOutputFile(getFileName());
+            mRecorder.setOutputFile(audioCaptureHelper.getDir().getAbsolutePath() + "/"+ getFileName());
             mRecorder.prepare();
         } catch (IOException e) {
             Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
@@ -85,7 +85,7 @@ public class AudioUploadBox extends BaseView {
         try {
             String newFileName = null;
             while(newFileName == null || (fileName !=null && fileName.equals(newFileName))){
-               newFileName = audioCaptureHelper.getDir().getAbsolutePath() + child.getUniqueId() + new Date().getTime();
+               newFileName = (child.getUniqueId() == null? "" : child.getUniqueId()) + new Date().getTime();
             }
             fileName = newFileName;
         } catch (JSONException e) {
@@ -103,6 +103,7 @@ public class AudioUploadBox extends BaseView {
         mRecorder.release();
         mRecorder = null;
         child.put(formField.getId(), fileName);
+        child.setAttachments(formField.getId(),fileName);
     }
 
     protected void playRecording(View view) {
@@ -121,7 +122,7 @@ public class AudioUploadBox extends BaseView {
             disableButton(record, R.drawable.record);
             play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
             mPlayer = getMediaPlayer();
-            mPlayer.setDataSource(child.getString(formField.getId()));
+            mPlayer.setDataSource(audioCaptureHelper.getCompleteFileName(child.getString(formField.getId())));
             mPlayer.prepare();
             mPlayer.start();
             mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
