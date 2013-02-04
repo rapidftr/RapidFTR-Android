@@ -66,7 +66,7 @@ public class AudioUploadBox extends BaseView {
             mRecorder.prepare();
         } catch (IOException e) {
             Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
-            new RuntimeException(e);
+            throw  new RuntimeException(e);
         }
         mRecorder.start();
     }

@@ -11,6 +11,7 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.PhotoCaptureHelper;
+import com.rapidftr.utils.RapidFtrDateTime;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
 import org.apache.http.HttpResponse;
@@ -36,6 +37,8 @@ public class ChildService {
     private RapidFtrApplication context;
     private ChildRepository repository;
     private FluentRequest fluentRequest;
+    private JSONArray photoKeys;
+    private Object audioAttachments;
 
     @Inject
     public ChildService(RapidFtrApplication context, ChildRepository repository, FluentRequest fluentRequest) {
@@ -56,10 +59,11 @@ public class ChildService {
         catch (IOException e){
             child.setSynced(false);
             child.setSyncLog(e.getMessage());
+            child.put("photo_keys", photoKeys);
+            child.put("audio_attachments", audioAttachments);
             repository.update(child);
             throw new SyncFailedException(e.getMessage());
         }
-
         if (response != null && response.isSuccess()) {
             String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
             child = new Child(source);
@@ -77,8 +81,9 @@ public class ChildService {
         setAudio(child);
     }
 
-    private void setChildAttributes(Child child) {
+    private void setChildAttributes(Child child) throws JSONException {
         child.setSynced(true);
+        child.setLastSyncedAt(RapidFtrDateTime.now().defaultFormat());
         child.remove("_attachments");
     }
 
@@ -97,8 +102,8 @@ public class ChildService {
     }
 
     private void removeUnusedParametersBeforeSync(Child child) {
-        child.remove("photo_keys");
-        child.remove("audio_attachments");
+        photoKeys = (JSONArray)child.remove("photo_keys");
+        audioAttachments = child.remove("audio_attachments");
     }
 
     private List<Object> getPhotoKeys(Child child) throws JSONException {

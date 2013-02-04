@@ -21,7 +21,6 @@ import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -187,7 +186,7 @@ public class ChildTest {
     public void shouldReturnListOfChangeLogsBasedOnChanges() throws JSONException {
         Child oldChild = new Child("id", "user", "{'name' : 'old-name'}");
         Child updatedChild = new Child("id", "user", "{'name' : 'updated-name'}");
-        List<Child.History> histories = updatedChild.changeLogs(oldChild);
+        List<Child.History> histories = updatedChild.changeLogs(oldChild, null);
 
         JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
         HashMap fromTo = (HashMap) changesMap.get("name");
@@ -203,7 +202,7 @@ public class ChildTest {
     public void shouldReturnListOfChangeLogsForNewFieldValueToExistingChild() throws JSONException {
         Child oldChild = new Child("id", "user", "{'gender' : 'male', 'name' : 'old-name', 'created_organisation' : 'XYZ'}");
         Child updatedChild = new Child("id", "user", "{'gender' : 'male','nationality' : 'Indian', 'name' : 'new-name', 'separated': 'yes', 'rc_id_no': '1234'}");
-        List<Child.History> histories = updatedChild.changeLogs(oldChild);
+        List<Child.History> histories = updatedChild.changeLogs(oldChild, null);
         JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
         JSONObject fromToNationality = (JSONObject)(changesMap.get("nationality"));
         JSONObject fromToName = (JSONObject)(changesMap.get("name"));

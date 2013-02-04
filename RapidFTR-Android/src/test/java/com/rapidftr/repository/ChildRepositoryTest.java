@@ -1,12 +1,12 @@
 package com.rapidftr.repository;
 
-import android.content.SharedPreferences;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
+import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,9 +24,11 @@ import static com.rapidftr.CustomTestRunner.createUser;
 import static com.rapidftr.model.Child.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.*;
@@ -258,7 +260,7 @@ public class ChildRepositoryTest {
         history.put(CHANGES, changes);
         histories.add(history);
 
-        doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild);
+        doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild, null);
         repository.createOrUpdate(spyUpdatedChild);
 
         verify(spyUpdatedChild).put(HISTORIES, "[{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
@@ -285,7 +287,7 @@ public class ChildRepositoryTest {
         history.put(CHANGES, changes);
         histories.add(history);
 
-        doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild);
+        doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild, null);
         repository.createOrUpdate(spyUpdatedChild);
 
         verify(spyUpdatedChild).put(HISTORIES, "[{\"changes\":{\"name\":{}}},{\"changes\":{\"sex\":{}}},{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
@@ -304,6 +306,25 @@ public class ChildRepositoryTest {
         assertThat(name.get("to").toString(), is("new-name"));
         assertThat(sex.get("from").toString(), is(""));
         assertThat(sex.get("to").toString(), is("male"));
+    }
+
+
+    @Test
+    public void shouldCompareWithLastSyncedAtDateBeforeGeneratingChangeLogs() throws JSONException {
+
+        String last_synced_at = new RapidFtrDateTime(1, 2, 2013).defaultFormat();
+        String last_saved_at = new RapidFtrDateTime(2, 2, 2013).defaultFormat();
+
+        String oldHistories = String.format("[{\"user_name\":\"user\",\"datetime\":\"%s\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]", last_saved_at);
+        String oldContent = String.format("{'last_synced_at':'%s','gender' : 'male','nationality' : 'Indian', 'name' : 'new-name', 'separated': 'yes', 'rc_id_no': '1234', 'histories' : '%s'}", last_synced_at, oldHistories);
+        Child childWithHistories = new Child("id", "user", oldContent);
+        repository.createOrUpdate(childWithHistories);
+
+        String newContent = String.format("{'last_synced_at':'%s','gender' : 'female','nationality' : 'Indian', 'name' : 'new-name', 'rc_id_no': '1234', 'separated' : 'true', 'histories' : '%s'}",last_synced_at, oldHistories);
+        Child updatedChild = new Child("id", "user", newContent);
+
+        repository.createOrUpdate(updatedChild);
+        assertThat(((JSONArray)updatedChild.get(HISTORIES)).length(), is(1));
     }
 
     @Test
