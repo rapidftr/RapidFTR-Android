@@ -254,12 +254,12 @@ public class Child extends JSONObject implements Parcelable {
     public List<History> changeLogs(Child child) throws JSONException {
         JSONArray names = this.names();
         List<History> histories = new ArrayList<History>();
+        History history = new History();
+        JSONObject changes = new JSONObject();
         for (int i = 0; i < names.length(); i++) {
             String newValue = this.optString(names.getString(i), "");
             String oldValue = child.optString(names.getString(i), "");
             if (!oldValue.equals(newValue)) {
-                History history = new History();
-                JSONObject changes = new JSONObject();
                 JSONObject fromTo = new JSONObject();
                 fromTo.put(FROM, oldValue);
                 fromTo.put(TO, newValue);
@@ -267,10 +267,10 @@ public class Child extends JSONObject implements Parcelable {
                 history.put(USER_NAME, child.getOwner());
                 history.put(USER_ORGANISATION, child.optString("created_organisation"));
                 history.put(DATETIME, RapidFtrDateTime.now().defaultFormat());
-                history.put(CHANGES, changes);
-                histories.add(history);
             }
         }
+        history.put(CHANGES, changes);
+        histories.add(history);
         return histories;
     }
 

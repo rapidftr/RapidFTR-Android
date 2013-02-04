@@ -36,8 +36,6 @@ public class ChildService {
     private RapidFtrApplication context;
     private ChildRepository repository;
     private FluentRequest fluentRequest;
-    private List<Object> photoKeys;
-    private String audioKey;
 
     @Inject
     public ChildService(RapidFtrApplication context, ChildRepository repository, FluentRequest fluentRequest) {
@@ -105,13 +103,11 @@ public class ChildService {
 
     private List<Object> getPhotoKeys(Child child) throws JSONException {
         JSONArray array = child.has("photo_keys") ? child.getJSONArray("photo_keys") : new JSONArray();
-        photoKeys = JSONArrays.asList(array);
-        return photoKeys;
+        return JSONArrays.asList(array);
     }
 
     private String getAudioKey(Child child) throws JSONException{
-       audioKey =  (child.has("audio_attachments") && child.getJSONObject("audio_attachments").has("original"))? child.getJSONObject("audio_attachments").optString("original") : "";
-       return audioKey;
+       return (child.has("audio_attachments") && child.getJSONObject("audio_attachments").has("original"))? child.getJSONObject("audio_attachments").optString("original") : "";
     }
 
     public void setPrimaryPhoto(Child child, String currentPhotoKey) throws JSONException, IOException {
@@ -164,6 +160,7 @@ public class ChildService {
 
     public void setPhoto(Child child) throws IOException, JSONException {
         String current_photo_key = child.optString("current_photo_key");
+        List<Object> photoKeys = getPhotoKeys(child);
         if (!current_photo_key.equals("")) {
             if (photoKeys== null || !photoKeys.contains(current_photo_key)) {
                 HttpResponse httpResponse = getPhoto(child);
@@ -176,6 +173,7 @@ public class ChildService {
     }
 
     public void setAudio(Child child) throws IOException, JSONException {
+        String audioKey = getAudioKey(child);
         if(!child.optString("recorded_audio").equals("")){
             if(audioKey == null || !audioKey.equals(child.optString("recorded_audio"))){
                 HttpResponse response = getAudio(child);

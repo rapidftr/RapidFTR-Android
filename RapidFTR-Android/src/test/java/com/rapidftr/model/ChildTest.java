@@ -21,6 +21,7 @@ import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -201,23 +202,28 @@ public class ChildTest {
     @Test
     public void shouldReturnListOfChangeLogsForNewFieldValueToExistingChild() throws JSONException {
         Child oldChild = new Child("id", "user", "{'gender' : 'male', 'name' : 'old-name', 'created_organisation' : 'XYZ'}");
-        Child updatedChild = new Child("id", "user", "{'gender' : 'male','nationality' : 'Indian', 'name' : 'new-name'}");
+        Child updatedChild = new Child("id", "user", "{'gender' : 'male','nationality' : 'Indian', 'name' : 'new-name', 'separated': 'yes', 'rc_id_no': '1234'}");
         List<Child.History> histories = updatedChild.changeLogs(oldChild);
-
         JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
-        JSONObject fromTo = (JSONObject) changesMap.get("nationality");
+        JSONObject fromToNationality = (JSONObject)(changesMap.get("nationality"));
+        JSONObject fromToName = (JSONObject)(changesMap.get("name"));
+        JSONObject fromToSeparated = (JSONObject)(changesMap.get("separated"));
+        JSONObject fromToRcIdNo = (JSONObject)(changesMap.get("rc_id_no"));
 
-        assertThat(histories.size(),is(2));
-        assertThat(changesMap.names().get(0).toString(), is("nationality"));
-        assertThat(fromTo.get(FROM).toString(),is(""));
-        assertThat(fromTo.get(TO).toString(), is("Indian"));
+        assertThat(histories.size(),is(1));
+        assertThat(fromToNationality.get(FROM).toString(),is(""));
+        assertThat(fromToNationality.get(TO).toString(), is("Indian"));
 
-        changesMap = (JSONObject) histories.get(1).get(CHANGES);
-        fromTo = (JSONObject) changesMap.get("name");
+        assertThat(fromToName.get(FROM).toString(),is("old-name"));
+        assertThat(fromToName.get(TO).toString(), is("new-name"));
 
-        assertThat(changesMap.names().get(0).toString(), is("name"));
-        assertThat(fromTo.get(FROM).toString(),is("old-name"));
-        assertThat(fromTo.get(TO).toString(), is("new-name"));
+        assertThat(fromToSeparated.get(FROM).toString(),is(""));
+        assertThat(fromToSeparated.get(TO).toString(), is("yes"));
+
+        assertThat(fromToRcIdNo.get(FROM).toString(),is(""));
+        assertThat(fromToRcIdNo.get(TO).toString(), is("1234"));
+
+
     }
 
     @Test
