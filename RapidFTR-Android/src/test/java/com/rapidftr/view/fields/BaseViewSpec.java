@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.spy;
 
 public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
 
@@ -28,7 +29,7 @@ public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
         field.setHelpText(new HashMap<String, String>(){{put("en", "Help Field");}});
         field.setId("test_field");
         field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", new ArrayList<String>());}});
-        child = new Child();
+        child = spy(new Child());
     }
 
     @Test

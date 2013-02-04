@@ -8,16 +8,14 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@EqualsAndHashCode(of = { "userName", "password" })
+@EqualsAndHashCode(of = "userName")
 @AllArgsConstructor(suppressConstructorProperties = true)
-@NoArgsConstructor
 public class User {
 
 	public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
@@ -46,6 +44,9 @@ public class User {
 
 	@Getter @Setter @JsonProperty("unauthenticated_password")
 	protected String unauthenticatedPassword;
+
+	protected User() {
+	}
 
 	public User(String userName) {
 		this(userName, null, false, null, null, null, null, null);
@@ -92,7 +93,7 @@ public class User {
 	public void save() throws IOException, GeneralSecurityException {
 		if (!this.isAuthenticated()) {
 			this.setUnauthenticatedPassword(this.getPassword());
-			this.setDbKey(getUnauthenticatedDbKeyDbKey());
+			this.setDbKey(getUnauthenticatedDbKey());
 		}
 
 		getSharedPreferences().edit().putString(prefKey(userName), asEncryptedJSON()).commit();
@@ -106,11 +107,15 @@ public class User {
 		return JSON_MAPPER;
 	}
 
+	public static User readFromJSON(String json) throws IOException {
+		return new User().read(json);
+	}
+
 	protected static SharedPreferences getSharedPreferences() {
 		return RapidFtrApplication.getApplicationInstance().getSharedPreferences();
 	}
 
-	protected static String getUnauthenticatedDbKeyDbKey() {
+	protected static String getUnauthenticatedDbKey() {
 		String dbKey = getSharedPreferences().getString(UNAUTHENTICATED_DB_KEY, null);
 		return dbKey != null ? dbKey : createUnauthenticatedDbKey();
 	}

@@ -1,9 +1,7 @@
 package com.rapidftr.model;
 
-import android.content.SharedPreferences;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
-import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,20 +39,20 @@ public class UserTest {
 	public void shouldSetUnauthenticatedDbKeyForUnverifiedUsers() throws IOException, GeneralSecurityException {
 		user.setAuthenticated(false);
 		user.save();
-		verify(user).setDbKey(User.getUnauthenticatedDbKeyDbKey());
+		verify(user).setDbKey(User.getUnauthenticatedDbKey());
 	}
 
 	@Test
 	public void shouldReturnUnauthenticatedDbKeyWhenPresent() {
 		RapidFtrApplication.getApplicationInstance().getSharedPreferences().edit().putString(UNAUTHENTICATED_DB_KEY, "abcd").commit();
-		assertThat(User.getUnauthenticatedDbKeyDbKey(), equalTo("abcd"));
+		assertThat(User.getUnauthenticatedDbKey(), equalTo("abcd"));
 	}
 
 	@Test
 	public void shouldCreateAndStoreUnauthenticatedDbKeyWhenNotPresent() {
 		RapidFtrApplication.getApplicationInstance().getSharedPreferences().edit().remove(UNAUTHENTICATED_DB_KEY).commit();
 		String dbKey = User.createUnauthenticatedDbKey();
-		assertThat(User.getUnauthenticatedDbKeyDbKey(), equalTo(dbKey));
+		assertThat(User.getUnauthenticatedDbKey(), equalTo(dbKey));
 	}
 
 	@Test

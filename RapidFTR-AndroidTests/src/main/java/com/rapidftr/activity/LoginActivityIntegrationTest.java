@@ -44,12 +44,11 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         loginPage.login();
         solo.waitForText("Login Successful");
         solo.goBack();
-        solo.assertCurrentActivity("should still be on the home page", MainActivity.class);
-        loginPage.logout();
+	    assertTrue(solo.getCurrentActivity().isFinishing());
     }
 
 
-    public void estUserIsAlertedWhenAttemptingToLogoutWhileSyncInProgress() throws InterruptedException {
+    public void testUserIsAlertedWhenAttemptingToLogoutWhileSyncInProgress() throws InterruptedException {
         loginPage.login();
         solo.waitForText("Login Successful");
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
