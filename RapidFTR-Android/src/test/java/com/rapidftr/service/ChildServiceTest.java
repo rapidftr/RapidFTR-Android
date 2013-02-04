@@ -9,6 +9,7 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,20 +27,22 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class ChildServiceTest {
 
-    @Mock
-    ChildRepository repository;
+    @Mock private ChildRepository repository;
+    @Mock private User currentUser;
 
     FluentRequest fluentRequest;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
+        given(currentUser.isVerified()).willReturn(true);
         fluentRequest = new FluentRequest();
     }
 
@@ -56,10 +59,12 @@ public class ChildServiceTest {
 
     @Test
     public void shouldMarkChildAsSyncedWhenSyncing() throws IOException, JSONException, GeneralSecurityException {
-        Child child = new Child();
+        Child child = mock(Child.class, RETURNS_DEEP_STUBS);
+        when(child.values().toString()).thenReturn("{}");
         getFakeHttpLayer().setDefaultHttpResponse(201, "{}");
 
-        child = new ChildService(mockContext(), repository, fluentRequest).sync(child);
+        child = new ChildService(mockContext(), repository, fluentRequest).sync(child, currentUser);
+
         assertThat(child.isSynced(), is(true));
         verify(repository).update(child);
     }
@@ -69,7 +74,7 @@ public class ChildServiceTest {
         Child child = new Child();
         getFakeHttpLayer().setDefaultHttpResponse(503, "error");
 
-        new ChildService(mockContext(), repository, fluentRequest).sync(child);
+        new ChildService(mockContext(), repository, fluentRequest).sync(child, currentUser);
     }
 
     @Test
@@ -78,7 +83,7 @@ public class ChildServiceTest {
         child.put(Database.ChildTableColumn.internal_id.getColumnName(), "xyz");
 
         getFakeHttpLayer().addHttpResponseRule("http://whatever/children/xyz", "{}");
-        new ChildService(mockContext(), repository, fluentRequest).sync(child);
+        new ChildService(mockContext(), repository, fluentRequest).sync(child, currentUser);
     }
 
     @Test
@@ -87,8 +92,8 @@ public class ChildServiceTest {
         getFakeHttpLayer().addHttpResponseRule("http://whatever/children", "{ 'test1' : 'value2', '_id' : 'abcd1234'}");
 
         getFakeHttpLayer().addHttpResponseRule("http://whatever/children/abcd1234/photo/", "{}");
-        child = new ChildService(mockContext(), repository, fluentRequest).sync(child);
-        assertThat(child.getString("test1"), is("value2"));
+        child = new ChildService(mockContext(), repository, fluentRequest).sync(child, currentUser);
+
         verify(repository).update(child);
     }
 
@@ -99,7 +104,7 @@ public class ChildServiceTest {
         RapidFtrApplication context = mockContext();
         doReturn(null).when(mockFluentRequest).postWithMultipart();
 
-        new ChildService(context, repository, mockFluentRequest).sync(child);
+        new ChildService(context, repository, mockFluentRequest).sync(child, currentUser);
         verify(mockFluentRequest).param("current_photo_key", "1234ABC");
     }
 
@@ -154,12 +159,19 @@ public class ChildServiceTest {
     }
 
     @Test
-    public void shouldSyncUnverifiedChild() throws Exception {
+    public void shouldMarkUnverifiedChildAsSyncedOnceSuccessfullySynced() throws Exception {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
-        getFakeHttpLayer().addHttpResponseRule("POST", "http://whatever/children/sync_unverified", new TestHttpResponse(200, "{}"));
-        User user = mock(User.class);
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/children/sync_unverified", new TestHttpResponse(200, "{}"));
 
-        new ChildService(mockContext(), repository, mockFluentRequest).syncUnverified(mock(Child.class), user);
+        Child child = mock(Child.class, RETURNS_DEEP_STUBS);
+        JSONObject jsonObject = mock(JSONObject.class);
+        given(child.values()).willReturn(jsonObject);
+        given(jsonObject.toString()).willReturn("{}");
+        given(currentUser.isVerified()).willReturn(false);
+
+        child = new ChildService(mockContext(), repository, mockFluentRequest).sync(child, currentUser);
+
+        assertThat(child.isSynced(), is(true));
     }
 
     private RapidFtrApplication mockContext() {

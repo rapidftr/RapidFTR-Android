@@ -25,13 +25,13 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
     private LoginService loginService;
     private RegisterUserService registerUserService;
     private RapidFtrApplication applicationContext;
-    private User currentUser;
 
     @Inject
     public SyncUnverifiedDataAsyncTask(FormService formService, ChildService childService,
                                        ChildRepository childRepository, LoginService loginService,
-                                       RegisterUserService registerUserService) {
-        super(formService, childService, childRepository);
+                                       RegisterUserService registerUserService,
+                                       User user) {
+        super(formService, childService, childRepository, user);
         this.loginService = loginService;
         this.registerUserService = registerUserService;
     }
@@ -40,15 +40,15 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
     public void setContext(RapidFtrActivity context) {
         this.context = context;
         this.applicationContext = context.getContext();
-        this.currentUser = applicationContext.getCurrentUser();
     }
 
     protected void sync() throws JSONException, IOException {
+        setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
         registerUser();
         login();
         getFormSections();
-        sendRecordsToServer();
-        setProgressAndNotify(context.getString(R.string.sync_complete), MAX_PROGRESS);
+        sendChildrenToServer(childRepository.currentUsersUnsyncedRecords());
+        setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
     }
 
     private void registerUser() throws IOException {
@@ -63,15 +63,6 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
 
     private void login() throws IOException {
         loginService.login(context, currentUser.getUserName(), currentUser.getUnauthenticatedPassword(), currentUser.getServerUrl());
-    }
-
-    private void sendRecordsToServer() throws JSONException, IOException {
-        List<Child> childrenToSyncWithServer = childRepository.currentUsersUnsyncedRecords();
-        for (Child child : childrenToSyncWithServer) {
-            childService.syncUnverified(child, currentUser);
-            child.setSynced(true);
-            childRepository.update(child);
-        }
     }
 
 }

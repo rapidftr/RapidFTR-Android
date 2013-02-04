@@ -8,7 +8,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -29,8 +28,8 @@ public class User {
 	@Getter @Setter @JsonIgnore
 	protected String password;
 
-	@Getter @Setter @JsonProperty("authenticated")
-	protected boolean authenticated;
+    @Getter @Setter @JsonProperty("verified")
+	protected boolean verified;
 
 	@Getter @Setter @JsonProperty("server_url")
 	protected String serverUrl;
@@ -56,7 +55,7 @@ public class User {
         return "User{" +
                 "userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
-                ", authenticated=" + authenticated +
+                ", verified=" + verified +
                 ", serverUrl='" + serverUrl + '\'' +
                 ", dbKey='" + dbKey + '\'' +
                 ", organisation='" + organisation + '\'' +
@@ -69,12 +68,12 @@ public class User {
 		this(userName, password, false, null, null, null, null, null);
 	}
 
-	public User(String userName, String password, boolean authenticated) {
-		this(userName, password, authenticated, null, null, null, null, null);
+	public User(String userName, String password, boolean verified) {
+		this(userName, password, verified, null, null, null, null, null);
 	}
 
-	public User(String userName, String password, boolean authenticated, String serverUrl) {
-		this(userName, password, authenticated, serverUrl, null, null, null, null);
+	public User(String userName, String password, boolean verified, String serverUrl) {
+		this(userName, password, verified, serverUrl, null, null, null, null);
 	}
 
 	public String getDbName() {
@@ -104,7 +103,7 @@ public class User {
 	}
 
 	public void save() throws IOException, GeneralSecurityException {
-		if (!this.isAuthenticated()) {
+		if (!this.isVerified()) {
 			this.setUnauthenticatedPassword(this.getPassword());
 			this.setDbKey(getUnauthenticatedDbKeyDbKey());
 		}

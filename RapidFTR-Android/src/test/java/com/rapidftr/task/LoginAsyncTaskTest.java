@@ -1,12 +1,10 @@
 package com.rapidftr.task;
 
-import android.content.SharedPreferences;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.User;
-import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONException;
 import org.junit.Before;
@@ -17,7 +15,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import static com.rapidftr.CustomTestRunner.createUser;
-import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertNull;
@@ -67,7 +64,7 @@ public class LoginAsyncTaskTest {
     @Test
     public void shouldCheckOfflineLogin() throws Exception {
 	    User expectedUser = createUser();
-	    expectedUser.setAuthenticated(false);
+	    expectedUser.setVerified(false);
 	    expectedUser.save();
 
 	    loginAsyncTask.userName = expectedUser.getUserName();
@@ -79,7 +76,7 @@ public class LoginAsyncTaskTest {
     @Test(expected = GeneralSecurityException.class)
     public void shouldReturnFalseIfGivenPasswordIsInCorrectForOfflineLogin() throws Exception {
 	    User user = createUser();
-	    user.setAuthenticated(false);
+	    user.setVerified(false);
 	    user.save();
 
 	    loginAsyncTask.userName = user.getUserName();

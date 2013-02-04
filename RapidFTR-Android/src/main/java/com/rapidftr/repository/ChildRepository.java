@@ -69,7 +69,7 @@ public class ChildRepository implements Closeable {
     }
 
     private String fetchByOwner(RapidFtrApplication context) throws JSONException {
-	    if (!context.getCurrentUser().isAuthenticated()) {
+	    if (!context.getCurrentUser().isVerified()) {
             return  " child_owner = '" + userName + "' AND ";
         } else {
 		    return "";

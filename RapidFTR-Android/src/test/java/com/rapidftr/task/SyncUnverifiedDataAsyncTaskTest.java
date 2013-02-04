@@ -39,7 +39,7 @@ public class SyncUnverifiedDataAsyncTaskTest {
     @Mock private MenuItem cancelSyncAll;
     @Mock private RegisterUserService registerUserService;
     @Mock private LoginService loginService;
-    RapidFtrApplication applicationContext;
+    private RapidFtrApplication applicationContext;
     private User currentUser;
 
     SyncUnverifiedDataAsyncTask task;
@@ -62,7 +62,7 @@ public class SyncUnverifiedDataAsyncTaskTest {
         given(rapidFtrActivity.getContext()).willReturn(applicationContext);
         given(registerUserService.register(any(User.class))).willReturn(new FluentResponse(new TestHttpResponse(200, "")));
 
-        task = new SyncUnverifiedDataAsyncTask(formService, childService, childRepository, loginService, registerUserService);
+        task = new SyncUnverifiedDataAsyncTask(formService, childService, childRepository, loginService, registerUserService, currentUser);
         task.setContext(rapidFtrActivity);
     }
 
@@ -90,19 +90,7 @@ public class SyncUnverifiedDataAsyncTaskTest {
         task.onPreExecute();
         task.execute();
 
-        verify(childService).syncUnverified(child, applicationContext.getCurrentUser());
+        verify(childService).sync(child, currentUser);
     }
 
-    @Test
-    public void shouldMarkChildAsSynced() throws Exception {
-        Child child = mock(Child.class);
-        given(childRepository.currentUsersUnsyncedRecords()).willReturn(newArrayList(child));
-        doNothing().when(childService).syncUnverified(child, currentUser);
-
-        task.onPreExecute();
-        task.execute();
-
-        verify(child).setSynced(true);
-        verify(childRepository).update(child);
-    }
 }

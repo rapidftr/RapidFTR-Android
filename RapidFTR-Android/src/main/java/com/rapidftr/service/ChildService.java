@@ -14,6 +14,7 @@ import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
+import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
@@ -45,33 +46,41 @@ public class ChildService {
         this.fluentRequest = fluentRequest;
     }
 
-    public Child sync(Child child) throws IOException, JSONException {
-        String path = child.isNew() ? "/children" : String.format("/children/%s", child.get(internal_id.getColumnName()));
-
-        fluentRequest.path(path).context(context).param("child", child.values().toString());
-        if(child.has("attachments")){
-            addMultiMediaFilesToTheRequest(child);
-        }
-        FluentResponse response = null;
+    public Child sync(Child child, User currentUser) throws IOException, JSONException {
         try {
-        response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
-        }
-        catch (IOException e){
+            fluentRequest
+                    .path(getSyncPath(child, currentUser))
+                    .context(context)
+                    .param("child", child.values().toString());
+
+            if (child.has("attachments")) {
+                addMultiMediaFilesToTheRequest(child);
+            }
+
+            FluentResponse response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
+            if (response.isSuccess()) {
+                String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
+                child = new Child(source);
+                setChildAttributes(child);
+                repository.update(child);
+                setMedia(child);
+                return child;
+            } else {
+                throw new HttpException();
+            }
+        } catch (Exception e) {
             child.setSynced(false);
             child.setSyncLog(e.getMessage());
             repository.update(child);
-            throw new SyncFailedException(e.getMessage());
+            throw (SyncFailedException) new SyncFailedException(e.getMessage()).initCause(e);
         }
+    }
 
-        if (response != null && response.isSuccess()) {
-            String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
-            child = new Child(source);
-            setChildAttributes(child);
-            repository.update(child);
-            setMedia(child);
-            return child;
+    protected String getSyncPath(Child child, User currentUser) throws JSONException {
+        if (currentUser.isVerified()) {
+            return child.isNew() ? "/children" : String.format("/children/%s", child.get(internal_id.getColumnName()));
         } else {
-            throw new SyncFailedException(child.getUniqueId());
+            return "/children/sync_unverified";
         }
     }
 
@@ -94,7 +103,7 @@ public class ChildService {
                 fluentRequest.param("current_photo_key", child.optString("current_photo_key"));
             }
         }
-        if(child.optAttachmentValue("recorded_audio")!=""){
+        if (child.optAttachmentValue("recorded_audio") != "") {
             fluentRequest.param("recorded_audio", child.optString("recorded_audio"));
         }
         child.remove("attachments");
@@ -109,8 +118,8 @@ public class ChildService {
         //TODO need to modify this code once we implement multiple images. Can clean the webapp API, so that
         //TODO we can send the primary photo along with the child put request
 
-        if(!currentPhotoKey.equals("")){
-            String setPrimaryPhotoPath = "/children/"+child.get(internal_id.getColumnName())+"/select_primary_photo/"+currentPhotoKey;
+        if (!currentPhotoKey.equals("")) {
+            String setPrimaryPhotoPath = "/children/" + child.get(internal_id.getColumnName()) + "/select_primary_photo/" + currentPhotoKey;
             fluentRequest.path(setPrimaryPhotoPath);
             fluentRequest.put();
         }
@@ -153,7 +162,7 @@ public class ChildService {
 
     public void setPhoto(Child child) throws IOException {
         String current_photo_key = child.optString("current_photo_key");
-        if(current_photo_key == null || current_photo_key.equals("") ){
+        if (current_photo_key == null || current_photo_key.equals("")) {
             return;
         }
         HttpResponse httpResponse = getPhoto(child);
@@ -165,15 +174,16 @@ public class ChildService {
 
     public void setAudio(Child child) throws IOException, JSONException {
         String recorded_audio = child.optString("recorded_audio");
-        if(recorded_audio == null || recorded_audio.equals("") ){
+        if (recorded_audio == null || recorded_audio.equals("")) {
             return;
         }
         HttpResponse response = getAudio(child);
-        AudioCaptureHelper audioCaptureHelper  = new AudioCaptureHelper(context);
+        AudioCaptureHelper audioCaptureHelper = new AudioCaptureHelper(context);
         audioCaptureHelper.saveAudio(child, response.getEntity().getContent());
     }
+
     private void savePhoto(Bitmap bitmap, PhotoCaptureHelper photoCaptureHelper, String current_photo_key) throws IOException {
-        if(bitmap!=null && !current_photo_key.equals("")){
+        if (bitmap != null && !current_photo_key.equals("")) {
             try {
                 photoCaptureHelper.saveThumbnail(bitmap, current_photo_key);
                 photoCaptureHelper.savePhoto(bitmap, current_photo_key);
@@ -185,9 +195,9 @@ public class ChildService {
 
     public HttpResponse getPhoto(Child child) throws IOException {
         return fluentRequest
-                    .path(String.format("/children/%s/photo/%s", child.optString("_id"), child.optString("current_photo_key")))
-                    .context(context)
-                    .get();
+                .path(String.format("/children/%s/photo/%s", child.optString("_id"), child.optString("current_photo_key")))
+                .context(context)
+                .get();
     }
 
     public HttpResponse getAudio(Child child) throws IOException {
@@ -198,7 +208,7 @@ public class ChildService {
 
     }
 
-    public HashMap<String,String> getAllIdsAndRevs() throws IOException {
+    public HashMap<String, String> getAllIdsAndRevs() throws IOException {
         final ObjectMapper objectMapper = new ObjectMapper();
         HttpResponse response = fluentRequest.path("/children-ids").context(context).get();
         List<Map> idRevs = asList(objectMapper.readValue(response.getEntity().getContent(), Map[].class));
@@ -207,14 +217,5 @@ public class ChildService {
             idRevMapping.put(idRev.get("_id").toString(), idRev.get("_rev").toString());
         }
         return idRevMapping;
-    }
-
-    public void syncUnverified(Child child, User currentUser) throws IOException {
-        fluentRequest
-                .path("/children/sync_unverified")
-                .context(context)
-                .param("child", child.toString())
-                .param("user", currentUser.asJSON())
-                .post();
     }
 }
