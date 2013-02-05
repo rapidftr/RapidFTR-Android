@@ -83,9 +83,6 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 		String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
 		User user = new User(this.userName, this.password, true, this.url);
 		user.read(responseAsString);
-
-        new FormService(application).getPublishedFormSections();
-
 		return user;
 	}
 
@@ -104,6 +101,9 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 	    try {
 		    user.save();
 		    application.setCurrentUser(user);
+            if(isOnline()){
+                formService.getPublishedFormSections();
+            }
 		    Toast.makeText(application, R.string.login_successful, Toast.LENGTH_LONG).show();
 		    goToHomeScreen();
 	    } catch (Exception e) {

@@ -37,7 +37,6 @@ public class LoginPage {
         solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.url), "");
         solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.url), url);
         clickLoginButton();
-//        solo.waitForText("Login Successful");
     }
 
     public void logout() {

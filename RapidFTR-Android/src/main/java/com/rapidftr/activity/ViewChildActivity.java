@@ -60,6 +60,9 @@ public class ViewChildActivity extends BaseChildActivity {
             if (!child.isSynced() && child.getSyncLog() != null) {
                 menu.findItem(R.id.synchronize_log).setVisible(true);
             }
+            if (!getCurrentUser().isVerified()) {
+                menu.findItem(R.id.synchronize_child).setVisible(false);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
