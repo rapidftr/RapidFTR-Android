@@ -1,5 +1,8 @@
 package com.rapidftr.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
@@ -8,6 +11,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -132,5 +136,13 @@ public class RapidFtrActivityTest {
         when(mockMenu.getItem(anyInt())).thenReturn(mock(MenuItem.class));
         mainActivity.onCreateOptionsMenu(mockMenu);
         verify(mockSyncAll).setContext(mainActivity);
+    }
+
+    @Test
+    public void shouldRegisterBroadCastReceiverOnInitialization(){
+        RapidFtrActivity mainActivity = spy(new MainActivity());
+        Bundle bundle = mock(Bundle.class);
+        mainActivity.onCreate(bundle);
+        verify(mainActivity).registerReceiver(Matchers.<BroadcastReceiver>any(), Matchers.<IntentFilter>any());
     }
 }

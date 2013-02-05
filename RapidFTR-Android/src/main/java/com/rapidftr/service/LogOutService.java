@@ -1,7 +1,6 @@
 package com.rapidftr.service;
 
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.widget.Toast;
@@ -9,8 +8,6 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.LoginActivity;
 import com.rapidftr.activity.RapidFtrActivity;
-import com.rapidftr.task.SyncAllDataAsyncTask;
-
 import static android.widget.Toast.LENGTH_LONG;
 import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
 import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
@@ -40,9 +37,7 @@ public class LogOutService {
     }
 
     private void cancelSync(RapidFtrApplication context) {
-        context.getSyncTask().cancel(true);
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(SyncAllDataAsyncTask.NOTIFICATION_ID);
+        RapidFtrApplication.getApplicationInstance().cleanSyncTask();
     }
 
     private void createAlertDialog(final RapidFtrActivity currentActivity) {

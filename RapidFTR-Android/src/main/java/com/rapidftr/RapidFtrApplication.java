@@ -1,10 +1,13 @@
 package com.rapidftr;
 
 import android.app.Application;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 import com.rapidftr.utils.ApplicationInjector;
 import lombok.Getter;
@@ -40,6 +43,7 @@ public class RapidFtrApplication extends Application {
     private @Getter @Setter boolean loggedIn;
     private @Getter @Setter String dbKey;
     private @Getter @Setter SyncAllDataAsyncTask syncTask;
+    protected @Getter @Setter AsyncTaskWithDialog asyncTaskWithDialog;
 
     public RapidFtrApplication() {
         this(Guice.createInjector(new ApplicationInjector()));
@@ -75,4 +79,16 @@ public class RapidFtrApplication extends Application {
             if (!iterator.next().isEnabled())
                 iterator.remove();
     }
+
+    public void cleanSyncTask() {
+        if(syncTask != null){
+            syncTask.cancel(false);
+            NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(SyncAllDataAsyncTask.NOTIFICATION_ID);
+        }
+        if(asyncTaskWithDialog != null) {
+            asyncTaskWithDialog.cancel();
+        }
+    }
+
 }

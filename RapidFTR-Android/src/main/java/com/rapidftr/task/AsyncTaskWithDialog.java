@@ -8,6 +8,8 @@ import com.rapidftr.RapidFtrApplication;
 
 public abstract class AsyncTaskWithDialog<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
+    public abstract void cancel();
+
     public static <Params, Progress, Result> AsyncTask<Params, Progress, Result> wrap(
             final Context context, final AsyncTaskWithDialog<Params, Progress, Result> actualTask,
             final int progressMessage, final int successMessage, final int failureMessage) {
@@ -47,6 +49,11 @@ public abstract class AsyncTaskWithDialog<Params, Progress, Result> extends Asyn
                 }
 
                 Toast.makeText(RapidFtrApplication.getApplicationInstance(), message, Toast.LENGTH_LONG).show();
+            }
+
+            public void cancel(){
+                dialog.dismiss();
+                actualTask.cancel(false);
             }
         };
 

@@ -154,6 +154,7 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
         return new SaveChildTask();
     }
 
+
     protected class SaveChildTask extends AsyncTaskWithDialog<Void, Void, Child> {
         @Override
         protected Child doInBackground(Void... params) {
@@ -172,6 +173,11 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public void cancel() {
+           this.cancel(false);
         }
     }
 
