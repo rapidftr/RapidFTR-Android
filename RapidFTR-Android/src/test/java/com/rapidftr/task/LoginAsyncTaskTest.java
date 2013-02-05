@@ -5,11 +5,13 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.User;
+import com.rapidftr.service.FormService;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -20,21 +22,23 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class LoginAsyncTaskTest {
 
-    private RapidFtrActivity activity;
+    @Mock private RapidFtrActivity activity;
+    @Mock private FormService formService;
+
     private RapidFtrApplication application;
     private LoginAsyncTask loginAsyncTask;
 
     @Before
     public void setUp() {
-        activity = mock(RapidFtrActivity.class);
+        initMocks(this);
         application = spy(RapidFtrApplication.getApplicationInstance());
-        when(activity.getContext()).thenReturn(application);
-
-        loginAsyncTask = spy(new LoginAsyncTask(activity));
+        loginAsyncTask = spy(new LoginAsyncTask(application, formService));
+        loginAsyncTask.setActivity(activity);
     }
 
 	@Test

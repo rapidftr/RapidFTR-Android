@@ -84,9 +84,7 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
 
     protected void getFormSections() throws IOException {
         if (!isCancelled()) {
-
-            String formSectionsResponse = formService.getPublishedFormSections();
-            context.getContext().setFormSections(formSectionsResponse);
+            formService.getPublishedFormSections();
         }
     }
 

@@ -9,11 +9,13 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 import com.google.common.io.CharStreams;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.MainActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.User;
+import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import org.apache.http.HttpResponse;
 import org.json.JSONException;
@@ -31,20 +33,26 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
     protected RapidFtrActivity activity;
     protected ProgressDialog mProgressDialog;
     protected RapidFtrApplication application;
+    protected FormService formService;
 
     protected String userName;
     protected String password;
     protected String url;
 
-    public LoginAsyncTask(RapidFtrActivity activity) {
+    @Inject
+    public LoginAsyncTask(RapidFtrApplication application, FormService formService) {
+        this.application = application;
+        this.formService = formService;
+    }
+
+    public void setActivity(RapidFtrActivity activity) {
         this.activity = activity;
-        this.application = activity.getContext();
     }
 
     @Override
     protected void onPreExecute() {
         mProgressDialog = new ProgressDialog(activity);
-        mProgressDialog.setMessage(application.getString(R.string.loading_message));
+        mProgressDialog.setMessage(activity.getString(R.string.loading_message));
         mProgressDialog.setCancelable(false);
         mProgressDialog.show();
     }
@@ -75,6 +83,9 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 		String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
 		User user = new User(this.userName, this.password, true, this.url);
 		user.read(responseAsString);
+
+        new FormService(application).getPublishedFormSections();
+
 		return user;
 	}
 
