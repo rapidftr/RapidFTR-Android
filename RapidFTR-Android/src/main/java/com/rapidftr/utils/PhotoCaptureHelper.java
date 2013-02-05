@@ -11,7 +11,6 @@ import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import lombok.Cleanup;
-import lombok.RequiredArgsConstructor;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
@@ -119,10 +118,7 @@ public class PhotoCaptureHelper extends CaptureHelper {
     }
 
     public InputStream getDecodedImageStream(String fileNameWithoutExtension) throws GeneralSecurityException, IOException {
-        File file = new File(getDir(), fileNameWithoutExtension + ".jpg");
-        if (!file.exists())
-            throw new FileNotFoundException();
-
+        File file = getFile(fileNameWithoutExtension, ".jpg");
         return getCipherInputStream(file);
     }
 

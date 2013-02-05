@@ -180,6 +180,7 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
                     childRepository.createOrUpdate(incomingChild);
                 }
                 childService.setPhoto(incomingChild);
+                childService.setAudio(incomingChild);
                 setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
                 startProgress += 1 ;
             } catch (Exception e) {
