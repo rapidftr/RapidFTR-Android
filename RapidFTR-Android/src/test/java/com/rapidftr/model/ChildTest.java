@@ -199,33 +199,6 @@ public class ChildTest {
     }
 
     @Test
-    public void shouldReturnListOfChangeLogsForNewFieldValueToExistingChild() throws JSONException {
-        Child oldChild = new Child("id", "user", "{'gender' : 'male', 'name' : 'old-name', 'created_organisation' : 'XYZ'}");
-        Child updatedChild = new Child("id", "user", "{'gender' : 'male','nationality' : 'Indian', 'name' : 'new-name', 'separated': 'yes', 'rc_id_no': '1234'}");
-        List<Child.History> histories = updatedChild.changeLogs(oldChild, null);
-        JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
-        JSONObject fromToNationality = (JSONObject)(changesMap.get("nationality"));
-        JSONObject fromToName = (JSONObject)(changesMap.get("name"));
-        JSONObject fromToSeparated = (JSONObject)(changesMap.get("separated"));
-        JSONObject fromToRcIdNo = (JSONObject)(changesMap.get("rc_id_no"));
-
-        assertThat(histories.size(),is(1));
-        assertThat(fromToNationality.get(FROM).toString(),is(""));
-        assertThat(fromToNationality.get(TO).toString(), is("Indian"));
-
-        assertThat(fromToName.get(FROM).toString(),is("old-name"));
-        assertThat(fromToName.get(TO).toString(), is("new-name"));
-
-        assertThat(fromToSeparated.get(FROM).toString(),is(""));
-        assertThat(fromToSeparated.get(TO).toString(), is("yes"));
-
-        assertThat(fromToRcIdNo.get(FROM).toString(),is(""));
-        assertThat(fromToRcIdNo.get(TO).toString(), is("1234"));
-
-
-    }
-
-    @Test
     public void shouldBeNewIfThereIsNoID() throws JSONException {
         Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
         assertThat(child.isNew(), is(true));
