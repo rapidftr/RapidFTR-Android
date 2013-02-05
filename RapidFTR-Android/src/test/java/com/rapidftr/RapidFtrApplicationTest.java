@@ -15,6 +15,7 @@ import java.io.IOException;
 import static com.rapidftr.CustomTestRunner.createUser;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
@@ -44,7 +45,7 @@ public class RapidFtrApplicationTest {
         application.setAsyncTaskWithDialog(mockAsyncTaskWithDialog);
         application.setSyncTask(mockSyncTask);
         doReturn(mockNotification).when(application).getSystemService(Context.NOTIFICATION_SERVICE);
-        application.cleanSyncTask();
+        assertTrue(application.cleanSyncTask());
         verify(mockAsyncTaskWithDialog).cancel();
         verify(mockSyncTask).cancel(false);
         verify(mockNotification).cancel(SynchronisationAsyncTask.NOTIFICATION_ID);

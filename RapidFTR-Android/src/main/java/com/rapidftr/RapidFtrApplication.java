@@ -119,15 +119,19 @@ public class RapidFtrApplication extends Application {
         return (user != null && user.getLanguage() != null) ? user.getLanguage() : DEFAULT_LANGUAGE;
     }
 
-    public void cleanSyncTask() {
+    public boolean cleanSyncTask() {
+        boolean syncInProgress = (syncTask != null || asyncTaskWithDialog != null);
         if(syncTask != null){
             syncTask.cancel(false);
             NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(SynchronisationAsyncTask.NOTIFICATION_ID);
+            syncTask = null;
         }
         if(asyncTaskWithDialog != null) {
             asyncTaskWithDialog.cancel();
+            asyncTaskWithDialog = null;
         }
+        return syncInProgress;
     }
 
 }

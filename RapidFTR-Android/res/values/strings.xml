@@ -102,4 +102,5 @@
     <string name="stop_record">Stop</string>
     <string name="play_record">Play</string>
 
+    <string name="network_down">Connection to the server lost, the sync process has been cancelled</string>
 </resources>
