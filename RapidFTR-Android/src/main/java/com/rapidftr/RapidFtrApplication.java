@@ -1,6 +1,8 @@
 package com.rapidftr;
 
 import android.app.Application;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 import com.google.common.base.Strings;
@@ -9,6 +11,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.User;
+import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.utils.ApplicationInjector;
 import lombok.Cleanup;
@@ -40,6 +43,8 @@ public class RapidFtrApplication extends Application {
     protected @Getter List<FormSection> formSections;
 	protected @Getter User currentUser;
     protected @Getter @Setter SynchronisationAsyncTask syncTask;
+    public static final String DEFAULT_LANGUAGE = "en";
+    protected @Getter @Setter AsyncTaskWithDialog asyncTaskWithDialog;
 
     public RapidFtrApplication() {
         this(Guice.createInjector(new ApplicationInjector()));
@@ -108,5 +113,21 @@ public class RapidFtrApplication extends Application {
 	public boolean isLoggedIn() {
 		return getCurrentUser() != null;
 	}
+
+    public static String getDefaultLocale() {
+        User user = getApplicationInstance().getCurrentUser();
+        return (user != null && user.getLanguage() != null) ? user.getLanguage() : DEFAULT_LANGUAGE;
+    }
+
+    public void cleanSyncTask() {
+        if(syncTask != null){
+            syncTask.cancel(false);
+            NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(SynchronisationAsyncTask.NOTIFICATION_ID);
+        }
+        if(asyncTaskWithDialog != null) {
+            asyncTaskWithDialog.cancel();
+        }
+    }
 
 }
