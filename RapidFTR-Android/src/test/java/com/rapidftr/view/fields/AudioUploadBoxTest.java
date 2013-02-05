@@ -107,8 +107,8 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         verify(view).enableButton(play, R.drawable.play_active);
         verify(view).enableButton(record, R.drawable.record_active);
         verify(view).disableButton(stop, R.drawable.stop);
-        verify(child).setAttachments(field.getId(),fileName);
         assertEquals(fileName, child.getString(field.getId()));
+        assertEquals("{\"test_field\":\""+fileName+"\"}", child.getAttachments());
     }
 
     @Test

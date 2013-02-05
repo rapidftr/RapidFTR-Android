@@ -1,7 +1,9 @@
 package com.rapidftr.view.fields;
 
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import junit.framework.TestCase;
 import org.json.JSONException;
 import org.junit.Before;
@@ -44,11 +46,13 @@ public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
     }
 
     @Test
-    public void testShouldNotReturnNULLIfNoTranslationsAvailable() {
+    public void testShouldReturnUsersDefaultLanguagesValueIfNoTranslationsAvailable() {
         Locale.setDefault(new Locale("fr"));
-
+        User currentUser = RapidFtrApplication.getApplicationInstance().getCurrentUser();
+        if(currentUser != null)
+            currentUser.setLanguage("en");
         view.initialize(field, child);
-        assertThat(view.getLabel().getText().toString(), equalTo(""));
+        assertThat(view.getLabel().getText().toString(), equalTo("Test Field"));
         Locale.setDefault(new Locale("en"));
 
     }

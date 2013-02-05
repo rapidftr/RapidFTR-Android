@@ -1,5 +1,6 @@
 package com.rapidftr.forms;
 
+import com.rapidftr.RapidFtrApplication;
 import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -36,16 +37,26 @@ public class FormField {
 	private Object value;
 
     public String getLocalizedDisplayName(){
-        return displayName != null ? displayName.get(Locale.getDefault().getLanguage()) : "";
+        return getLocalized(displayName);
     }
 
     public String getLocalizedHelpText(){
-        return helpText != null ? helpText.get(Locale.getDefault().getLanguage()) : "";
+        return getLocalized(helpText);
     }
 
     public List<String> getLocalizedOptionStrings(){
         String locale = Locale.getDefault().getLanguage();
-        return (optionStrings != null && optionStrings.get(locale) != null) ? optionStrings.get(locale) : new ArrayList<String>();
+        List<String> localizedOptionStrings = (optionStrings != null && optionStrings.get(locale) != null) ? optionStrings.get(locale) : null;
+        if(localizedOptionStrings == null)
+            return (optionStrings != null && optionStrings.get(RapidFtrApplication.getDefaultLocale()) != null) ? optionStrings.get(RapidFtrApplication.getDefaultLocale()) : new ArrayList<String>();
+        return localizedOptionStrings;
     }
+
+    private String getLocalized(Map<String, String> valueMap) {
+        if(valueMap != null)
+            return valueMap.get(Locale.getDefault().getLanguage()) != null ? valueMap.get(Locale.getDefault().getLanguage()) : valueMap.get(RapidFtrApplication.getDefaultLocale());
+        return null;
+    }
+
 
 }

@@ -8,7 +8,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -47,20 +46,23 @@ public class User {
 	@Getter @Setter @JsonProperty("unauthenticated_password")
 	protected String unauthenticatedPassword;
 
+	@Getter @Setter @JsonProperty("language")
+	protected String language;
+
 	public User(String userName) {
-		this(userName, null, false, null, null, null, null, null);
+		this(userName, null, false, null, null, null, null, null, null);
 	}
 
 	public User(String userName, String password) {
-		this(userName, password, false, null, null, null, null, null);
+		this(userName, password, false, null, null, null, null, null, null);
 	}
 
 	public User(String userName, String password, boolean authenticated) {
-		this(userName, password, authenticated, null, null, null, null, null);
+		this(userName, password, authenticated, null, null, null, null, null, null);
 	}
 
 	public User(String userName, String password, boolean authenticated, String serverUrl) {
-		this(userName, password, authenticated, serverUrl, null, null, null, null);
+		this(userName, password, authenticated, serverUrl, null, null, null, null, null);
 	}
 
 	public String getDbName() {
