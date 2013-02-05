@@ -6,6 +6,7 @@ import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
+import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -262,35 +263,40 @@ public class ChildRepositoryTest {
 
         doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild, null);
         repository.createOrUpdate(spyUpdatedChild);
-
-        verify(spyUpdatedChild).put(HISTORIES, "[{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
         Child savedChild = repository.get(updatedChild.getUniqueId());
         assertThat(savedChild.get(HISTORIES).toString(), is("[{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"to\":\"new-name\",\"from\":\"old-name\"}}}]"));
     }
 
     @Test
-    public void shouldAppendHistoryIfHistoriesAlreadyExist() throws JSONException {
-        Child existingChild = new Child("id", "user1", "{\"name\":\"old-name\",\"histories\":[{\"changes\":{\"name\":{}}}, {\"changes\":{\"sex\":{}}}]}");
-        repository.createOrUpdate(existingChild);
+    public void shouldMergeHistoriesIfHistoriesAlreadyExist() throws JSONException {
 
-        Child updatedChild = new Child("id", "user1", "{'name' : 'updated-name'}");
-        Child spyUpdatedChild = spy(updatedChild);
-        List<Child.History> histories = new ArrayList<Child.History>();
-        Child.History history = updatedChild.new History();
-        HashMap changes = new HashMap();
-        HashMap fromTo = new LinkedHashMap();
-        fromTo.put(FROM, "old-name");
-        fromTo.put(TO, "new-name");
-        changes.put("name", fromTo);
-        history.put(USER_NAME, "user");
-        history.put(DATETIME, "timestamp");
-        history.put(CHANGES, changes);
-        histories.add(history);
+        String olderHistoryLastSavedAt = new RapidFtrDateTime(1, 2, 2012).defaultFormat();
+        String last_synced_at = new RapidFtrDateTime(1, 2, 2013).defaultFormat();
+        String last_saved_at = new RapidFtrDateTime(2, 2, 2013).defaultFormat();
 
-        doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild, null);
-        repository.createOrUpdate(spyUpdatedChild);
+        String oldHistories = String.format("[{\"user_name\":\"user\",\"datetime\":\"%s\",\"changes\":{\"rc_id_no\":{\"from\":\"old_rc_id\",\"to\":\"new_rc_id\"}}}, {\"user_name\":\"user\",\"datetime\":\"%s\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]", olderHistoryLastSavedAt, last_saved_at);
+        String oldContent = String.format("{'last_synced_at':'%s','gender' : 'male','nationality' : 'Indian', 'name' : 'new-name', 'separated': 'yes', 'rc_id_no': '1234', 'histories' : '%s'}", last_synced_at, oldHistories);
+        Child childWithHistories = new Child("id", "user", oldContent);
+        repository.createOrUpdate(childWithHistories);
 
-        verify(spyUpdatedChild).put(HISTORIES, "[{\"changes\":{\"name\":{}}},{\"changes\":{\"sex\":{}}},{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]");
+        childWithHistories.put("name", "updated-name");
+        childWithHistories.put("separated", "no");
+        childWithHistories.put("protected", "yes");
+
+        repository.createOrUpdate(childWithHistories);
+        List<Object> childHistories = JSONArrays.asList((JSONArray) childWithHistories.get("histories"));
+        assertThat(childHistories.size(), is(2));
+        JSONObject jsonObject = (JSONObject) childHistories.get(1);
+
+        assertOnHistory(jsonObject, "name", "updated-name", "new-name");
+        assertOnHistory(jsonObject, "separated", "no", "yes");
+        assertOnHistory(jsonObject, "protected", "yes", "");
+    }
+
+    private void assertOnHistory(JSONObject jsonObject, String name,  String toString, String fromString) throws JSONException {
+        JSONObject changesKey = (JSONObject) ((JSONObject) jsonObject.get("changes")).get(name);
+        assertThat(changesKey.optString("to"), is(toString));
+        assertThat(changesKey.optString("from"), is(fromString));
     }
 
     @Test
