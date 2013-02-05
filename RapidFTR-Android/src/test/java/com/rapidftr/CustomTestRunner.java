@@ -25,9 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 public class CustomTestRunner extends RobolectricTestRunner {
 
@@ -87,7 +84,7 @@ public class CustomTestRunner extends RobolectricTestRunner {
 	}
 
 	public static User createUser(String userName) {
-		return new User(userName, "testPassword", true, "localhost:3000", "testDbKey", "Test Organisation", "Test Name", "testPassword");
+		return new User(userName, "testPassword", true, "localhost:3000", "testDbKey", "Test Organisation", "Test Name", "testPassword", "en");
 	}
 
 }

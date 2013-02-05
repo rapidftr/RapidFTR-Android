@@ -3,7 +3,11 @@ package com.rapidftr.model;
 import android.content.SharedPreferences;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.EncryptionUtil;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -46,34 +50,23 @@ public class User {
 	@Getter @Setter @JsonProperty("unauthenticated_password")
 	protected String unauthenticatedPassword;
 
+	@Getter @Setter @JsonProperty("language")
+	protected String language;
+
 	public User(String userName) {
-		this(userName, null, false, null, null, null, null, null);
+		this(userName, null, false, null, null, null, null, null, null);
 	}
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", verified=" + verified +
-                ", serverUrl='" + serverUrl + '\'' +
-                ", dbKey='" + dbKey + '\'' +
-                ", organisation='" + organisation + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", unauthenticatedPassword='" + unauthenticatedPassword + '\'' +
-                '}';
-    }
-
-    public User(String userName, String password) {
-		this(userName, password, false, null, null, null, null, null);
+	public User(String userName, String password) {
+		this(userName, password, false, null, null, null, null, null, null);
 	}
 
-	public User(String userName, String password, boolean verified) {
-		this(userName, password, verified, null, null, null, null, null);
+	public User(String userName, String password, boolean authenticated) {
+		this(userName, password, authenticated, null, null, null, null, null, null);
 	}
 
-	public User(String userName, String password, boolean verified, String serverUrl) {
-		this(userName, password, verified, serverUrl, null, null, null, null);
+	public User(String userName, String password, boolean authenticated, String serverUrl) {
+		this(userName, password, authenticated, serverUrl, null, null, null, null, null);
 	}
 
 	public String getDbName() {

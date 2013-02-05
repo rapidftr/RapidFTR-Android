@@ -1,9 +1,9 @@
 package com.rapidftr.forms;
 
+import com.rapidftr.RapidFtrApplication;
 import lombok.*;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.*;
 
@@ -28,11 +28,17 @@ public class FormSection implements Comparable<FormSection> {
 	protected List<FormField> fields = new ArrayList<FormField>();
 
 	public String getLocalizedName() {
-		return name != null ? name.get(Locale.getDefault().getLanguage()) : null;
-	}
+        return getLocalized(name);
+    }
 
     public String getLocalizedHelpText() {
-        return helpText != null ? helpText.get(Locale.getDefault().getLanguage()) : null;
+        return getLocalized(helpText);
+    }
+
+    private String getLocalized(Map<String, String> valueMap) {
+        if(valueMap != null)
+            return valueMap.get(Locale.getDefault().getLanguage()) != null ? valueMap.get(Locale.getDefault().getLanguage()) : valueMap.get(RapidFtrApplication.getDefaultLocale());
+        return null;
     }
 
     @Override
