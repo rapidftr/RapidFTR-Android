@@ -23,6 +23,8 @@ import com.rapidftr.task.SyncAllDataAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
 
+import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
+
 public abstract class RapidFtrActivity extends Activity {
     private
     @Getter
@@ -32,8 +34,8 @@ public abstract class RapidFtrActivity extends Activity {
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(!((NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO)).isConnected()){
-                    RapidFtrApplication.getApplicationInstance().cleanSyncTask();
+                if(!((NetworkInfo) intent.getParcelableExtra(EXTRA_NETWORK_INFO)).isConnected() && RapidFtrApplication.getApplicationInstance().cleanSyncTask()){
+                    makeToast(R.string.network_down);
                 }
             }
     };

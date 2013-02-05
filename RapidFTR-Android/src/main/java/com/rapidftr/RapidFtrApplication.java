@@ -80,15 +80,19 @@ public class RapidFtrApplication extends Application {
                 iterator.remove();
     }
 
-    public void cleanSyncTask() {
+    public boolean cleanSyncTask() {
+        boolean syncInProgress = (syncTask != null || asyncTaskWithDialog != null);
         if(syncTask != null){
             syncTask.cancel(false);
             NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(SyncAllDataAsyncTask.NOTIFICATION_ID);
+            syncTask = null;
         }
         if(asyncTaskWithDialog != null) {
             asyncTaskWithDialog.cancel();
+            asyncTaskWithDialog = null;
         }
+        return syncInProgress;
     }
 
 }

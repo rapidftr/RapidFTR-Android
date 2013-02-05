@@ -4,14 +4,11 @@ import android.app.NotificationManager;
 import android.content.Context;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncAllDataAsyncTask;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-
-import static org.hamcrest.CoreMatchers.equalTo;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
@@ -32,7 +29,7 @@ public class RapidFtrApplicationTest {
         application.setAsyncTaskWithDialog(mockAsyncTaskWithDialog);
         application.setSyncTask(mockSyncTask);
         doReturn(mockNotification).when(application).getSystemService(Context.NOTIFICATION_SERVICE);
-        application.cleanSyncTask();
+        assertTrue(application.cleanSyncTask());
         verify(mockAsyncTaskWithDialog).cancel();
         verify(mockSyncTask).cancel(false);
         verify(mockNotification).cancel(SyncAllDataAsyncTask.NOTIFICATION_ID);
