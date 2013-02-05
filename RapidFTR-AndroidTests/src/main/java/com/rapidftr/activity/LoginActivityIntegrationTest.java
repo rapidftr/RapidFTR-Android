@@ -1,6 +1,7 @@
 package com.rapidftr.activity;
 
 import android.test.suitebuilder.annotation.Smoke;
+import com.rapidftr.R;
 import com.rapidftr.activity.pages.LoginPage;
 
 import static com.rapidftr.activity.pages.LoginPage.*;
@@ -11,11 +12,6 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         loginPage.login("wrongUsername", "wrongPassword", LOGIN_URL);
         assertTrue(solo.waitForText("Incorrect username or password"));
     }
-
-	public void testIncorrectServer() {
-		loginPage.login(USERNAME, PASSWORD, LoginPage.LOGIN_URL+":abc");
-		assertTrue(solo.waitForText("Incorrect username or password"));
-	}
 
     public void testNoLoginDetailsErrorMessages(){
           loginPage.login("","","");
@@ -39,4 +35,18 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         solo.assertCurrentActivity("should still be on the home page", MainActivity.class);
         loginPage.logout();
     }
+
+    public void testUserIsAlertedWhenAttemptingToLogoutWhileSyncInProgress() throws InterruptedException {
+        loginPage.login();
+        solo.waitForText("Login Successful");
+        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
+        solo.sleep(1000);
+        solo.clickOnMenuItem(solo.getString(R.string.log_out));
+
+        assertTrue("Could not find the dialog!", solo.searchText(solo.getString(R.string.confirm_logout_message)));
+
+        solo.clickOnButton(solo.getString(R.string.log_out));
+        solo.assertCurrentActivity("should log out and go to login page", LoginActivity.class);
+    }
+
 }
