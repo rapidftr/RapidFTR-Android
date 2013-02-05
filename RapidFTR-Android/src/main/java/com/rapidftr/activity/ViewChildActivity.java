@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
@@ -54,7 +55,8 @@ public class ViewChildActivity extends BaseChildActivity {
 
     protected void sync() {
         SyncChildTask task = new SyncChildTask(inject(ChildService.class),inject(ChildRepository.class));
-        AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child);
+        RapidFtrApplication applicationInstance = RapidFtrApplication.getApplicationInstance();
+        applicationInstance.setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
     }
 
     @Override
@@ -102,7 +104,7 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     @RequiredArgsConstructor(suppressConstructorProperties = true)
-    protected class SyncChildTask extends AsyncTaskWithDialog<Child, Void, Child> {
+    public class SyncChildTask extends AsyncTaskWithDialog<Child, Void, Child> {
 
         protected final ChildService service;
         protected final ChildRepository repository;
@@ -121,6 +123,11 @@ public class ViewChildActivity extends BaseChildActivity {
         @Override
         protected void onPostExecute(Child child) {
             restart();
+        }
+
+        @Override
+        public void cancel() {
+            this.cancel(false);
         }
     }
 

@@ -1,9 +1,9 @@
 package com.rapidftr.activity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.*;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
@@ -29,6 +29,15 @@ import lombok.Setter;
 public abstract class RapidFtrActivity extends FragmentActivity {
 
     private @Getter @Setter Menu menu;
+
+    private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(!((NetworkInfo) intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO)).isConnected()){
+                    RapidFtrApplication.getApplicationInstance().cleanSyncTask();
+                }
+            }
+    };
 
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
@@ -130,9 +139,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
                 task.execute();
                 return true;
             case R.id.cancel_synchronize_all:
-                AsyncTask taskToCancel = RapidFtrApplication.getApplicationInstance().getSyncTask();
-                if (taskToCancel != null)
-                    taskToCancel.cancel(false);
+                RapidFtrApplication.getApplicationInstance().cleanSyncTask();
                 return true;
             case R.id.logout:
                 if (this.getClass() == RegisterChildActivity.class || this.getClass() == EditChildActivity.class) {
@@ -156,6 +163,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        registerReceiver(networkChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         initializeExceptionHandler();
     }
 
@@ -272,6 +280,10 @@ public abstract class RapidFtrActivity extends FragmentActivity {
                 }
             }
         };
+    }
+
+    protected BroadcastReceiver getBroadCastReceiver(){
+        return networkChangeReceiver;
     }
 
 
