@@ -92,7 +92,7 @@ public class ViewChildActivityTest {
         when(child.getSyncLog()).thenReturn(syncError);
         activity.child = child;
         activity.showSyncLog();
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(syncError));
+        assertThat(ShadowToast.getTextOfLatestToast(), equalTo("Error occurred while syncing the record with the server, please try again."));
     }
 
     @Test(expected = RuntimeException.class)

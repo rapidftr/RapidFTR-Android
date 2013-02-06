@@ -71,4 +71,5 @@
     <string name="go">Go</string>
     <string name="child_not_found">No Record Found</string>
     <string name="network_down">Connection to the server lost, the sync process has been cancelled</string>
+    <string name="temp_sync_error">Error occurred while syncing the record with the server, please try again.</string>
 </resources>
