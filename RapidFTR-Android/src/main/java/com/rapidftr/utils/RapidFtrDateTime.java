@@ -1,5 +1,6 @@
 package com.rapidftr.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,9 +29,21 @@ public class RapidFtrDateTime {
     }
 
     public String defaultFormat(){
+        SimpleDateFormat simpleDateFormat = getDefaultSimpleDateFormat();
+        return simpleDateFormat.format(dateTime);
+    }
+
+    public static Calendar getDateTime(String dateTime) throws ParseException {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = getDefaultSimpleDateFormat();
+        calendar.setTime(simpleDateFormat.parse(dateTime));
+        return calendar;
+    }
+
+    private static SimpleDateFormat getDefaultSimpleDateFormat() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(defaultFormat);
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return simpleDateFormat.format(dateTime);
+        return simpleDateFormat;
     }
 
     @Override

@@ -84,4 +84,11 @@ public class CaptureHelper {
     protected InputStream getCipherInputStream(File file) throws GeneralSecurityException, IOException {
         return new CipherInputStream(new FileInputStream(file), getCipher(Cipher.DECRYPT_MODE, file.getName()));
     }
+
+    public File getFile(String fileNameWithoutExtension, String extension) throws FileNotFoundException {
+        File file = new File(getDir(), fileNameWithoutExtension + extension);
+        if (!file.exists())
+            throw new FileNotFoundException();
+        return file;
+    }
 }

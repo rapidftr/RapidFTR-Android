@@ -3,7 +3,7 @@ package com.rapidftr.view;
 import android.view.LayoutInflater;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
-import com.rapidftr.activity.LoginActivity;
+import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
@@ -34,7 +34,7 @@ public class FormSectionViewTest {
 
     @Before
     public void setUp() throws JSONException {
-        view = (FormSectionView) LayoutInflater.from(new LoginActivity()).inflate(R.layout.form_section, null);
+        view = (FormSectionView) LayoutInflater.from(new RegisterChildActivity()).inflate(R.layout.form_section, null);
         child = new Child();
 
         section = new FormSection();

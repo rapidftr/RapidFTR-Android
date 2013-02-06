@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.activity.BaseChildActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.utils.AudioCaptureHelper;
 import org.json.JSONException;
@@ -19,20 +20,23 @@ import java.util.Date;
 
 public class AudioUploadBox extends BaseView {
 
-    private MediaRecorder mRecorder = null;
-    private MediaPlayer mPlayer = null;
-    private String fileName = null;
+    private MediaRecorder mRecorder;
+    private MediaPlayer mPlayer;
+    private String fileName;
+    private BaseChildActivity context;
 
     private AudioCaptureHelper audioCaptureHelper;
     Resources resources = RapidFtrApplication.getApplicationInstance().getResources();
 
     public AudioUploadBox(Context context) {
         super(context);
+        this.context = (BaseChildActivity) context;
         audioCaptureHelper = getHelper(context);
     }
 
     public AudioUploadBox(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = (BaseChildActivity) context;
         audioCaptureHelper = getHelper(context);
     }
 
@@ -46,7 +50,7 @@ public class AudioUploadBox extends BaseView {
         enableButton(findViewById(R.id.stop_record), R.drawable.stop_active);
         mRecorder = getMediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         mRecorder.setMaxDuration(60000);
         mRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
@@ -58,11 +62,11 @@ public class AudioUploadBox extends BaseView {
             }
         });
         try {
-            mRecorder.setOutputFile(getFileName());
+            mRecorder.setOutputFile(audioCaptureHelper.getDir().getAbsolutePath() + "/"+ getFileName());
             mRecorder.prepare();
         } catch (IOException e) {
             Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
-            new RuntimeException(e);
+            throw  new RuntimeException(e);
         }
         mRecorder.start();
     }
@@ -81,7 +85,7 @@ public class AudioUploadBox extends BaseView {
         try {
             String newFileName = null;
             while(newFileName == null || (fileName !=null && fileName.equals(newFileName))){
-               newFileName = audioCaptureHelper.getDir().getAbsolutePath() + child.getUniqueId() + new Date().getTime();
+               newFileName = (child.getUniqueId() == null? "" : child.getUniqueId()) + new Date().getTime();
             }
             fileName = newFileName;
         } catch (JSONException e) {
@@ -109,11 +113,15 @@ public class AudioUploadBox extends BaseView {
                 play.setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
                 mPlayer.pause();
                 return;
+            } else if(mPlayer != null){
+                play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
+                mPlayer.start();
+                return;
             }
             disableButton(record, R.drawable.record);
             play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
             mPlayer = getMediaPlayer();
-            mPlayer.setDataSource(child.getString(formField.getId()));
+            mPlayer.setDataSource(audioCaptureHelper.getCompleteFileName(child.getString(formField.getId())));
             mPlayer.prepare();
             mPlayer.start();
             mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -122,6 +130,7 @@ public class AudioUploadBox extends BaseView {
                     enableButton(record, R.drawable.record_active);
                     enableButton(play, R.drawable.play_active);
                     mPlayer.release();
+                    mPlayer = null;
                 }
             });
         } catch (IOException e) {
@@ -174,10 +183,15 @@ public class AudioUploadBox extends BaseView {
     }
 
     protected MediaRecorder getMediaRecorder() {
-        return new MediaRecorder();
+        MediaRecorder mediaRecorder = new MediaRecorder();
+        context.setMediaRecorder(mediaRecorder);
+        return mediaRecorder;
     }
 
     protected MediaPlayer getMediaPlayer() {
-        return new MediaPlayer();
+        if(mPlayer == null)
+            mPlayer = new MediaPlayer();
+        context.setMediaPlayer(mPlayer);
+        return mPlayer;
     }
 }

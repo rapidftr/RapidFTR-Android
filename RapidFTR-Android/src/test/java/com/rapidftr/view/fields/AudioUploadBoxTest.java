@@ -10,6 +10,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.model.Child;
+import com.rapidftr.utils.AudioCaptureHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @RunWith(CustomTestRunner.class)
 public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
 
+    RapidFtrApplication application;
+    AudioCaptureHelper audioCaptureHelper;
     @Mock
     MediaRecorder mediaRecorder;
 
@@ -35,6 +38,8 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     public void setUp() {
         initMocks(this);
         view = spy((AudioUploadBox) LayoutInflater.from(new RegisterChildActivity()).inflate(R.layout.form_audio_upload_box, null));
+        application = spy(new RapidFtrApplication());
+        audioCaptureHelper = spy(new AudioCaptureHelper(application));
     }
 
     @Test
@@ -76,9 +81,9 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         verify(view).disableButton(play, R.drawable.play);
         verify(view).enableButton(stop, R.drawable.stop_active);
         verify(mediaRecorder).setAudioSource(MediaRecorder.AudioSource.MIC);
-        verify(mediaRecorder).setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        verify(mediaRecorder).setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
         verify(mediaRecorder).setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        verify(mediaRecorder).setOutputFile("audio_file_name");
+        verify(mediaRecorder).setOutputFile(audioCaptureHelper.getDir().getAbsolutePath()+"/audio_file_name");
         verify(mediaRecorder).prepare();
         verify(mediaRecorder).start();
     }
@@ -106,6 +111,9 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
+    public void shouldAddAudioToAttachmentsWhenStopRecordMethodHasBeenCalled() {}
+
+    @Test
     public void shouldPlayRecordWhenPlayMethodHasBeenCalled() throws IOException {
         view.initialize(field, child);
         doReturn("audio_file_name").when(view).getFileName();
@@ -118,20 +126,19 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         view.playRecording(view);
         verify(play).setBackgroundDrawable(RapidFtrApplication.getApplicationInstance().getResources().getDrawable(R.drawable.pause_active));
         verify(view).disableButton(record, R.drawable.record);
-        verify(mediaPlayer).setDataSource(child.getString(field.getId()));
+        verify(mediaPlayer).setDataSource(audioCaptureHelper.getCompleteFileName(child.getString(field.getId())));
         verify(mediaPlayer).prepare();
         verify(mediaPlayer).start();
     }
 
     @Test
-    public void shouldPauseIfMediaPlayerIsPlaying(){
+    public void shouldNotIntialiseMediaPlayerWhenItIsInPausedState(){
         view.initialize(field, child);
         doReturn(mediaPlayer).when(view).getMediaPlayer();
-        doReturn(true).when(mediaPlayer).isPlaying();
+        doReturn(false).when(mediaPlayer).isPlaying();
         view.playRecording(view);
 
-        view.playRecording(view);
-        verify(mediaPlayer).pause();
+        verify(mediaPlayer).start();
     }
 
     @Test

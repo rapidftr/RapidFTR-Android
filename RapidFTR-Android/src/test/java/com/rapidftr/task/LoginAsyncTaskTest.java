@@ -1,47 +1,48 @@
 package com.rapidftr.task;
 
-import android.content.SharedPreferences;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.User;
-import com.xtremelabs.robolectric.Robolectric;
+import com.rapidftr.service.FormService;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import static com.rapidftr.CustomTestRunner.createUser;
-import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class LoginAsyncTaskTest {
 
-    private RapidFtrActivity activity;
+    @Mock private RapidFtrActivity activity;
+    @Mock private FormService formService;
+
     private RapidFtrApplication application;
     private LoginAsyncTask loginAsyncTask;
 
     @Before
     public void setUp() {
-        activity = mock(RapidFtrActivity.class);
+        initMocks(this);
         application = spy(RapidFtrApplication.getApplicationInstance());
-        when(activity.getContext()).thenReturn(application);
-
-        loginAsyncTask = spy(new LoginAsyncTask(activity));
+        loginAsyncTask = spy(new LoginAsyncTask(application, formService));
+        loginAsyncTask.setActivity(activity);
     }
 
 	@Test
-	public void shouldCallOnlineLoginIfNetworkIsUp() throws IOException, JSONException {
+	public void shouldCallOnlineLoginIfNetworkIsUp() throws IOException, JSONException, GeneralSecurityException {
 		doReturn(true).when(loginAsyncTask).isOnline();
 		loginAsyncTask.doInBackground("", "", "");
 		verify(loginAsyncTask).doOnlineLogin();
@@ -59,7 +60,6 @@ public class LoginAsyncTaskTest {
 	    User user = spy(createUser());
 	    doReturn("{}").when(user).asJSON();
         loginAsyncTask.onPostExecute(user);
-	    verify(user).save();
 	    verify(application).setCurrentUser(user);
 	    verify(loginAsyncTask).goToHomeScreen();
     }
@@ -67,7 +67,7 @@ public class LoginAsyncTaskTest {
     @Test
     public void shouldCheckOfflineLogin() throws Exception {
 	    User expectedUser = createUser();
-	    expectedUser.setAuthenticated(false);
+	    expectedUser.setVerified(false);
 	    expectedUser.save();
 
 	    loginAsyncTask.userName = expectedUser.getUserName();
@@ -79,7 +79,7 @@ public class LoginAsyncTaskTest {
     @Test(expected = GeneralSecurityException.class)
     public void shouldReturnFalseIfGivenPasswordIsInCorrectForOfflineLogin() throws Exception {
 	    User user = createUser();
-	    user.setAuthenticated(false);
+	    user.setVerified(false);
 	    user.save();
 
 	    loginAsyncTask.userName = user.getUserName();
@@ -97,6 +97,39 @@ public class LoginAsyncTaskTest {
     public void shouldShowAptToastMessageForSuccesfulOfflineLogin() throws IOException, GeneralSecurityException {
         loginAsyncTask.onPostExecute(createUser());
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(application.getString(R.string.login_successful)));
+    }
+
+    @Test
+    public void shouldDownloadFormSectionsUponSuccessfulLogin() {
+        User user = createUser();
+        doNothing().when(loginAsyncTask).getFormSections(user);
+        loginAsyncTask.onPostExecute(user);
+        verify(loginAsyncTask).getFormSections(user);
+    }
+
+    @Test
+    public void shouldDownloadFormSections() throws IOException {
+        User user = createUser();
+        doReturn(true).when(loginAsyncTask).isOnline();
+        loginAsyncTask.getFormSections(user);
+        verify(formService).getPublishedFormSections();
+    }
+
+    @Test
+    public void shouldNotDownloadFormSectionsDuringOfflineLogin() throws IOException {
+        User user = createUser();
+        doReturn(false).when(loginAsyncTask).isOnline();
+        loginAsyncTask.getFormSections(user);
+        verifyZeroInteractions(formService);
+    }
+
+    @Test
+    public void shouldNotDownloadFormSectionsForUnverifiedUser() throws IOException {
+        User user = createUser();
+        user.setVerified(false);
+        doReturn(true).when(loginAsyncTask).isOnline();
+        loginAsyncTask.getFormSections(user);
+        verifyZeroInteractions(formService);
     }
 
 }

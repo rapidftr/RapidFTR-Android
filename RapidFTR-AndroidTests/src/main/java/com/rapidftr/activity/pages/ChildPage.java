@@ -2,6 +2,7 @@ package com.rapidftr.activity.pages;
 
 import android.widget.EditText;
 import android.widget.ListAdapter;
+import android.widget.Spinner;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.R;
 import com.rapidftr.view.fields.TextField;
@@ -36,7 +37,7 @@ public class ChildPage {
        solo.waitForText("Automation Form");
         ListAdapter adapter = solo.getCurrentListViews().get(0).getAdapter();
         int totalCount = adapter.getCount();
-        ArrayList formSections = new ArrayList();
+        List<String> formSections = new ArrayList<String>();
        for(int i=0;i<totalCount;i++){
            formSections.add(adapter.getItem(i).toString());
         }
@@ -79,8 +80,8 @@ public class ChildPage {
 
     public void enterAutomationFormDetails(List automationFormData) {
         solo.enterText(0, automationFormData.get(0).toString());
+        solo.sleep(3);
         solo.enterText(1, automationFormData.get(1).toString());
-        solo.scrollDown();
         int checkBoxCount=solo.getCurrentCheckBoxes().size();
         for(int i=0;i<checkBoxCount;i++){
             if (solo.getCurrentCheckBoxes().get(i).getText().toString().equals(automationFormData.get(2).toString())) {
@@ -88,7 +89,16 @@ public class ChildPage {
                 solo.clickOnCheckBox(i);
             }
         }
-//        solo.clickOnText(automationFormData.get(4).toString(),1,true);
+        solo.scrollDown();
+        Spinner spinner = solo.getCurrentSpinners().get(1);
+        int selectBoxCount = spinner.getCount();
+        for(int i=0;i<selectBoxCount;i++){
+            if(spinner.getAdapter().getItem(i).toString().equals(automationFormData.get(3).toString())){
+                solo.pressSpinnerItem(1,i);
+//                solo.clickOnText(automationFormData.get(3).toString(),1,true);
+            }
+        }
+        solo.clickOnText(automationFormData.get(4).toString(),1,true);
     }
 
     public void verifyRegisterChildDetail(List automationFormData,String formName) {
@@ -111,4 +121,14 @@ public class ChildPage {
         solo.enterText(nameField, name);
     }
 
+
+    public void choosePopUpAction(String popUpAction) {
+        solo.clickOnText(popUpAction);
+    }
+
+    public boolean verifyRegisterPopup() {
+
+        return  solo.searchText("Cancel",true) && solo.searchText("Save",true) && solo.searchText("Discard",true) && solo.searchText("Choose an action",true);
+
+    }
 }

@@ -1,7 +1,9 @@
 package com.rapidftr.view.fields;
 
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import junit.framework.TestCase;
 import org.json.JSONException;
 import org.junit.Before;
@@ -14,6 +16,7 @@ import java.util.Locale;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.spy;
 
 public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
 
@@ -28,7 +31,7 @@ public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
         field.setHelpText(new HashMap<String, String>(){{put("en", "Help Field");}});
         field.setId("test_field");
         field.setOptionStrings(new HashMap<String, List<String>>(){{put("en", new ArrayList<String>());}});
-        child = new Child();
+        child = spy(new Child());
     }
 
     @Test
@@ -44,11 +47,13 @@ public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
     }
 
     @Test
-    public void testShouldNotReturnNULLIfNoTranslationsAvailable() {
+    public void testShouldReturnUsersDefaultLanguagesValueIfNoTranslationsAvailable() {
         Locale.setDefault(new Locale("fr"));
-
+        User currentUser = RapidFtrApplication.getApplicationInstance().getCurrentUser();
+        if(currentUser != null)
+            currentUser.setLanguage("en");
         view.initialize(field, child);
-        assertThat(view.getLabel().getText().toString(), equalTo(""));
+        assertThat(view.getLabel().getText().toString(), equalTo("Test Field"));
         Locale.setDefault(new Locale("en"));
 
     }

@@ -3,11 +3,14 @@ package com.rapidftr.task;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.view.fields.PhotoUploadBox;
+
+import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
 public class EncryptImageAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 
@@ -42,6 +45,7 @@ public class EncryptImageAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 	        bitmap.recycle();
 	        photoUploadBox.repaint();
         } catch (Exception e) {
+	        Log.e(APP_IDENTIFIER, "Error saving photo", e);
 	        result = false;
         }
 

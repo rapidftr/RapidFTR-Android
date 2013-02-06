@@ -1,8 +1,6 @@
 package com.rapidftr.activity;
 
 
-import com.rapidftr.R;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,20 +20,18 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
 
     @Override
     public void tearDown() throws Exception {
-        solo.goBackToActivity("MainActivity");
         loginPage.logout();
         super.tearDown();
     }
-//     df
-    public void estFormSectionsDisplayed() {
+
+    public void testFormSectionsDisplayed() {
         List<String> actualSections = childPage.getDropDownFormSections();
         List<String> expectedSections = new ArrayList<String>(asList(new String[]{"Basic Identity", "Family details", "Care Arrangements", "Separation History", "Protection Concerns",
                 "Childs Wishes", "Other Interviews", "Other Tracing Info", "Interview Details", "Automation Form"}));
         assertEquals(actualSections, expectedSections);
     }
 
-    //df
-    public void estFieldsDisplayed() {
+    public void testFieldsDisplayed() {
         childPage.selectFormSection("Automation Form");
         List expectedFields = asList("Automation TextField", "Automation TextArea", "Automation CheckBoxes", "Automation Select",
                 "Automation Radio", "Automation Number", "Automation Date");
@@ -47,7 +43,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         List hiddenField = asList("Hidden TextField");
         childPage.verifyFields(hiddenField, false);
     }
-//   df
+
     public void testRegisterChild() {
         childPage.selectFormSection("Automation Form");
         List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 1", "Select 1", "Radio 3", "1", "20", "10", "2012");
@@ -55,7 +51,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         childPage.save();
         childPage.verifyRegisterChildDetail(automationFormData, "Automation Form");
     }
-//    df
+
     public void testRegisterAndSyncChild() {
         childPage.selectFormSection("Automation Form");
         List automationFormData = asList("Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012");
@@ -76,61 +72,19 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         assertTrue(isEditedTextPresent(name));
     }
 
-
-    public void estNavigatingAwayFromRegisterPromptUserToSave(){
-        childPage.enterChildName("MsgPromptText");
-        viewAllChildrenPage.navigateToViewAllTab();
-        isTextPresent("Choose an action");
-
-
-    }
-    public void xtestIfNavigatingAwayFromRegisterPromptsUserToSave() {
-        String name = "Test";
+    public void testNavigatingAwayFromRegisterPromptUserToSave() {
+        String name = "MsgPromptText";
         childPage.enterChildName(name);
-        solo.clickOnText("View All");
-        assertTrue(solo.waitForText("Save"));
-    }
-
-    public void xtestIfNavigatingAwayFromRegisterPageDoesnotPromptIfChildInvalid() throws InterruptedException {
-        solo.clickOnText("View All");
-        assertFalse(solo.waitForText("Choose an option"));
-    }
-
-    public void xtestIfDiscardTakesYouToTheNextActivity() throws InterruptedException {
-        childPage.enterChildName("Test");
-        solo.clickOnText("Search");
-        solo.clickOnText("Discard");
-        assertTrue(solo.waitForText("Go"));
-    }
-
-    public void xtestIfUserIsPromptedToSaveWhenLeavingEditPage() {
-        String name = "Test Edit Child";
-        childPage.selectFormSection("Automation Form");
-        childPage.registerChild();
+        loginPage.logout();
+        assertTrue(childPage.verifyRegisterPopup());
+        childPage.choosePopUpAction("Cancel");
+        assertTrue(solo.waitForText(name));
+        searchPage.navigateToSearchTab();
+        assertTrue(childPage.verifyRegisterPopup());
+        childPage.choosePopUpAction("Save");
         childPage.selectEditChild();
-        childPage.selectFormSection("Basic Identity");
-        childPage.enterChildName(name);
-        solo.clickOnText("Search");
-        assertTrue(solo.waitForText("Go"));
-    }
-
-    public void xtestIfUserIsPromptedToSaveWhenBackButtonIsPressed() {
-        childPage.enterChildName("Name");
-        solo.goBack();
-        assertTrue(solo.waitForText("Save"));
-        solo.clickOnText("Cancel");
-    }
-
-    public void xtestIfCancelButtonLeavesTakesYouNowhere() {
-        childPage.enterChildName("Name");
-        solo.goBack();
-        solo.clickOnText("Cancel");
-        assertTrue(solo.waitForText("Name"));
-    }
-
-    public void xtestIfUserIsPromptedToSaveWhenLogoutIsPressed() {
-        childPage.enterChildName("Name");
-        solo.clickOnMenuItem(solo.getString(R.string.log_out));
-        assertTrue(solo.waitForText("Save"));
+        viewAllChildrenPage.navigateToViewAllTab();
+        assertTrue(childPage.verifyRegisterPopup());
+        childPage.choosePopUpAction("Discard");
     }
 }

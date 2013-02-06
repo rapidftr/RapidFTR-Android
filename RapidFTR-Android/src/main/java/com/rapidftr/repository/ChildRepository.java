@@ -8,6 +8,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Child;
+import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
 import org.json.JSONArray;
@@ -69,7 +70,7 @@ public class ChildRepository implements Closeable {
     }
 
     private String fetchByOwner(RapidFtrApplication context) throws JSONException {
-	    if (!context.getCurrentUser().isAuthenticated()) {
+	    if (!context.getCurrentUser().isVerified()) {
             return  " child_owner = '" + userName + "' AND ";
         } else {
 		    return "";
@@ -102,21 +103,9 @@ public class ChildRepository implements Closeable {
     private void addHistory(Child child) throws JSONException {
         Child existingChild = get(child.getUniqueId());
         JSONArray existingHistories = (JSONArray) existingChild.opt(HISTORIES);
-        List<Child.History> histories = child.changeLogs(existingChild);
-        if(histories.size() > 0 || (existingHistories != null && existingHistories.length() > 1))
-            child.put(HISTORIES, convertToString(existingHistories, histories));
-    }
-
-    private String convertToString(JSONArray existingHistories, List<Child.History> histories) throws JSONException {
-        StringBuilder json = new StringBuilder("[");
-        for (int i = 0; existingHistories != null && (i < existingHistories.length()); i++) {
-            json.append(existingHistories.get(i)).append(",");
-        }
-        for (Child.History history : histories) {
-            json.append(history.toString()).append(",");
-        }
-        json.setLength(json.length() - 1);
-        return json.append("]").toString();
+        List<Child.History> histories = child.changeLogs(existingChild, existingHistories);
+        if(histories.size() > 0)
+            child.put(HISTORIES, JSONArrays.asJSONObjectArray(histories));
     }
 
     public void update(Child child) throws JSONException {

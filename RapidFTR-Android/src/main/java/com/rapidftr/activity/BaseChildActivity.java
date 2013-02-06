@@ -2,6 +2,8 @@ package com.rapidftr.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -13,6 +15,8 @@ import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import lombok.Cleanup;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONException;
 
 import java.util.List;
@@ -24,6 +28,9 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
     protected List<FormSection> formSections;
     protected Child child;
     protected boolean editable = true;
+    @Getter @Setter MediaRecorder mediaRecorder;
+    @Getter @Setter MediaPlayer mediaPlayer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,19 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("child_state", child.toString());
+    }
+
+    @Override
+    protected void onStop(){
+        super.onPause();
+        if(mediaPlayer != null){
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        if(mediaRecorder != null){
+            mediaRecorder.release();
+            mediaRecorder = null;
+        }
     }
 
     protected void setLabel(int label) {
@@ -141,15 +161,10 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
         startActivity(intent);
     }
 
-    public void restart() {
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
-    }
-
     protected SaveChildTask getSaveChildTask() {
         return new SaveChildTask();
     }
+
 
     protected class SaveChildTask extends AsyncTaskWithDialog<Void, Void, Child> {
         @Override
@@ -169,6 +184,11 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public void cancel() {
+           this.cancel(false);
         }
     }
 

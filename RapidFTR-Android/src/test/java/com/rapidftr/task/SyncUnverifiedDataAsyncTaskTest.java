@@ -4,11 +4,17 @@ import android.app.NotificationManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.service.FormService;
+import com.rapidftr.service.LoginService;
+import com.rapidftr.service.RegisterUserService;
+import com.rapidftr.utils.http.FluentResponse;
+import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +24,6 @@ import org.mockito.Mock;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
@@ -32,6 +37,10 @@ public class SyncUnverifiedDataAsyncTaskTest {
     @Mock private Menu menu;
     @Mock private MenuItem syncAll;
     @Mock private MenuItem cancelSyncAll;
+    @Mock private RegisterUserService registerUserService;
+    @Mock private LoginService loginService;
+    private RapidFtrApplication applicationContext;
+    private User currentUser;
 
     SyncUnverifiedDataAsyncTask task;
 
@@ -44,11 +53,25 @@ public class SyncUnverifiedDataAsyncTaskTest {
         doReturn(cancelSyncAll).when(menu).getItem(1);
         doReturn(menu).when(rapidFtrActivity).getMenu();
 
-        when(rapidFtrActivity.getSystemService(Matchers.<String>any())).thenReturn(notificationManager);
-        when(rapidFtrActivity.getPackageName()).thenReturn("package");
+        given(rapidFtrActivity.getSystemService(Matchers.<String>any())).willReturn(notificationManager);
+        given(rapidFtrActivity.getPackageName()).willReturn("package");
+        applicationContext = RapidFtrApplication.getApplicationInstance();
+        currentUser = new User("username", "password", false, "serverUrl");
+        currentUser.setUnauthenticatedPassword("password");
+        applicationContext.setCurrentUser(currentUser);
+        given(rapidFtrActivity.getContext()).willReturn(applicationContext);
+        given(registerUserService.register(any(User.class))).willReturn(new FluentResponse(new TestHttpResponse(200, "")));
 
-        task = new SyncUnverifiedDataAsyncTask(formService, childService, childRepository);
+        task = new SyncUnverifiedDataAsyncTask(formService, childService, childRepository, loginService, registerUserService, currentUser);
         task.setContext(rapidFtrActivity);
+    }
+
+    @Test
+    public void shouldLoginUser() throws Exception {
+        task.onPreExecute();
+        task.execute();
+
+        verify(loginService).login(rapidFtrActivity, "username", "password", "serverUrl");
     }
 
     @Test
@@ -67,19 +90,7 @@ public class SyncUnverifiedDataAsyncTaskTest {
         task.onPreExecute();
         task.execute();
 
-        verify(childService).syncUnverified(child);
+        verify(childService).sync(child, currentUser);
     }
 
-    @Test
-    public void shouldMarkChildAsSynced() throws Exception {
-        Child child = mock(Child.class);
-        given(childRepository.currentUsersUnsyncedRecords()).willReturn(newArrayList(child));
-        doNothing().when(childService).syncUnverified(child);
-
-        task.onPreExecute();
-        task.execute();
-
-        verify(child).setSynced(true);
-        verify(childRepository).update(child);
-    }
 }
