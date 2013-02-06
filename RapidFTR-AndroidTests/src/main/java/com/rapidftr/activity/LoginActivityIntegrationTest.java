@@ -1,10 +1,7 @@
 package com.rapidftr.activity;
 
-import android.content.Context;
-import android.net.wifi.WifiManager;
 import android.test.suitebuilder.annotation.Smoke;
 import com.rapidftr.R;
-import com.rapidftr.activity.pages.LoginPage;
 
 import static com.rapidftr.activity.pages.LoginPage.*;
 
@@ -15,15 +12,10 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         assertTrue(solo.waitForText("Incorrect username or password"));
     }
 
-    public void estIncorrectServer() {
-        loginPage.login(USERNAME, PASSWORD, LoginPage.LOGIN_URL+":abc");
-        assertTrue(solo.waitForText("Unable to connect to the server, please contact your system administrator"));
-    }
-
     public void testNoLoginDetailsErrorMessages(){
-          loginPage.login("","","");
+          loginPage.login("", "", "");
           assertTrue(loginPage.getUserNameRequiredMessage().equals("Username is required"));
-          assertTrue(loginPage.getPasswordRequiredMEssage().equals("Password is required"));
+          assertTrue(loginPage.getPasswordRequiredMessage().equals("Password is required"));
     }
 
      public void testUserAbleToSeeLastSuccessfulLoginUrl() {
@@ -42,7 +34,6 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
 	    assertTrue(solo.getCurrentActivity().isFinishing());
     }
 
-
     public void testUserIsAlertedWhenAttemptingToLogoutWhileSyncInProgress() throws InterruptedException {
         loginPage.login();
         solo.waitForText("Login Successful");
@@ -55,31 +46,5 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         solo.clickOnButton(solo.getString(R.string.log_out));
         solo.assertCurrentActivity("should log out and go to login page", LoginActivity.class);
     }
-
-
-    @Smoke
-    public void estUserAbleToLoginOfflineAfterOneSuccessfulLogin(){
-        loginPage.login();
-        solo.waitForText("Login Successful");
-        boolean wifi=false;
-        turnWifi(wifi);
-        System.out.println("hello");
-        loginPage.logout();
-    }
-
-
-
-    protected void turnWifi(boolean status) {
-//        try {
-//            WifiManager wifiManager = (WifiManager) getInstrumentation()
-//                    .getTargetContext().getSystemService(Context.WIFI_SERVICE);
-        WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
-            wifiManager.setWifiEnabled(status);
-//        } catch (Exception ignored) {
-            // don't interrupt test execution, if there
-            // is no permission for that action
-//        }
-    }
-
 
 }

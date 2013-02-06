@@ -10,7 +10,6 @@ import com.rapidftr.model.User;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 import com.rapidftr.task.SyncUnverifiedDataAsyncTask;
 import com.rapidftr.task.SynchronisationAsyncTask;
-import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +45,7 @@ public class ApplicationInjectorTest {
     @Test
     public void testReturnVerifiedSyncTask() throws Exception {
 	    User user = createUser();
-	    user.setAuthenticated(true);
+	    user.setVerified(true);
 	    application.setCurrentUser(user);
         assertThat(application.getInjector().getInstance(SynchronisationAsyncTask.class), instanceOf(SyncAllDataAsyncTask.class));
     }
@@ -54,7 +53,7 @@ public class ApplicationInjectorTest {
     @Test
     public void testReturnUnverifiedSyncTask() throws Exception {
 	    User user = createUser();
-	    user.setAuthenticated(false);
+	    user.setVerified(false);
 	    application.setCurrentUser(user);
         assertThat(application.getInjector().getInstance(SynchronisationAsyncTask.class), instanceOf(SyncUnverifiedDataAsyncTask.class));
     }

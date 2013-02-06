@@ -30,14 +30,14 @@ public class UserTest {
 
 	@Test
 	public void shouldSavePlainTextPasswordForUnverified() throws IOException, GeneralSecurityException {
-		user.setAuthenticated(false);
+		user.setVerified(false);
 		user.save();
 		verify(user).setUnauthenticatedPassword(user.getPassword());
 	}
 
 	@Test
 	public void shouldSetUnauthenticatedDbKeyForUnverifiedUsers() throws IOException, GeneralSecurityException {
-		user.setAuthenticated(false);
+		user.setVerified(false);
 		user.save();
 		verify(user).setDbKey(User.getUnauthenticatedDbKey());
 	}
@@ -58,7 +58,7 @@ public class UserTest {
 	@Test
 	public void shouldSaveUnauthenticatedDbKeyForUnauthenticatedUsers() throws IOException, GeneralSecurityException {
 		User user = spy(createUser());
-		user.setAuthenticated(false);
+		user.setVerified(false);
 		user.setUnauthenticatedPassword(null);
 
 		doReturn("{}").when(user).asJSON();

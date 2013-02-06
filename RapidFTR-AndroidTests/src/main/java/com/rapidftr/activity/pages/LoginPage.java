@@ -37,7 +37,6 @@ public class LoginPage {
         solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.url), "");
         solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.url), url);
         clickLoginButton();
-//        solo.waitForText("Login Successful");
     }
 
     public void logout() {
@@ -63,13 +62,9 @@ public class LoginPage {
 
     }
 
-    public String getPasswordRequiredMEssage(){
+    public String getPasswordRequiredMessage(){
         solo.clickOnEditText(1);
         return ((EditText)solo.getCurrentActivity().findViewById(R.id.password)).getError().toString();
     }
 
-    public String getURLRequiredMessage(){
-        solo.clickOnEditText(2);
-        return ((EditText)solo.getCurrentActivity().findViewById(R.id.url)).getError().toString();
-    }
 }

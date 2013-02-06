@@ -1,47 +1,48 @@
 package com.rapidftr.task;
 
-import android.content.SharedPreferences;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.User;
-import com.xtremelabs.robolectric.Robolectric;
+import com.rapidftr.service.FormService;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import static com.rapidftr.CustomTestRunner.createUser;
-import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class LoginAsyncTaskTest {
 
-    private RapidFtrActivity activity;
+    @Mock private RapidFtrActivity activity;
+    @Mock private FormService formService;
+
     private RapidFtrApplication application;
     private LoginAsyncTask loginAsyncTask;
 
     @Before
     public void setUp() {
-        activity = mock(RapidFtrActivity.class);
+        initMocks(this);
         application = spy(RapidFtrApplication.getApplicationInstance());
-        when(activity.getContext()).thenReturn(application);
-
-        loginAsyncTask = spy(new LoginAsyncTask(activity));
+        loginAsyncTask = spy(new LoginAsyncTask(application, formService));
+        loginAsyncTask.setActivity(activity);
     }
 
 	@Test
-	public void shouldCallOnlineLoginIfNetworkIsUp() throws IOException, JSONException {
+	public void shouldCallOnlineLoginIfNetworkIsUp() throws IOException, JSONException, GeneralSecurityException {
 		doReturn(true).when(loginAsyncTask).isOnline();
 		loginAsyncTask.doInBackground("", "", "");
 		verify(loginAsyncTask).doOnlineLogin();
@@ -66,7 +67,7 @@ public class LoginAsyncTaskTest {
     @Test
     public void shouldCheckOfflineLogin() throws Exception {
 	    User expectedUser = createUser();
-	    expectedUser.setAuthenticated(false);
+	    expectedUser.setVerified(false);
 	    expectedUser.save();
 
 	    loginAsyncTask.userName = expectedUser.getUserName();
@@ -78,7 +79,7 @@ public class LoginAsyncTaskTest {
     @Test(expected = GeneralSecurityException.class)
     public void shouldReturnFalseIfGivenPasswordIsInCorrectForOfflineLogin() throws Exception {
 	    User user = createUser();
-	    user.setAuthenticated(false);
+	    user.setVerified(false);
 	    user.save();
 
 	    loginAsyncTask.userName = user.getUserName();

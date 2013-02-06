@@ -1,7 +1,9 @@
 package com.rapidftr.activity;
 
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,6 +11,9 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.SynchronisationAsyncTask;
+import com.rapidftr.task.AsyncTaskWithDialog;
+import com.xtremelabs.robolectric.shadows.ShadowToast;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -16,6 +21,8 @@ import org.mockito.Matchers;
 import java.io.IOException;
 
 import static com.rapidftr.CustomTestRunner.createUser;
+import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -144,10 +151,25 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldRegisterBroadCastReceiverOnInitialization(){
-        RapidFtrActivity mainActivity = spy(new MainActivity());
-        Bundle bundle = mock(Bundle.class);
-        mainActivity.onCreate(bundle);
-        verify(mainActivity).registerReceiver(Matchers.<BroadcastReceiver>any(), Matchers.<IntentFilter>any());
+    public void shouldShowToastMsgIfSyncIsInProgressAndNetworkLost(){
+        RapidFtrActivity rapidFtrActivity = spy(new MainActivity());
+        BroadcastReceiver receiver = rapidFtrActivity.getBroadcastReceiver();
+        Intent mockIntent = mock(Intent.class);
+        NetworkInfo mockNetworkInfo = mock(NetworkInfo.class);
+        doReturn(mockNetworkInfo).when(mockIntent).getParcelableExtra(EXTRA_NETWORK_INFO);
+        doReturn(false).when(mockNetworkInfo).isConnected();
+        RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog(new AsyncTaskWithDialog() {
+            @Override
+            public void cancel() {
+            }
+
+            @Override
+            protected Object doInBackground(Object... objects) {
+                return null;
+            }
+        });
+        receiver.onReceive(rapidFtrActivity, mockIntent);
+        MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(), equalTo(rapidFtrActivity.getString(R.string.network_down)));
+
     }
 }

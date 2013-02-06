@@ -21,17 +21,16 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-	    loginPage.login();
-        solo.waitForText("Login Successful");
+        loginPage.login();
+        assertTrue(solo.waitForText("Login Successful"));
         repository = application.getInjector().getInstance(ChildRepository.class);
         RapidFTRDatabase.deleteChildren();
     }
 
     @Override
-    public void tearDown() throws Exception{
+    public void tearDown() throws Exception {
         repository.close();
         super.tearDown();
-
     }
 
     public void testRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
@@ -40,7 +39,6 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         Thread.sleep(10000); //Sleep for synchronization to happen.
 
-        assertTrue(repository.exists("abcd1234"));
         Child child = repository.get("abcd1234");
         assertEquals("123456", child.optString("_id"));
         searchPage.navigateToSearchPage();
@@ -55,7 +53,6 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         repository.createOrUpdate(childToBeSynced);
         assertFalse(childToBeSynced.isSynced());
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-//        solo.waitForText("Sync Successful");
         Thread.sleep(10000); //Sleep for synchronization to happen.
         assertTrue(repository.exists("xyz4321"));
         List<Child> children = repository.getMatchingChildren("xyz4321");
@@ -64,7 +61,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         loginPage.logout();
     }
 
-    public void testSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException,InterruptedException {
+    public void testSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
         Child child1 = new Child("abc4321", "rapidftr", "{'name' : 'moses'}");
         Child child2 = new Child("qwe4321", "rapidftr", "{'name' : 'james'}");
         Child child3 = new Child("zxy4321", "rapidftr", "{'name' : 'kenyata'}");
@@ -76,18 +73,13 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         //Robotium doesn't support asserting on notification bar by default. Below is the hack to get around it.
         solo.clickOnButton(solo.getString(R.string.log_out)); //As the synchronization is still happening we'll get an dialog box for the user action.
         solo.waitForText(solo.getString(R.string.logout_successful));
-   }
-
-    public void estLatestDataTakenBasedOnTimeStamp(){
-
     }
 
-    //    public void estCancelSyncAll
+
     public void seedDataToRepository(Child... children) throws JSONException {
-        for(Child child : children){
+        for (Child child : children) {
             repository = application.getInjector().getInstance(ChildRepository.class);
             repository.createOrUpdate(child);
-//            repository.close();
         }
     }
 
@@ -96,10 +88,8 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .context(application)
                 .host(LoginPage.LOGIN_URL)
                 .config(HttpConnectionParams.CONNECTION_TIMEOUT, 15000)
-                .path(String.format("/children", child.getId()))
-                .param("child", child.toString())
+                .path("/children")
+                .param("child", child.values().toString())
                 .post();
     }
-
-
 }

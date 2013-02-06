@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.task.LoginAsyncTask;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowActivity;
 import com.xtremelabs.robolectric.shadows.ShadowHandler;
@@ -73,20 +74,6 @@ public class LoginActivityTest {
         loginButton.performClick();
         ShadowHandler.idleMainLooper();
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.server_not_reachable)));
-    }
-
-    @Test
-    public void shouldTimeoutLongRunningOperations() throws IOException {
-        // TODO: A Test must be written to ensure long running operations are timed out
-        // Currently this is work in progress, we are evaluating how to go about testing this
-    }
-
-    @Test
-    public void shouldLoginSuccessfullyForValidUserAndUrl() {
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(201, "{}");
-        loginButton.performClick();
-        ShadowHandler.idleMainLooper();
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.login_successful)));
     }
 
     @Test

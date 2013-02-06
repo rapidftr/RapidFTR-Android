@@ -76,7 +76,9 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     protected void login(String username, String password, String baseUrl) throws IOException {
-        new LoginAsyncTask(this).execute(username, password, baseUrl);
+        LoginAsyncTask task = inject(LoginAsyncTask.class);
+        task.setActivity(this);
+        task.execute(username, password, baseUrl);
     }
 
     protected void goToHomeScreenIfLoggedIn() {
