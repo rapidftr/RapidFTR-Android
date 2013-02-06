@@ -14,7 +14,7 @@ public class AudioCaptureHelper extends CaptureHelper{
 
     public void saveAudio(Child child, InputStream inputStream) throws JSONException, IOException {
         File file = new File(getDir(), child.optString("recorded_audio"));
-        if (!file.exists()){
+        if (!file.exists() && !child.optString("recorded_audio").equals("")){
             IOUtils.copy(inputStream, new FileOutputStream(file));
         }
     }

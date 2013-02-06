@@ -7,10 +7,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncChildTask;
 import org.json.JSONException;
+
 
 public class ViewChildActivity extends BaseChildActivity {
 
@@ -50,7 +52,8 @@ public class ViewChildActivity extends BaseChildActivity {
     protected void sync() {
         SyncChildTask task = inject(SyncChildTask.class);
         task.setActivity(this);
-        AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child);
+        RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
+        
     }
 
     @Override

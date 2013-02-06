@@ -66,7 +66,7 @@ public class AudioUploadBox extends BaseView {
             mRecorder.prepare();
         } catch (IOException e) {
             Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
-            new RuntimeException(e);
+            throw  new RuntimeException(e);
         }
         mRecorder.start();
     }
@@ -103,7 +103,6 @@ public class AudioUploadBox extends BaseView {
         mRecorder.release();
         mRecorder = null;
         child.put(formField.getId(), fileName);
-        child.setAttachments(formField.getId(),fileName);
     }
 
     protected void playRecording(View view) {

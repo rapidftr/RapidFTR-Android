@@ -48,4 +48,9 @@ public class SyncChildTask extends AsyncTaskWithDialog<Child, Void, Boolean> {
     public void setActivity(Activity activity) {
         this.activity = activity;
     }
+
+    @Override
+    public void cancel() {
+        this.cancel(false);
+    }
 }

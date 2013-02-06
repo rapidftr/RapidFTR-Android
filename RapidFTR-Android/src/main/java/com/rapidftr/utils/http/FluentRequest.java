@@ -129,7 +129,7 @@ public class FluentRequest {
                             new ByteArrayBody(IOUtils.toByteArray(new PhotoCaptureHelper((RapidFtrApplication) context).getDecodedImageStream(param.getValue())),
                                             "image/jpg", param.getValue()+".jpg"));
                         } catch (Exception e) {
-                            new RuntimeException(e);
+                            throw new RuntimeException(e);
                         }
                 }else if(param.getKey().equals("recorded_audio")){
                     try {
@@ -137,7 +137,7 @@ public class FluentRequest {
                                 new ByteArrayBody(IOUtils.toByteArray(new FileInputStream(new File(new AudioCaptureHelper((RapidFtrApplication) context).getCompleteFileName(param.getValue())))),
                                         "audio/amr", param.getValue()+".amr"));
                     } catch (Exception e) {
-                        new RuntimeException(e);
+                        throw new RuntimeException(e);
                     }
                 }else{
                     try {
@@ -149,7 +149,7 @@ public class FluentRequest {
                             multipartEntity.addPart("child["+currentKey+"]", new StringBody(child.get(currentKey).toString()));
                         }
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 }
             }

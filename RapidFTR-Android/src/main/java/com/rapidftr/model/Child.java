@@ -17,7 +17,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,7 +82,7 @@ public class Child extends JSONObject implements Parcelable {
         setSynced(synced);
     }
 
-    public String getString(String key){
+    public String getString(String key) {
         try {
             return super.getString(key);
         } catch (JSONException e) {
@@ -152,7 +154,7 @@ public class Child extends JSONObject implements Parcelable {
         put(created_organisation.getColumnName(), userOrg);
     }
 
-    public String getName()  {
+    public String getName() {
         return optString(name.getColumnName(), EMPTY_STRING);
     }
 
@@ -168,7 +170,7 @@ public class Child extends JSONObject implements Parcelable {
         put(created_at.getColumnName(), createdAt);
     }
 
-    public String getLastUpdatedAt()  throws JSONException {
+    public String getLastUpdatedAt() throws JSONException {
         return optString(last_updated_at.getColumnName(), null);
     }
 
@@ -176,28 +178,16 @@ public class Child extends JSONObject implements Parcelable {
         put(last_updated_at.getColumnName(), lastUpdatedAt);
     }
 
-    public String getAttachments(){
-        return (optString(attachments.getColumnName(), "") == "") ?  "{}" :  optString(attachments.getColumnName());
+    public void setLastSyncedAt(String lastSyncedAt) throws JSONException {
+        put(last_synced_at.getColumnName(), lastSyncedAt);
     }
 
-    public void setAttachments(String key, String value) {
-        try {
-            put(attachments.getColumnName(), new JSONObject(getAttachments()).putOpt(key,value));
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+    public String getLastSyncedAt() throws JSONException {
+        return optString(last_synced_at.getColumnName(), null);
     }
 
-    public String optAttachmentValue(String key){
-        try {
-            return new JSONObject(getAttachments()).optString(key,"");
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String getSyncLog()  throws JSONException {
-        return optString(syncLog.getColumnName(),null);
+    public String getSyncLog() throws JSONException {
+        return optString(syncLog.getColumnName(), null);
     }
 
     public void setSyncLog(String syncLog1) throws JSONException {
@@ -271,27 +261,48 @@ public class Child extends JSONObject implements Parcelable {
         return new JSONObject(this, names.toArray(new String[names.size()]));
     }
 
-    public List<History> changeLogs(Child child) throws JSONException {
+    public List<History> changeLogs(Child child, JSONArray existingHistories) throws JSONException {
+        //fetch all the histories from this child, which are greater than last_synced_at and merge the histories
         JSONArray names = this.names();
-        List<History> histories = new ArrayList<History>();
-        for (int i = 0; i < names.length(); i++) {
-            String newValue = this.optString(names.getString(i), "");
-            String oldValue = child.optString(names.getString(i), "");
-            if (!oldValue.equals(newValue)) {
-                History history = new History();
-                JSONObject changes = new JSONObject();
-                JSONObject fromTo = new JSONObject();
-                fromTo.put(FROM, oldValue);
-                fromTo.put(TO, newValue);
-                changes.put(names.getString(i), fromTo);
-                history.put(USER_NAME, child.getOwner());
-                history.put(USER_ORGANISATION, child.optString("created_organisation"));
-                history.put(DATETIME, RapidFtrDateTime.now().defaultFormat());
-                history.put(CHANGES, changes);
-                histories.add(history);
+        List<History> histories = getHistoriesFromJsonArray(existingHistories);
+        try {
+            if (!child.optString("last_synced_at").equals("")) {
+                Calendar lastSync = RapidFtrDateTime.getDateTime(child.optString("last_synced_at"));
+                for (History history : histories) {
+                    Calendar lastSavedAt = RapidFtrDateTime.getDateTime((String) history.get("datetime"));
+                    if (lastSavedAt.after(lastSync)) {
+                        JSONObject changes = (JSONObject) history.get("changes");
+                        for (int i = 0; i < names.length(); i++) {
+                            String newValue = this.optString(names.getString(i), "");
+                            String oldValue = child.optString(names.getString(i), "");
+                            if (!oldValue.equals(newValue)) {
+                                JSONObject fromTo = new JSONObject();
+                                fromTo.put(FROM, oldValue);
+                                fromTo.put(TO, newValue);
+                                changes.put(names.getString(i), fromTo);
+                            }
+                        }
+                        history.put(USER_NAME, child.getOwner());
+                        history.put(USER_ORGANISATION, child.optString("created_organisation"));
+                        history.put(DATETIME, RapidFtrDateTime.now().defaultFormat());
+                        break;
+                    }
+                }
             }
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
+
         return histories;
+    }
+
+    private List<History> getHistoriesFromJsonArray(JSONArray histories) throws JSONException {
+        List<Object> objects = histories != null ? asList(histories) : new ArrayList<Object>();
+        List<History> childHistories = new ArrayList<History>();
+        for (Object object : objects) {
+            childHistories.add(new History(object.toString()));
+        }
+        return childHistories;
     }
 
     public boolean isNew() {
@@ -306,6 +317,14 @@ public class Child extends JSONObject implements Parcelable {
         public static final String CHANGES = "changes";
         public static final String FROM = "from";
         public static final String TO = "to";
+
+        public History(String jsonSource) throws JSONException {
+            super(jsonSource);
+        }
+
+        public History() {
+
+        }
 
         @Override
         public int describeContents() {
