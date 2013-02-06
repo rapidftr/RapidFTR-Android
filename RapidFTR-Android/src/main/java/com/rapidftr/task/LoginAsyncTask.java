@@ -89,7 +89,6 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 	protected User doOfflineLogin() throws GeneralSecurityException, IOException {
 		User user = new User(this.userName, this.password);
 		user.load();
-		user.setUnauthenticatedPassword(this.password);
 		return user;
 	}
 
@@ -99,7 +98,9 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
             mProgressDialog.dismiss();
 
 	    try {
-		    user.save();
+		    if (user == null)
+			    throw new GeneralSecurityException();
+
 		    application.setCurrentUser(user);
             if(isOnline()){
                 formService.getPublishedFormSections();
@@ -112,6 +113,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
     }
 
     protected void goToHomeScreen() {
+	    activity.finish();
         activity.startActivity(new Intent(activity, MainActivity.class));
     }
 

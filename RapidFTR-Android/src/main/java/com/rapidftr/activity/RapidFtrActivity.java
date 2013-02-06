@@ -2,6 +2,7 @@ package com.rapidftr.activity;
 
 import android.app.AlertDialog;
 import android.content.*;
+import android.os.AsyncTask;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -28,12 +29,15 @@ import lombok.Getter;
 import lombok.Setter;
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 
+import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
 public abstract class RapidFtrActivity extends FragmentActivity {
 
-    private @Getter @Setter Menu menu;
+	public static final String LOGOUT_INTENT_FILTER = "com.rapidftr.LOGOUT_INTENT";
+
+    protected @Getter @Setter Menu menu;
 
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
             @Override
@@ -76,7 +80,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
 
     protected void logError(String message) {
         if (message != null) {
-            Log.e(RapidFtrApplication.APP_IDENTIFIER, message);
+            Log.e(APP_IDENTIFIER, message);
         }
     }
 
@@ -178,9 +182,23 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         registerReceiver(networkChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         initializeExceptionHandler();
+	    initializeLogoutHandler();
     }
 
-    protected boolean shouldEnsureLoggedIn() {
+	protected void initializeLogoutHandler() {
+		if (shouldEnsureLoggedIn()) {
+			IntentFilter intentFilter = new IntentFilter(LOGOUT_INTENT_FILTER);
+			registerReceiver(new BroadcastReceiver() {
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					Log.d(APP_IDENTIFIER, "Logout event received");
+					finish();
+				}
+			}, intentFilter);
+		}
+	}
+
+	protected boolean shouldEnsureLoggedIn() {
         return true;
     }
 
@@ -206,7 +224,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(final Thread thread, final Throwable throwable) {
-                Log.e(RapidFtrApplication.APP_IDENTIFIER, throwable.getMessage(), throwable);
+                Log.e(APP_IDENTIFIER, throwable.getMessage(), throwable);
 
                 new Thread(new Runnable() {
                     @Override
