@@ -45,23 +45,26 @@ public class User {
 	@Getter @Setter @JsonProperty("unauthenticated_password")
 	protected String unauthenticatedPassword;
 
+	@Getter @Setter @JsonProperty("language")
+	protected String language;
+
 	protected User() {
 	}
 
 	public User(String userName) {
-		this(userName, null, false, null, null, null, null, null);
+		this(userName, null, false, null, null, null, null, null, null);
 	}
 
 	public User(String userName, String password) {
-		this(userName, password, false, null, null, null, null, null);
+		this(userName, password, false, null, null, null, null, null, null);
 	}
 
 	public User(String userName, String password, boolean authenticated) {
-		this(userName, password, authenticated, null, null, null, null, null);
+		this(userName, password, authenticated, null, null, null, null, null, null);
 	}
 
 	public User(String userName, String password, boolean authenticated, String serverUrl) {
-		this(userName, password, authenticated, serverUrl, null, null, null, null);
+		this(userName, password, authenticated, serverUrl, null, null, null, null, null);
 	}
 
 	public String getDbName() {

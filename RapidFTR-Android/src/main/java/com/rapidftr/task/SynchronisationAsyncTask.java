@@ -174,13 +174,13 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
                 break;
             }
             try {
-                incomingChild.setSynced(true);
                 if (childRepository.exists(incomingChild.getUniqueId())) {
                     childRepository.update(incomingChild);
                 } else {
                     childRepository.createOrUpdate(incomingChild);
                 }
                 childService.setPhoto(incomingChild);
+                childService.setAudio(incomingChild);
                 setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
                 startProgress += 1 ;
             } catch (Exception e) {

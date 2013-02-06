@@ -186,7 +186,7 @@ public class ChildTest {
     public void shouldReturnListOfChangeLogsBasedOnChanges() throws JSONException {
         Child oldChild = new Child("id", "user", "{'name' : 'old-name'}");
         Child updatedChild = new Child("id", "user", "{'name' : 'updated-name'}");
-        List<Child.History> histories = updatedChild.changeLogs(oldChild);
+        List<Child.History> histories = updatedChild.changeLogs(oldChild, null);
 
         JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
         HashMap fromTo = (HashMap) changesMap.get("name");
@@ -196,28 +196,6 @@ public class ChildTest {
         assertThat(changesMap.names().get(0).toString(), is("name"));
         assertThat(fromTo.get(FROM).toString(), is("old-name"));
         assertThat(fromTo.get(TO).toString(), is("updated-name"));
-    }
-
-    @Test
-    public void shouldReturnListOfChangeLogsForNewFieldValueToExistingChild() throws JSONException {
-        Child oldChild = new Child("id", "user", "{'gender' : 'male', 'name' : 'old-name', 'created_organisation' : 'XYZ'}");
-        Child updatedChild = new Child("id", "user", "{'gender' : 'male','nationality' : 'Indian', 'name' : 'new-name'}");
-        List<Child.History> histories = updatedChild.changeLogs(oldChild);
-
-        JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
-        JSONObject fromTo = (JSONObject) changesMap.get("nationality");
-
-        assertThat(histories.size(),is(2));
-        assertThat(changesMap.names().get(0).toString(), is("nationality"));
-        assertThat(fromTo.get(FROM).toString(),is(""));
-        assertThat(fromTo.get(TO).toString(), is("Indian"));
-
-        changesMap = (JSONObject) histories.get(1).get(CHANGES);
-        fromTo = (JSONObject) changesMap.get("name");
-
-        assertThat(changesMap.names().get(0).toString(), is("name"));
-        assertThat(fromTo.get(FROM).toString(),is("old-name"));
-        assertThat(fromTo.get(TO).toString(), is("new-name"));
     }
 
     @Test
@@ -232,5 +210,5 @@ public class ChildTest {
         child.put(internal_id.getColumnName(), "xyz");
         assertThat(child.isNew(), is(false));
     }
-
+    
 }

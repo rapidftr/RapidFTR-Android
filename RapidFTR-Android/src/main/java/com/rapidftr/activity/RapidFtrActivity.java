@@ -3,6 +3,8 @@ package com.rapidftr.activity;
 import android.app.AlertDialog;
 import android.content.*;
 import android.os.AsyncTask;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
@@ -24,6 +26,7 @@ import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
+import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
@@ -32,6 +35,15 @@ public abstract class RapidFtrActivity extends FragmentActivity {
 	public static final String LOGOUT_INTENT_FILTER = "com.rapidftr.LOGOUT_INTENT";
 
     protected @Getter @Setter Menu menu;
+
+    private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(!((NetworkInfo) intent.getParcelableExtra(EXTRA_NETWORK_INFO)).isConnected() && RapidFtrApplication.getApplicationInstance().cleanSyncTask()){
+                    makeToast(R.string.network_down);
+                }
+            }
+    };
 
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
@@ -133,9 +145,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
                 task.execute();
                 return true;
             case R.id.cancel_synchronize_all:
-                AsyncTask taskToCancel = RapidFtrApplication.getApplicationInstance().getSyncTask();
-                if (taskToCancel != null)
-                    taskToCancel.cancel(false);
+                RapidFtrApplication.getApplicationInstance().cleanSyncTask();
                 return true;
             case R.id.logout:
                 if (this.getClass() == RegisterChildActivity.class || this.getClass() == EditChildActivity.class) {
@@ -159,6 +169,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        registerReceiver(networkChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         initializeExceptionHandler();
 	    initializeLogoutHandler();
     }
@@ -289,6 +300,10 @@ public abstract class RapidFtrActivity extends FragmentActivity {
                 }
             }
         };
+    }
+
+    protected BroadcastReceiver getBroadCastReceiver(){
+        return networkChangeReceiver;
     }
 
 

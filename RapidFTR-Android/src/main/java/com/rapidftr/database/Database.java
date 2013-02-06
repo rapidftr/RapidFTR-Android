@@ -72,7 +72,6 @@ public enum Database {
         synced("synced"),
         syncLog("syncLog"),
 
-
         internal_id("_id", true, false),
         internal_rev("_rev", true, false),
         unique_identifier("unique_identifier", true, false),
@@ -82,9 +81,9 @@ public enum Database {
         revision("_rev", true, true),
         thumbnail("_thumbnail", true, true),
         created_at("created_at", true, true),
-        created_organisation("created_organisation", true, false);
+        created_organisation("created_organisation", true, false),
 
-
+        last_synced_at("last_synced_at",true, true);
         private @Getter final String columnName;
         private final boolean isInternal;
         private final boolean isSystem;

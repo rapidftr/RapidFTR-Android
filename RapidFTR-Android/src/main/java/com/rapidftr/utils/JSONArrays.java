@@ -1,7 +1,9 @@
 package com.rapidftr.utils;
 
+import com.rapidftr.model.Child;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,13 @@ public class JSONArrays {
         for (Object item : list)
             array.put(item);
 
+        return array;
+    }
+
+    public static JSONArray asJSONObjectArray(List<Child.History> list) throws JSONException {
+        JSONArray array = new JSONArray();
+        for (JSONObject item : list)
+            array.put(item);
         return array;
     }
 

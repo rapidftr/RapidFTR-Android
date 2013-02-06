@@ -5,6 +5,8 @@ import android.net.Uri;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.Child;
+import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.IOUtils;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import lombok.Cleanup;
@@ -26,16 +28,12 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URI;
 import java.security.KeyStore;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
@@ -126,15 +124,33 @@ public class FluentRequest {
         if (params.size() > 0) {
             for (Map.Entry<String, String> param : params.entrySet()){
                 if(param.getKey().equals("current_photo_key")){
+                        try {
+                            multipartEntity.addPart("child[photo]",
+                            new ByteArrayBody(IOUtils.toByteArray(new PhotoCaptureHelper((RapidFtrApplication) context).getDecodedImageStream(param.getValue())),
+                                            "image/jpg", param.getValue()+".jpg"));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                }else if(param.getKey().equals("recorded_audio")){
                     try {
-                        multipartEntity.addPart(param.getKey(),
-                                new ByteArrayBody(IOUtils.toByteArray(new PhotoCaptureHelper((RapidFtrApplication) context).getDecodedImageStream(param.getValue())),
-                                        "image/jpg", param.getValue()+".jpg"));
+                        multipartEntity.addPart("child[audio]",
+                                new ByteArrayBody(IOUtils.toByteArray(new FileInputStream(new File(new AudioCaptureHelper((RapidFtrApplication) context).getCompleteFileName(param.getValue())))),
+                                        "audio/amr", param.getValue()+".amr"));
                     } catch (Exception e) {
-                        new RuntimeException(e);
+                        throw new RuntimeException(e);
                     }
                 }else{
-                    multipartEntity.addPart(param.getKey(), new StringBody(param.getValue()));
+                    try {
+                        Child child = new Child(param.getValue());
+                        Iterator keys = child.keys();
+                        while(keys.hasNext())
+                        {
+                            String currentKey = keys.next().toString();
+                            multipartEntity.addPart("child["+currentKey+"]", new StringBody(child.get(currentKey).toString()));
+                        }
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
