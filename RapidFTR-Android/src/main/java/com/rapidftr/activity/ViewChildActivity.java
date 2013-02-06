@@ -53,7 +53,6 @@ public class ViewChildActivity extends BaseChildActivity {
         SyncChildTask task = inject(SyncChildTask.class);
         task.setActivity(this);
         RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
-        
     }
 
     @Override
@@ -92,11 +91,7 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     protected void showSyncLog() {
-        try {
-            Toast.makeText(this,child.getSyncLog(), Toast.LENGTH_LONG).show();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        Toast.makeText(this, getText(R.string.temp_sync_error), Toast.LENGTH_LONG).show();
     }
 
 }
