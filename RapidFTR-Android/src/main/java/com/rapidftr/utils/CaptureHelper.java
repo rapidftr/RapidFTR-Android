@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
@@ -12,7 +14,6 @@ import android.util.Log;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import dalvik.system.DexFile;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 
@@ -119,7 +120,7 @@ public class CaptureHelper {
     }
 
     public void savePhoto(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        save(scaleImageTo(bitmap, 300, 300), fileNameWithoutExtension);
+        save(scaleImageTo(bitmap, 475, 635), fileNameWithoutExtension);
     }
 
     protected Bitmap scaleImageTo(Bitmap image, int width, int height) {
@@ -164,6 +165,33 @@ public class CaptureHelper {
 	        return getDefaultThumbnail();
         }
     }
+
+    public int getPictureRotation() throws IOException {
+        ExifInterface exif = getExifInterface();
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return 90;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return 180;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return 270;
+            default:
+                return 0;
+        }
+    }
+
+    protected ExifInterface getExifInterface() throws IOException {
+        return new ExifInterface(getTempCaptureFile().getAbsolutePath());
+    }
+
+    public Bitmap rotateBitmap(Bitmap bitmap, int rotationDegree) throws IOException {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotationDegree);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
 
     /**
      * We need to generate a Cipher key from the DbKey (since we cannot just directly use the dbKey as password)
