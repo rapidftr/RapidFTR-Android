@@ -1,6 +1,7 @@
 package com.rapidftr.activity;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -49,12 +50,6 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        // Suppress the BACK key when this activity is running
-        // no-op
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         goToHomeScreenIfLoggedIn();
@@ -90,6 +85,9 @@ public class LoginActivity extends RapidFtrActivity {
         if (getContext().isLoggedIn()){
 	        finish();
             startActivity(new Intent(this, MainActivity.class));
+        } else {
+	        Intent broadcastLogout = new Intent(LOGOUT_INTENT_FILTER);
+	        sendBroadcast(broadcastLogout);
         }
     }
 

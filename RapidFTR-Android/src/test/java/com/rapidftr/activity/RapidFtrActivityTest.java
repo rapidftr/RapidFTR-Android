@@ -151,14 +151,6 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldRegisterBroadCastReceiverOnInitialization(){
-        RapidFtrActivity mainActivity = spy(new MainActivity());
-        Bundle bundle = mock(Bundle.class);
-        mainActivity.onCreate(bundle);
-        verify(mainActivity).registerReceiver(Matchers.<BroadcastReceiver>any(), Matchers.<IntentFilter>any());
-    }
-
-    @Test
     public void shouldShowToastMsgIfSyncIsInProgressAndNetworkLost(){
         RapidFtrActivity rapidFtrActivity = spy(new MainActivity());
         BroadcastReceiver receiver = rapidFtrActivity.getBroadcastReceiver();

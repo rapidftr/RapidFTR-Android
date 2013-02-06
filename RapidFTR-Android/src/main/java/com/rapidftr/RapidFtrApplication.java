@@ -106,8 +106,8 @@ public class RapidFtrApplication extends Application {
 	}
 
 	protected void reloadCurrentUser() throws IOException {
-		String currentUser = getSharedPreferences().getString(CURRENT_USER_PREF, null);
-		this.currentUser = currentUser == null ? null : JSON_MAPPER.readValue(currentUser, User.class);
+		String currentUserJson = getSharedPreferences().getString(CURRENT_USER_PREF, null);
+		this.currentUser = currentUserJson == null ? null : User.readFromJSON(currentUserJson);
 	}
 
 	public boolean isLoggedIn() {
