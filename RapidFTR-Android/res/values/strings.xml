@@ -60,6 +60,7 @@
 
     <string name="internal_error">An error occurred while performing this operation</string>
     <string name="fetch_child_error">An error occurred while fetching record(s), please try again</string>
+    <string name="fetch_form_sections_error">An error occurred while fetching form sections</string>
     <string name="submit">Submit</string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
