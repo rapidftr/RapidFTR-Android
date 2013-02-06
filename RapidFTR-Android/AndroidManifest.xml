@@ -13,7 +13,7 @@
         </activity>
 
         <activity android:name=".activity.MainActivity"/>
-        <activity android:name=".activity.RegisterChildActivity" android:configChanges="orientation" />
+        <activity android:name=".activity.RegisterChildActivity" android:configChanges="orientation" android:windowSoftInputMode="stateHidden" />
         <activity android:name=".activity.ViewChildActivity" android:configChanges="orientation" />
         <activity android:name=".activity.EditChildActivity" android:configChanges="orientation" />
         <activity android:name=".activity.SearchActivity"/>
