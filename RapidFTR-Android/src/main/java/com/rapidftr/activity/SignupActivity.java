@@ -44,7 +44,7 @@ public class SignupActivity extends RapidFtrActivity {
 
 	protected User buildUser() {
 		User user = new User(getEditText(R.id.username));
-		user.setAuthenticated(false);
+		user.setVerified(false);
 		user.setFullName(getEditText(R.id.full_name));
 		user.setPassword(getEditText(R.id.password));
 		user.setUnauthenticatedPassword(getEditText(R.id.password));

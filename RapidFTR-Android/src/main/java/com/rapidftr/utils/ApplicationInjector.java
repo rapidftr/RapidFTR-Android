@@ -11,12 +11,8 @@ import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.SQLCipherHelper;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
-import com.rapidftr.service.FormService;
-import com.rapidftr.service.LogOutService;
-import com.rapidftr.task.SyncAllDataAsyncTask;
-import com.rapidftr.task.SyncUnverifiedDataAsyncTask;
-import com.rapidftr.task.SynchronisationAsyncTask;
+import com.rapidftr.service.*;
+import com.rapidftr.task.*;
 import com.rapidftr.utils.http.FluentRequest;
 import org.json.JSONException;
 
@@ -29,10 +25,14 @@ public class ApplicationInjector extends AbstractModule {
         bind(ChildRepository.class);
         bind(FormService.class);
         bind(SyncAllDataAsyncTask.class);
+        bind(RegisterUserService.class);
+        bind(RegisterUnverifiedUserAsyncTask.class);
         bind(SyncUnverifiedDataAsyncTask.class);
         bind(FluentRequest.class);
         bind(ChildService.class);
         bind(LogOutService.class);
+        bind(LoginService.class);
+        bind(SyncChildTask.class);
     }
 
     @Provides @Named("USER_NAME")
@@ -57,7 +57,7 @@ public class ApplicationInjector extends AbstractModule {
 
     @Provides
     public SynchronisationAsyncTask getSynchronisationAsyncTask(User user, Provider<SyncAllDataAsyncTask> provider1, Provider<SyncUnverifiedDataAsyncTask> provider2) {
-        return user.isAuthenticated() ? provider1.get() : provider2.get();
+        return user.isVerified() ? provider1.get() : provider2.get();
     }
 
 

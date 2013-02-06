@@ -3,6 +3,7 @@ package com.rapidftr.service;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.utils.http.FluentResponse;
 import org.apache.http.HttpResponse;
 
 import java.io.IOException;
@@ -19,13 +20,16 @@ public class FormService {
         this.context = context;
     }
 
-    public String getPublishedFormSections() throws IOException {
-        HttpResponse formSectionsResponse = http()
+    public void getPublishedFormSections() throws IOException {
+        FluentResponse formSectionsResponse = http()
                 .path("/published_form_sections")
                 .context(context)
                 .get();
 
-        return CharStreams.toString(new InputStreamReader(formSectionsResponse.getEntity().getContent()));
+        if (formSectionsResponse.isSuccess()) {
+            String formSectionJson = CharStreams.toString(new InputStreamReader(formSectionsResponse.getEntity().getContent()));
+            context.setFormSections(formSectionJson);
+        }
     }
 
 }
