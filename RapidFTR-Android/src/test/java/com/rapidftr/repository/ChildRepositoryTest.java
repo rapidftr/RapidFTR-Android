@@ -139,9 +139,9 @@ public class ChildRepositoryTest {
     @Test
     public void shouldNotReturnChildrenCreatedByOtherUnAuthorizedUsers() throws Exception {
         User user1 = createUser("user1");
-	    user1.setAuthenticated(false);
+	    user1.setVerified(false);
         User user2 = createUser("user2");
-	    user2.setAuthenticated(false);
+	    user2.setVerified(false);
 	    RapidFtrApplication.getApplicationInstance().setCurrentUser(user1);
 
         Child child1 = new Child("id1", user1.getUserName(), "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");

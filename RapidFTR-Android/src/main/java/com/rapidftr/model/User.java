@@ -3,7 +3,11 @@ package com.rapidftr.model;
 import android.content.SharedPreferences;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.EncryptionUtil;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -28,8 +32,8 @@ public class User {
 	@Getter @Setter @JsonIgnore
 	protected String password;
 
-	@Getter @Setter @JsonProperty("authenticated")
-	protected boolean authenticated;
+    @Getter @Setter @JsonProperty("verified")
+	protected boolean verified;
 
 	@Getter @Setter @JsonProperty("server_url")
 	protected String serverUrl;
@@ -92,7 +96,7 @@ public class User {
 	}
 
 	public void save() throws IOException, GeneralSecurityException {
-		if (!this.isAuthenticated()) {
+		if (!this.isVerified()) {
 			this.setUnauthenticatedPassword(this.getPassword());
 			this.setDbKey(getUnauthenticatedDbKeyDbKey());
 		}

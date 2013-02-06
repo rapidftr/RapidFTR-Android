@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.*;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
@@ -26,6 +27,9 @@ import com.rapidftr.task.SynchronisationAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
 public abstract class RapidFtrActivity extends FragmentActivity {
 
@@ -80,7 +84,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         makeToast(getText(resId).toString());
     }
 
-    protected void makeToast(String text){
+    protected void makeToast(String text) {
         Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
         toast.show();
@@ -116,11 +120,11 @@ public abstract class RapidFtrActivity extends FragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if(getContext().isLoggedIn()) {
-	        getMenuInflater().inflate(R.menu.options_menu, menu);
-	        setMenu(menu);
-	        toggleSync(menu);
-	        setContextToSyncTask();
+        if (getContext().isLoggedIn()) {
+            getMenuInflater().inflate(R.menu.options_menu, menu);
+            setMenu(menu);
+            toggleSync(menu);
+            setContextToSyncTask();
         }
         return getContext().isLoggedIn();
     }
@@ -135,9 +139,11 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.synchronize_all:
-                SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
-                task.setContext(this);
-                task.execute();
+                if (isNullOrEmpty(getCurrentUser().getServerUrl())) {
+                    getServerAndSync();
+                } else {
+                    synchronise();
+                }
                 return true;
             case R.id.cancel_synchronize_all:
                 RapidFtrApplication.getApplicationInstance().cleanSyncTask();
@@ -157,9 +163,15 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         return false;
     }
 
-	protected User getCurrentUser() {
-		return getContext().getCurrentUser();
-	}
+    private void synchronise() {
+        SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
+        task.setContext(this);
+        task.execute();
+    }
+
+    protected User getCurrentUser() {
+        return getContext().getCurrentUser();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,8 +282,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         DialogInterface.OnClickListener listener = createAlertDialogForLogout(activity);
         if (activity.child.isValid()) {
             saveOrDiscardOrCancelChild(listener);
-        }
-        else{
+        } else {
             inject(LogOutService.class).attemptLogOut(activity);
         }
     }
@@ -293,6 +304,28 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         };
     }
 
+    public void getServerAndSync() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Enter sync location");
+        alert.setMessage("Please enter the the location you wish to synchronise with");
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                getContext().getSharedPreferences().edit().putString(SERVER_URL_PREF, input.getText().toString()).commit();
+                synchronise();
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                finish();
+                startActivity(new Intent(getContext(), MainActivity.class));
+            }
+        });
+        alert.create().show();
+    }
+    
     protected BroadcastReceiver getBroadcastReceiver(){
         return networkChangeReceiver;
     }

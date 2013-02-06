@@ -7,6 +7,7 @@ import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.JSONArrays;
@@ -14,6 +15,7 @@ import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.RapidFtrDateTime;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
+import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
@@ -30,6 +32,7 @@ import java.util.Map;
 
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.rapidftr.database.Database.ChildTableColumn.content;
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static java.util.Arrays.asList;
 
@@ -48,11 +51,10 @@ public class ChildService {
         this.fluentRequest = fluentRequest;
     }
 
-    public Child sync(Child child) throws IOException, JSONException {
-        String path = child.isNew() ? "/children" : String.format("/children/%s", child.get(internal_id.getColumnName()));
+    public Child sync(Child child, User currentUser) throws IOException, JSONException {
         addMultiMediaFilesToTheRequest(child);
         removeUnusedParametersBeforeSync(child);
-        fluentRequest.path(path).context(context).param("child", child.values().toString());
+        fluentRequest.path(getSyncPath(child, currentUser)).context(context).param("child", child.values().toString());
         FluentResponse response;
         try {
             response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
@@ -73,6 +75,14 @@ public class ChildService {
             return child;
         } else {
             throw new SyncFailedException(child.getUniqueId());
+        }
+    }
+    
+    protected String getSyncPath(Child child, User currentUser) throws JSONException {
+        if (currentUser.isVerified()) {
+            return child.isNew() ? "/children" : String.format("/children/%s", child.get(internal_id.getColumnName()));
+        } else {
+            return "/children/sync_unverified";
         }
     }
 
@@ -99,6 +109,7 @@ public class ChildService {
                 fluentRequest.param("recorded_audio", child.optString("recorded_audio"));
             }
         }
+        child.remove("attachments");
     }
 
     private void removeUnusedParametersBeforeSync(Child child) {
@@ -234,13 +245,5 @@ public class ChildService {
             idRevMapping.put(idRev.get("_id").toString(), idRev.get("_rev").toString());
         }
         return idRevMapping;
-    }
-
-    public void syncUnverified(Child child) throws IOException {
-        fluentRequest
-                .path("/children/sync_unverified")
-                .context(context)
-                .param("child", child.toString())
-                .post();
     }
 }

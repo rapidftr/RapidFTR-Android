@@ -161,12 +161,6 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
         startActivity(intent);
     }
 
-    public void restart() {
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
-    }
-
     protected SaveChildTask getSaveChildTask() {
         return new SaveChildTask();
     }

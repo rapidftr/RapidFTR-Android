@@ -9,11 +9,11 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
-import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.service.FormService;
@@ -30,21 +30,25 @@ import static java.lang.System.currentTimeMillis;
 public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, Boolean> {
 
     public static final int NOTIFICATION_ID = 1010;
-    private FormService formService;
-    ChildService childService;
-    ChildRepository childRepository;
-    RapidFtrActivity context;
-    protected static int MAX_PROGRESS;
-    private Notification notification;
-    NotificationManager notificationManager;
     private static final String SYNC_ALL = "SYNC_ALL";
     private static final String CANCEL_SYNC_ALL = "CANCEL_SYNC_ALL";
-    protected static int FORM_SECTION_PROGRESS;
 
-    public SynchronisationAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository) {
+    protected FormService formService;
+    protected ChildService childService;
+    protected ChildRepository childRepository;
+    protected User currentUser;
+    protected RapidFtrActivity context;
+    protected Notification notification;
+    protected NotificationManager notificationManager;
+
+    protected int formSectionProgress;
+    protected int maxProgress;
+
+    public SynchronisationAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository, User user) {
         this.formService = formService;
         this.childService = childService;
         this.childRepository = childRepository;
+        currentUser = user;
     }
 
     @Override
@@ -80,15 +84,14 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
 
     protected void getFormSections() throws IOException {
         if (!isCancelled()) {
-            setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
             formService.getPublishedFormSections();
         }
     }
 
     void setProgressBarParameters(ArrayList<String> idsToDownload, List<Child> childrenToSyncWithServer) {
         int totalRecordsToSynchronize = idsToDownload.size() + childrenToSyncWithServer.size();
-        FORM_SECTION_PROGRESS = totalRecordsToSynchronize/4 == 0 ? 20 : totalRecordsToSynchronize/4;
-        MAX_PROGRESS = totalRecordsToSynchronize + FORM_SECTION_PROGRESS;
+        formSectionProgress = totalRecordsToSynchronize/4 == 0 ? 20 : totalRecordsToSynchronize/4;
+        maxProgress = totalRecordsToSynchronize + formSectionProgress;
     }
 
     public ArrayList<String> getAllIdsForDownload() throws IOException, JSONException {
@@ -143,21 +146,21 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
     protected void setProgressAndNotify(String statusText, int progress) {
         if (!isCancelled()) {
             notification.contentView.setTextViewText(R.id.status_text, statusText);
-            notification.contentView.setProgressBar(R.id.status_progress, MAX_PROGRESS, progress, false);
+            notification.contentView.setProgressBar(R.id.status_progress, maxProgress, progress, false);
             notificationManager.notify(NOTIFICATION_ID, notification);
         }
     }
 
     void sendChildrenToServer(List<Child> childrenToSyncWithServer) throws IOException, JSONException {
-        setProgressAndNotify(context.getString(R.string.synchronize_step_2), FORM_SECTION_PROGRESS);
+        setProgressAndNotify(context.getString(R.string.synchronize_step_2), formSectionProgress);
         String subStatusFormat = "Uploading Child %s of " + childrenToSyncWithServer.size();
         int counter = 0;
-        int startProgress = FORM_SECTION_PROGRESS;
+        int startProgress = formSectionProgress;
         for (Child child : childrenToSyncWithServer) {
             if (isCancelled()) {
                 break;
             }
-            childService.sync(child);
+            childService.sync(child, currentUser);
             setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
             startProgress += 1;
         }

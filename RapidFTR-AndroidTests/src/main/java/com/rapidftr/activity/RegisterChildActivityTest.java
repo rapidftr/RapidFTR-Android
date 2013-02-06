@@ -20,11 +20,10 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
 
     @Override
     public void tearDown() throws Exception {
-//        solo.goBackToActivity("MainActivity");
         loginPage.logout();
         super.tearDown();
     }
-//     df
+
     public void testFormSectionsDisplayed() {
         List<String> actualSections = childPage.getDropDownFormSections();
         List<String> expectedSections = new ArrayList<String>(asList(new String[]{"Basic Identity", "Family details", "Care Arrangements", "Separation History", "Protection Concerns",
@@ -32,7 +31,6 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         assertEquals(actualSections, expectedSections);
     }
 
-    //df
     public void testFieldsDisplayed() {
         childPage.selectFormSection("Automation Form");
         List expectedFields = asList("Automation TextField", "Automation TextArea", "Automation CheckBoxes", "Automation Select",
@@ -45,7 +43,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         List hiddenField = asList("Hidden TextField");
         childPage.verifyFields(hiddenField, false);
     }
-//   df
+
     public void testRegisterChild() {
         childPage.selectFormSection("Automation Form");
         List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 1", "Select 1", "Radio 3", "1", "20", "10", "2012");
@@ -53,7 +51,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         childPage.save();
         childPage.verifyRegisterChildDetail(automationFormData, "Automation Form");
     }
-//    df
+
     public void testRegisterAndSyncChild() {
         childPage.selectFormSection("Automation Form");
         List automationFormData = asList("Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012");
@@ -74,9 +72,8 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         assertTrue(isEditedTextPresent(name));
     }
 
-
-    public void testNavigatingAwayFromRegisterPromptUserToSave(){
-        String name="MsgPromptText";
+    public void testNavigatingAwayFromRegisterPromptUserToSave() {
+        String name = "MsgPromptText";
         childPage.enterChildName(name);
         loginPage.logout();
         assertTrue(childPage.verifyRegisterPopup());
@@ -85,12 +82,9 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         searchPage.navigateToSearchTab();
         assertTrue(childPage.verifyRegisterPopup());
         childPage.choosePopUpAction("Save");
-//        assertTrue(isEditedTextPresent(name));
         childPage.selectEditChild();
         viewAllChildrenPage.navigateToViewAllTab();
         assertTrue(childPage.verifyRegisterPopup());
         childPage.choosePopUpAction("Discard");
-
-
     }
 }
