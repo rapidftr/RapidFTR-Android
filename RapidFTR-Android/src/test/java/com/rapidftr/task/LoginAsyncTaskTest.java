@@ -99,4 +99,37 @@ public class LoginAsyncTaskTest {
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(application.getString(R.string.login_successful)));
     }
 
+    @Test
+    public void shouldDownloadFormSectionsUponSuccessfulLogin() {
+        User user = createUser();
+        doNothing().when(loginAsyncTask).getFormSections(user);
+        loginAsyncTask.onPostExecute(user);
+        verify(loginAsyncTask).getFormSections(user);
+    }
+
+    @Test
+    public void shouldDownloadFormSections() throws IOException {
+        User user = createUser();
+        doReturn(true).when(loginAsyncTask).isOnline();
+        loginAsyncTask.getFormSections(user);
+        verify(formService).getPublishedFormSections();
+    }
+
+    @Test
+    public void shouldNotDownloadFormSectionsDuringOfflineLogin() throws IOException {
+        User user = createUser();
+        doReturn(false).when(loginAsyncTask).isOnline();
+        loginAsyncTask.getFormSections(user);
+        verifyZeroInteractions(formService);
+    }
+
+    @Test
+    public void shouldNotDownloadFormSectionsForUnverifiedUser() throws IOException {
+        User user = createUser();
+        user.setVerified(false);
+        doReturn(true).when(loginAsyncTask).isOnline();
+        loginAsyncTask.getFormSections(user);
+        verifyZeroInteractions(formService);
+    }
+
 }
