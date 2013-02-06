@@ -180,6 +180,12 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         }
     }
 
+    @Override
+    protected void onStop(){
+        super.onStop();
+        unregisterReceiver(networkChangeReceiver);
+    }
+
     protected void initializeExceptionHandler() {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
@@ -283,9 +289,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         };
     }
 
-    protected BroadcastReceiver getBroadCastReceiver(){
+    protected BroadcastReceiver getBroadcastReceiver(){
         return networkChangeReceiver;
     }
-
-
 }
