@@ -195,7 +195,11 @@ public abstract class RapidFtrActivity extends Activity {
     @Override
     protected void onStop(){
         super.onStop();
-        unregisterReceiver(networkChangeReceiver);
+        try{
+            unregisterReceiver(networkChangeReceiver);
+        }catch(IllegalArgumentException e){
+            logError(e.getMessage());
+        }
     }
 
     protected void initializeExceptionHandler() {
