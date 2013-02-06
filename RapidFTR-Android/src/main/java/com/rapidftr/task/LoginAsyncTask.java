@@ -101,15 +101,25 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 		    if (user == null)
 			    throw new GeneralSecurityException();
 
-		    application.setCurrentUser(user);
-            if(isOnline()){
-                formService.getPublishedFormSections();
-            }
-		    Toast.makeText(application, R.string.login_successful, Toast.LENGTH_LONG).show();
+            application.setCurrentUser(user);
+            getFormSections(user);
+
+            Toast.makeText(application, R.string.login_successful, Toast.LENGTH_LONG).show();
 		    goToHomeScreen();
 	    } catch (Exception e) {
 		    Toast.makeText(application, R.string.unauthorized, Toast.LENGTH_LONG).show();
 	    }
+    }
+
+    protected void getFormSections(User user) {
+        if (isOnline() && user.isVerified()) {
+            try {
+                formService.getPublishedFormSections();
+            } catch (Exception e) {
+                Log.e(APP_IDENTIFIER, "Failed to download form sections", e);
+                Toast.makeText(application, R.string.fetch_form_sections_error, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     protected void goToHomeScreen() {
