@@ -8,7 +8,7 @@ import com.rapidftr.R;
 
 public class LoginPage {
 
-    public static final String HOST = "https://test.rapidftr.com";
+    public static final String HOST = "http://10.0.2.2:3000";
 //    public static final String PORT = "5001";
     public static final String LOGIN_URL = HOST ;
     public static final String PASSWORD = "rapidftr";
@@ -62,13 +62,9 @@ public class LoginPage {
 
     }
 
-    public String getPasswordRequiredMEssage(){
+    public String getPasswordRequiredMessage(){
         solo.clickOnEditText(1);
         return ((EditText)solo.getCurrentActivity().findViewById(R.id.password)).getError().toString();
     }
 
-    public String getURLRequiredMessage(){
-        solo.clickOnEditText(2);
-        return ((EditText)solo.getCurrentActivity().findViewById(R.id.url)).getError().toString();
-    }
 }

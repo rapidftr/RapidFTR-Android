@@ -2,7 +2,6 @@ package com.rapidftr.activity;
 
 import android.test.suitebuilder.annotation.Smoke;
 import com.rapidftr.R;
-import com.rapidftr.activity.pages.LoginPage;
 
 import static com.rapidftr.activity.pages.LoginPage.*;
 
@@ -14,9 +13,9 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
     }
 
     public void testNoLoginDetailsErrorMessages(){
-          loginPage.login("","","");
+          loginPage.login("", "", "");
           assertTrue(loginPage.getUserNameRequiredMessage().equals("Username is required"));
-          assertTrue(loginPage.getPasswordRequiredMEssage().equals("Password is required"));
+          assertTrue(loginPage.getPasswordRequiredMessage().equals("Password is required"));
     }
 
      public void testUserAbleToSeeLastSuccessfulLoginUrl() {
