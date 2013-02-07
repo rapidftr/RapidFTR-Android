@@ -128,28 +128,77 @@
                 <artifactId>keytool-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>default_certs</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <workingDirectory>${project.basedir}/res/raw</workingDirectory>
+                            <noprompt/>
+                            <trustcacerts>true</trustcacerts>
+                            <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
+                            <storetype>bks</storetype>
+                            <alias>rapid_ftr_default</alias>
+                            <storepass>rapidftr</storepass>
+                            <file>rapid_ftr_ca.der</file>
+                            <arguments>
+                                <argument>-provider</argument>
+                                <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
+                                <argument>-providerpath</argument>
+                                <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
+                            </arguments>
+                        </configuration>
                         <goals>
                             <goal>clean</goal>
                             <goal>import</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>uw_cert</id>
                         <phase>initialize</phase>
+                        <configuration>
+                            <workingDirectory>${project.basedir}/res/raw</workingDirectory>
+                            <noprompt/>
+                            <trustcacerts>true</trustcacerts>
+                            <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
+                            <storetype>bks</storetype>
+                            <alias>rapid_ftr_uw</alias>
+                            <storepass>rapidftr</storepass>
+                            <file>uw_rapid_ftr_ca.crt</file>
+                            <arguments>
+                                <argument>-provider</argument>
+                                <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
+                                <argument>-providerpath</argument>
+                                <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>import</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>uw2_cert</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <workingDirectory>${project.basedir}/res/raw</workingDirectory>
+                            <noprompt/>
+                            <trustcacerts>true</trustcacerts>
+                            <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
+                            <storetype>bks</storetype>
+                            <alias>rapid_ftr_uw2</alias>
+                            <storepass>rapidftr</storepass>
+                            <file>uw2_rapid_ftr_ca.crt</file>
+                            <arguments>
+                                <argument>-provider</argument>
+                                <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
+                                <argument>-providerpath</argument>
+                                <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>import</goal>
+                        </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <workingDirectory>${project.basedir}/res/raw</workingDirectory>
-                    <noprompt/>
-                    <trustcacerts/>
-                    <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
-                    <storetype>bks</storetype>
-                    <storepass>rapidftr</storepass>
-                    <file>rapid_ftr_ca.der</file>
-                    <arguments>
-                        <argument>-provider</argument>
-                        <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
-                        <argument>-providerpath</argument>
-                        <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
-                    </arguments>
-                </configuration>
+
             </plugin>
         </plugins>
     </build>
