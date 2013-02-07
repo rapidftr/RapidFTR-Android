@@ -147,8 +147,8 @@ public class ChildService {
     private void savePhoto(Bitmap bitmap, CaptureHelper captureHelper, String current_photo_key) throws IOException {
         if(bitmap!=null && !current_photo_key.equals("")){
             try {
-                captureHelper.saveThumbnail(bitmap, current_photo_key);
-                captureHelper.savePhoto(bitmap, current_photo_key);
+                captureHelper.saveThumbnail(bitmap, 0, current_photo_key);
+                captureHelper.savePhoto(bitmap, 0, current_photo_key);
             } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
             }

@@ -123,8 +123,8 @@ public class CaptureHelperTest {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
         doReturn(expected).when(captureHelper).scaleImageTo(original, 96, 96);
         doNothing().when(captureHelper).save(expected, "random_file_thumb");
-
-        captureHelper.saveThumbnail(original, "random_file");
+        doReturn(expected).when(captureHelper).rotateBitmap(expected, 90);
+        captureHelper.saveThumbnail(original, 90, "random_file");
         verify(captureHelper).save(expected, "random_file_thumb");
     }
 
@@ -133,8 +133,8 @@ public class CaptureHelperTest {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
         doReturn(expected).when(captureHelper).scaleImageTo(original, 475, 635);
         doNothing().when(captureHelper).save(expected, "random_file");
-
-        captureHelper.savePhoto(original, "random_file");
+        doReturn(expected).when(captureHelper).rotateBitmap(expected, 180);
+        captureHelper.savePhoto(original, 180, "random_file");
         verify(captureHelper).save(expected, "random_file");
     }
 
