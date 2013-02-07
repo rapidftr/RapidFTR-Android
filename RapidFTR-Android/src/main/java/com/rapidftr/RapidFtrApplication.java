@@ -4,6 +4,8 @@ import android.app.Application;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.forms.FormSection;
@@ -94,5 +96,11 @@ public class RapidFtrApplication extends Application {
         }
         return syncInProgress;
     }
+
+    public boolean isOnline() {
+   		ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+   		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+   		return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
+   	}
 
 }

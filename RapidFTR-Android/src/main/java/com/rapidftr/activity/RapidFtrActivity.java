@@ -125,14 +125,20 @@ public abstract class RapidFtrActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        RapidFtrApplication applicationInstance = RapidFtrApplication.getApplicationInstance();
         switch (item.getItemId()) {
             case R.id.synchronize_all:
+                if(!applicationInstance.isOnline()){
+                    makeToast(R.string.sync_error);
+                    return true;
+                }
                 SyncAllDataAsyncTask task = inject(SyncAllDataAsyncTask.class);
                 task.setContext(this);
+                applicationInstance.setSyncTask(task);
                 task.execute();
                 return true;
             case R.id.cancel_synchronize_all:
-                RapidFtrApplication.getApplicationInstance().cleanSyncTask();
+                applicationInstance.cleanSyncTask();
                 return true;
             case R.id.logout:
                 if (this.getClass() == RegisterChildActivity.class || this.getClass() == EditChildActivity.class) {

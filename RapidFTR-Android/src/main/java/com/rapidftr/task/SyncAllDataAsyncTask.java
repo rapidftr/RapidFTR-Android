@@ -50,9 +50,9 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected void onPreExecute() {
         RapidFtrApplication.getApplicationInstance().setSyncTask(this);
-        toggleMenu(CANCEL_SYNC_ALL);
         initNotifiers();
         configureNotification();
+        toggleMenu(CANCEL_SYNC_ALL);
     }
 
     private void configureNotification() {
@@ -124,16 +124,16 @@ public class SyncAllDataAsyncTask extends AsyncTask<Void, String, Boolean> {
 
     @Override
     protected void onPostExecute(Boolean result) {
-        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
         toggleMenu(SYNC_ALL);
         notificationManager.cancel(NOTIFICATION_ID);
+        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
     }
 
     @Override
     protected void onCancelled() {
-        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
         toggleMenu(SYNC_ALL);
         notificationManager.cancel(NOTIFICATION_ID);
+        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
     }
 
     private void toggleMenu(String showMenu) {
