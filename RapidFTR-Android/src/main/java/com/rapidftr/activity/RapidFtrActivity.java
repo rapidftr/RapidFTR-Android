@@ -48,6 +48,14 @@ public abstract class RapidFtrActivity extends FragmentActivity {
             }
     };
 
+    private BroadcastReceiver logoutReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(APP_IDENTIFIER, "Logout event received");
+            finish();
+        }
+    };
+
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
     }
@@ -188,13 +196,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
 	protected void initializeLogoutHandler() {
 		if (shouldEnsureLoggedIn()) {
 			IntentFilter intentFilter = new IntentFilter(LOGOUT_INTENT_FILTER);
-			registerReceiver(new BroadcastReceiver() {
-				@Override
-				public void onReceive(Context context, Intent intent) {
-					Log.d(APP_IDENTIFIER, "Logout event received");
-					finish();
-				}
-			}, intentFilter);
+			registerReceiver(logoutReceiver, intentFilter);
 		}
 	}
 
@@ -215,6 +217,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         super.onStop();
         try{
             unregisterReceiver(networkChangeReceiver);
+            unregisterReceiver(logoutReceiver);
         }catch(IllegalArgumentException e){
             logError(e.getMessage());
         }

@@ -4,23 +4,32 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.activity.BaseChildActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.utils.PhotoCaptureHelper;
+import com.xtremelabs.robolectric.shadows.ShadowImageView;
+import com.xtremelabs.robolectric.shadows.ShadowLinearLayout;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
+import com.xtremelabs.robolectric.shadows.ShadowView;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import static com.xtremelabs.robolectric.Robolectric.shadowOf;
+import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -160,14 +169,43 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
         assertThat(child.getString(field.getId()), equalTo("random_file_name"));
     }
 
-    @Test
-    public void testPaintThumbnail() throws JSONException, IOException {
-        view.initialize(field, child);
-        child.put(field.getId(), "test_image");
-        when(photoCaptureHelper.getThumbnailOrDefault("test_image")).thenReturn(bitmap);
+//    @Test
+//    public void shouldPaintAllThumbnailsUnderPhotoKeysForViewAndEditChild() throws JSONException, IOException {
+//        ShadowView shadowLinearLayout = shadowOf(view.findViewById(R.id.linear));
+//        ShadowImageView shadowImageView = new ShadowImageView();
+//        child.put("photo_keys", new JSONArray("[some_file_name, random_file_name]"));
+//        view.initialize(field, child);
+////        doReturn(new ShadowImageView()).when(view).getImageView();
+////        doReturn(shadowLinearLayout).when(view).getGalleryView();
+//        when(photoCaptureHelper.getThumbnailOrDefault("some_file_name")).thenReturn(bitmap);
+//        when(photoCaptureHelper.getThumbnailOrDefault("random_file_name")).thenReturn(bitmap);
+////        doNothing().when(view).addImageToView(Matchers.<LinearLayout>any(), Matchers.<String>any());
+//        view.repaint();
+//        verify(imageView,times(1)).setImageBitmap(bitmap);
+//    }
 
-        view.repaint();
-        verify(imageView).setImageBitmap(bitmap);
+    @Test
+    public void shouldSaveNewlyCapturedFileNameInPhotoKeys() throws JSONException {
+        view.initialize(field, child);
+        String fileName = "random_file_name";
+        doReturn(fileName).when(view).createCaptureFileName();
+
+        view.saveCapture();
+        assertThat(child.optJSONArray("photo_keys").length(), is(1));
+        assertThat(child.optJSONArray("photo_keys").get(0).toString(), is("random_file_name"));
+    }
+
+    @Test
+    public void shouldAddCapturedFileNamesToExistingPhotoKeys() throws JSONException {
+        child.put("photo_keys", new JSONArray("[some_file_name]"));
+        view.initialize(field, child);
+        String fileName = "random_file_name";
+        doReturn(fileName).when(view).createCaptureFileName();
+
+        view.saveCapture();
+        assertThat(child.optJSONArray("photo_keys").length(), is(2));
+        assertThat(child.optJSONArray("photo_keys").get(0).toString(), is("some_file_name"));
+        assertThat(child.optJSONArray("photo_keys").get(1).toString(), is("random_file_name"));
     }
 
 }
