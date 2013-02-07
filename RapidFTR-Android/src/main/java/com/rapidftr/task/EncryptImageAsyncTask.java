@@ -33,8 +33,8 @@ public class EncryptImageAsyncTask extends AsyncTask<Void, Integer, Boolean> {
     @Override
     protected Boolean doInBackground(Void... bitmaps) {
         try {
-            photoCaptureHelper.saveThumbnail(photoCaptureHelper.rotateBitmap(bitmap, rotationDegree) , fileName);
-            photoCaptureHelper.savePhoto(photoCaptureHelper.rotateBitmap(bitmap, rotationDegree), fileName);
+            photoCaptureHelper.saveThumbnail(bitmap, rotationDegree , fileName);
+            photoCaptureHelper.savePhoto(bitmap, rotationDegree, fileName);
             return true;
         } catch (Exception e) {
 	        return false;

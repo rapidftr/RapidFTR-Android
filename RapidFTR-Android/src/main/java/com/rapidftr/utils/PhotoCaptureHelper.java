@@ -89,8 +89,8 @@ public class PhotoCaptureHelper extends CaptureHelper {
         return decodeResource(application.getResources(), R.drawable.no_photo_clip);
     }
 
-    public void savePhoto(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        save(scaleImageTo(bitmap, 475, 635), fileNameWithoutExtension);
+    public void savePhoto(Bitmap bitmap, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        save(rotateBitmap(scaleImageTo(bitmap, 475, 635), rotationDegree), fileNameWithoutExtension);
     }
 
     protected Bitmap scaleImageTo(Bitmap image, int width, int height) {
@@ -106,8 +106,8 @@ public class PhotoCaptureHelper extends CaptureHelper {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream);
     }
 
-    public void saveThumbnail(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        save(scaleImageTo(bitmap, 96, 96), fileNameWithoutExtension + "_thumb");
+    public void saveThumbnail(Bitmap bitmap, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        save(rotateBitmap(scaleImageTo(bitmap, 96, 96), rotationDegree), fileNameWithoutExtension + "_thumb");
     }
 
     public Bitmap loadThumbnail(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
@@ -153,7 +153,7 @@ public class PhotoCaptureHelper extends CaptureHelper {
         return new ExifInterface(getTempCaptureFile().getAbsolutePath());
     }
 
-    public Bitmap rotateBitmap(Bitmap bitmap, int rotationDegree) throws IOException {
+    protected Bitmap rotateBitmap(Bitmap bitmap, int rotationDegree) throws IOException {
         Matrix matrix = new Matrix();
         matrix.postRotate(rotationDegree);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);

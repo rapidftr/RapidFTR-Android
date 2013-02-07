@@ -98,10 +98,10 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
         view.initialize(field, child);
         RapidFtrActivity activity = (RapidFtrActivity) view.getContext();
         doCallRealMethod().when(view).saveCapture();
-        doNothing().when(photoCaptureHelper).savePhoto(bitmap,"");
+        doNothing().when(photoCaptureHelper).savePhoto(bitmap, 90, "");
         activity.onActivityResult(PhotoUploadBox.CAPTURE_IMAGE_REQUEST, Activity.RESULT_OK, null);
         verify(view).saveCapture();
-        verify(photoCaptureHelper).savePhoto(bitmap, "name");
+        verify(photoCaptureHelper).savePhoto(bitmap, 90, "name");
     }
 
     @Test
@@ -133,9 +133,8 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     public void testSaveCaptureShouldSaveBitmap() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
         doReturn(90).when(photoCaptureHelper).getPictureRotation();
-        doReturn(bitmap).when(photoCaptureHelper).rotateBitmap(eq(bitmap), eq(90));
         view.saveCapture();
-        verify(photoCaptureHelper).savePhoto(eq(bitmap), anyString());
+        verify(photoCaptureHelper).savePhoto(eq(bitmap), eq(90), anyString());
     }
 
     @Test
@@ -149,9 +148,8 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     public void testSaveCaptureShouldSaveThumbnail() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
         doReturn(180).when(photoCaptureHelper).getPictureRotation();
-        doReturn(bitmap).when(photoCaptureHelper).rotateBitmap(eq(bitmap), eq(180));
         view.saveCapture();
-        verify(photoCaptureHelper).saveThumbnail(eq(bitmap), anyString());
+        verify(photoCaptureHelper).saveThumbnail(eq(bitmap), eq(180), anyString());
     }
 
     @Test

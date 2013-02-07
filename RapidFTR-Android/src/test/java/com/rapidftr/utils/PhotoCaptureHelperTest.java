@@ -122,9 +122,10 @@ public class PhotoCaptureHelperTest {
     public void testSaveThumbnailShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
         doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 96, 96);
+        doReturn(expected).when(photoCaptureHelper).rotateBitmap(expected, 90);
         doNothing().when(photoCaptureHelper).save(expected, "random_file_thumb");
 
-        photoCaptureHelper.saveThumbnail(original, "random_file");
+        photoCaptureHelper.saveThumbnail(original, 90, "random_file");
         verify(photoCaptureHelper).save(expected, "random_file_thumb");
     }
 
@@ -132,8 +133,9 @@ public class PhotoCaptureHelperTest {
     public void testSaveActualImageShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
         doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 475, 635);
+        doReturn(expected).when(photoCaptureHelper).rotateBitmap(expected, 180);
         doNothing().when(photoCaptureHelper).save(expected, "random_file");
-        photoCaptureHelper.savePhoto(original, "random_file");
+        photoCaptureHelper.savePhoto(original, 180, "random_file");
         verify(photoCaptureHelper).save(expected, "random_file");
     }
 
