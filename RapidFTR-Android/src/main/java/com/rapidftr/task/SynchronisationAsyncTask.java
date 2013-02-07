@@ -121,16 +121,16 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
 
     @Override
     protected void onPostExecute(Boolean result) {
-        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
         toggleMenu(SYNC_ALL);
         notificationManager.cancel(NOTIFICATION_ID);
+        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
     }
 
     @Override
     protected void onCancelled() {
-        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
         toggleMenu(SYNC_ALL);
         notificationManager.cancel(NOTIFICATION_ID);
+        RapidFtrApplication.getApplicationInstance().setSyncTask(null);
     }
 
     private void toggleMenu(String showMenu) {
