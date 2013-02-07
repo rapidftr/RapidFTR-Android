@@ -101,7 +101,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         Activity context = (Activity) getContext();
         try {
             String fileName = (String) child.opt(formField.getId());
-            if (fileName == null) {
+            if ((fileName == null)||(fileName == "")) {
                 Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_not_captured, Toast.LENGTH_LONG).show();
             } else {
                 Intent intent = new Intent(context, ViewPhotoActivity.class);
