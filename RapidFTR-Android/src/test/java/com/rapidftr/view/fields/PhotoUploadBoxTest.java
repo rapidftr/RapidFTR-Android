@@ -132,6 +132,8 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     @Test
     public void testSaveCaptureShouldSaveBitmap() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
+        doReturn(90).when(photoCaptureHelper).getPictureRotation();
+        doReturn(bitmap).when(photoCaptureHelper).rotateBitmap(eq(bitmap), eq(90));
         view.saveCapture();
         verify(photoCaptureHelper).savePhoto(eq(bitmap), anyString());
     }
@@ -146,6 +148,8 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     @Test
     public void testSaveCaptureShouldSaveThumbnail() throws IOException, JSONException, GeneralSecurityException {
         view.initialize(field, child);
+        doReturn(180).when(photoCaptureHelper).getPictureRotation();
+        doReturn(bitmap).when(photoCaptureHelper).rotateBitmap(eq(bitmap), eq(180));
         view.saveCapture();
         verify(photoCaptureHelper).saveThumbnail(eq(bitmap), anyString());
     }

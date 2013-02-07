@@ -24,7 +24,8 @@ public class EncryptImageAsyncTaskTest {
     @Test
     public void testEncryptAndSaveImage() throws Exception {
         String fileName = "random";
-        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, photoCaptureHelper, bitmap, fileName, photoUploadBox);
+        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, photoCaptureHelper, bitmap, fileName, photoUploadBox, 90);
+        doReturn(bitmap).when(photoCaptureHelper).rotateBitmap(bitmap, 90);
         AsyncTask<Void, Integer, Boolean> task = asyncTask.execute();
         assertTrue(task.get());
         verify(photoCaptureHelper).saveThumbnail(bitmap, fileName);
@@ -36,7 +37,8 @@ public class EncryptImageAsyncTaskTest {
     @Test
     public void testEncryptShouldReturnFalseIfSaveFails() throws Exception {
         String fileName = "random";
-        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, photoCaptureHelper, bitmap, fileName, photoUploadBox);
+        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, photoCaptureHelper, bitmap, fileName, photoUploadBox, 180);
+        doReturn(bitmap).when(photoCaptureHelper).rotateBitmap(bitmap, 180);
         doThrow(new RuntimeException()).when(photoCaptureHelper).saveThumbnail(bitmap, fileName);
         AsyncTask<Void, Integer, Boolean> task = asyncTask.execute();
         assertFalse(task.get());

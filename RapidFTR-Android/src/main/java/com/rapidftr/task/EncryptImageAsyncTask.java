@@ -19,20 +19,22 @@ public class EncryptImageAsyncTask extends AsyncTask<Void, Integer, Boolean> {
     private String fileName;
     private PhotoUploadBox photoUploadBox;
     private Context context;
+    private int rotationDegree;
 
-    public EncryptImageAsyncTask(Context context, PhotoCaptureHelper photoCaptureHelper, Bitmap bitmap, String fileName, PhotoUploadBox photoUploadBox) {
+    public EncryptImageAsyncTask(Context context, PhotoCaptureHelper photoCaptureHelper, Bitmap bitmap, String fileName, PhotoUploadBox photoUploadBox, int rotationDegree) {
         this.context = context;
         this.photoCaptureHelper = photoCaptureHelper;
         this.bitmap = bitmap;
         this.fileName = fileName;
         this.photoUploadBox = photoUploadBox;
+        this.rotationDegree = rotationDegree;
     }
 
     @Override
     protected Boolean doInBackground(Void... bitmaps) {
         try {
-            photoCaptureHelper.saveThumbnail(bitmap, fileName);
-            photoCaptureHelper.savePhoto(bitmap, fileName);
+            photoCaptureHelper.saveThumbnail(photoCaptureHelper.rotateBitmap(bitmap, rotationDegree) , fileName);
+            photoCaptureHelper.savePhoto(photoCaptureHelper.rotateBitmap(bitmap, rotationDegree), fileName);
             return true;
         } catch (Exception e) {
 	        return false;

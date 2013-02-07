@@ -3,7 +3,6 @@ package com.rapidftr.utils;
 import android.content.Context;
 import android.os.Environment;
 import com.rapidftr.RapidFtrApplication;
-import lombok.RequiredArgsConstructor;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
