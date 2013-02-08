@@ -2,26 +2,24 @@ package com.rapidftr.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.task.AsyncTaskWithDialog;
+import com.rapidftr.task.SynchronisationAsyncTask;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 
 import java.io.IOException;
 
-import static com.rapidftr.CustomTestRunner.createUser;
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
+import static com.rapidftr.CustomTestRunner.createUser;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -171,5 +169,18 @@ public class RapidFtrActivityTest {
         receiver.onReceive(rapidFtrActivity, mockIntent);
         MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(), equalTo(rapidFtrActivity.getString(R.string.network_down)));
 
+    }
+
+    @Test
+    public void shouldRenderMenuWithOptionsMenuLayout(){
+        RapidFtrActivity rapidFtrActivity = new MainActivity();
+        RapidFtrActivity spyRapidFtrActivity = spy(rapidFtrActivity);
+        Menu menu = mock(Menu.class);
+        MenuInflater menuInflater = mock(MenuInflater.class);
+        when(menu.getItem(0)).thenReturn(mock(MenuItem.class));
+        when(menu.getItem(1)).thenReturn(mock(MenuItem.class));
+        when(spyRapidFtrActivity.getMenuInflater()).thenReturn(menuInflater);
+        spyRapidFtrActivity.onCreateOptionsMenu(menu);
+        verify(menuInflater).inflate(R.menu.options_menu, menu);
     }
 }

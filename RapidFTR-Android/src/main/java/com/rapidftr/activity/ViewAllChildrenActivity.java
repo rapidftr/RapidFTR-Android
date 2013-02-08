@@ -19,6 +19,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_children);
+        menuId = R.menu.view_children_menu;
         listView(getChildren());
     }
     
