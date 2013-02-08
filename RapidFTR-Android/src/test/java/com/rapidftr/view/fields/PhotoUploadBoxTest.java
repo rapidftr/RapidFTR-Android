@@ -4,30 +4,24 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.activity.BaseChildActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.utils.PhotoCaptureHelper;
-import com.xtremelabs.robolectric.shadows.ShadowImageView;
-import com.xtremelabs.robolectric.shadows.ShadowLinearLayout;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
-import com.xtremelabs.robolectric.shadows.ShadowView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import static com.xtremelabs.robolectric.Robolectric.shadowOf;
-import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -70,19 +64,19 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
 
         view.setEnabled(false);
         view.getImageContainer().performClick();
-        verify(view).showFullPhoto();
+        verify(view).showFullPhoto(null);
 
     }
     @Test
     public void shouldShowPhotoWhenImageClicked() throws Exception {
         view.initialize(field, child);
-        doNothing().when(view).showFullPhoto();
+        doNothing().when(view).showFullPhoto(null);
 
         child.put(field.getId(), "random_file_name");
         view.getImageContainer().performClick();
 
         verify(view).onImageClick();
-        verify(view).showFullPhoto();
+        verify(view).showFullPhoto(null);
     }
 
     @Test

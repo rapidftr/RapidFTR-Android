@@ -7,24 +7,18 @@
         android:layout_height="wrap_content">
 
     <include layout="@layout/form_label" />
-
-    <HorizontalScrollView
-            android:id="@+id/gallery"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
-        <include layout="@layout/form_photo_thumbnail" android:id="@+id/capture" />
-
-    </HorizontalScrollView>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:orientation="vertical"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:id="@+id/linear">
-
-    </LinearLayout>
-
     <include layout="@layout/form_help_text" />
 
+    <include layout="@layout/form_photo_thumbnail" android:id="@+id/capture" />
+
+    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/photo_grid_view"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:columnWidth="90dp"
+              android:numColumns="auto_fit"
+              android:stretchMode="columnWidth"
+              android:gravity="center"
+              android:scrollbars="vertical"
+            />
 </com.rapidftr.view.fields.PhotoUploadBox>

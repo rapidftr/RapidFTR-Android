@@ -9,12 +9,7 @@
             android:id="@+id/thumbnail"
             android:layout_width="96dp"
             android:layout_height="96dp"
-            />
-    <TextView
-            android:id="@+id/caption"
-            android:layout_width="96dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:src="@drawable/no_photo_clip"
             />
 
 </LinearLayout>

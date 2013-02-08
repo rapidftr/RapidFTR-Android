@@ -47,11 +47,11 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
         if (child != null) {
             TextView uniqueIdView = (TextView) view.findViewById(R.id.row_child_unique_id);
             TextView nameView = (TextView) view.findViewById(R.id.row_child_name);
-            ImageView imageView = (ImageView) view.findViewById(R.id.thumbnail);
+//            ImageView imageView = (ImageView) view.findViewById(R.id.thumbnail);
             try {
                 setFields(String.valueOf(child.getShortId()), uniqueIdView);
                 setFields(String.valueOf(child.optString("name")), nameView);
-                assignThumbnail(child, imageView);
+//                assignThumbnail(child, imageView);
 
                 view.setOnClickListener(clickListener(child));
             } catch (JSONException e) {

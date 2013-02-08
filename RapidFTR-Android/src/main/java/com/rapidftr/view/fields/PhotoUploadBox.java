@@ -9,15 +9,12 @@ import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
-import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.activity.ViewPhotoActivity;
+import com.rapidftr.adapter.ImageAdapter;
 import com.rapidftr.task.EncryptImageAsyncTask;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import org.json.JSONArray;
@@ -30,7 +27,7 @@ import static com.rapidftr.activity.BaseChildActivity.CLOSE_ACTIVITY;
 public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultListener {
 
     public static final int CAPTURE_IMAGE_REQUEST = 100;
-    private final String PHOTO_KEYS = "photo_keys";
+    public static final String PHOTO_KEYS = "photo_keys";
 
     protected PhotoCaptureHelper photoCaptureHelper;
     private boolean enabled;
@@ -63,7 +60,6 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -78,8 +74,8 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     @Override
-    public void setEnabled(boolean isEnabled){
-       this.enabled = isEnabled ;
+    public void setEnabled(boolean isEnabled) {
+        this.enabled = isEnabled;
     }
 
     protected void deleteCapture() {
@@ -96,14 +92,13 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         if (enabled) {
             startCapture();
         } else {
-            showFullPhoto();
+            showFullPhoto(null);
         }
     }
 
-    protected void showFullPhoto() {
+    protected void showFullPhoto(String fileName) {
         Activity context = (Activity) getContext();
         try {
-            String fileName = (String) child.opt(formField.getId());
             if (fileName == null) {
                 Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_not_captured, Toast.LENGTH_LONG).show();
             } else {
@@ -139,11 +134,11 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     private void addPhotoToPhotoKeys(String fileName) throws JSONException {
-        if(child.optJSONArray(PHOTO_KEYS) == null){
+        if (child.optJSONArray(PHOTO_KEYS) == null) {
             JSONArray photo_keys = new JSONArray();
             photo_keys.put(fileName);
             child.put(PHOTO_KEYS, photo_keys);
-        }else{
+        } else {
             child.getJSONArray(PHOTO_KEYS).put(fileName);
         }
         child.put(formField.getId(), fileName);
@@ -157,34 +152,32 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         return new ImageView(getContext());
     }
 
-    protected TextView getImageCaption() {
-        return (TextView) findViewById(R.id.caption);
-    }
-
     public void repaint() throws JSONException {
-        JSONArray photoKeys = child.optJSONArray(PHOTO_KEYS);
-        LinearLayout linearLayout = getGalleryView();
-        if(photoKeys != null){
-            if (!enabled) {
-                for (int i = 0; i < photoKeys.length(); i++) {
-                    addImageToView(linearLayout, photoKeys.get(i).toString());
-                }
-            } else {
-                addImageToView(linearLayout, photoKeys.get(photoKeys.length() - 1).toString());
-                getImageCaption().setText((getContext() instanceof RegisterChildActivity) ? R.string.photo_capture : R.string.photo_view);
-            }
+        GridView photoGridView = getGalleryView();
+        final JSONArray photoKeys = child.optJSONArray(PHOTO_KEYS);
+        addImageClickListener(photoGridView, photoKeys);
+        if (photoKeys != null) {
+            photoGridView.setAdapter(new ImageAdapter(getContext(), child, photoCaptureHelper, enabled));
         }
     }
 
-    protected LinearLayout getGalleryView() {
-        return (LinearLayout) findViewById(R.id.linear);
+    private void addImageClickListener(GridView photoGridView, final JSONArray photoKeys) {
+        photoGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (photoKeys != null) {
+                    try {
+                        showFullPhoto(photoKeys.get(position).toString());
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
     }
 
-    protected void addImageToView(LinearLayout linearLayout, String fileNameWithoutExtension) throws JSONException {
-        Bitmap bitmap = photoCaptureHelper.getThumbnailOrDefault(fileNameWithoutExtension);
-        ImageView imageView = getImageView();
-        imageView.setImageBitmap(bitmap);
-        linearLayout.addView(imageView);
+    protected GridView getGalleryView() {
+        return (GridView) findViewById(R.id.photo_grid_view);
     }
 
 }
