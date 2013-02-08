@@ -1,6 +1,7 @@
 package com.rapidftr.view.fields;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
@@ -21,7 +22,6 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import static com.xtremelabs.robolectric.Robolectric.shadowOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -165,21 +165,6 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
         assertThat(child.getString(field.getId()), equalTo("random_file_name"));
     }
 
-//    @Test
-//    public void shouldPaintAllThumbnailsUnderPhotoKeysForViewAndEditChild() throws JSONException, IOException {
-//        ShadowView shadowLinearLayout = shadowOf(view.findViewById(R.id.linear));
-//        ShadowImageView shadowImageView = new ShadowImageView();
-//        child.put("photo_keys", new JSONArray("[some_file_name, random_file_name]"));
-//        view.initialize(field, child);
-////        doReturn(new ShadowImageView()).when(view).getImageView();
-////        doReturn(shadowLinearLayout).when(view).getGalleryView();
-//        when(photoCaptureHelper.getThumbnailOrDefault("some_file_name")).thenReturn(bitmap);
-//        when(photoCaptureHelper.getThumbnailOrDefault("random_file_name")).thenReturn(bitmap);
-////        doNothing().when(view).addImageToView(Matchers.<LinearLayout>any(), Matchers.<String>any());
-//        view.repaint();
-//        verify(imageView,times(1)).setImageBitmap(bitmap);
-//    }
-
     @Test
     public void shouldSaveNewlyCapturedFileNameInPhotoKeys() throws JSONException {
         view.initialize(field, child);
@@ -204,4 +189,29 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
         assertThat(child.optJSONArray("photo_keys").get(1).toString(), is("random_file_name"));
     }
 
+    @Test
+    public void shouldSetCurrentPhotoKeyIfItIsNotSetEarlier(){
+        view.initialize(field, child);
+        String fileName = "some_file_name";
+        doReturn(fileName).when(view).createCaptureFileName();
+        view.saveCapture();
+        assertThat(child.optString("current_photo_key"), is("some_file_name"));
+    }
+
+    @Test
+    public void shouldSetCurrentPhotoKey(){
+        view.initialize(field, child);
+        Intent intent = new Intent();
+        intent.putExtra("file_name","some_file");
+        view.onActivityResult(PhotoUploadBox.SHOW_FULL_IMAGE_REQUEST,1, intent);
+        assertEquals(child.optString("current_photo_key"),"some_file");
+    }
+
+    @Test
+    public void shouldNotSetCurrentPhotoKey(){
+        view.initialize(field, child);
+        Intent intent = new Intent();
+        view.onActivityResult(PhotoUploadBox.SHOW_FULL_IMAGE_REQUEST,1, intent);
+        assertEquals(child.optString("current_photo_key"),"");
+    }
 }

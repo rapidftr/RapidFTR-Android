@@ -113,6 +113,7 @@ public class PhotoCaptureHelperTest {
     public void testReturnOriginalThumbnail() throws Exception {
         Bitmap expected = mock(Bitmap.class);
         doReturn(expected).when(photoCaptureHelper).loadThumbnail("random_file");
+        doReturn(new File("random_file.jpg")).when(photoCaptureHelper).getFile("random_file", ".jpg");
 
         Bitmap actual = photoCaptureHelper.getThumbnailOrDefault("random_file");
         assertThat(actual, equalTo(expected));

@@ -9,7 +9,10 @@ import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
@@ -27,7 +30,9 @@ import static com.rapidftr.activity.BaseChildActivity.CLOSE_ACTIVITY;
 public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultListener {
 
     public static final int CAPTURE_IMAGE_REQUEST = 100;
+    public static final int SHOW_FULL_IMAGE_REQUEST = 200;
     public static final String PHOTO_KEYS = "photo_keys";
+    public static final String CURRENT_PHOTO_KEY = "current_photo_key";
 
     protected PhotoCaptureHelper photoCaptureHelper;
     private boolean enabled;
@@ -49,6 +54,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         RapidFtrActivity activity = (RapidFtrActivity) getContext();
         activity.addResultListener(CAPTURE_IMAGE_REQUEST, this);
         activity.addResultListener(CLOSE_ACTIVITY, this);
+        activity.addResultListener(SHOW_FULL_IMAGE_REQUEST, this);
 
         getImageContainer().setOnClickListener(new OnClickListener() {
             @Override
@@ -69,6 +75,11 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
                 break;
             case CLOSE_ACTIVITY:
                 deleteCapture();
+                break;
+            case SHOW_FULL_IMAGE_REQUEST:
+                if (data != null && data.getStringExtra("file_name") != null) {
+                    child.put(CURRENT_PHOTO_KEY, data.getStringExtra("file_name"));
+                }
                 break;
         }
     }
@@ -104,7 +115,8 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
             } else {
                 Intent intent = new Intent(context, ViewPhotoActivity.class);
                 intent.putExtra("file_name", fileName);
-                context.startActivity(intent);
+                intent.putExtra("enabled", enabled);
+                context.startActivityForResult(intent, SHOW_FULL_IMAGE_REQUEST);
             }
         } catch (Exception e) {
             Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_view_error, Toast.LENGTH_LONG).show();
@@ -129,8 +141,15 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
             Log.e("REGISTER", "start of async task ");
             new EncryptImageAsyncTask(getContext(), photoCaptureHelper, bitmap, fileName, this, rotationDegree).execute();
             addPhotoToPhotoKeys(fileName);
+            addCurrentPhotoKeyIfNotPresent(fileName);
         } catch (Exception e) {
             Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void addCurrentPhotoKeyIfNotPresent(String fileName) {
+        if (child.optString(CURRENT_PHOTO_KEY).equals("")) {
+            child.put(CURRENT_PHOTO_KEY, fileName);
         }
     }
 
