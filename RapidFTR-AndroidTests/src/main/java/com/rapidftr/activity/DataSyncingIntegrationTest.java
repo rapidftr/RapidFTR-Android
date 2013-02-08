@@ -19,13 +19,14 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     RapidFtrApplication context;
     ChildRepository repository;
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        loginPage.login();
+	    loginPage.login();
         solo.waitForText("Login Successful");
         context=RapidFtrApplication.getApplicationInstance();
-        repository=context.getInjector().getInstance(ChildRepository.class);
+        repository = application.getInjector().getInstance(ChildRepository.class);
         RapidFTRDatabase.deleteChildren();
     }
 
@@ -71,19 +72,24 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         Child child2 = new Child("qwe4321", "rapidftr", "{'name' : 'james'}");
         Child child3 = new Child("zxy4321", "rapidftr", "{'name' : 'kenyata'}");
         Child child4 = new Child("uye4321", "rapidftr", "{'name' : 'keburingi'}");
+        Child child5 = new Child("utr4322", "rapidftr", "{'name' : 'jebuguhyi'}");
         seedDataToRepository(child1, child2, child3, child4);
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        Thread.sleep(1000);
+        Thread.sleep(100);
         solo.clickOnMenuItem(solo.getString(R.string.log_out));
         //Robotium doesn't support asserting on notification bar by default. Below is the hack to get around it.
         solo.clickOnButton(solo.getString(R.string.log_out)); //As the synchronization is still happening we'll get an dialog box for the user action.
         solo.waitForText(solo.getString(R.string.logout_successful));
    }
 
-    private void seedDataToRepository(Child... children) throws JSONException {
+    public void estLatestDataTakenBasedOnTimeStamp(){
+
+    }
+
     //    public void estCancelSyncAll
+    public void seedDataToRepository(Child... children) throws JSONException {
         for(Child child : children){
-            repository = context.getInjector().getInstance(ChildRepository.class);
+            repository = application.getInjector().getInstance(ChildRepository.class);
             repository.createOrUpdate(child);
 //            repository.close();
         }
@@ -91,7 +97,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     public void seedDataOnServer(Child child) throws JSONException, IOException {
         http()
-                .context(context)
+                .context(application)
                 .host(LoginPage.LOGIN_URL)
                 .config(HttpConnectionParams.CONNECTION_TIMEOUT, 15000)
                 .path(String.format("/children", child.getId()))

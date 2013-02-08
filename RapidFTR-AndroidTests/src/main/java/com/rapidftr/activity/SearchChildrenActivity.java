@@ -3,6 +3,7 @@ package com.rapidftr.activity;
 
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import junit.framework.Assert;
 import org.json.JSONException;
 
 import com.rapidftr.RapidFtrApplication;
@@ -13,7 +14,8 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
     public void setUp() throws Exception {
         super.setUp();
         loginPage.login();
-        solo.waitForText("Login Successful");
+        Assert.assertTrue(solo.waitForText("Login Successful"));
+        waitUntilTextDisappears("Login Successful");
     }
 
     @Override

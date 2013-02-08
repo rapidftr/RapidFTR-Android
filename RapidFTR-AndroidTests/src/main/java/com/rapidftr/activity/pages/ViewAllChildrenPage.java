@@ -15,10 +15,13 @@ public class ViewAllChildrenPage {
         this.solo = solo;
     }
 
-    public void navigateToViewAllPage() {
+    public void navigateToViewAllFromHome() {
         solo.clickOnText("View All Children");
     }
 
+    public void navigateToViewAllTab(){
+        solo.clickOnText("View All");
+    }
     public boolean isChildPresent(String uniqueId, String name){
         return solo.searchText(uniqueId) && solo.searchText(name);
     }

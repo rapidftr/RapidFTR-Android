@@ -7,14 +7,6 @@ import com.rapidftr.activity.pages.ChildPage;
 import com.rapidftr.activity.pages.LoginPage;
 import com.rapidftr.activity.pages.SearchChildrenPage;
 import com.rapidftr.activity.pages.ViewAllChildrenPage;
-import com.rapidftr.model.Child;
-import com.rapidftr.repository.ChildRepository;
-import org.apache.http.params.HttpConnectionParams;
-import org.json.JSONException;
-
-import java.io.IOException;
-
-import static com.rapidftr.utils.http.FluentRequest.http;
 
 public abstract class BaseActivityIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
@@ -23,6 +15,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     public ViewAllChildrenPage viewAllChildrenPage;
     public ChildPage childPage;
     public SearchChildrenPage searchPage;
+	public RapidFtrApplication application;
 
 
     final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -38,6 +31,11 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
         viewAllChildrenPage = new ViewAllChildrenPage(solo);
         childPage = new ChildPage(solo);
         searchPage= new SearchChildrenPage(solo);
+	    application = RapidFtrApplication.getApplicationInstance();
+
+	    if (application.isLoggedIn()) {
+		    loginPage.logout();
+	    }
     }
 
     @Override
@@ -84,6 +82,18 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
         return sb.toString();
     }
 
+   public void waitUntilTextDisappears(String text) throws Exception{
+       assertTrue(solo.searchText(text,true));
+      for(int i=0;i<10;i++){
+          if(solo.searchText(text,true)){
+              Thread.sleep(2);
+          }else{
+              break;
+          }
 
-
+      }
+   }
 }
+
+
+

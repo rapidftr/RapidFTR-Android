@@ -18,7 +18,7 @@ public class ChildPage {
 
     public Solo solo;
     int formPosition ;
-    List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 3", "Select 1", "Radio 3", "1", "20", "10", "2012");
+    List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 1", "Select 1", "Radio 3", "1", "20", "10", "2012");
     private int nameHashCode = "name".hashCode();
 
     public ChildPage(Solo solo) {
@@ -109,4 +109,14 @@ public class ChildPage {
         solo.enterText(nameField, name);
     }
 
+
+    public void choosePopUpAction(String popUpAction) {
+        solo.clickOnText(popUpAction);
+    }
+
+    public boolean verifyRegisterPopup() {
+
+        return  solo.searchText("Cancel",true) && solo.searchText("Save",true) && solo.searchText("Discard",true) && solo.searchText("Choose an action",true);
+
+    }
 }

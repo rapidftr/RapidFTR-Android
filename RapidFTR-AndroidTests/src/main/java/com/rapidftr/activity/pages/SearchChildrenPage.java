@@ -17,6 +17,10 @@ public class SearchChildrenPage {
         solo.waitForActivity("SearchActivity");
     }
 
+    public void navigateToSearchTab(){
+        solo.clickOnText("Search");
+        solo.waitForActivity("SearchActivity");
+    }
     public void searchChild(String childName) {
         solo.enterText((EditText)solo.getCurrentActivity().findViewById(R.id.search_text),childName);
         clickSearch();
