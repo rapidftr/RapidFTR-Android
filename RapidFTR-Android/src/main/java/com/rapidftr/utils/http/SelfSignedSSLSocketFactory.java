@@ -1,14 +1,16 @@
 package com.rapidftr.utils.http;
 
-import com.google.common.collect.ObjectArrays;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 public class SelfSignedSSLSocketFactory extends SSLSocketFactory {
 
@@ -16,16 +18,44 @@ public class SelfSignedSSLSocketFactory extends SSLSocketFactory {
 
     public SelfSignedSSLSocketFactory(KeyStore keyStore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
         super(null, null, null, null, null, null);
-        this.setHostnameVerifier(BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+        this.setHostnameVerifier(ALLOW_ALL_HOSTNAME_VERIFIER);
 
-        TrustManagerFactory originalCAs = TrustManagerFactory.getInstance("X509");
+        TrustManagerFactory originalCAs = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         originalCAs.init((KeyStore) null);
 
         TrustManagerFactory customCAs = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         customCAs.init(keyStore);
 
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, ObjectArrays.concat(customCAs.getTrustManagers(), originalCAs.getTrustManagers(), TrustManager.class), null);
+	    final X509TrustManager defaultTrustManager = (X509TrustManager) originalCAs.getTrustManagers()[0];
+	    final X509TrustManager localTrustManager   = (X509TrustManager) customCAs.getTrustManagers()[0];
+
+	    TrustManager customTrustManager = new X509TrustManager() {
+		    @Override
+		    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+			    try {
+				    localTrustManager.checkClientTrusted(x509Certificates, s);
+			    } catch (Exception e) {
+				    defaultTrustManager.checkClientTrusted(x509Certificates, s);
+			    }
+		    }
+
+		    @Override
+		    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+			    try {
+				    localTrustManager.checkServerTrusted(x509Certificates, s);
+			    } catch (Exception e) {
+				    defaultTrustManager.checkServerTrusted(x509Certificates, s);
+			    }
+		    }
+
+		    @Override
+		    public X509Certificate[] getAcceptedIssuers() {
+			    return defaultTrustManager.getAcceptedIssuers();
+		    }
+	    };
+
+	    SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, new TrustManager[]{ customTrustManager }, null);
         socketFactory = sslContext.getSocketFactory();
     }
 
@@ -38,4 +68,6 @@ public class SelfSignedSSLSocketFactory extends SSLSocketFactory {
     public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException {
         return socketFactory.createSocket(socket, host, port, autoClose);
     }
+
+
 }
