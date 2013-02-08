@@ -1,10 +1,7 @@
 package com.rapidftr.task;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -25,7 +22,6 @@ import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
-import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.apache.http.HttpStatus.SC_CREATED;
 
 public class LoginAsyncTask extends AsyncTask<String, Void, User> {
@@ -72,7 +68,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
     }
 
 	protected User doLogin() throws IOException, JSONException, GeneralSecurityException {
-		return isOnline() ? doOnlineLogin() : doOfflineLogin();
+		return application.isOnline() ? doOnlineLogin() : doOfflineLogin();
 	}
 
 	protected User doOnlineLogin() throws IOException, JSONException, GeneralSecurityException {
@@ -101,15 +97,25 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 		    if (user == null)
 			    throw new GeneralSecurityException();
 
-		    application.setCurrentUser(user);
-            if(isOnline()){
-                formService.getPublishedFormSections();
-            }
-		    Toast.makeText(application, R.string.login_successful, Toast.LENGTH_LONG).show();
+            application.setCurrentUser(user);
+            getFormSections(user);
+
+            Toast.makeText(application, R.string.login_successful, Toast.LENGTH_LONG).show();
 		    goToHomeScreen();
 	    } catch (Exception e) {
 		    Toast.makeText(application, R.string.unauthorized, Toast.LENGTH_LONG).show();
 	    }
+    }
+
+    protected void getFormSections(User user) {
+        if (application.isOnline() && user.isVerified()) {
+            try {
+                formService.getPublishedFormSections();
+            } catch (Exception e) {
+                Log.e(APP_IDENTIFIER, "Failed to download form sections", e);
+                Toast.makeText(application, R.string.fetch_form_sections_error, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     protected void goToHomeScreen() {
@@ -117,10 +123,5 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
         activity.startActivity(new Intent(activity, MainActivity.class));
     }
 
-	protected boolean isOnline() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) application.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-		return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
-	}
 }
 

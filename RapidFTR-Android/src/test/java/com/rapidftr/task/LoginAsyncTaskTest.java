@@ -18,8 +18,6 @@ import java.security.GeneralSecurityException;
 
 import static com.rapidftr.CustomTestRunner.createUser;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -43,14 +41,14 @@ public class LoginAsyncTaskTest {
 
 	@Test
 	public void shouldCallOnlineLoginIfNetworkIsUp() throws IOException, JSONException, GeneralSecurityException {
-		doReturn(true).when(loginAsyncTask).isOnline();
+		doReturn(true).when(application).isOnline();
 		loginAsyncTask.doInBackground("", "", "");
 		verify(loginAsyncTask).doOnlineLogin();
 	}
 
 	@Test
 	public void shouldCallOfflineLoginIfNetworkIsDown() throws GeneralSecurityException, IOException {
-		doReturn(false).when(loginAsyncTask).isOnline();
+		doReturn(false).when(application).isOnline();
 		loginAsyncTask.doInBackground("", "", "");
 		verify(loginAsyncTask).doOfflineLogin();
 	}
@@ -97,6 +95,39 @@ public class LoginAsyncTaskTest {
     public void shouldShowAptToastMessageForSuccesfulOfflineLogin() throws IOException, GeneralSecurityException {
         loginAsyncTask.onPostExecute(createUser());
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(application.getString(R.string.login_successful)));
+    }
+
+    @Test
+    public void shouldDownloadFormSectionsUponSuccessfulLogin() {
+        User user = createUser();
+        doNothing().when(loginAsyncTask).getFormSections(user);
+        loginAsyncTask.onPostExecute(user);
+        verify(loginAsyncTask).getFormSections(user);
+    }
+
+    @Test
+    public void shouldDownloadFormSections() throws IOException {
+        User user = createUser();
+        doReturn(true).when(application).isOnline();
+        loginAsyncTask.getFormSections(user);
+        verify(formService).getPublishedFormSections();
+    }
+
+    @Test
+    public void shouldNotDownloadFormSectionsDuringOfflineLogin() throws IOException {
+        User user = createUser();
+        doReturn(false).when(application).isOnline();
+        loginAsyncTask.getFormSections(user);
+        verifyZeroInteractions(formService);
+    }
+
+    @Test
+    public void shouldNotDownloadFormSectionsForUnverifiedUser() throws IOException {
+        User user = createUser();
+        user.setVerified(false);
+        doReturn(true).when(application).isOnline();
+        loginAsyncTask.getFormSections(user);
+        verifyZeroInteractions(formService);
     }
 
 }

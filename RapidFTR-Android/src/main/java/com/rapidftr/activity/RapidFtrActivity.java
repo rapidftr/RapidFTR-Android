@@ -2,10 +2,8 @@ package com.rapidftr.activity;
 
 import android.app.AlertDialog;
 import android.content.*;
-import android.os.AsyncTask;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
@@ -27,10 +25,10 @@ import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
-import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 
-import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
+import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
 public abstract class RapidFtrActivity extends FragmentActivity {
@@ -176,7 +174,12 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     private void synchronise() {
+        RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
+        if(!application.isOnline()){
+            makeToast(R.string.sync_error);
+        }
         SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
+        application.setSyncTask(task);
         task.setContext(this);
         task.execute();
     }

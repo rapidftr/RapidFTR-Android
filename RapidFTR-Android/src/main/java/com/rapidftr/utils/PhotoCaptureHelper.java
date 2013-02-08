@@ -4,6 +4,8 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -87,8 +89,8 @@ public class PhotoCaptureHelper extends CaptureHelper {
         return decodeResource(application.getResources(), R.drawable.no_photo_clip);
     }
 
-    public void savePhoto(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        save(scaleImageTo(bitmap, 300, 300), fileNameWithoutExtension);
+    public void savePhoto(Bitmap bitmap, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        save(rotateBitmap(scaleImageTo(bitmap, 475, 635), rotationDegree), fileNameWithoutExtension);
     }
 
     protected Bitmap scaleImageTo(Bitmap image, int width, int height) {
@@ -104,8 +106,8 @@ public class PhotoCaptureHelper extends CaptureHelper {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream);
     }
 
-    public void saveThumbnail(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        save(scaleImageTo(bitmap, 96, 96), fileNameWithoutExtension + "_thumb");
+    public void saveThumbnail(Bitmap bitmap, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+        save(rotateBitmap(scaleImageTo(bitmap, 96, 96), rotationDegree), fileNameWithoutExtension + "_thumb");
     }
 
     public Bitmap loadThumbnail(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
@@ -133,5 +135,32 @@ public class PhotoCaptureHelper extends CaptureHelper {
             throw new RuntimeException(e);
         }
     }
+
+    public int getPictureRotation() throws IOException {
+        ExifInterface exif = getExifInterface();
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return 90;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return 180;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return 270;
+            default:
+                return 0;
+        }
+    }
+
+    protected ExifInterface getExifInterface() throws IOException {
+        return new ExifInterface(getTempCaptureFile().getAbsolutePath());
+    }
+
+    protected Bitmap rotateBitmap(Bitmap bitmap, int rotationDegree) throws IOException {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotationDegree);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
 
 }
