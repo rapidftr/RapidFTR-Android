@@ -125,10 +125,11 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     public void saveCapture() {
         try {
             Bitmap bitmap = photoCaptureHelper.getCapture();
+            int rotationDegree = photoCaptureHelper.getPictureRotation();
             photoCaptureHelper.deleteCaptures();
             String fileName = createCaptureFileName();
             Log.e("REGISTER", "start of async task ");
-            new EncryptImageAsyncTask(getContext(), photoCaptureHelper, bitmap, fileName, this).execute();
+            new EncryptImageAsyncTask(getContext(), photoCaptureHelper, bitmap, fileName, this, rotationDegree).execute();
             child.put(formField.getId(), fileName);
         } catch (Exception e) {
             Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG).show();

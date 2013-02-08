@@ -1,10 +1,7 @@
 package com.rapidftr.task;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -25,7 +22,6 @@ import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
-import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.apache.http.HttpStatus.SC_CREATED;
 
 public class LoginAsyncTask extends AsyncTask<String, Void, User> {
@@ -72,7 +68,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
     }
 
 	protected User doLogin() throws IOException, JSONException, GeneralSecurityException {
-		return isOnline() ? doOnlineLogin() : doOfflineLogin();
+		return application.isOnline() ? doOnlineLogin() : doOfflineLogin();
 	}
 
 	protected User doOnlineLogin() throws IOException, JSONException, GeneralSecurityException {
@@ -112,7 +108,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
     }
 
     protected void getFormSections(User user) {
-        if (isOnline() && user.isVerified()) {
+        if (application.isOnline() && user.isVerified()) {
             try {
                 formService.getPublishedFormSections();
             } catch (Exception e) {
@@ -127,10 +123,5 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
         activity.startActivity(new Intent(activity, MainActivity.class));
     }
 
-	protected boolean isOnline() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) application.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-		return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
-	}
 }
 
