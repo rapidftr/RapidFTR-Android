@@ -1,5 +1,8 @@
 package com.rapidftr.activity;
 
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ListView;
 import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
@@ -56,6 +59,20 @@ public class ViewAllChildrenActivityTest {
         activity.onCreate(null);
         ListView listView = (ListView) activity.findViewById(R.id.child_list);
         assertNotNull(listView.getEmptyView());
+    }
+
+    @Test
+    public void shouldRenderMenuWithViewChildrenMenuLayout(){
+        ViewAllChildrenActivity viewAllChildrenActivity = new ViewAllChildrenActivity();
+        RapidFtrActivity spyViewAllChildrenActivity = spy(viewAllChildrenActivity);
+        Menu menu = mock(Menu.class);
+        MenuInflater menuInflater = mock(MenuInflater.class);
+        when(menu.getItem(0)).thenReturn(mock(MenuItem.class));
+        when(menu.getItem(1)).thenReturn(mock(MenuItem.class));
+        when(spyViewAllChildrenActivity.getMenuInflater()).thenReturn(menuInflater);
+        spyViewAllChildrenActivity.onCreate(null);
+        spyViewAllChildrenActivity.onCreateOptionsMenu(menu);
+        verify(menuInflater).inflate(R.menu.view_children_menu, menu);
     }
 
 }
