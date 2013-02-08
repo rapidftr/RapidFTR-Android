@@ -32,6 +32,7 @@ import java.util.Map;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
+import static com.rapidftr.view.fields.PhotoUploadBox.PHOTO_KEYS;
 import static java.util.Arrays.asList;
 
 public class ChildService {
@@ -96,11 +97,15 @@ public class ChildService {
     }
 
     private void addMultiMediaFilesToTheRequest(Child child) throws JSONException {
-        if (child.opt("current_photo_key") != null && !child.optString("current_photo_key").equals("")) {
-            List<Object> photoKeys = getPhotoKeys(child);
-            if (!photoKeys.contains(child.optString("current_photo_key"))) {
-                fluentRequest.param("current_photo_key", child.optString("current_photo_key"));
+        JSONArray photoKeys = child.optJSONArray(PHOTO_KEYS);
+        JSONArray photoKeysToAdd = new JSONArray();
+        if(photoKeys != null){
+            for(int i = 0; i< photoKeys.length(); i++){
+                if(!photoKeys.optString(i).startsWith("photo-")){
+                    photoKeysToAdd.put(photoKeys.optString(i));
+                }
             }
+            fluentRequest.param("photo_keys", photoKeysToAdd.toString());
         }
         if (child.opt("recorded_audio") != null && !child.optString("recorded_audio").equals("")) {
             if (!getAudioKey(child).equals(child.optString("recorded_audio"))) {
@@ -208,7 +213,7 @@ public class ChildService {
         audioCaptureHelper.saveAudio(child, response.getEntity().getContent());
     }
 
-    private void savePhoto(Bitmap bitmap, PhotoCaptureHelper photoCaptureHelper, String current_photo_key) throws IOException {
+    public void savePhoto(Bitmap bitmap, PhotoCaptureHelper photoCaptureHelper, String current_photo_key) throws IOException {
         if (bitmap != null && !current_photo_key.equals("")) {
             try {
                 photoCaptureHelper.saveThumbnail(bitmap, 0, current_photo_key);
