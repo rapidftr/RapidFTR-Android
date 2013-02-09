@@ -90,6 +90,9 @@
     <string name="this_is_audio_upload_box">This is an audio upload box</string>
     <string name="info">Info</string>
     <string name="sort_by">Sort by</string>
+    <string name="sort_by_options">Sort Options</string>
+    <string name="sort_by_name">Name</string>
+    <string name="sort_by_recent_update">Recent Update</string>
 
     <string name="info_text">RapidFTR is supported in the following languages:</string>
     <string name="full_name_label">Full name:</string>
