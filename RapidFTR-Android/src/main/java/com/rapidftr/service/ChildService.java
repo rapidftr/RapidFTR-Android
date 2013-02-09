@@ -195,10 +195,10 @@ public class ChildService {
 
     }
 
-    public void getPhotoFromServer(Child child, PhotoCaptureHelper photoCaptureHelper, String currentPhotoKey) throws IOException {
-        HttpResponse httpResponse = getPhoto(child);
+    public void getPhotoFromServer(Child child, PhotoCaptureHelper photoCaptureHelper, String fileName) throws IOException {
+        HttpResponse httpResponse = getPhoto(child, fileName);
         Bitmap bitmap = BitmapFactory.decodeStream(httpResponse.getEntity().getContent());
-        savePhoto(bitmap, photoCaptureHelper, currentPhotoKey);
+        savePhoto(bitmap, photoCaptureHelper, fileName);
     }
 
 
@@ -230,9 +230,9 @@ public class ChildService {
         }
     }
 
-    public HttpResponse getPhoto(Child child) throws IOException {
+    public HttpResponse getPhoto(Child child, String fileName) throws IOException {
         return fluentRequest
-                .path(String.format("/children/%s/photo/%s", child.optString("_id"), child.optString("current_photo_key")))
+                .path(String.format("/children/%s/photo/%s", child.optString("_id"), fileName))
                 .context(context)
                 .get();
     }
