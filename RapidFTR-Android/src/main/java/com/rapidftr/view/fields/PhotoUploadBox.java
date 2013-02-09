@@ -9,10 +9,7 @@ import android.provider.MediaStore;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.*;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
@@ -55,14 +52,21 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         activity.addResultListener(CAPTURE_IMAGE_REQUEST, this);
         activity.addResultListener(CLOSE_ACTIVITY, this);
         activity.addResultListener(SHOW_FULL_IMAGE_REQUEST, this);
-
-        getImageContainer().setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onImageClick();
-            }
-        });
         repaint();
+    }
+
+    private void toggleVisibility() {
+        if (enabled) {
+            getImageContainer().setVisibility(View.VISIBLE);
+            getImageContainer().setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onImageClick();
+                }
+            });
+        } else {
+            getImageContainer().setVisibility(View.GONE);
+        }
     }
 
 
@@ -87,6 +91,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     @Override
     public void setEnabled(boolean isEnabled) {
         this.enabled = isEnabled;
+        toggleVisibility();
     }
 
     protected void deleteCapture() {
@@ -96,14 +101,12 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     public View getImageContainer() {
-        return findViewById(R.id.capture);
+        return findViewById(R.id.thumbnail);
     }
 
     public void onImageClick() {
         if (enabled) {
             startCapture();
-        } else {
-            showFullPhoto(null);
         }
     }
 
