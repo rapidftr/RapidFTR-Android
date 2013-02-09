@@ -179,14 +179,20 @@ public class ChildService {
 
     public void setPhoto(Child child) throws IOException, JSONException {
         PhotoCaptureHelper photoCaptureHelper = new PhotoCaptureHelper(context);
-        String currentPhotoKey = child.optString("current_photo_key");
-        try {
-            if (!currentPhotoKey.equals("")) {
-                photoCaptureHelper.getFile(currentPhotoKey, ".jpg");
+
+        JSONArray photoKeys = new JSONArray(child.optString("photo_keys"));
+        for(int i = 0; i < photoKeys.length(); i++){
+            String photoKey = photoKeys.get(i).toString();
+            try {
+                if (!photoKey.equals("")) {
+                    photoCaptureHelper.getFile(photoKey, ".jpg");
+                }
             }
-        } catch (FileNotFoundException e) {
-            getPhotoFromServer(child, photoCaptureHelper, currentPhotoKey);
+            catch (FileNotFoundException e) {
+                getPhotoFromServer(child, photoCaptureHelper, photoKey);
+            }
         }
+
     }
 
     public void getPhotoFromServer(Child child, PhotoCaptureHelper photoCaptureHelper, String currentPhotoKey) throws IOException {

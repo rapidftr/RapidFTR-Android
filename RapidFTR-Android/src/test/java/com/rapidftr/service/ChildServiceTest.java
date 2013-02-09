@@ -186,19 +186,25 @@ public class ChildServiceTest {
         assertThat(syncedChild.getString("_attachments"), is(nullValue()));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void shouldSetMediaIfNotAlreadyExistingOnTheMobile() throws JSONException, IOException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         RapidFtrApplication context = mockContext();
-        String response = "{\"recorded_audio\":\"audio-12321\",\"photo_keys\": \"[photo-998,photo-888]\",\"_id\":\"abcd\",\"current_photo_key\": \"photo-998877\",\"separation_place\":\"\",\"wishes_address_3\":\"\",\"care_arrangments_name\":\"\",\"other_family\":\"\",\"care_arrangements_knowsfamily\":\"\",\"created_at\":\"2012-12-14 10:57:39UTC\",\"wishes_contacted_details\":\"\",\"posted_from\":\"Browser\"}";
+        String response = "{\"recorded_audio\":\"audio-12321\",\"photo_keys\": \"[photo-998,photo-888, photo-777]\",\"_id\":\"abcd\",\"current_photo_key\": \"photo-888\",\"separation_place\":\"\",\"wishes_address_3\":\"\",\"care_arrangments_name\":\"\",\"other_family\":\"\",\"care_arrangements_knowsfamily\":\"\",\"created_at\":\"2012-12-14 10:57:39UTC\",\"wishes_contacted_details\":\"\",\"posted_from\":\"Browser\"}";
+        ChildService childService = spy(new ChildService(context, repository, mockFluentRequest));
         getFakeHttpLayer().setDefaultHttpResponse(200, response);
-
         Child child = new Child("id","user","{ 'name' : 'child1'}");
-        new ChildService(context, repository, mockFluentRequest).sync(child, currentUser);
 
-        verify(mockFluentRequest).path("/children/abcd/photo/photo-998877");
+        doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-998"));
+        doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-888"));
+        doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-777"));
+
+        childService.sync(child, currentUser);
+
         verify(mockFluentRequest).path("/children/abcd/audio");
-
+        verify(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-888"));
+        verify(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-998"));
+        verify(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-777"));
     }
 
     @Test
