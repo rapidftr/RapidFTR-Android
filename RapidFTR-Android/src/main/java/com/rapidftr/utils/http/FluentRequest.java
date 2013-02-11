@@ -24,15 +24,16 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.*;
 import java.net.URI;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.*;
 
@@ -126,11 +127,9 @@ public class FluentRequest {
         MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
         if (params.size() > 0) {
             for (Map.Entry<String, String> param : params.entrySet()){
-                if(param.getKey().equals("current_photo_key")){
+                if(param.getKey().equals("photo_keys")){
                         try {
-                            multipartEntity.addPart("child[photo]",
-                            new ByteArrayBody(IOUtils.toByteArray(new PhotoCaptureHelper((RapidFtrApplication) context).getDecodedImageStream(param.getValue())),
-                                            "image/jpg", param.getValue()+".jpg"));
+                            addPhotoToMultipart(multipartEntity, param.getValue());
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -156,11 +155,21 @@ public class FluentRequest {
                     }
                 }
             }
-
-
         }
         request.setEntity(multipartEntity);
         return execute(request);
+    }
+
+    public void addPhotoToMultipart(MultipartEntity multipartEntity, String param) throws IOException, GeneralSecurityException, JSONException {
+        JSONArray photoKeys = new JSONArray(param);
+        for(int i = 0; i < photoKeys.length(); i++){
+            multipartEntity.addPart("child[photo]["+i+"]", attachPhoto(photoKeys.get(i).toString()));
+        }
+    }
+
+    protected ByteArrayBody attachPhoto(String fileName) throws IOException, GeneralSecurityException {
+        return new ByteArrayBody(IOUtils.toByteArray(new PhotoCaptureHelper((RapidFtrApplication) context).getDecodedImageStream(fileName)),
+                        "image/jpg", fileName+".jpg");
     }
 
     protected FluentResponse executeUnenclosed(HttpRequestBase request) throws IOException {

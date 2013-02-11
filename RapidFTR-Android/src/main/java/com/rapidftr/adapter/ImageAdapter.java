@@ -53,6 +53,8 @@ public class ImageAdapter extends BaseAdapter {
         try {
             bitmap = photoCaptureHelper.getThumbnailOrDefault(photoKeys.get(position).toString());
             imageView = new ImageView(context);
+            imageView.setPadding(0,0,0,0);
+            imageView.setAdjustViewBounds(true);
             imageView.setImageBitmap(bitmap);
         } catch (JSONException e) {
             throw new RuntimeException(e);

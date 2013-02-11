@@ -48,6 +48,7 @@
     <string name="photo_view_error">حدث خطأ عند تحميل الصورة</string>
     <string name="photo_not_captured">لم يتم إلتقاط صورة للسجل</string>
     <string name="photo_gallery_delete_error">غير قادر على مسح الصورة. الرجاء الذهاب إلى الأستوديو و مسحها يدويا</string>
+    <string name="set_as_primary">Set as primary photo</string>
 
     <string name="synchronize_all">تزامن الكل</string>
     <string name="cancel_synchronize_all">إلغاء تزامن الكل</string>
