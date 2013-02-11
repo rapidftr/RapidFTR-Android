@@ -180,10 +180,14 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         final JSONArray photoKeys = child.optJSONArray(PHOTO_KEYS);
         addImageClickListener(photoGridView, photoKeys);
         if (photoKeys != null) {
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) photoGridView.getLayoutParams();
-            layoutParams.height = measureRealHeightForGridView(photoGridView, photoKeys.length());
+            setGridAttributes(photoGridView, photoKeys);
             photoGridView.setAdapter(new ImageAdapter(getContext(), child, photoCaptureHelper, enabled));
         }
+    }
+
+    protected void setGridAttributes(GridView photoGridView, JSONArray photoKeys) {
+        LayoutParams layoutParams = (LayoutParams) photoGridView.getLayoutParams();
+        layoutParams.height = measureRealHeightForGridView(photoGridView, photoKeys.length());
     }
 
     private int measureRealHeightForGridView(GridView gridView, int imagesCount){

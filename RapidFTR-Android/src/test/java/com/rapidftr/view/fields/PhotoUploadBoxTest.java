@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
+import android.widget.GridView;
 import android.widget.ImageView;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
@@ -11,13 +12,12 @@ import com.rapidftr.activity.BaseChildActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.utils.PhotoCaptureHelper;
-import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -55,36 +55,6 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
         view.setEnabled(true);
         view.getImageContainer().performClick();
         verify(view).startCapture();
-    }
-
-    @Test
-    public void shouldShowFullPhotoWhenImageClickedAndViewIsDisabled(){
-        view.initialize(field, child);
-        doNothing().when(view).startCapture();
-
-        view.setEnabled(false);
-        view.getImageContainer().performClick();
-        verify(view).showFullPhoto(null);
-
-    }
-    @Test
-    public void shouldShowPhotoWhenImageClicked() throws Exception {
-        view.initialize(field, child);
-        doNothing().when(view).showFullPhoto(null);
-
-        child.put(field.getId(), "random_file_name");
-        view.getImageContainer().performClick();
-
-        verify(view).onImageClick();
-        verify(view).showFullPhoto(null);
-    }
-
-    @Test
-    public void shouldShowImageNotAvailableToastIfViewIsDisabledAndTheImageIsNotAvailable(){
-        view.initialize(field, child);
-        view.setEnabled(false);
-        view.getImageContainer().performClick();
-        Assert.assertThat(ShadowToast.getTextOfLatestToast(), equalTo(view.getContext().getString(R.string.photo_not_captured)));
     }
 
     @Test
@@ -162,7 +132,7 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
         doReturn(fileName).when(view).createCaptureFileName();
 
         view.saveCapture();
-        assertThat(child.getString(field.getId()), equalTo("random_file_name"));
+        assertThat(child.getString("current_photo_key"), equalTo("random_file_name"));
     }
 
     @Test
@@ -179,9 +149,10 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
     @Test
     public void shouldAddCapturedFileNamesToExistingPhotoKeys() throws JSONException {
         child.put("photo_keys", new JSONArray("[some_file_name]"));
-        view.initialize(field, child);
         String fileName = "random_file_name";
         doReturn(fileName).when(view).createCaptureFileName();
+        doNothing().when(view).setGridAttributes(Matchers.any(GridView.class), Matchers.any(JSONArray.class));
+        view.initialize(field, child);
 
         view.saveCapture();
         assertThat(child.optJSONArray("photo_keys").length(), is(2));
