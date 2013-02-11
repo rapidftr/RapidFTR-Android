@@ -170,7 +170,7 @@ public class Child extends JSONObject implements Parcelable {
         put(created_at.getColumnName(), createdAt);
     }
 
-    public String getLastUpdatedAt() throws JSONException {
+    public String getLastUpdatedAt(){
         return optString(last_updated_at.getColumnName(), null);
     }
 

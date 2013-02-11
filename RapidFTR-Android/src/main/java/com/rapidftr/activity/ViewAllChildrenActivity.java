@@ -1,7 +1,10 @@
 package com.rapidftr.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ListView;
 import com.rapidftr.R;
 import com.rapidftr.adapter.ChildViewAdapter;
@@ -10,18 +13,74 @@ import com.rapidftr.repository.ChildRepository;
 import lombok.Cleanup;
 import org.json.JSONException;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ViewAllChildrenActivity extends RapidFtrActivity {
+
+    List<Child> children;
+    ChildViewAdapter childViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_children);
-        listView(getChildren());
+        menuId = R.menu.view_children_menu;
+        children = getChildren();
+        listView();
     }
-    
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.sort_by) {
+           showSortOptions();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showSortOptions() {
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener(){
+
+            @Override
+            public void onClick(DialogInterface dialogInterface, int item) {
+                 switch (item){
+                     case 0:
+                         sortChildrenByName();
+                         break;
+                     case 1:
+                         sortChildrenByRecentUpdate();
+                         break;
+                 }
+            }
+        };
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle(getString(R.string.sort_by_options)).setCancelable(false);
+        alertDialog.setItems(new String[]{getString(R.string.sort_by_name), getString(R.string.sort_by_recent_update)}, listener);
+        alertDialog.create().show();
+    }
+
+    private void sortChildrenByRecentUpdate() {
+        childViewAdapter.sort(new Comparator<Child>() {
+            @Override
+            public int compare(Child child, Child child1) {
+               Timestamp childLastUpdateAt = Timestamp.valueOf(child.getLastUpdatedAt());
+               Timestamp child1LastUpdateAt = Timestamp.valueOf(child1.getLastUpdatedAt());
+               return child1LastUpdateAt.compareTo(childLastUpdateAt);
+            }
+        });
+    }
+
+    private void sortChildrenByName() {
+        childViewAdapter.sort(new Comparator<Child>() {
+            @Override
+            public int compare(Child child, Child child1) {
+                return child.getName().compareTo(child1.getName());
+            }
+        });
+    }
+
     private List<Child> getChildren()
     {
         List<Child> children = new ArrayList<Child>();
@@ -35,10 +94,11 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
         return children;
     }
     
-    private void listView(List<Child> children) {
-        ChildViewAdapter childViewAdapter = new ChildViewAdapter(this, R.layout.row_child, children);
+    private void listView() {
+        childViewAdapter = new ChildViewAdapter(this, R.layout.row_child, this.children);
+
         ListView childListView = (ListView) findViewById(R.id.child_list);
-        if (children.isEmpty()) {
+        if (this.children.isEmpty()) {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
         }
         childListView.setAdapter(childViewAdapter);

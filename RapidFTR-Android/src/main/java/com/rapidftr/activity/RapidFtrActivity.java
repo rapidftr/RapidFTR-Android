@@ -37,6 +37,8 @@ public abstract class RapidFtrActivity extends FragmentActivity {
 
     protected @Getter @Setter Menu menu;
 
+    int menuId = R.menu.options_menu;
+
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -131,7 +133,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (getContext().isLoggedIn()) {
-            getMenuInflater().inflate(R.menu.options_menu, menu);
+            getMenuInflater().inflate(menuId, menu);
             setMenu(menu);
             toggleSync(menu);
             setContextToSyncTask();
