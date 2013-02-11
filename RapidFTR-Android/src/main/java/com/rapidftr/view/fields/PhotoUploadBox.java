@@ -181,7 +181,6 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         addImageClickListener(photoGridView, photoKeys);
         if (photoKeys != null) {
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) photoGridView.getLayoutParams();
-            layoutParams.setMargins(0,0,0,0);
             layoutParams.height = measureRealHeightForGridView(photoGridView, photoKeys.length());
             photoGridView.setAdapter(new ImageAdapter(getContext(), child, photoCaptureHelper, enabled));
         }
@@ -191,12 +190,12 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         final int screenWidth = windowManager.getDefaultDisplay().getWidth();
         final double screenDensity = getResources().getDisplayMetrics().density;
-        final int horizontalSpacing = (int) (5 * screenDensity + 1);
-        final int verticalSpacing = (int) (5 * screenDensity + 1);
-        final int columnWidth = (int) (90 * screenDensity + 1);
-        final int columnsCount = (screenWidth  + horizontalSpacing - gridView.getVerticalScrollbarWidth()) / (columnWidth + horizontalSpacing);
+        final int horizontalSpacing = (int) (2 * screenDensity + 0.5f);
+        final int verticalSpacing = (int) (2 * screenDensity + 0.5f);
+        final int columnWidth = (int) (90 * screenDensity + 0.5f);
+        final int columnsCount = (screenWidth - gridView.getVerticalScrollbarWidth()) / (columnWidth + horizontalSpacing);
         final int rowsCount = imagesCount / columnsCount + (imagesCount % columnsCount == 0 ? 0 : 1);
-        return columnWidth * rowsCount + verticalSpacing * (rowsCount - 1) + 70;
+        return columnWidth * rowsCount + verticalSpacing * (rowsCount - 1);
     }
 
     private void addImageClickListener(GridView photoGridView, final JSONArray photoKeys) {
