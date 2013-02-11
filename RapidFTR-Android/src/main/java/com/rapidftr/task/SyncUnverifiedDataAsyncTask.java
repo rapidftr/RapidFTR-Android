@@ -1,21 +1,20 @@
 package com.rapidftr.task;
 
+import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
-import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
-import com.rapidftr.service.FormService;
-import com.rapidftr.service.LoginService;
-import com.rapidftr.service.RegisterUserService;
+import com.rapidftr.service.*;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStreamReader;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -45,10 +44,23 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
     protected void sync() throws JSONException, IOException {
         setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
         registerUser();
-        login();
+        JSONObject response = login();
         getFormSections();
         sendChildrenToServer(childRepository.currentUsersUnsyncedRecords());
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
+        RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
+        if(response.getBoolean("user_status") && !application.getCurrentUser().isVerified()){
+            new MigrateUnverifiedDataToVerified(response, application.getCurrentUser()).execute();
+            setNewCurrentUser(response, application.getCurrentUser());
+        }
+
+    }
+
+    private void setNewCurrentUser(JSONObject userFromResponse, User currentUser) throws JSONException {
+        currentUser.setDbKey(userFromResponse.getString("db_key"));
+        currentUser.setVerified(userFromResponse.getBoolean("user_status"));
+        currentUser.setOrganisation(userFromResponse.getString("organisation"));
+        currentUser.setLanguage(userFromResponse.getString("language"));
     }
 
     private void registerUser() throws IOException {
@@ -61,8 +73,19 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
         }
     }
 
-    private void login() throws IOException {
-        loginService.login(context, currentUser.getUserName(), currentUser.getUnauthenticatedPassword(), currentUser.getServerUrl());
+    private JSONObject login() throws IOException, JSONException {
+        HttpResponse response = loginService.login(context, currentUser.getUserName(), currentUser.getUnauthenticatedPassword(), currentUser.getServerUrl());
+        if(response !=null && (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED || response.getStatusLine().getStatusCode() == HttpStatus.SC_OK))
+            return new JSONObject(getResponse(response));
+        return null;
+    }
+
+    protected String getResponse(HttpResponse response) throws IOException {
+        return CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
+    }
+
+    private User getUser() {
+        return RapidFtrApplication.getApplicationInstance().getCurrentUser();
     }
 
 }

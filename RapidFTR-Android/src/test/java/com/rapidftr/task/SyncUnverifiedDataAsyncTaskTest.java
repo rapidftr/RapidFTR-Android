@@ -15,13 +15,18 @@ import com.rapidftr.service.LoginService;
 import com.rapidftr.service.RegisterUserService;
 import com.rapidftr.utils.http.FluentResponse;
 import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
+import org.apache.http.HttpResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 
+import java.io.IOException;
+
 import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -91,6 +96,20 @@ public class SyncUnverifiedDataAsyncTaskTest {
         task.execute();
 
         verify(childService).sync(child, currentUser);
+    }
+
+    @Test
+    public void shouldUpdateUserIfHasBeenChangedAsVerifiedInServer() throws IOException {
+        task = spy(task);
+        HttpResponse response = new TestHttpResponse(201, "{\"user_status\":true, \"db_key\":\"hey_from_server\", \"organisation\":\"tw\",\"language\":\"en\"}");
+        doReturn(response).when(loginService).login(rapidFtrActivity, "username", "password", "serverUrl");
+        task.onPreExecute();
+        task.execute();
+        User newUser = applicationContext.getCurrentUser();
+        assertTrue(newUser.isVerified());
+        assertEquals(newUser.getDbKey(), "hey_from_server");
+        assertEquals(newUser.getOrganisation(), "tw");
+        assertEquals(newUser.getLanguage(), "en");
     }
 
 }
