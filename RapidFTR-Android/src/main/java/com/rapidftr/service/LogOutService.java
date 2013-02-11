@@ -9,7 +9,9 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.LoginActivity;
 import com.rapidftr.activity.RapidFtrActivity;
+import com.rapidftr.utils.http.FluentRequest;
 
+import java.io.FileReader;
 import java.io.IOException;
 
 import static android.widget.Toast.LENGTH_LONG;
@@ -24,10 +26,11 @@ public class LogOutService {
 	        logOut(currentActivity);
     }
 
-    private void logOut(RapidFtrActivity currentActivity) {
+    protected void logOut(RapidFtrActivity currentActivity) {
 	    try {
 		    RapidFtrApplication context = currentActivity.getContext();
 		    context.setCurrentUser(null);
+		    FluentRequest.getHttpClient().getCookieStore().clear();
 		    Toast.makeText(context, R.string.logout_successful, LENGTH_LONG).show();
 		    currentActivity.finish();
 		    currentActivity.startActivity(new Intent(currentActivity, LoginActivity.class));
