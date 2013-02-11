@@ -180,7 +180,14 @@ public class ChildService {
     public void setPhoto(Child child) throws IOException, JSONException {
         PhotoCaptureHelper photoCaptureHelper = new PhotoCaptureHelper(context);
 
-        JSONArray photoKeys = new JSONArray(child.optString("photo_keys"));
+        JSONArray photoKeys = child.optJSONArray("photo_keys");
+        if(photoKeys != null){
+            getPhotoFromServerIfNeeded(child, photoCaptureHelper, photoKeys);
+        }
+
+    }
+
+    private void getPhotoFromServerIfNeeded(Child child, PhotoCaptureHelper photoCaptureHelper, JSONArray photoKeys) throws JSONException, IOException {
         for(int i = 0; i < photoKeys.length(); i++){
             String photoKey = photoKeys.get(i).toString();
             try {
@@ -192,7 +199,6 @@ public class ChildService {
                 getPhotoFromServer(child, photoCaptureHelper, photoKey);
             }
         }
-
     }
 
     public void getPhotoFromServer(Child child, PhotoCaptureHelper photoCaptureHelper, String fileName) throws IOException {
