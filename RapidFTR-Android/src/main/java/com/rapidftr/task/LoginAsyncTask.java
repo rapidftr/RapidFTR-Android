@@ -97,6 +97,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 		    if (user == null)
 			    throw new GeneralSecurityException();
 
+		    user.save();
             application.setCurrentUser(user);
             getFormSections(user);
 
