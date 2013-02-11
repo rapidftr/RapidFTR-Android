@@ -7,6 +7,7 @@ import com.rapidftr.activity.pages.ChildPage;
 import com.rapidftr.activity.pages.LoginPage;
 import com.rapidftr.activity.pages.SearchChildrenPage;
 import com.rapidftr.activity.pages.ViewAllChildrenPage;
+import com.rapidftr.repository.ChildRepository;
 
 public abstract class BaseActivityIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
@@ -17,6 +18,9 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     public SearchChildrenPage searchPage;
 	public RapidFtrApplication application;
 
+
+    RapidFtrApplication context = RapidFtrApplication.getApplicationInstance() ;
+    ChildRepository repository=context.getInjector().getInstance(ChildRepository.class);
 
     final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
