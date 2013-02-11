@@ -104,4 +104,5 @@
     <string name="play_record">Play</string>
 
     <string name="network_down">Connection to the server lost, the sync process has been cancelled</string>
+    <string name="temp_sync_error">Error occurred while syncing the record with the server, please try again.</string>
 </resources>

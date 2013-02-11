@@ -15,7 +15,6 @@ import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.RapidFtrDateTime;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
-import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
@@ -32,7 +31,6 @@ import java.util.Map;
 
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.rapidftr.database.Database.ChildTableColumn.content;
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static java.util.Arrays.asList;
 
@@ -213,8 +211,8 @@ public class ChildService {
     private void savePhoto(Bitmap bitmap, PhotoCaptureHelper photoCaptureHelper, String current_photo_key) throws IOException {
         if (bitmap != null && !current_photo_key.equals("")) {
             try {
-                photoCaptureHelper.saveThumbnail(bitmap, current_photo_key);
-                photoCaptureHelper.savePhoto(bitmap, current_photo_key);
+                photoCaptureHelper.saveThumbnail(bitmap, 0, current_photo_key);
+                photoCaptureHelper.savePhoto(bitmap, 0, current_photo_key);
             } catch (GeneralSecurityException e) {
                 throw new RuntimeException(e);
             }

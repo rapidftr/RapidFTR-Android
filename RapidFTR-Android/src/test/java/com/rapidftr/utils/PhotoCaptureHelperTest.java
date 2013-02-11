@@ -2,6 +2,7 @@ package com.rapidftr.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
 import android.os.Environment;
 import com.google.common.io.Files;
 import com.rapidftr.CustomTestRunner;
@@ -22,6 +23,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -120,19 +122,20 @@ public class PhotoCaptureHelperTest {
     public void testSaveThumbnailShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
         doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 96, 96);
+        doReturn(expected).when(photoCaptureHelper).rotateBitmap(expected, 90);
         doNothing().when(photoCaptureHelper).save(expected, "random_file_thumb");
 
-        photoCaptureHelper.saveThumbnail(original, "random_file");
+        photoCaptureHelper.saveThumbnail(original, 90, "random_file");
         verify(photoCaptureHelper).save(expected, "random_file_thumb");
     }
 
     @Test
     public void testSaveActualImageShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
-        doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 300, 300);
+        doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 475, 635);
+        doReturn(expected).when(photoCaptureHelper).rotateBitmap(expected, 180);
         doNothing().when(photoCaptureHelper).save(expected, "random_file");
-
-        photoCaptureHelper.savePhoto(original, "random_file");
+        photoCaptureHelper.savePhoto(original, 180, "random_file");
         verify(photoCaptureHelper).save(expected, "random_file");
     }
 
@@ -146,6 +149,15 @@ public class PhotoCaptureHelperTest {
         photoCaptureHelper.save(bitmap, "random_file");
         verify(bitmap).compress(Bitmap.CompressFormat.JPEG, 85, out);
         verify(out).close();
+    }
+
+    @Test
+    public void testShouldReturnRotationInfoOfPicture() throws IOException {
+        ExifInterface mockExifInterface = mock(ExifInterface.class);
+        doReturn(mockExifInterface).when(photoCaptureHelper).getExifInterface();
+        doReturn(ExifInterface.ORIENTATION_ROTATE_90).when(mockExifInterface).getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+        int rotation = photoCaptureHelper.getPictureRotation();
+        assertEquals(90, rotation);
     }
 
     @After

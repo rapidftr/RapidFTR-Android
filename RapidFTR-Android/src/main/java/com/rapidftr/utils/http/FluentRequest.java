@@ -23,6 +23,7 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
@@ -61,6 +62,8 @@ public class FluentRequest {
             String[] parts = host.split("\\:\\/\\/");
             scheme(parts[0]);
             host = parts[1];
+        } else {
+	        scheme("http");
         }
 
         uri.encodedAuthority(host);
@@ -228,7 +231,7 @@ public class FluentRequest {
             registry.register(new Scheme("https", new SelfSignedSSLSocketFactory(trusted), 443));
 
             HttpParams params = new BasicHttpParams();
-            ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(params, registry);
+            ClientConnectionManager connectionManager = new SingleClientConnManager(params, registry);
 
             return new DefaultHttpClient(connectionManager, params);
         } catch (Exception e) {

@@ -24,11 +24,11 @@ public class EncryptImageAsyncTaskTest {
     @Test
     public void testEncryptAndSaveImage() throws Exception {
         String fileName = "random";
-        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, photoCaptureHelper, bitmap, fileName, photoUploadBox);
+        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, photoCaptureHelper, bitmap, fileName, photoUploadBox, 90);
         AsyncTask<Void, Integer, Boolean> task = asyncTask.execute();
         assertTrue(task.get());
-        verify(photoCaptureHelper).saveThumbnail(bitmap, fileName);
-        verify(photoCaptureHelper).savePhoto(bitmap, fileName);
+        verify(photoCaptureHelper).saveThumbnail(bitmap, 90, fileName);
+        verify(photoCaptureHelper).savePhoto(bitmap, 90, fileName);
         verify(bitmap).recycle();
         verify(photoUploadBox).repaint();
     }
@@ -36,12 +36,12 @@ public class EncryptImageAsyncTaskTest {
     @Test
     public void testEncryptShouldReturnFalseIfSaveFails() throws Exception {
         String fileName = "random";
-        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, photoCaptureHelper, bitmap, fileName, photoUploadBox);
-        doThrow(new RuntimeException()).when(photoCaptureHelper).saveThumbnail(bitmap, fileName);
+        EncryptImageAsyncTask asyncTask = new EncryptImageAsyncTask(context, photoCaptureHelper, bitmap, fileName, photoUploadBox, 180);
+        doThrow(new RuntimeException()).when(photoCaptureHelper).saveThumbnail(bitmap, 180, fileName);
         AsyncTask<Void, Integer, Boolean> task = asyncTask.execute();
         assertFalse(task.get());
-        verify(photoCaptureHelper).saveThumbnail(bitmap, fileName);
-        verify(photoCaptureHelper,never()).savePhoto(bitmap, fileName);
+        verify(photoCaptureHelper).saveThumbnail(bitmap, 180, fileName);
+        verify(photoCaptureHelper,never()).savePhoto(bitmap, 180, fileName);
         verify(bitmap).recycle();
         verify(photoUploadBox).repaint();
     }
