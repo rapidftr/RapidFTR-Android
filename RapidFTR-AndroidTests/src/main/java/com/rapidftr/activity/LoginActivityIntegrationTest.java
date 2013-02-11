@@ -1,5 +1,7 @@
 package com.rapidftr.activity;
 
+import android.content.Context;
+import android.net.wifi.WifiManager;
 import android.test.suitebuilder.annotation.Smoke;
 import com.rapidftr.R;
 
@@ -46,5 +48,28 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         solo.clickOnButton(solo.getString(R.string.log_out));
         solo.assertCurrentActivity("should log out and go to login page", LoginActivity.class);
     }
+
+    public void testUserAbleToLoginOfflineAfterOneSuccessfulLogin(){
+        loginPage.login();
+        solo.waitForText("Login Successful");
+        boolean wifi=false;
+        turnWifi(wifi);
+        System.out.println("hello");
+    }
+
+
+
+    protected void turnWifi(boolean status) {
+        try {
+            WifiManager wifiManager = (WifiManager) getInstrumentation()
+                    .getTargetContext().getSystemService(Context.WIFI_SERVICE);
+//        WifiManager wifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(status);
+        } catch (Exception ignored) {
+//            don't interrupt test execution, if there
+            // is no permission for that action
+        }
+    }
+
 
 }
