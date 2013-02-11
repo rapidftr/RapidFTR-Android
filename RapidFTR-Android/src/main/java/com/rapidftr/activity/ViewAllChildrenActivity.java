@@ -67,7 +67,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
             public int compare(Child child, Child child1) {
                Timestamp childLastUpdateAt = Timestamp.valueOf(child.getLastUpdatedAt());
                Timestamp child1LastUpdateAt = Timestamp.valueOf(child1.getLastUpdatedAt());
-               return childLastUpdateAt.compareTo(child1LastUpdateAt);
+               return child1LastUpdateAt.compareTo(childLastUpdateAt);
             }
         });
     }

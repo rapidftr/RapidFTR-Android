@@ -2,6 +2,7 @@ package com.rapidftr.activity.pages;
 
 import android.widget.Button;
 import com.jayway.android.robotium.solo.Solo;
+import com.rapidftr.R;
 import com.rapidftr.model.Child;
 import org.json.JSONException;
 
@@ -37,5 +38,17 @@ public class ViewAllChildrenPage {
         assertTrue(solo.searchText("Basic Identity"));
         assertTrue(solo.searchText(child.get("name").toString(),true));
         assertTrue(solo.searchText(child.get("unique_identifier").toString(),true));
+    }
+
+    public void testSortByName() {
+      solo.clickOnMenuItem(solo.getString(R.string.sort_by));
+      solo.waitForText(solo.getString(R.string.sort_by_name));
+      solo.clickOnText(solo.getString(R.string.sort_by_name));
+    }
+
+    public void testSortByRecentUpdate() {
+        solo.clickOnMenuItem(solo.getString(R.string.sort_by));
+        solo.waitForText(solo.getString(R.string.sort_by_recent_update));
+        solo.clickOnText(solo.getString(R.string.sort_by_recent_update));
     }
 }
