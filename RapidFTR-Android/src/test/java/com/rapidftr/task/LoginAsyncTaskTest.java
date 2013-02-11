@@ -58,6 +58,8 @@ public class LoginAsyncTaskTest {
 	    User user = spy(createUser());
 	    doReturn("{}").when(user).asJSON();
         loginAsyncTask.onPostExecute(user);
+
+	    verify(user).save();
 	    verify(application).setCurrentUser(user);
 	    verify(loginAsyncTask).goToHomeScreen();
     }
