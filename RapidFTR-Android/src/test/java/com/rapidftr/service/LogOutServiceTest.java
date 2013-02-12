@@ -3,6 +3,10 @@ package com.rapidftr.service;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
+import com.rapidftr.utils.http.FluentRequest;
+import org.apache.http.client.CookieStore;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -15,15 +19,32 @@ import static org.mockito.Mockito.*;
 @RunWith(CustomTestRunner.class)
 public class LogOutServiceTest {
 
+	protected LogOutService service;
+	protected RapidFtrApplication application;
+	protected RapidFtrActivity activity;
+
+	@Before
+	public void setUp() {
+		service = spy(new LogOutService());
+		application = spy(RapidFtrApplication.getApplicationInstance());
+		activity = mock(RapidFtrActivity.class, RETURNS_DEEP_STUBS);
+		given(activity.getContext()).willReturn(application);
+	}
+
     @Test
     public void shouldUpdateContextOnLogout() throws IOException {
-        LogOutService service = new LogOutService();
-        RapidFtrApplication context = spy(RapidFtrApplication.getApplicationInstance());
-	    RapidFtrActivity currentActivity = mock(RapidFtrActivity.class);
-        given(currentActivity.getContext()).willReturn(context);
-        context.setSyncTask(null);
-        doReturn("You have been logged out successfully.").when(currentActivity).getString(anyInt());
-        service.attemptLogOut(currentActivity);
-        verify(context).setCurrentUser(null);
+        application.setSyncTask(null);
+        service.attemptLogOut(activity);
+        verify(application).setCurrentUser(null);
     }
+
+	@Test
+	public void shouldClearCookiesOnLogout() {
+		CookieStore spyCookieStore = spy(FluentRequest.getHttpClient().getCookieStore());
+		FluentRequest.getHttpClient().setCookieStore(spyCookieStore);
+
+		service.attemptLogOut(activity);
+		verify(spyCookieStore).clear();
+	}
+
 }

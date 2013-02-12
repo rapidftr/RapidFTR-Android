@@ -7,12 +7,17 @@ import android.view.MenuItem;
 import com.google.common.collect.Maps;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.service.FormService;
+import com.rapidftr.utils.http.FluentRequest;
+import com.xtremelabs.robolectric.Robolectric;
+import com.xtremelabs.robolectric.shadows.ShadowToast;
+import org.apache.http.HttpException;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +31,8 @@ import java.util.HashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -179,8 +186,19 @@ public class SyncAllDataAsyncTaskTest {
         verify(notificationManager, never()).notify(anyInt(), (Notification) anyObject());
     }
 
+	@Test
+	public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
+		Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
+		given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
+		syncTask.childService = new ChildService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
+		syncTask.setContext(rapidFtrActivity);
+		syncTask.execute();
+
+		assertThat(ShadowToast.getTextOfLatestToast(), equalTo("Your session is timed out"));
+	}
+
     @Test
-    public void shouldCompareAndRetrieveIdsToBeDownloadedFromServer() throws JSONException, IOException {
+    public void shouldCompareAndRetrieveIdsToBeDownloadedFromServer() throws JSONException, IOException, HttpException {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
