@@ -32,6 +32,12 @@ import static android.graphics.BitmapFactory.decodeResource;
 @RequiredArgsConstructor(suppressConstructorProperties = true)
 public class PhotoCaptureHelper {
 
+	public static final int THUMBNAIL_WIDTH = 96;
+	public static final int THUMBNAIL_HEIGHT = 96;
+	public static final int JPEG_QUALITY = 85;
+	public static final int PHOTO_WIDTH = 475;
+	public static final int PHOTO_HEIGHT = 635;
+
     protected final RapidFtrApplication application;
 
     public File getPhotoDir() {
@@ -120,12 +126,29 @@ public class PhotoCaptureHelper {
     }
 
     public void savePhoto(Bitmap bitmap, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        save(rotateBitmap(scaleImageTo(bitmap, 475, 635), rotationDegree), fileNameWithoutExtension);
+	    Bitmap rotated = rotateBitmap(bitmap, rotationDegree);
+	    Bitmap scaled = scaleImageTo(rotated, PHOTO_WIDTH, PHOTO_HEIGHT);
+	    save(scaled, fileNameWithoutExtension);
     }
 
-    protected Bitmap scaleImageTo(Bitmap image, int width, int height) {
+    protected Bitmap resizeImageTo(Bitmap image, int width, int height) {
         return Bitmap.createScaledBitmap(image, width, height, false);
     }
+
+	protected Bitmap scaleImageTo(Bitmap image, int maxWidth, int maxHeight) {
+		double givenWidth = image.getWidth(), givenHeight = image.getHeight();
+		double scaleRatio = 1.0;
+
+		if (givenWidth > maxWidth || givenHeight > maxHeight) {
+			if (givenWidth > givenHeight) {
+				scaleRatio = maxWidth / givenWidth;
+			} else {
+				scaleRatio = maxHeight / givenHeight;
+			}
+		}
+
+		return resizeImageTo(image, (int) (givenWidth * scaleRatio), (int) (givenHeight * scaleRatio));
+	}
 
     protected void save(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
         fileNameWithoutExtension = fileNameWithoutExtension.contains(".jpg")? fileNameWithoutExtension : fileNameWithoutExtension + ".jpg";
@@ -133,11 +156,11 @@ public class PhotoCaptureHelper {
         if (!file.exists())
             file.createNewFile();
         @Cleanup OutputStream outputStream = getCipherOutputStream(file);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, outputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, outputStream);
     }
 
     public void saveThumbnail(Bitmap bitmap, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        save(rotateBitmap(scaleImageTo(bitmap, 96, 96), rotationDegree), fileNameWithoutExtension + "_thumb");
+        save(resizeImageTo(rotateBitmap(bitmap, rotationDegree), THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT), fileNameWithoutExtension + "_thumb");
     }
 
     public Bitmap loadThumbnail(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
