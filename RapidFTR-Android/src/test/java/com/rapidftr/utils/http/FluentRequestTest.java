@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.params.HttpConnectionParams;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.json.JSONException;
 import org.junit.Before;
@@ -107,6 +108,19 @@ public class FluentRequestTest {
         Robolectric.getFakeHttpLayer().addHttpResponseRule("http://example.com/test", response);
         assertThat(http.path("/test").context(context).get(), equalTo(response));
     }
+
+	@Test
+	public void testTimeoutFromContext() {
+		Context context = mock(Context.class);
+		FluentRequest http = spy(http());
+
+		doReturn("example.com").when(http).getBaseUrl(context);
+		doReturn(1234).when(http).getConnectionTimeout(context);
+
+		http.context(context);
+		verify(http).config(HttpConnectionParams.CONNECTION_TIMEOUT, 1234);
+		verify(http).config(HttpConnectionParams.SO_TIMEOUT, 1234);
+	}
 
     @Test
     public void testGetShouldCallExecute() throws IOException {
