@@ -4,16 +4,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.widget.ImageView;
 import com.rapidftr.R;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 
 public class ViewPhotoActivity extends RapidFtrActivity {
 
-    protected CaptureHelper captureHelper;
+    protected PhotoCaptureHelper captureHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        captureHelper = new CaptureHelper(getContext());
+        captureHelper = new PhotoCaptureHelper(getContext());
         this.initialize();
     }
 

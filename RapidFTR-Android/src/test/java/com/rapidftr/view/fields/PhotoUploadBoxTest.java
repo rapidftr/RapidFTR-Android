@@ -9,7 +9,7 @@ import com.rapidftr.R;
 import com.rapidftr.activity.BaseChildActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONException;
 import org.junit.Assert;
@@ -27,13 +27,13 @@ import static org.mockito.Mockito.*;
 @RunWith(CustomTestRunner.class)
 public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
 
-    protected CaptureHelper captureHelper;
+    protected PhotoCaptureHelper captureHelper;
     protected Bitmap bitmap;
     protected ImageView imageView;
 
     @Before
     public void setUp() throws IOException {
-        captureHelper = mock(CaptureHelper.class);
+        captureHelper = mock(PhotoCaptureHelper.class);
         bitmap = mock(Bitmap.class);
         imageView = mock(ImageView.class);
 

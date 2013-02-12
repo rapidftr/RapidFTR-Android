@@ -15,7 +15,7 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.ViewChildActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.task.AssignThumbnailAsyncTask;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import org.json.JSONException;
 
 import java.util.List;
@@ -26,14 +26,14 @@ public class ChildViewAdapter extends ArrayAdapter<Child> {
     private Context context;
     private int textViewResourceId;
     private List<Child> children;
-    private CaptureHelper captureHelper;
+    private PhotoCaptureHelper captureHelper;
 
     public ChildViewAdapter(Context context, int textViewResourceId, List<Child> children) {
         super(context, textViewResourceId, children);
         this.context = context;
         this.textViewResourceId = textViewResourceId;
         this.children = children;
-        this.captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
+        this.captureHelper = new PhotoCaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     @Override

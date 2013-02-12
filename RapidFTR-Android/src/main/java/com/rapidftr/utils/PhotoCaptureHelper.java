@@ -30,7 +30,7 @@ import java.util.Calendar;
 import static android.graphics.BitmapFactory.decodeResource;
 
 @RequiredArgsConstructor(suppressConstructorProperties = true)
-public class CaptureHelper {
+public class PhotoCaptureHelper {
 
     protected final RapidFtrApplication application;
 

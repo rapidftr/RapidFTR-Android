@@ -5,15 +5,15 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 import com.rapidftr.adapter.ThumbnailDrawable;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 
 public class AssignThumbnailAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
     private ImageView imageView;
-    private CaptureHelper captureHelper;
+    private PhotoCaptureHelper captureHelper;
     private String imageName;
 
-    public AssignThumbnailAsyncTask(ImageView imageView, CaptureHelper captureHelper) {
+    public AssignThumbnailAsyncTask(ImageView imageView, PhotoCaptureHelper captureHelper) {
         this.imageView = imageView;
         this.captureHelper = captureHelper;
     }

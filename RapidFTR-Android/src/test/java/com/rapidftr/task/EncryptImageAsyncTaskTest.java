@@ -5,7 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import com.rapidftr.CustomTestRunner;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.view.fields.PhotoUploadBox;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
 public class EncryptImageAsyncTaskTest {
-    private CaptureHelper captureHelper = mock(CaptureHelper.class);
+    private PhotoCaptureHelper captureHelper = mock(PhotoCaptureHelper.class);
     private Context context = new Activity();
     private Bitmap bitmap = mock(Bitmap.class);
     private PhotoUploadBox photoUploadBox = mock(PhotoUploadBox.class);

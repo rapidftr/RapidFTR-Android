@@ -29,15 +29,15 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
-public class CaptureHelperTest {
+public class PhotoCaptureHelperTest {
 
     RapidFtrApplication application;
-    CaptureHelper captureHelper;
+    PhotoCaptureHelper captureHelper;
 
     @Before
     public void setUp() {
         application = spy(new RapidFtrApplication());
-        captureHelper = spy(new CaptureHelper(application));
+        captureHelper = spy(new PhotoCaptureHelper(application));
     }
 
     @Test
