@@ -17,6 +17,7 @@ import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.service.FormService;
+import org.apache.http.HttpException;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -64,6 +65,11 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
         try {
             sync();
             return true;
+        } catch (HttpException e) {
+	        notificationManager.cancel(NOTIFICATION_ID);
+	        Log.e("SyncAllDataTask", "Error in sync", e);
+	        publishProgress(context.getString(R.string.session_timeout));
+	        return false;
         } catch (Exception e) {
             notificationManager.cancel(NOTIFICATION_ID);
             Log.e("SyncAllDataTask", "Error in sync", e);
@@ -72,7 +78,7 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
         }
     }
 
-    protected abstract void sync() throws JSONException, IOException;
+    protected abstract void sync() throws JSONException, IOException, HttpException;
 
 
     private void configureNotification() {
@@ -94,7 +100,7 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
         maxProgress = totalRecordsToSynchronize + formSectionProgress;
     }
 
-    public ArrayList<String> getAllIdsForDownload() throws IOException, JSONException {
+    public ArrayList<String> getAllIdsForDownload() throws IOException, JSONException, HttpException {
         HashMap<String,String> serverIdsRevs = childService.getAllIdsAndRevs();
         HashMap<String, String> repoIdsAndRevs = childRepository.getAllIdsAndRevs();
         ArrayList<String> idsToDownload = new ArrayList<String>();

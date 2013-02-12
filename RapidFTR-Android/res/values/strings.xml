@@ -5,6 +5,8 @@
     <string name="log_in">Log In</string>
     <string name="log_out">Log Out</string>
     <string name="confirm_logout_message">Records are still being sychronised. Logging out now will cancel this process, are you sure you want to log out?</string>
+    <string name="session_timeout">Your session is not active on the server, Please logout and login again</string>
+
     <string name="logout_successful">You have been logged out successfully.</string>
     <string name="change_url">Change URL</string>
     <string name="register_child">Register Child</string>

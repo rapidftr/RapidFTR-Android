@@ -10,6 +10,7 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
+import org.apache.http.HttpException;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -195,8 +196,8 @@ public class ChildServiceTest {
         getFakeHttpLayer().setDefaultHttpResponse(200, response);
         Child child = new Child("id","user","{ 'name' : 'child1'}");
 
-        doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-998"));
-        doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-888"));
+        doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-998"));
+        doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-888"));
         doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-777"));
 
         childService.sync(child, currentUser);
@@ -230,7 +231,7 @@ public class ChildServiceTest {
     }
 
     @Test
-    public void shouldFetchAllIdRevs() throws IOException {
+    public void shouldFetchAllIdRevs() throws IOException, HttpException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
 
         String response = "[{\"_rev\":\"5-1ed26a0e5072830a9064361a570684f6\",\"_id\":\"dfb2031ebfcbef39dccdb468f5200edc\"},{\"_rev\":\"4-b011946150a16b0d2c6271aed05e2abe\",\"_id\":\"59cd40f39ab6aa791f73885e3bdd99f9\"}]";
