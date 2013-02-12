@@ -15,7 +15,9 @@ import static com.rapidftr.view.fields.PhotoUploadBox.PHOTO_KEYS;
 
 public class ImageAdapter extends BaseAdapter {
 
-    private final Child child;
+	public static final int NO_PADDING = 0;
+
+	private final Child child;
     private final boolean enabled;
     private final PhotoCaptureHelper photoCaptureHelper;
     private final Context context;
@@ -53,7 +55,7 @@ public class ImageAdapter extends BaseAdapter {
         try {
             bitmap = photoCaptureHelper.getThumbnailOrDefault(photoKeys.get(position).toString());
             imageView = new ImageView(context);
-            imageView.setPadding(0,0,0,0);
+            imageView.setPadding(NO_PADDING, NO_PADDING, NO_PADDING, NO_PADDING);
             imageView.setAdjustViewBounds(true);
             imageView.setImageBitmap(bitmap);
         } catch (JSONException e) {
