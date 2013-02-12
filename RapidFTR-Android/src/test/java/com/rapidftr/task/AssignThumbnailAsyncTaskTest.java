@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.adapter.ThumbnailDrawable;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +18,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class AssignThumbnailAsyncTaskTest {
 
     @Mock ImageView imageView;
-    @Mock CaptureHelper captureHelper;
+    @Mock
+    PhotoCaptureHelper captureHelper;
 
     @Before
     public void setUp() throws Exception {

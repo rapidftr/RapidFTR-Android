@@ -6,19 +6,19 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.view.fields.PhotoUploadBox;
 
 public class EncryptImageAsyncTask extends AsyncTask<Void, Integer, Boolean> {
 
-    private CaptureHelper captureHelper;
+    private PhotoCaptureHelper captureHelper;
     private Bitmap bitmap;
     private String fileName;
     private PhotoUploadBox photoUploadBox;
     private Context context;
     private int rotationDegree;
 
-    public EncryptImageAsyncTask(Context context, CaptureHelper captureHelper, Bitmap bitmap, String fileName, PhotoUploadBox photoUploadBox, int rotationDegree) {
+    public EncryptImageAsyncTask(Context context, PhotoCaptureHelper captureHelper, Bitmap bitmap, String fileName, PhotoUploadBox photoUploadBox, int rotationDegree) {
         this.context = context;
         this.captureHelper = captureHelper;
         this.bitmap = bitmap;

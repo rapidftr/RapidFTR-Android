@@ -5,7 +5,7 @@ import android.net.Uri;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.IOUtils;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -128,7 +128,7 @@ public class FluentRequest {
                 if(param.getKey().equals("current_photo_key")){
                     try {
                         multipartEntity.addPart(param.getKey(),
-                                new ByteArrayBody(IOUtils.toByteArray(new CaptureHelper((RapidFtrApplication) context).getDecodedImageStream(param.getValue())),
+                                new ByteArrayBody(IOUtils.toByteArray(new PhotoCaptureHelper((RapidFtrApplication) context).getDecodedImageStream(param.getValue())),
                                         "image/jpg", param.getValue()+".jpg"));
                     } catch (Exception e) {
                         new RuntimeException(e);
