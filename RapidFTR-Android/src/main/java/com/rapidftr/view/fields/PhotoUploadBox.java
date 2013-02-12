@@ -18,7 +18,7 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.activity.ViewPhotoActivity;
 import com.rapidftr.task.EncryptImageAsyncTask;
-import com.rapidftr.utils.CaptureHelper;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import org.json.JSONException;
 
 import java.util.UUID;
@@ -29,17 +29,17 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
 
     public static final int CAPTURE_IMAGE_REQUEST = 100;
 
-    protected CaptureHelper captureHelper;
+    protected PhotoCaptureHelper captureHelper;
     private boolean enabled;
 
     public PhotoUploadBox(Context context) {
         super(context);
-        captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
+        captureHelper = new PhotoCaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     public PhotoUploadBox(Context context, AttributeSet attrs) {
         super(context, attrs);
-        captureHelper = new CaptureHelper(((RapidFtrActivity) context).getContext());
+        captureHelper = new PhotoCaptureHelper(((RapidFtrActivity) context).getContext());
     }
 
     @Override
