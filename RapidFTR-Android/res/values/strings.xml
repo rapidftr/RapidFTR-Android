@@ -49,6 +49,8 @@
     <string name="photo_view_error">An error occurred while loading the photo</string>
     <string name="photo_not_captured">No photo captured for the record</string>
     <string name="photo_gallery_delete_error">Unable to delete photo from Gallery. Please go to Gallery and delete it manually</string>
+    <string name="set_as_primary">Set as primary photo</string>
+
 
     <string name="synchronize_all">Synchronize All</string>
     <string name="cancel_synchronize_all">Cancel Synchronize All</string>

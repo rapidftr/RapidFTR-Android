@@ -7,13 +7,19 @@ import com.xtremelabs.robolectric.tester.org.apache.http.FakeHttpLayer;
 import com.xtremelabs.robolectric.tester.org.apache.http.RequestMatcher;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.Security;
 
 import static com.rapidftr.utils.http.FluentRequest.http;
@@ -147,6 +153,18 @@ public class FluentRequestTest {
         FluentRequest http = spy(http());
         http.execute(mock(HttpRequestBase.class, RETURNS_DEEP_STUBS));
         verify(http).reset();
+    }
+
+    @Test
+    public void shouldAddImageMultiPartsFromPhotoKeys() throws IOException, GeneralSecurityException, JSONException {
+        FluentRequest fluentRequest = spy(new FluentRequest());
+        String photoKeys = "[\"abcd\", \"1234\"]";
+        MultipartEntity multipartEntity = spy(new MultipartEntity());
+        doReturn(new ByteArrayBody("content body".getBytes(), "abcd")).when(fluentRequest).attachPhoto("abcd");
+        doReturn(new ByteArrayBody("content body".getBytes(), "1234")).when(fluentRequest).attachPhoto("1234");
+        fluentRequest.addPhotoToMultipart(multipartEntity, photoKeys);
+        verify(multipartEntity).addPart(eq("child[photo][0]"), Matchers.any(ContentBody.class));
+        verify(multipartEntity).addPart(eq("child[photo][1]"), Matchers.any(ContentBody.class));
     }
 
     @Test @Ignore // This test alone does a *real* connection to test SSL

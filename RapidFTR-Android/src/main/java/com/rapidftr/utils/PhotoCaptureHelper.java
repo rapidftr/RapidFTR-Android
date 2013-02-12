@@ -126,10 +126,13 @@ public class PhotoCaptureHelper extends CaptureHelper {
 
     public Bitmap getThumbnailOrDefault(String fileNameWithoutExtension) {
         try {
+            getFile(fileNameWithoutExtension, ".jpg");
             return loadThumbnail(fileNameWithoutExtension);
+        } catch (FileNotFoundException e) {
+            return getDefaultThumbnail();
         } catch (Exception e) {
-            Log.e("Child Image", "Error while getting the Thumbnail",e);
-	        return getDefaultThumbnail();
+            Log.e("Child Image", "Error while getting the Thumbnail", e);
+            throw new RuntimeException(e);
         }
     }
 

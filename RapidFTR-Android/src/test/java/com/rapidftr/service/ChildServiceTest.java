@@ -1,19 +1,22 @@
 package com.rapidftr.service;
 
+import android.graphics.Bitmap;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
+import org.apache.http.entity.mime.MultipartEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import java.io.IOException;
@@ -39,6 +42,7 @@ public class ChildServiceTest {
     @Mock private User currentUser;
 
     FluentRequest fluentRequest;
+    public static final String RESPONSE = "{\"unique_identifier\":\"adf7c0c9-0137-4cae-beea-b7d282344829\",\"created_at\":\"2013-02-08 12:18:37\",\"created_by_full_name\":\"RapidFTR\",\"couchrest-type\":\"Child\",\"short_id\":\"2344829\",\"_id\":\"b7f89b978870da823e0af6491c3e295b\",\"_rev\":\"2-bc72af384e177fcaa8e9e8d181bfe05b\",\"name\":\"\",\"last_updated_at\":\"2013-02-08 11:37:33\",\"current_photo_key\":\"photo--1475374810-2013-02-08T175138\",\"created_by\":\"rapidftr\",\"photo_keys\":[\"photo--1475374810-2013-02-08T175138\"],\"created_organisation\":\"N/A\",\"posted_at\":\"2013-02-08 12:16:55UTC\",\"last_updated_by_full_name\":\"RapidFTR\"}";
 
     @Before
     public void setUp() throws Exception {
@@ -49,12 +53,11 @@ public class ChildServiceTest {
 
     @Test
     public void shouldParseJsonResponseAndConvertToChildren() throws IOException, JSONException {
-        String response = "{\"photo_keys\":[],\"evacuation_status\":\"\",\"id_document\":\"\",\"disclosure_authorities\":\"\",\"wishes_address_1\":\"\",\"ethnicity_or_tribe\":\"\",\"evacuation_date\":\"\",\"other_child_1_telephone\":\"\",\"concerns_followup_details\":\"\",\"nick_name\":\"\",\"rc_id_no\":\"\",\"wishes_name_3\":\"\",\"disclosure_deny_details\":\"\",\"concerns_needs_followup\":\"\",\"interview_place\":\"\",\"care_arrangements\":\"\",\"concerns_further_info\":\"\",\"fathers_name\":\"\",\"wishes_wants_contact\":\"\",\"governing_org\":\"\",\"disclosure_public_name\":\"\",\"other_child_2_telephone\":\"\",\"separation_details\":\"\",\"care_arrangements_address\":\"\",\"other_child_3\":\"\",\"caregivers_name\":\"\",\"separation_place\":\"\",\"mothers_name\":\"\",\"concerns_other\":\"\",\"wishes_telephone_2\":\"\",\"is_caregiver_alive\":\"\",\"disclosure_public_photo\":\"\",\"care_arrangements_came_from\":\"\",\"other_child_3_dob\":\"\",\"wishes_address_2\":\"\",\"couchrest-type\":\"Child\",\"_id\":\"be5d92ff528c8d82c8753934a7712eb1\",\"additional_tracing_info\":\"\",\"care_arrangments_name\":\"\",\"concerns_girl_mother\":\"\",\"_rev\":\"1-dfd36730cc723481387511804b21a320\",\"mother_death_details\":\"\",\"interview_subject\":\"\",\"other_org_place\":\"\",\"other_org_name\":\"\",\"care_arrangements_relationship\":\"\",\"wishes_name_1\":\"\",\"concerns_medical_case\":\"\",\"other_child_3_telephone\":\"\",\"disclosure_public_relatives\":\"\",\"concerns_chh\":\"\",\"wishes_contacted\":\"\",\"name\":\"Akash Bhalla\",\"unique_identifier\":\"fworkerxxxdea2f\",\"evacuation_from\":\"\",\"interview_subject_details\":\"\",\"father_death_details\":\"\",\"interview_date\":\"\",\"characteristics\":\"\",\"documents\":\"\",\"other_child_2_relationship\":\"\",\"evacuation_to\":\"\",\"created_by_full_name\":\"testing\",\"is_father_alive\":\"\",\"other_child_1_address\":\"\",\"names_origin\":\"\",\"wishes_telephone_3\":\"\",\"other_child_1\":\"\",\"birthplace\":\"\",\"care_arrangements_arrival_date\":\"\",\"other_child_1_relationship\":\"\",\"other_child_3_birthplace\":\"\",\"concerns_street_child\":\"\",\"wishes_address_3\":\"\",\"telephone\":\"\",\"other_child_2_birthplace\":\"\",\"other_child_1_birthplace\":\"\",\"current_photo_key\":null,\"protection_status\":\"\",\"care_arrangements_knowsfamily\":\"\",\"care_arrangements_other\":\"\",\"histories\":[],\"interviewers_org\":\"\",\"created_by\":\"fworker\",\"other_child_3_relationship\":\"\",\"concerns_abuse_situation\":\"\",\"address\":\"\",\"wishes_name_2\":\"\",\"other_child_1_dob\":\"\",\"other_org_interview_status\":\"\",\"gender\":\"\",\"posted_from\":\"Browser\",\"nationality\":\"\",\"separation_date\":\"\",\"other_child_2_dob\":\"\",\"evacuation_agent\":\"\",\"wishes_contacted_details\":\"\",\"other_family\":\"\",\"created_at\":\"2012-10-26 09:28:39UTC\",\"languages\":\"\",\"other_child_3_address\":\"\",\"is_mother_alive\":\"\",\"other_org_country\":\"\",\"dob_or_age\":\"\",\"concerns_disabled\":\"\",\"other_org_date\":\"\",\"concerns_vulnerable_person\":\"\",\"care_arrangements_familyinfo\":\"\",\"disclosure_other_orgs\":\"\",\"interviewer\":\"\",\"orther_org_reference_no\":\"\",\"other_child_2\":\"\",\"wishes_telephone_1\":\"\",\"other_child_2_address\":\"\",\"posted_at\":\"2012-10-26 09:28:39UTC\"}";
-        getFakeHttpLayer().setDefaultHttpResponse(201, "[" + response + "]");
+        getFakeHttpLayer().setDefaultHttpResponse(201, "[" + RESPONSE + "]");
 
         List<Child> children = new ChildService(mockContext(), repository, fluentRequest).getAllChildren();
         assertThat(children.size(), is(1));
-        assertThat(children.get(0), equalTo(new Child(response)));
+        assertThat(children.get(0), equalTo(new Child(RESPONSE)));
     }
 
     @Test
@@ -95,18 +98,22 @@ public class ChildServiceTest {
         verify(repository).update(child);
     }
 
-    @Test(expected = SyncFailedException.class)
-    public void shouldAddPhotoParamIfPhotoIsCapturedAsPartOfChildAndThePhotoNameIsNotPresentInPhotoKeys() throws JSONException, IOException, GeneralSecurityException {
+    @Test
+    public void shouldAddPhotoKeysToParam() throws JSONException, IOException, GeneralSecurityException {
+        getFakeHttpLayer().setDefaultHttpResponse(201, RESPONSE );
+        RapidFtrApplication context = mockContext();
         FluentRequest mockFluentRequest = spy(new FluentRequest());
+        ChildService childService = spy(new ChildService(context, repository, mockFluentRequest));
 
-        String photoKeys = new JSONArray(Arrays.asList("photo-998877", "photo-998547")).toString();
+
+        String photoKeys = new JSONArray(Arrays.asList("photo-998877", "photo-998547", "abcd123", "1234ABC")).toString();
         String childDetails = String.format("{ '_id' : 'abcdef', 'name' : 'child1', 'test2' : 0, 'current_photo_key' : '1234ABC', 'photo_keys' : %s}", photoKeys);
         Child child = new Child("id1", "user1", childDetails);
-        RapidFtrApplication context = mockContext();
-        doReturn(null).when(mockFluentRequest).put();
 
-        new ChildService(context, repository, mockFluentRequest).sync(child, currentUser);
-        verify(mockFluentRequest).param("current_photo_key", "1234ABC");
+        doNothing().when(mockFluentRequest).addPhotoToMultipart(Matchers.any(MultipartEntity.class), Matchers.any(String.class));
+        doNothing().when(childService).savePhoto(Matchers.any(Bitmap.class), Matchers.any(PhotoCaptureHelper.class), Matchers.anyString());
+        childService.sync(child, currentUser);
+        verify(mockFluentRequest).param("photo_keys", new JSONArray(Arrays.asList("abcd123", "1234ABC")).toString());
     }
 
     @Test(expected = SyncFailedException.class)
@@ -179,19 +186,25 @@ public class ChildServiceTest {
         assertThat(syncedChild.getString("_attachments"), is(nullValue()));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void shouldSetMediaIfNotAlreadyExistingOnTheMobile() throws JSONException, IOException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         RapidFtrApplication context = mockContext();
-        String response = "{\"recorded_audio\":\"audio-12321\",\"photo_keys\": \"[photo-998,photo-888]\",\"_id\":\"abcd\",\"current_photo_key\": \"photo-998877\",\"separation_place\":\"\",\"wishes_address_3\":\"\",\"care_arrangments_name\":\"\",\"other_family\":\"\",\"care_arrangements_knowsfamily\":\"\",\"created_at\":\"2012-12-14 10:57:39UTC\",\"wishes_contacted_details\":\"\",\"posted_from\":\"Browser\"}";
+        String response = "{\"recorded_audio\":\"audio-12321\",\"photo_keys\": \"[photo-998,photo-888, photo-777]\",\"_id\":\"abcd\",\"current_photo_key\": \"photo-888\",\"separation_place\":\"\",\"wishes_address_3\":\"\",\"care_arrangments_name\":\"\",\"other_family\":\"\",\"care_arrangements_knowsfamily\":\"\",\"created_at\":\"2012-12-14 10:57:39UTC\",\"wishes_contacted_details\":\"\",\"posted_from\":\"Browser\"}";
+        ChildService childService = spy(new ChildService(context, repository, mockFluentRequest));
         getFakeHttpLayer().setDefaultHttpResponse(200, response);
-
         Child child = new Child("id","user","{ 'name' : 'child1'}");
-        new ChildService(context, repository, mockFluentRequest).sync(child, currentUser);
 
-        verify(mockFluentRequest).path("/children/abcd/photo/photo-998877");
+        doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-998"));
+        doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-888"));
+        doNothing().when(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-777"));
+
+        childService.sync(child, currentUser);
+
         verify(mockFluentRequest).path("/children/abcd/audio");
-
+        verify(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-888"));
+        verify(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-998"));
+        verify(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-777"));
     }
 
     @Test
@@ -200,7 +213,7 @@ public class ChildServiceTest {
         Child child = new Child("id1", "user1", "{ '_id' : '1234abcd' ,'current_photo_key' : 'image_file_name'}");
         getFakeHttpLayer().setDefaultHttpResponse(200, "image stream");
 
-        new ChildService(mockContext(), repository, mockFluentRequest).getPhoto(child);
+        new ChildService(mockContext(), repository, mockFluentRequest).getPhoto(child, "image_file_name");
 
         verify(mockFluentRequest).path("/children/1234abcd/photo/image_file_name");
     }
