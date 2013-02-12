@@ -7,6 +7,7 @@ import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.service.FormService;
+import org.apache.http.HttpException;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
         super(formService, childService, childRepository, user);
     }
 
-    protected void sync() throws JSONException, IOException {
+    protected void sync() throws JSONException, IOException, HttpException {
         ArrayList<String> idsToDownload = getAllIdsForDownload();
         List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
         setProgressBarParameters(idsToDownload, childrenToSyncWithServer);

@@ -41,7 +41,7 @@ import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
 public class FluentRequest {
 
-    private static @Getter(lazy = true) final HttpClient httpClient = createHttpClient();
+    private static @Getter(lazy = true) final DefaultHttpClient httpClient = createHttpClient();
 
     protected Map<String, String> headers;
     protected Map<String, String> params;
@@ -229,7 +229,7 @@ public class FluentRequest {
         return context.getResources().getInteger(R.integer.http_timeout);
     }
 
-    private static HttpClient createHttpClient() {
+    private static DefaultHttpClient createHttpClient() {
         try {
             KeyStore trusted = KeyStore.getInstance("BKS");
             @Cleanup InputStream in = RapidFtrApplication.getApplicationInstance().getResources().openRawResource(R.raw.trusted);
