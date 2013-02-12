@@ -25,6 +25,7 @@ import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -122,8 +123,8 @@ public class PhotoCaptureHelperTest {
     @Test
     public void testSaveThumbnailShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
-        doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 96, 96);
-        doReturn(expected).when(photoCaptureHelper).rotateBitmap(expected, 90);
+	    doReturn(expected).when(photoCaptureHelper).rotateBitmap(original, 90);
+        doReturn(expected).when(photoCaptureHelper).resizeImageTo(expected, 96, 96);
         doNothing().when(photoCaptureHelper).save(expected, "random_file_thumb");
 
         photoCaptureHelper.saveThumbnail(original, 90, "random_file");
@@ -133,8 +134,8 @@ public class PhotoCaptureHelperTest {
     @Test
     public void testSaveActualImageShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
-        doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 475, 635);
-        doReturn(expected).when(photoCaptureHelper).rotateBitmap(expected, 180);
+	    doReturn(expected).when(photoCaptureHelper).rotateBitmap(original, 180);
+        doReturn(expected).when(photoCaptureHelper).scaleImageTo(expected, 475, 635);
         doNothing().when(photoCaptureHelper).save(expected, "random_file");
         photoCaptureHelper.savePhoto(original, 180, "random_file");
         verify(photoCaptureHelper).save(expected, "random_file");
@@ -160,6 +161,66 @@ public class PhotoCaptureHelperTest {
         int rotation = photoCaptureHelper.getPictureRotation();
         assertEquals(90, rotation);
     }
+
+	@Test
+	public void testScaleImagePreserveAspectRatioHorizontally() throws Exception {
+		Bitmap bitmap = mock(Bitmap.class);
+		int maxWidth = 100, maxHeight = 100;
+		int givenWidth = 300, givenHeight = 200;
+		int expectedWidth = 100, expectedHeight = 66;
+
+		given(bitmap.getWidth()).willReturn(givenWidth);
+		given(bitmap.getHeight()).willReturn(givenHeight);
+		doReturn(bitmap).when(photoCaptureHelper).resizeImageTo(bitmap, expectedWidth, expectedHeight);
+
+		// If you get exception here - then it means resizeImageTo was not called with proper passing arguments
+		assertThat(bitmap, equalTo(photoCaptureHelper.scaleImageTo(bitmap, maxWidth, maxHeight)));
+	}
+
+	@Test
+	public void testScaleImagePreserveAspectRatioVertically() throws Exception {
+		Bitmap bitmap = mock(Bitmap.class);
+		int maxWidth = 100, maxHeight = 100;
+		int givenWidth = 200, givenHeight = 300;
+		int expectedWidth = 66, expectedHeight = 100;
+
+		given(bitmap.getWidth()).willReturn(givenWidth);
+		given(bitmap.getHeight()).willReturn(givenHeight);
+		doReturn(bitmap).when(photoCaptureHelper).resizeImageTo(bitmap, expectedWidth, expectedHeight);
+
+		// If you get exception here - then it means resizeImageTo was not called with proper passing arguments
+		assertThat(bitmap, equalTo(photoCaptureHelper.scaleImageTo(bitmap, maxWidth, maxHeight)));
+	}
+
+	@Test
+	public void testScaleImagePreserveAspectRatioHorizontally2() throws Exception {
+		Bitmap bitmap = mock(Bitmap.class);
+		int maxWidth = 100, maxHeight = 100;
+		int givenWidth = 200, givenHeight = 50;
+		int expectedWidth = 100, expectedHeight = 25;
+
+		given(bitmap.getWidth()).willReturn(givenWidth);
+		given(bitmap.getHeight()).willReturn(givenHeight);
+		doReturn(bitmap).when(photoCaptureHelper).resizeImageTo(bitmap, expectedWidth, expectedHeight);
+
+		// If you get exception here - then it means resizeImageTo was not called with proper passing arguments
+		assertThat(bitmap, equalTo(photoCaptureHelper.scaleImageTo(bitmap, maxWidth, maxHeight)));
+	}
+
+	@Test
+	public void testScaleImagePreserveAspectRatioVertically2() throws Exception {
+		Bitmap bitmap = mock(Bitmap.class);
+		int maxWidth = 100, maxHeight = 100;
+		int givenWidth = 50, givenHeight = 200;
+		int expectedWidth = 25, expectedHeight = 100;
+
+		given(bitmap.getWidth()).willReturn(givenWidth);
+		given(bitmap.getHeight()).willReturn(givenHeight);
+		doReturn(bitmap).when(photoCaptureHelper).resizeImageTo(bitmap, expectedWidth, expectedHeight);
+
+		// If you get exception here - then it means resizeImageTo was not called with proper passing arguments
+		assertThat(bitmap, equalTo(photoCaptureHelper.scaleImageTo(bitmap, maxWidth, maxHeight)));
+	}
 
     @After
     public void resetSharedDirectory() {
