@@ -98,6 +98,7 @@ public class FluentRequest {
         this.context = context;
         host(getBaseUrl(context));
         config(HttpConnectionParams.CONNECTION_TIMEOUT, getConnectionTimeout(context));
+	    config(HttpConnectionParams.SO_TIMEOUT, getConnectionTimeout(context));
         return this;
     }
 
