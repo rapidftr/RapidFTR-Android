@@ -15,6 +15,7 @@ import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.RapidFtrDateTime;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
+import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
@@ -251,9 +252,9 @@ public class ChildService {
 
     }
 
-    public HashMap<String, String> getAllIdsAndRevs() throws IOException {
+    public HashMap<String, String> getAllIdsAndRevs() throws IOException, HttpException {
         final ObjectMapper objectMapper = new ObjectMapper();
-        HttpResponse response = fluentRequest.path("/children-ids").context(context).get();
+        HttpResponse response = fluentRequest.path("/children-ids").context(context).get().ensureSuccess();
         List<Map> idRevs = asList(objectMapper.readValue(response.getEntity().getContent(), Map[].class));
         HashMap<String, String> idRevMapping = new HashMap<String, String>();
         for (Map idRev : idRevs) {
