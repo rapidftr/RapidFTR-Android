@@ -109,17 +109,23 @@ public class AudioUploadBox extends BaseView {
         try {
             final View play = findViewById(R.id.play_record);
             final View record = findViewById(R.id.start_record);
-            if(mPlayer != null && mPlayer.isPlaying()){
-                play.setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
-                mPlayer.pause();
-                return;
-            } else if(mPlayer != null){
-                play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
-                mPlayer.start();
-                return;
-            }
+
+	        try {
+	            if(mPlayer != null && mPlayer.isPlaying()){
+	                play.setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
+	                mPlayer.pause();
+	                return;
+	            } else if(mPlayer != null){
+	                play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
+	                mPlayer.start();
+	                return;
+	            }
+	        } catch (Exception e) { }
+
             disableButton(record, R.drawable.record);
             play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
+
+	        mPlayer = null;
             mPlayer = getMediaPlayer();
             mPlayer.setDataSource(audioCaptureHelper.getCompleteFileName(child.getString(formField.getId())));
             mPlayer.prepare();
