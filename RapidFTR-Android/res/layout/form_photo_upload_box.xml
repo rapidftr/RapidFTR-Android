@@ -11,11 +11,13 @@
     <include layout="@layout/form_help_text" />
 
     <Button android:id="@+id/thumbnail"
-            android:background="@drawable/button"
-            android:layout_width="fill_parent"
+            android:background="@drawable/camera_button"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="@string/photo_capture">
+            android:layout_gravity="center"
+            android:text="@string/photo_capture"
+            >
     </Button>
 
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"
