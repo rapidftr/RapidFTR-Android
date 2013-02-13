@@ -7,7 +7,10 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.*;
+import com.rapidftr.service.ChildService;
+import com.rapidftr.service.FormService;
+import com.rapidftr.service.LoginService;
+import com.rapidftr.service.RegisterUserService;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
@@ -49,18 +52,15 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
         sendChildrenToServer(childRepository.currentUsersUnsyncedRecords());
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
         RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
-        if(response.getBoolean("user_status") && !application.getCurrentUser().isVerified()){
-            new MigrateUnverifiedDataToVerified(response, application.getCurrentUser()).execute();
-            setNewCurrentUser(response, application.getCurrentUser());
+        if(response != null && response.getBoolean("user_status") && !application.getCurrentUser().isVerified()){
+            startMigrationTask(response, application);
+
         }
 
     }
 
-    private void setNewCurrentUser(JSONObject userFromResponse, User currentUser) throws JSONException {
-        currentUser.setDbKey(userFromResponse.getString("db_key"));
-        currentUser.setVerified(userFromResponse.getBoolean("user_status"));
-        currentUser.setOrganisation(userFromResponse.getString("organisation"));
-        currentUser.setLanguage(userFromResponse.getString("language"));
+    protected void startMigrationTask(JSONObject response, RapidFtrApplication application) {
+        new MigrateUnverifiedDataToVerified(response, application.getCurrentUser()).execute();
     }
 
     private void registerUser() throws IOException {

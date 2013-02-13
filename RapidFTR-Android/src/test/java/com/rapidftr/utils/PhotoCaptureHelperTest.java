@@ -7,18 +7,23 @@ import android.os.Environment;
 import com.google.common.io.Files;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.User;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import static com.rapidftr.utils.PhotoCaptureHelper.QUALITY;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringEndsWith.endsWith;
@@ -124,21 +129,30 @@ public class PhotoCaptureHelperTest {
     public void testSaveThumbnailShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
 	    doReturn(expected).when(photoCaptureHelper).rotateBitmap(original, 90);
+        doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 96, 96);
+        User user = mock(User.class);
+        doReturn(user).when(application).getCurrentUser();
+        doReturn("key").when(user).getDbKey();
+        doReturn(expected).when(photoCaptureHelper).rotateBitmap(expected, 90);
+        doNothing().when(photoCaptureHelper).save(expected, "random_file_thumb", QUALITY, "key");
         doReturn(expected).when(photoCaptureHelper).resizeImageTo(expected, 96, 96);
-        doNothing().when(photoCaptureHelper).save(expected, "random_file_thumb");
 
         photoCaptureHelper.saveThumbnail(original, 90, "random_file");
-        verify(photoCaptureHelper).save(expected, "random_file_thumb");
+        verify(photoCaptureHelper).save(expected, "random_file_thumb", QUALITY, "key");
     }
 
     @Test
     public void testSaveActualImageShouldResizeAndSave() throws Exception {
         Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
-	    doReturn(expected).when(photoCaptureHelper).rotateBitmap(original, 180);
         doReturn(expected).when(photoCaptureHelper).scaleImageTo(expected, 475, 635);
-        doNothing().when(photoCaptureHelper).save(expected, "random_file");
+        doReturn(expected).when(photoCaptureHelper).rotateBitmap(original, 180);
+        User user = mock(User.class);
+        doReturn(user).when(application).getCurrentUser();
+        doReturn("key").when(user).getDbKey();
+        doNothing().when(photoCaptureHelper).save(expected, "random_file", QUALITY, "key");
+
         photoCaptureHelper.savePhoto(original, 180, "random_file");
-        verify(photoCaptureHelper).save(expected, "random_file");
+        verify(photoCaptureHelper).save(expected, "random_file", QUALITY, "key");
     }
 
     @Test
@@ -147,8 +161,9 @@ public class PhotoCaptureHelperTest {
         File file = new File(photoCaptureHelper.getDir(), "random_file.jpg");
         OutputStream out = mock(OutputStream.class);
 
-        doReturn(out).when(photoCaptureHelper).getCipherOutputStream(eq(file));
-        photoCaptureHelper.save(bitmap, "random_file");
+        doReturn(out).when(photoCaptureHelper).getCipherOutputStream(eq(file), anyString());
+        doReturn(mock(User.class)).when(application).getCurrentUser();
+        photoCaptureHelper.save(bitmap, "random_file", QUALITY, "key");
         verify(bitmap).compress(Bitmap.CompressFormat.JPEG, 85, out);
         verify(out).close();
     }
@@ -221,6 +236,29 @@ public class PhotoCaptureHelperTest {
 		// If you get exception here - then it means resizeImageTo was not called with proper passing arguments
 		assertThat(bitmap, equalTo(photoCaptureHelper.scaleImageTo(bitmap, maxWidth, maxHeight)));
 	}
+
+    @Test
+    public void shouldEncryptTheGivenEncryptedPhotoUsingNewKey() throws IOException, GeneralSecurityException {
+        File mockFile = mock(File.class);
+        File mockThumbnailFile = mock(File.class);
+        doReturn(mockFile).when(photoCaptureHelper).getFile("photo_name", ".jpg");
+        doReturn(mockThumbnailFile).when(photoCaptureHelper).getFile("photo_name_thumb", ".jpg");
+        InputStream mockInputStream = mock(InputStream.class);
+        InputStream mockThumbnailInputStream = mock(InputStream.class);
+        Bitmap mockBitmap = mock(Bitmap.class);
+        Bitmap mockThumbnailBitmap = mock(Bitmap.class);
+
+        doReturn(mockInputStream).when(photoCaptureHelper).getCipherInputStream(mockFile, "oldKey");
+        doReturn(mockThumbnailInputStream).when(photoCaptureHelper).getCipherInputStream(mockThumbnailFile, "oldKey");
+        doReturn(mockBitmap).when(photoCaptureHelper).decodeStreamToBitMap(mockInputStream);
+        doReturn(mockThumbnailBitmap).when(photoCaptureHelper).decodeStreamToBitMap(mockThumbnailInputStream);
+
+        doNothing().when(photoCaptureHelper).save(Matchers.<Bitmap>any(), anyString(), anyInt(), anyString());
+
+        photoCaptureHelper.convertPhoto("photo_name", "oldKey", "newKey");
+        verify(photoCaptureHelper).save(mockBitmap, "photo_name", PhotoCaptureHelper.QUALITY, "newKey");
+        verify(photoCaptureHelper).save(mockThumbnailBitmap, "photo_name_thumb", PhotoCaptureHelper.QUALITY, "newKey");
+    }
 
     @After
     public void resetSharedDirectory() {

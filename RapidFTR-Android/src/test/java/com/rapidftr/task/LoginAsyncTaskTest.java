@@ -7,6 +7,8 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.User;
 import com.rapidftr.service.FormService;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
+import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
+import org.apache.http.HttpResponse;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -130,6 +132,17 @@ public class LoginAsyncTaskTest {
         doReturn(true).when(application).isOnline();
         loginAsyncTask.getFormSections(user);
         verifyZeroInteractions(formService);
+    }
+
+    @Test
+    public void shouldCallMigrateUnverifiedDataTaskIfLoggedInUserIsVerifiedAndHisStausInSharedPrefIsUnVerified() throws IOException, GeneralSecurityException, JSONException {
+        User userFromSharedPreference = mock(User.class);
+        HttpResponse loginResponse = new TestHttpResponse(201, "{\"user_status\":true, \"db_key\":\"hey_from_server\", \"organisation\":\"tw\",\"language\":\"en\"}");
+        doReturn(userFromSharedPreference).when(application).getUserFromSharedPreference();
+        doReturn(loginResponse).when(loginAsyncTask).getLoginResponse();
+        doNothing().when(loginAsyncTask).migrateUnverifiedData(anyString(), eq(userFromSharedPreference));
+        loginAsyncTask.doOnlineLogin();
+        verify(loginAsyncTask).migrateUnverifiedData("{\"user_status\":true, \"db_key\":\"hey_from_server\", \"organisation\":\"tw\",\"language\":\"en\"}", userFromSharedPreference);
     }
 
 }

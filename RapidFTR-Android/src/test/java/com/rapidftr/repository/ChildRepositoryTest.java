@@ -42,7 +42,7 @@ public class ChildRepositoryTest {
 
     @Before
     public void setupSession() {
-        session = new ShadowSQLiteHelper().getSession();
+        session = new ShadowSQLiteHelper("test_database").getSession();
         repository = new ChildRepository("user1", session);
     }
 
@@ -345,6 +345,17 @@ public class ChildRepositoryTest {
         assertEquals("5-1ed26a0e5072830a9064361a570684f6", allIdsAndRevs.get("dfb2031ebfcbef39dccdb468f5200edc"));
         assertEquals("4-b011946150a16b0d2c6271aed05e2abe", allIdsAndRevs.get("59cd40f39ab6aa791f73885e3bdd99f9"));
 
+    }
+
+    @Test
+    public void shouldDeleteAllRecordOfAGivenUser() throws JSONException {
+        Child syncedChild = new Child("syncedID", "user1", null, true);
+        Child unSyncedChild = new Child("unsyncedID", "user1", null, false);
+        repository.createOrUpdate(syncedChild);
+        repository.createOrUpdate(unSyncedChild);
+
+        repository.deleteChildrenByOwner();
+        assertEquals(0, repository.getChildrenByOwner().size());
     }
 
     public class ChildBuilder {

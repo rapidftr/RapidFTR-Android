@@ -22,7 +22,7 @@ public class ShadowSQLiteHelper extends SQLiteOpenHelper implements DatabaseHelp
     }
 
     public static DatabaseHelper resetDatabase() {
-        return (instance = new ShadowSQLiteHelper());
+        return (instance = new ShadowSQLiteHelper("test_database"));
     }
 
     @RequiredArgsConstructor(suppressConstructorProperties = true)
@@ -35,8 +35,8 @@ public class ShadowSQLiteHelper extends SQLiteOpenHelper implements DatabaseHelp
 
     private @Getter DatabaseSession session;
 
-    public ShadowSQLiteHelper() {
-        super(new Activity(), "test_database", null, 2);
+    public ShadowSQLiteHelper(String dbName) {
+        super(new Activity(), dbName, null, 2);
         session = new ShadowSQLiteSession(getWritableDatabase());
     }
 

@@ -61,6 +61,10 @@ public class ChildRepository implements Closeable {
         return toChildren(cursor);
     }
 
+    public void deleteChildrenByOwner() throws JSONException {
+        session.execSQL("DELETE FROM children WHERE child_owner = '"+ userName +"';");
+    }
+
     public List<Child> getMatchingChildren(String subString) throws JSONException {
         String searchString = String.format("%%%s%%", subString);
         RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();

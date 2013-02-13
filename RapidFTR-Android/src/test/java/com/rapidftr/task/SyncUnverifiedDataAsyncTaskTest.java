@@ -16,6 +16,7 @@ import com.rapidftr.service.RegisterUserService;
 import com.rapidftr.utils.http.FluentResponse;
 import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.apache.http.HttpResponse;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -97,19 +98,4 @@ public class SyncUnverifiedDataAsyncTaskTest {
 
         verify(childService).sync(child, currentUser);
     }
-
-    @Test
-    public void shouldUpdateUserIfHasBeenChangedAsVerifiedInServer() throws IOException {
-        task = spy(task);
-        HttpResponse response = new TestHttpResponse(201, "{\"user_status\":true, \"db_key\":\"hey_from_server\", \"organisation\":\"tw\",\"language\":\"en\"}");
-        doReturn(response).when(loginService).login(rapidFtrActivity, "username", "password", "serverUrl");
-        task.onPreExecute();
-        task.execute();
-        User newUser = applicationContext.getCurrentUser();
-        assertTrue(newUser.isVerified());
-        assertEquals(newUser.getDbKey(), "hey_from_server");
-        assertEquals(newUser.getOrganisation(), "tw");
-        assertEquals(newUser.getLanguage(), "en");
-    }
-
 }

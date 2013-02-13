@@ -27,8 +27,9 @@ public class PhotoCaptureHelper extends CaptureHelper {
 	public static final int JPEG_QUALITY = 85;
 	public static final int PHOTO_WIDTH = 475;
 	public static final int PHOTO_HEIGHT = 635;
+    public static final int QUALITY = 85;
 
-	public PhotoCaptureHelper(RapidFtrApplication context) {
+    public PhotoCaptureHelper(RapidFtrApplication context) {
         super(context);
     }
 
@@ -98,7 +99,7 @@ public class PhotoCaptureHelper extends CaptureHelper {
     public void savePhoto(Bitmap bitmap, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
 	    Bitmap rotated = rotateBitmap(bitmap, rotationDegree);
 	    Bitmap scaled = scaleImageTo(rotated, PHOTO_WIDTH, PHOTO_HEIGHT);
-	    save(scaled, fileNameWithoutExtension);
+	    save(scaled, fileNameWithoutExtension, QUALITY, application.getCurrentUser().getDbKey());
     }
 
     protected Bitmap resizeImageTo(Bitmap image, int width, int height) {
@@ -120,17 +121,22 @@ public class PhotoCaptureHelper extends CaptureHelper {
 		return resizeImageTo(image, (int) (givenWidth * scaleRatio), (int) (givenHeight * scaleRatio));
 	}
 
-    protected void save(Bitmap bitmap, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+    protected void save(Bitmap bitmap, String fileNameWithoutExtension, int quality, String key) throws IOException, GeneralSecurityException {
         fileNameWithoutExtension = fileNameWithoutExtension.contains(".jpg")? fileNameWithoutExtension : fileNameWithoutExtension + ".jpg";
         File file = new File(getDir(), fileNameWithoutExtension);
         if (!file.exists())
             file.createNewFile();
-        @Cleanup OutputStream outputStream = getCipherOutputStream(file);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, outputStream);
+        @Cleanup OutputStream outputStream = getCipherOutputStream(file, key);
+        saveImage(bitmap, outputStream, quality);
+    }
+
+
+    private void saveImage(Bitmap bitmap, OutputStream outputStream, int quality) {
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
     }
 
     public void saveThumbnail(Bitmap bitmap, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        save(resizeImageTo(rotateBitmap(bitmap, rotationDegree), THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT), fileNameWithoutExtension + "_thumb");
+        save(resizeImageTo(rotateBitmap(bitmap, rotationDegree), THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT), fileNameWithoutExtension + "_thumb", QUALITY, application.getCurrentUser().getDbKey());
     }
 
     public Bitmap loadThumbnail(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
@@ -139,12 +145,16 @@ public class PhotoCaptureHelper extends CaptureHelper {
 
     public Bitmap loadPhoto(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
         @Cleanup InputStream inputStream = getDecodedImageStream(fileNameWithoutExtension);
-        return BitmapFactory.decodeStream(inputStream);
+        return decodeStreamToBitMap(inputStream);
     }
 
     public InputStream getDecodedImageStream(String fileNameWithoutExtension) throws GeneralSecurityException, IOException {
+        return decodeImage(fileNameWithoutExtension, application.getCurrentUser().getDbKey());
+    }
+
+    private InputStream decodeImage(String fileNameWithoutExtension, String password) throws GeneralSecurityException, IOException {
         File file = getFile(fileNameWithoutExtension, ".jpg");
-        return getCipherInputStream(file);
+        return getCipherInputStream(file, password);
     }
 
     public Bitmap getThumbnailOrDefault(String fileNameWithoutExtension) {
@@ -186,4 +196,24 @@ public class PhotoCaptureHelper extends CaptureHelper {
     }
 
 
+    public void convertPhoto(String photo, String existingKey, String newKey) {
+        try {
+            @Cleanup InputStream inputStreamPhoto = decodeImage(photo, existingKey);
+            Bitmap bitmap = decodeStreamToBitMap(inputStreamPhoto);
+            @Cleanup InputStream inputStreamThumb = decodeImage(photo + "_thumb", existingKey);
+            Bitmap bitmap_thumbnail = decodeStreamToBitMap(inputStreamThumb);
+            save(bitmap, photo, QUALITY, newKey);
+            save(bitmap_thumbnail, photo + "_thumb", QUALITY, newKey);
+        } catch (IOException e) {
+            Log.e("ERROR WHILE CONVERTING PHOTO", e.getMessage());
+            new RuntimeException(e.getMessage());
+        } catch (GeneralSecurityException e) {
+            Log.e("ERROR WHILE CONVERTING PHOTO", e.getMessage());
+            new RuntimeException(e.getMessage());
+        }
+    }
+
+    protected Bitmap decodeStreamToBitMap(InputStream inputStream){
+        return BitmapFactory.decodeStream(inputStream);
+    }
 }

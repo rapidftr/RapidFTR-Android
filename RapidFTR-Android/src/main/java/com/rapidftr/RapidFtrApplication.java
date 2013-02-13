@@ -101,16 +101,30 @@ public class RapidFtrApplication extends Application {
 		reloadCurrentUser();
 	}
 
-	public void setCurrentUser(User user) throws IOException {
-		setCurrentUser(user == null ? null : user.asJSON());
-		if (user != null && user.getServerUrl() != null)
+	public void setCurrentUser(User user) {
+        try {
+            setCurrentUser(user == null ? null : user.asJSON());
+        } catch (IOException e) {
+            Log.e("Setting User", e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+        if (user != null && user.getServerUrl() != null)
 			getSharedPreferences().edit().putString(SERVER_URL_PREF, user.getServerUrl()).commit();
 	}
 
 	protected void reloadCurrentUser() throws IOException {
-		String currentUserJson = getSharedPreferences().getString(CURRENT_USER_PREF, null);
-		this.currentUser = currentUserJson == null ? null : User.readFromJSON(currentUserJson);
+		this.currentUser = getUserFromSharedPreference();
 	}
+
+    public User getUserFromSharedPreference(){
+        try {
+            String json = getSharedPreferences().getString(CURRENT_USER_PREF, null);
+            return json == null ? null : User.readFromJSON(json);
+        } catch (IOException e) {
+            Log.e(APP_IDENTIFIER, "Not able to fetch user from shared preference");
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
 	public boolean isLoggedIn() {
 		return getCurrentUser() != null;

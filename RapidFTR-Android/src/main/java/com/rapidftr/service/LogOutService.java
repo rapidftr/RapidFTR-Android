@@ -3,7 +3,6 @@ package com.rapidftr.service;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -11,11 +10,7 @@ import com.rapidftr.activity.LoginActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.utils.http.FluentRequest;
 
-import java.io.FileReader;
-import java.io.IOException;
-
 import static android.widget.Toast.LENGTH_LONG;
-import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
 public class LogOutService {
 
@@ -27,16 +22,12 @@ public class LogOutService {
     }
 
     protected void logOut(RapidFtrActivity currentActivity) {
-	    try {
-		    RapidFtrApplication context = currentActivity.getContext();
-		    context.setCurrentUser(null);
-		    FluentRequest.getHttpClient().getCookieStore().clear();
-		    Toast.makeText(context, R.string.logout_successful, LENGTH_LONG).show();
-		    currentActivity.finish();
-		    currentActivity.startActivity(new Intent(currentActivity, LoginActivity.class));
-	    } catch (IOException e) {
-		    Log.e(APP_IDENTIFIER, "Failed to logout", e);
-	    }
+        RapidFtrApplication context = currentActivity.getContext();
+        context.setCurrentUser(null);
+        FluentRequest.getHttpClient().getCookieStore().clear();
+        Toast.makeText(context, R.string.logout_successful, LENGTH_LONG).show();
+        currentActivity.finish();
+        currentActivity.startActivity(new Intent(currentActivity, LoginActivity.class));
     }
 
     protected void cancelSync(RapidFtrApplication context) {

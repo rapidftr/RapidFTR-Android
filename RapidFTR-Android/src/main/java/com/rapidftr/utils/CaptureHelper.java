@@ -54,8 +54,7 @@ public class CaptureHelper {
      * <p/>
      * Reference: http://nelenkov.blogspot.in/2012/04/using-password-based-encryption-on.html
      */
-    protected Cipher getCipher(int mode, String fileName) throws GeneralSecurityException {
-        String password = application.getCurrentUser().getDbKey();
+    protected Cipher getCipher(int mode, String fileName, String password) throws GeneralSecurityException {
         int iterationCount = 100, saltLength = 8, keyLength = 256;
 
         SecureRandom random = new SecureRandom();
@@ -76,12 +75,12 @@ public class CaptureHelper {
         return cipher;
     }
 
-    protected OutputStream getCipherOutputStream(File file) throws GeneralSecurityException, IOException {
-        return new CipherOutputStream(new FileOutputStream(file), getCipher(Cipher.ENCRYPT_MODE, file.getName()));
+    protected OutputStream getCipherOutputStream(File file, String password) throws GeneralSecurityException, IOException {
+        return new CipherOutputStream(new FileOutputStream(file), getCipher(Cipher.ENCRYPT_MODE, file.getName(), password));
     }
 
-    protected InputStream getCipherInputStream(File file) throws GeneralSecurityException, IOException {
-        return new CipherInputStream(new FileInputStream(file), getCipher(Cipher.DECRYPT_MODE, file.getName()));
+    protected InputStream getCipherInputStream(File file, String password) throws GeneralSecurityException, IOException {
+        return new CipherInputStream(new FileInputStream(file), getCipher(Cipher.DECRYPT_MODE, file.getName(), password));
     }
 
     public File getFile(String fileNameWithoutExtension, String extension) throws FileNotFoundException {

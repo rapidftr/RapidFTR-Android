@@ -309,6 +309,16 @@ public class Child extends JSONObject implements Parcelable {
         return !has(internal_id.getColumnName());
     }
 
+    public JSONArray getPhotos() {
+        JSONArray photo_keys = new JSONArray();
+        try {
+            photo_keys = getJSONArray("photo_keys");
+        } catch (JSONException e) {
+            Log.e("Fetching photos", "photo_keys field is available");
+        }
+        return photo_keys;
+    }
+
     public class History extends JSONObject implements Parcelable {
         public static final String HISTORIES = "histories";
         public static final String USER_NAME = "user_name";

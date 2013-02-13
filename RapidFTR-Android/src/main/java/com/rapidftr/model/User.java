@@ -6,7 +6,6 @@ import com.rapidftr.utils.EncryptionUtil;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -18,12 +17,13 @@ import java.security.GeneralSecurityException;
 import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@EqualsAndHashCode(of = "userName")
+@EqualsAndHashCode(of = {"userName", "verified"})
 @AllArgsConstructor(suppressConstructorProperties = true)
 public class User {
 
 	public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 	public static final String UNAUTHENTICATED_DB_KEY = "UNAUTHENTICATED_DB_KEY";
+	public static final String UNAUTHENTICATED_DB_NAME = "DB-" + UNAUTHENTICATED_DB_KEY.hashCode();
 
 	@Getter @JsonProperty("user_name")
 	protected String userName;

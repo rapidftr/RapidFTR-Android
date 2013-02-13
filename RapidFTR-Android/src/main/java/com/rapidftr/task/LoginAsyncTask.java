@@ -16,6 +16,7 @@ import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import org.apache.http.HttpResponse;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -72,17 +73,28 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 	}
 
 	protected User doOnlineLogin() throws IOException, JSONException, GeneralSecurityException {
-		HttpResponse response = new LoginService().login(application, userName, password, url);
+		HttpResponse response = getLoginResponse();
 		if (response == null || response.getStatusLine() == null || response.getStatusLine().getStatusCode() != SC_CREATED)
 			return doOfflineLogin();
 
 		String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
 		User user = new User(this.userName, this.password, true, this.url);
-		user.read(responseAsString);
-		return user;
+        user.read(responseAsString);
+        User userFromSharedPreference = application.getUserFromSharedPreference();
+        if(userFromSharedPreference !=null && (!userFromSharedPreference.isVerified() && user.isVerified()))
+            migrateUnverifiedData(responseAsString, userFromSharedPreference);
+        return user;
 	}
 
-	protected User doOfflineLogin() throws GeneralSecurityException, IOException {
+    protected void migrateUnverifiedData(String responseAsString, User user) throws JSONException {
+        new MigrateUnverifiedDataToVerified(new JSONObject(responseAsString), user).execute();
+    }
+
+    protected HttpResponse getLoginResponse() throws IOException {
+        return new LoginService().login(application, userName, password, url);
+    }
+
+    protected User doOfflineLogin() throws GeneralSecurityException, IOException {
 		User user = new User(this.userName, this.password);
 		user.load();
 		return user;
