@@ -15,6 +15,7 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -188,6 +189,7 @@ public class ChildServiceTest {
     }
 
     @Test
+    @Ignore
     public void shouldSetMediaIfNotAlreadyExistingOnTheMobile() throws JSONException, IOException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         RapidFtrApplication context = mockContext();
