@@ -44,8 +44,23 @@ public class ViewAllChildrenActivityIntegrationTest extends BaseActivityIntegrat
         viewAllChildrenPage.verifyChildDetails(child1);
     }
 
+    public void testShowSortByName() throws JSONException {
+        ChildRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(ChildRepository.class);
+        Child child1 = new Child(getAlphaNumeric(4), "rapidftr", "{\"name\":\"Test1\"}");
+        repository.createOrUpdate(child1);
+        Child child2 = new Child(getAlphaNumeric(6), "rapidftr", "{\"name\":\"Test2\"}");
+        repository.createOrUpdate(child2);
+        viewAllChildrenPage.navigateToViewAllFromHome();
+        viewAllChildrenPage.testSortByName();
+    }
 
-
-
-
+    public void testShowSortByRecentUpdate() throws JSONException {
+        ChildRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(ChildRepository.class);
+        Child child1 = new Child(getAlphaNumeric(4), "rapidftr", "{\"name\":\"Test1\"}");
+        repository.createOrUpdate(child1);
+        Child child2 = new Child(getAlphaNumeric(6), "rapidftr", "{\"name\":\"Test2\"}");
+        repository.createOrUpdate(child2);
+        viewAllChildrenPage.navigateToViewAllFromHome();
+        viewAllChildrenPage.testSortByRecentUpdate();
+    }
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/synchronize_all"
+          android:title="@string/synchronize_all"/>
+    <item android:id="@+id/cancel_synchronize_all"
+              android:title="@string/cancel_synchronize_all"/>
+    <item android:id="@+id/logout"
+          android:title="@string/log_out"/>
+    <item android:id="@+id/info" android:icon="@drawable/ic_info"
+          android:title="@string/info"/>
+    <item android:id="@+id/sort_by" android:title="@string/sort_by"/>
+</menu>
