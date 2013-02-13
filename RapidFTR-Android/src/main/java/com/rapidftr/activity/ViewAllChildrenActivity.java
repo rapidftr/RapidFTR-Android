@@ -11,24 +11,27 @@ import com.rapidftr.adapter.ChildViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import lombok.Cleanup;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONException;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class ViewAllChildrenActivity extends RapidFtrActivity {
 
-    List<Child> children;
-    ChildViewAdapter childViewAdapter;
+    @Getter @Setter List<Child> children;
+    @Getter @Setter ChildViewAdapter childViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_children);
         menuId = R.menu.view_children_menu;
-        children = getChildren();
+        this.children = getChildren();
         listView();
     }
 
@@ -36,6 +39,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.sort_by) {
            showSortOptions();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -61,8 +65,8 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
         alertDialog.create().show();
     }
 
-    private void sortChildrenByRecentUpdate() {
-        childViewAdapter.sort(new Comparator<Child>() {
+    public void sortChildrenByRecentUpdate() {
+        Collections.sort(this.children, new Comparator<Child>() {
             @Override
             public int compare(Child child, Child child1) {
                Timestamp childLastUpdateAt = Timestamp.valueOf(child.getLastUpdatedAt());
@@ -70,15 +74,17 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
                return child1LastUpdateAt.compareTo(childLastUpdateAt);
             }
         });
+        childViewAdapter.notifyDataSetChanged();
     }
 
-    private void sortChildrenByName() {
-        childViewAdapter.sort(new Comparator<Child>() {
+    public void sortChildrenByName() {
+        Collections.sort(this.children, new Comparator<Child>() {
             @Override
             public int compare(Child child, Child child1) {
                 return child.getName().compareTo(child1.getName());
             }
         });
+        childViewAdapter.notifyDataSetChanged();
     }
 
     private List<Child> getChildren()
