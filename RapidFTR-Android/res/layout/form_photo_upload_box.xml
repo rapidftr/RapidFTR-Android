@@ -12,11 +12,9 @@
 
     <Button android:id="@+id/thumbnail"
             android:background="@drawable/camera_button"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_gravity="center"
+
             android:text="@string/photo_capture"
+            style="@style/button_photo_audio"
             >
     </Button>
 
