@@ -40,7 +40,7 @@ public abstract class AsyncTaskWithDialog<Params, Progress, Result> extends Asyn
             @Override
             protected void onPostExecute(Result result) {
                 dialog.dismiss();
-                int message = result == null ? failureMessage : successMessage;
+                int message = (result == null || result.equals(false)) ? failureMessage : successMessage;
 
                 try {
                     actualTask.onPostExecute(result);
