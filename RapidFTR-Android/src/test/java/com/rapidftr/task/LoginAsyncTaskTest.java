@@ -138,7 +138,7 @@ public class LoginAsyncTaskTest {
     public void shouldCallMigrateUnverifiedDataTaskIfLoggedInUserIsVerifiedAndHisStausInSharedPrefIsUnVerified() throws IOException, GeneralSecurityException, JSONException {
         User userFromSharedPreference = mock(User.class);
         HttpResponse loginResponse = new TestHttpResponse(201, "{\"user_status\":true, \"db_key\":\"hey_from_server\", \"organisation\":\"tw\",\"language\":\"en\"}");
-        doReturn(userFromSharedPreference).when(application).getUserFromSharedPreference();
+        doReturn(userFromSharedPreference).when(loginAsyncTask).getUserFromPreference();
         doReturn(loginResponse).when(loginAsyncTask).getLoginResponse();
         doNothing().when(loginAsyncTask).migrateUnverifiedData(anyString(), eq(userFromSharedPreference));
         loginAsyncTask.doOnlineLogin();

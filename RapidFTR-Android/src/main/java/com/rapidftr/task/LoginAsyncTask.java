@@ -80,11 +80,20 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 		String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
 		User user = new User(this.userName, this.password, true, this.url);
         user.read(responseAsString);
-        User userFromSharedPreference = application.getUserFromSharedPreference();
+        User userFromSharedPreference = getUserFromPreference();
         if(userFromSharedPreference !=null && (!userFromSharedPreference.isVerified() && user.isVerified()))
             migrateUnverifiedData(responseAsString, userFromSharedPreference);
         return user;
 	}
+
+    protected User getUserFromPreference() {
+        try {
+            return new User(this.userName, this.password).load();
+        } catch (Exception e) {
+            Log.e(APP_IDENTIFIER, "Not able to get User from preference");
+        }
+        return null;
+    }
 
     protected void migrateUnverifiedData(String responseAsString, User user) throws JSONException {
         new MigrateUnverifiedDataToVerified(new JSONObject(responseAsString), user).execute();
