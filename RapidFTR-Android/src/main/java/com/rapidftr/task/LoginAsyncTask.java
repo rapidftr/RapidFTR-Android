@@ -72,8 +72,14 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 		return application.isOnline() ? doOnlineLogin() : doOfflineLogin();
 	}
 
-	protected User doOnlineLogin() throws IOException, JSONException, GeneralSecurityException {
-		HttpResponse response = getLoginResponse();
+	protected User doOnlineLogin() throws JSONException, GeneralSecurityException, IOException {
+        HttpResponse response;
+        try{
+		    response = getLoginResponse();
+        } catch (Exception e){
+            Log.e(APP_IDENTIFIER, "Failed to login", e);
+            return doOfflineLogin();
+        }
 		if (response == null || response.getStatusLine() == null || response.getStatusLine().getStatusCode() != SC_CREATED)
 			return doOfflineLogin();
 
