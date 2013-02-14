@@ -96,10 +96,12 @@ public class PhotoCaptureHelper extends CaptureHelper {
         return decodeResource(application.getResources(), R.drawable.no_photo_clip);
     }
 
-    public void savePhoto(Bitmap bitmap, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-	    Bitmap rotated = rotateBitmap(bitmap, rotationDegree);
-	    Bitmap scaled = scaleImageTo(rotated, PHOTO_WIDTH, PHOTO_HEIGHT);
-	    save(scaled, fileNameWithoutExtension, QUALITY, application.getCurrentUser().getDbKey());
+    public void savePhoto(Bitmap original, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+	    Bitmap scaled = scaleImageTo(original, PHOTO_WIDTH, PHOTO_HEIGHT);
+	    Bitmap rotated = rotateBitmap(scaled, rotationDegree);
+	    save(rotated, fileNameWithoutExtension, QUALITY, application.getCurrentUser().getDbKey());
+	    scaled.recycle();
+	    rotated.recycle();
     }
 
     protected Bitmap resizeImageTo(Bitmap image, int width, int height) {
@@ -135,8 +137,13 @@ public class PhotoCaptureHelper extends CaptureHelper {
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream);
     }
 
-    public void saveThumbnail(Bitmap bitmap, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
-        save(resizeImageTo(rotateBitmap(bitmap, rotationDegree), THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT), fileNameWithoutExtension + "_thumb", QUALITY, application.getCurrentUser().getDbKey());
+    public void saveThumbnail(Bitmap original, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
+	    Bitmap scaled = resizeImageTo(original, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
+	    Bitmap rotated = rotateBitmap(scaled, rotationDegree);
+        save(rotated, fileNameWithoutExtension + "_thumb", QUALITY, application.getCurrentUser().getDbKey());
+
+	    scaled.recycle();
+	    rotated.recycle();
     }
 
     public Bitmap loadThumbnail(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {

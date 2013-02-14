@@ -127,32 +127,34 @@ public class PhotoCaptureHelperTest {
 
     @Test
     public void testSaveThumbnailShouldResizeAndSave() throws Exception {
-        Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
-	    doReturn(expected).when(photoCaptureHelper).rotateBitmap(original, 90);
-        doReturn(expected).when(photoCaptureHelper).scaleImageTo(original, 96, 96);
-        User user = mock(User.class);
-        doReturn(user).when(application).getCurrentUser();
-        doReturn("key").when(user).getDbKey();
-        doReturn(expected).when(photoCaptureHelper).rotateBitmap(expected, 90);
-        doNothing().when(photoCaptureHelper).save(expected, "random_file_thumb", QUALITY, "key");
-        doReturn(expected).when(photoCaptureHelper).resizeImageTo(expected, 96, 96);
+        Bitmap original = mock(Bitmap.class), scaled = mock(Bitmap.class), rotated = mock(Bitmap.class);
+        doReturn(scaled).when(photoCaptureHelper).resizeImageTo(original, 96, 96);
+	    doReturn(rotated).when(photoCaptureHelper).rotateBitmap(scaled, 90);
+	    User user = mock(User.class);
+	    doReturn(user).when(application).getCurrentUser();
+	    doReturn("key").when(user).getDbKey();
+        doNothing().when(photoCaptureHelper).save(rotated, "random_file_thumb", QUALITY, "key");
 
         photoCaptureHelper.saveThumbnail(original, 90, "random_file");
-        verify(photoCaptureHelper).save(expected, "random_file_thumb", QUALITY, "key");
+        verify(photoCaptureHelper).save(rotated, "random_file_thumb", QUALITY, "key");
+	    verify(scaled).recycle();
+	    verify(rotated).recycle();
     }
 
     @Test
     public void testSaveActualImageShouldResizeAndSave() throws Exception {
-        Bitmap original = mock(Bitmap.class), expected = mock(Bitmap.class);
-        doReturn(expected).when(photoCaptureHelper).scaleImageTo(expected, 475, 635);
-        doReturn(expected).when(photoCaptureHelper).rotateBitmap(original, 180);
-        User user = mock(User.class);
-        doReturn(user).when(application).getCurrentUser();
-        doReturn("key").when(user).getDbKey();
-        doNothing().when(photoCaptureHelper).save(expected, "random_file", QUALITY, "key");
+        Bitmap original = mock(Bitmap.class), scaled = mock(Bitmap.class), rotated = mock(Bitmap.class);
+        doReturn(scaled).when(photoCaptureHelper).scaleImageTo(original, 475, 635);
+	    doReturn(rotated).when(photoCaptureHelper).rotateBitmap(scaled, 180);
+	    User user = mock(User.class);
+	    doReturn(user).when(application).getCurrentUser();
+	    doReturn("key").when(user).getDbKey();
+        doNothing().when(photoCaptureHelper).save(rotated, "random_file", QUALITY, "key");
 
         photoCaptureHelper.savePhoto(original, 180, "random_file");
-        verify(photoCaptureHelper).save(expected, "random_file", QUALITY, "key");
+        verify(photoCaptureHelper).save(rotated, "random_file", QUALITY, "key");
+	    verify(scaled).recycle();
+	    verify(rotated).recycle();
     }
 
     @Test
