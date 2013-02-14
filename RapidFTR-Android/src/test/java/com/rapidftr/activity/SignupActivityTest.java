@@ -1,11 +1,9 @@
 package com.rapidftr.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.User;
 import com.xtremelabs.robolectric.shadows.ShadowActivity;
 import com.xtremelabs.robolectric.shadows.ShadowIntent;
@@ -95,29 +93,15 @@ public class SignupActivityTest {
     }
 
     @Test
-    public void shouldStartLoginActivityAfterSignup() throws Exception {
-        doReturn("username").when(signupActivity).getEditText(R.id.username);
-        doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
-        doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
-        doReturn("text").when(signupActivity).getEditText(R.id.password);
-        doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
-
+    public void shouldCloseWhenUserDetailsAreCorrect() throws Exception {
+	    fillUpFields();
         signupActivity.createUser(null);
-        ShadowActivity signupActivity = shadowOf(new SignupActivity());
-        Intent startedIntent = signupActivity.getNextStartedActivity();
-        ShadowIntent shadowIntent = shadowOf(startedIntent);
-
-        assertThat(shadowIntent.getComponent().getClassName(), equalTo("com.rapidftr.activity.LoginActivity"));
+	    verify(signupActivity).finish();
     }
 
     @Test
     public void shouldShowToastAfterRedirectedToLoginPage() throws Exception {
-        doReturn("username").when(signupActivity).getEditText(R.id.username);
-        doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
-        doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
-        doReturn("text").when(signupActivity).getEditText(R.id.password);
-        doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
-
+	    fillUpFields();
         signupActivity.createUser(null);
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(signupActivity.getString(R.string.registered)+" username"));
     }
@@ -128,14 +112,18 @@ public class SignupActivityTest {
         userName  = mock(EditText.class);
 
         doReturn(userName).when(signupActivity).findViewById(R.id.username);
-        doReturn("username").when(signupActivity).getEditText(R.id.username);
-        doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
-        doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
-        doReturn("text").when(signupActivity).getEditText(R.id.password);
-        doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
-
+	    fillUpFields();
         signupActivity.createUser(null);
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(signupActivity.getString(R.string.username_taken)));
         verify(userName).setError(signupActivity.getString(R.string.username_taken));
     }
+
+	protected void fillUpFields() {
+		doReturn("username").when(signupActivity).getEditText(R.id.username);
+		doReturn("fullname").when(signupActivity).getEditText(R.id.full_name);
+		doReturn("organisation").when(signupActivity).getEditText(R.id.organisation);
+		doReturn("text").when(signupActivity).getEditText(R.id.password);
+		doReturn("text").when(signupActivity).getEditText(R.id.confirm_password);
+	}
+
 }

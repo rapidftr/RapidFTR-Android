@@ -36,8 +36,8 @@ public class SignupActivity extends RapidFtrActivity {
 	            makeToast(getString(R.string.username_taken));
             } else {
 	            user.save();
-	            startActivity(new Intent(this, LoginActivity.class));
 	            makeToast(getString(R.string.registered) + " "+ getEditText(R.id.username));
+	            finish();
             }
         }
     }
