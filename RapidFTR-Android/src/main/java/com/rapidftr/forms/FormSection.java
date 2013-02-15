@@ -36,8 +36,10 @@ public class FormSection implements Comparable<FormSection> {
     }
 
     private String getLocalized(Map<String, String> valueMap) {
-        if(valueMap != null)
-            return valueMap.get(Locale.getDefault().getLanguage()) != null ? valueMap.get(Locale.getDefault().getLanguage()) : valueMap.get(RapidFtrApplication.getDefaultLocale());
+        if(valueMap != null){
+            String value = valueMap.get(Locale.getDefault().getLanguage());
+            return (value == null || "".equals(value)) ? valueMap.get(RapidFtrApplication.getDefaultLocale()) : value ;
+        }
         return null;
     }
 
