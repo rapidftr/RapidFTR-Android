@@ -48,7 +48,7 @@ public class FormSection implements Comparable<FormSection> {
     }
 
     public String toString() {
-        return name.get(Locale.getDefault().getLanguage());
+        return getLocalizedName();
     }
 
 }
