@@ -344,7 +344,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 finish();
-                startActivity(new Intent(getContext(), MainActivity.class));
+                startActivity(new Intent(getContext(), ViewAllChildrenActivity.class));
             }
         });
         alert.create().show();

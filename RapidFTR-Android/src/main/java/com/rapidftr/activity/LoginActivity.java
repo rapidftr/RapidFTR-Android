@@ -84,7 +84,7 @@ public class LoginActivity extends RapidFtrActivity {
     protected void goToHomeScreenIfLoggedIn() {
         if (getContext().isLoggedIn()){
 	        finish();
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, RegisterChildActivity.class));
         } else {
 	        Intent broadcastLogout = new Intent(LOGOUT_INTENT_FILTER);
 	        sendBroadcast(broadcastLogout);

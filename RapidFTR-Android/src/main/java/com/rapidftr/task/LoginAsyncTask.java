@@ -9,8 +9,8 @@ import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.activity.MainActivity;
 import com.rapidftr.activity.RapidFtrActivity;
+import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.model.User;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
@@ -148,7 +148,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 
     protected void goToHomeScreen() {
 	    activity.finish();
-        activity.startActivity(new Intent(activity, MainActivity.class));
+        activity.startActivity(new Intent(activity, RegisterChildActivity.class));
     }
 
 }

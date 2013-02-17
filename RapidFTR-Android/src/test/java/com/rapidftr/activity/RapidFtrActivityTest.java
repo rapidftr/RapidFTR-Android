@@ -75,7 +75,7 @@ public class RapidFtrActivityTest {
         SynchronisationAsyncTask mockAsyncTask = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
 
-        RapidFtrActivity mainActivity = new MainActivity();
+        RapidFtrActivity mainActivity = new ViewAllChildrenActivity();
         MenuItem cancelSynAll = mock(MenuItem.class);
         doReturn(R.id.cancel_synchronize_all).when(cancelSynAll).getItemId();
 
@@ -89,7 +89,7 @@ public class RapidFtrActivityTest {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         instance.setSyncTask(null);
 
-        RapidFtrActivity mainActivity = new MainActivity();
+        RapidFtrActivity mainActivity = new ViewAllChildrenActivity();
         MenuItem cancelSynAll = mock(MenuItem.class);
         doReturn(R.id.cancel_synchronize_all).when(cancelSynAll).getItemId();
 
@@ -109,7 +109,7 @@ public class RapidFtrActivityTest {
         doReturn(syncAllMenuItem).when(mockMenu).getItem(0);
         doReturn(cancelSyncAllMenuItem).when(mockMenu).getItem(1);
 
-        RapidFtrActivity mainActivity = new MainActivity();
+        RapidFtrActivity mainActivity = new ViewAllChildrenActivity();
 
         mainActivity.onCreateOptionsMenu(mockMenu);
         verify(syncAllMenuItem).setVisible(false);
@@ -127,7 +127,7 @@ public class RapidFtrActivityTest {
         SynchronisationAsyncTask mockAsyncTask = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
 
-        RapidFtrActivity mainActivity = new MainActivity();
+        RapidFtrActivity mainActivity = new ViewAllChildrenActivity();
         MenuItem cancelSynAll = mock(MenuItem.class);
         doReturn(R.id.cancel_synchronize_all).when(cancelSynAll).getItemId();
 
@@ -143,7 +143,7 @@ public class RapidFtrActivityTest {
         instance.setSyncTask(mockSyncAll);
         instance.setCurrentUser(createUser());
 
-        RapidFtrActivity mainActivity = new MainActivity();
+        RapidFtrActivity mainActivity = new ViewAllChildrenActivity();
         Menu mockMenu = mock(Menu.class);
         when(mockMenu.getItem(anyInt())).thenReturn(mock(MenuItem.class));
 	    mainActivity.onCreateOptionsMenu(mockMenu);
@@ -152,7 +152,7 @@ public class RapidFtrActivityTest {
 
     @Test
     public void shouldShowToastMsgIfSyncIsInProgressAndNetworkLost(){
-        RapidFtrActivity rapidFtrActivity = spy(new MainActivity());
+        RapidFtrActivity rapidFtrActivity = spy(new ViewAllChildrenActivity());
         BroadcastReceiver receiver = rapidFtrActivity.getBroadcastReceiver();
         Intent mockIntent = mock(Intent.class);
         NetworkInfo mockNetworkInfo = mock(NetworkInfo.class);
