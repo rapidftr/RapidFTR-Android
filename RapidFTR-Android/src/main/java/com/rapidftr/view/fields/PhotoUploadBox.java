@@ -7,10 +7,12 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
@@ -139,13 +141,14 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     public void saveCapture() {
         try {
             Bitmap bitmap = photoCaptureHelper.getCapture();
+            if(bitmap != null){
             int rotationDegree = photoCaptureHelper.getPictureRotation();
             photoCaptureHelper.deleteCaptures();
             String fileName = createCaptureFileName();
-            Log.e("REGISTER", "start of async task ");
             new EncryptImageAsyncTask(getContext(), photoCaptureHelper, bitmap, fileName, this, rotationDegree).execute();
             addPhotoToPhotoKeys(fileName);
             addCurrentPhotoKeyIfNotPresent(fileName);
+            }
         } catch (Exception e) {
             Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.photo_capture_error, Toast.LENGTH_LONG).show();
         }
@@ -217,7 +220,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
         });
     }
 
-    protected GridView getGalleryView() {
+    protected GridView  getGalleryView() {
         return (GridView) findViewById(R.id.photo_grid_view);
     }
 
