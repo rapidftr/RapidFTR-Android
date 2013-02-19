@@ -66,16 +66,20 @@ public class ChildService {
             repository.update(child);
             throw new SyncFailedException(e.getMessage());
         }
-        if (response != null && response.isSuccess()) {
-            String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
-            child = new Child(source);
-            setChildAttributes(child);
-            repository.update(child);
-            setMedia(child);
-            return child;
-        } else {
-            throw new SyncFailedException(child.getUniqueId());
+        try {
+            if (response != null && response.isSuccess()) {
+                String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
+                child = new Child(source);
+                setChildAttributes(child);
+                repository.update(child);
+                setMedia(child);
+                return child;
+            }
+        } catch (Exception e) {
+            child.setSynced(false);
+            child.setSyncLog(e.getMessage());
         }
+        return child;
     }
     
     protected String getSyncPath(Child child, User currentUser) throws JSONException {

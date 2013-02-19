@@ -22,7 +22,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import java.io.IOException;
-import java.io.SyncFailedException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
@@ -72,12 +71,12 @@ public class ChildServiceTest {
         verify(repository).update(child);
     }
 
-    @Test(expected = SyncFailedException.class)
-    public void shouldRaiseExceptionUponSyncFailure() throws Exception {
+    @Test
+    public void shouldHandleSyncFailureAndReturnTheFailingChild() throws Exception {
         Child child = new Child();
         getFakeHttpLayer().setDefaultHttpResponse(503, "error");
 
-        new ChildService(mockContext(), repository, fluentRequest).sync(child, currentUser);
+        assertEquals(child, new ChildService(mockContext(), repository, fluentRequest).sync(child, currentUser));
     }
 
     @Test
@@ -118,7 +117,7 @@ public class ChildServiceTest {
         verify(mockFluentRequest).param("photo_keys", new JSONArray(Arrays.asList("abcd123", "1234ABC")).toString());
     }
 
-    @Test(expected = SyncFailedException.class)
+    @Test
     public void shouldNotAddPhotoParamIfThePhotoNameIsPresentInPhotoKeys() throws JSONException, IOException, GeneralSecurityException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
 
@@ -134,7 +133,7 @@ public class ChildServiceTest {
         verify(mockFluentRequest, times(0)).param("current_photo_key", "1234ABC");
     }
 
-    @Test(expected = SyncFailedException.class)
+    @Test
     public void shouldAddAudioRecordedIfCreatedOnTheMobile() throws JSONException, IOException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         RapidFtrApplication context = mockContext();
@@ -146,7 +145,7 @@ public class ChildServiceTest {
         verify(mockFluentRequest).param("recorded_audio", "123455");
     }
 
-    @Test(expected = SyncFailedException.class)
+    @Test
     public void shouldNotAddAudioRecordedToTheRequestIfItsAlreadyPresentInServer() throws JSONException, IOException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         RapidFtrApplication context = mockContext();
@@ -158,7 +157,7 @@ public class ChildServiceTest {
         verify(mockFluentRequest, times(0)).param("recorded_audio", "123455");
     }
 
-    @Test(expected =  SyncFailedException.class)
+    @Test
     public void shouldRemoveUnusedParametersBeforeSync() throws JSONException, IOException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         RapidFtrApplication context = mockContext();
