@@ -52,7 +52,7 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
         sendChildrenToServer(childRepository.currentUsersUnsyncedRecords());
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
         RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
-        if(response != null && response.getBoolean("user_status") && !application.getCurrentUser().isVerified()){
+        if(response != null && response.optBoolean("verified") && !application.getCurrentUser().isVerified()){
             startMigrationTask(response, application);
 
         }
