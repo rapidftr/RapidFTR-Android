@@ -48,15 +48,14 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
         setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
         registerUser();
         JSONObject response = login();
-        getFormSections();
-        sendChildrenToServer(childRepository.currentUsersUnsyncedRecords());
-        setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
         RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
         if(response != null && response.optBoolean("verified") && !application.getCurrentUser().isVerified()){
             startMigrationTask(response, application);
 
         }
-
+        getFormSections();
+        sendChildrenToServer(childRepository.currentUsersUnsyncedRecords());
+        setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
     }
 
     protected void startMigrationTask(JSONObject response, RapidFtrApplication application) {
