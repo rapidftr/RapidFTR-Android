@@ -61,6 +61,15 @@ public class ChildRepository implements Closeable {
         return toChildren(cursor);
     }
 
+    public ArrayList<String> getIdsChildrenByOwner() throws JSONException {
+        ArrayList<String> ids = new ArrayList<String>();
+        @Cleanup Cursor cursor = session.rawQuery("SELECT _id FROM children WHERE child_owner = ? ", new String[]{userName});
+        while (cursor.moveToNext()){
+            ids.add(cursor.getString(0));
+        }
+        return ids;
+    }
+
     public void deleteChildrenByOwner() throws JSONException {
         session.execSQL("DELETE FROM children WHERE child_owner = '"+ userName +"';");
     }

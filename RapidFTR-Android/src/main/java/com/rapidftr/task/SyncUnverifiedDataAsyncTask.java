@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
@@ -59,13 +60,21 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
         }
         getFormSections();
         sendChildrenToServer(childRepository.currentUsersUnsyncedRecords());
-        if(application.getCurrentUser().isVerified()) {
         ArrayList<String> idsToDownload = getAllIdsForDownload();
         List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
+
+        if(!application.getCurrentUser().isVerified()) {
+            ArrayList<String> idsOfCurrentUser = childRepository.getIdsChildrenByOwner();
+            Iterator<String> idIterator = idsToDownload.iterator();
+            while (idIterator.hasNext()) {
+                String id = idIterator.next();
+                if(!idsOfCurrentUser.contains(id)) {
+                    idIterator.remove();
+                }
+            }
+        }
         int startProgressForDownloadingChildren = formSectionProgress + childrenToSyncWithServer.size();
         saveIncomingChildren(idsToDownload, startProgressForDownloadingChildren);
-        }
-
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
     }
 
