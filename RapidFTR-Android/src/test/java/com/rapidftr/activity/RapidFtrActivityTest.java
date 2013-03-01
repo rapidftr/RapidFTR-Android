@@ -2,26 +2,23 @@ package com.rapidftr.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.task.AsyncTaskWithDialog;
+import com.rapidftr.task.SynchronisationAsyncTask;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 
 import java.io.IOException;
 
-import static com.rapidftr.CustomTestRunner.createUser;
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
+import static com.rapidftr.CustomTestRunner.createUser;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -106,8 +103,10 @@ public class RapidFtrActivityTest {
         Menu mockMenu = mock(Menu.class);
         MenuItem syncAllMenuItem = mock(MenuItem.class);
         MenuItem cancelSyncAllMenuItem = mock(MenuItem.class);
+        MenuItem changePasswordMenuItem = mock(MenuItem.class);
         doReturn(syncAllMenuItem).when(mockMenu).getItem(0);
         doReturn(cancelSyncAllMenuItem).when(mockMenu).getItem(1);
+        doReturn(changePasswordMenuItem).when(mockMenu).getItem(2);
 
         RapidFtrActivity mainActivity = new ViewAllChildrenActivity();
 

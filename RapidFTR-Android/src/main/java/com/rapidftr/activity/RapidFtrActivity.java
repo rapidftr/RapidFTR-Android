@@ -133,10 +133,15 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         if (getContext().isLoggedIn()) {
             getMenuInflater().inflate(R.menu.options_menu, menu);
             setMenu(menu);
+            toggleChangePassword(menu);
             toggleSync(menu);
             setContextToSyncTask();
         }
         return getContext().isLoggedIn();
+    }
+
+    private void toggleChangePassword(Menu menu) {
+        menu.getItem(2).setVisible(RapidFtrApplication.getApplicationInstance().getCurrentUser().isVerified());
     }
 
     private void setContextToSyncTask() {

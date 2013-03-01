@@ -3,7 +3,9 @@ package com.rapidftr.activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.ChangePasswordTask;
 
 public class ChangePasswordActivity extends RapidFtrActivity{
@@ -46,6 +48,12 @@ public class ChangePasswordActivity extends RapidFtrActivity{
     protected void sendRequestToServer(String old_password, String new_password, String confirmation) {
         ChangePasswordTask task = inject(ChangePasswordTask.class);
         task.setActivity(this);
-        task.execute(old_password, new_password, confirmation);
+        if(RapidFtrApplication.getApplicationInstance().isOnline()){
+            task.execute(old_password, new_password, confirmation);
+        } else {
+            Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.no_connection, Toast.LENGTH_LONG).show();
+            this.finish();
+        }
+
     }
 }

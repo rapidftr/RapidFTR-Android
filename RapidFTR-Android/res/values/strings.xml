@@ -109,6 +109,7 @@
     <string name="forgot_password">Request password reset</string>
 
     <string name="network_down">Connection to the server lost, the sync process has been cancelled</string>
+    <string name="no_connection">Connection to the server lost, Try again later</string>
     <string name="temp_sync_error">Error occurred while syncing the record with the server, please try again.</string>
     <string name="current_password_label">Current Password</string>
     <string name="new_password">New Password</string>
