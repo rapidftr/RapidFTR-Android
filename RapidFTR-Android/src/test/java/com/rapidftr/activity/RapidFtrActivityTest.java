@@ -49,6 +49,7 @@ public class RapidFtrActivityTest {
         RapidFtrActivity loginActivity = new LoginActivity();
         Menu menu = mock(Menu.class);
         doReturn(mock(MenuItem.class)).when(menu).getItem(anyInt());
+        doReturn(mock(MenuItem.class)).when(menu).findItem(anyInt());
         boolean showMenu = loginActivity.onCreateOptionsMenu(menu);
 
         assertThat(showMenu, is(true));
@@ -106,7 +107,7 @@ public class RapidFtrActivityTest {
         MenuItem changePasswordMenuItem = mock(MenuItem.class);
         doReturn(syncAllMenuItem).when(mockMenu).getItem(0);
         doReturn(cancelSyncAllMenuItem).when(mockMenu).getItem(1);
-        doReturn(changePasswordMenuItem).when(mockMenu).getItem(2);
+        doReturn(changePasswordMenuItem).when(mockMenu).findItem(R.id.change_password);
 
         RapidFtrActivity mainActivity = new ViewAllChildrenActivity();
 
@@ -145,6 +146,7 @@ public class RapidFtrActivityTest {
         RapidFtrActivity mainActivity = new ViewAllChildrenActivity();
         Menu mockMenu = mock(Menu.class);
         when(mockMenu.getItem(anyInt())).thenReturn(mock(MenuItem.class));
+        when(mockMenu.findItem(anyInt())).thenReturn(mock(MenuItem.class));
 	    mainActivity.onCreateOptionsMenu(mockMenu);
 	    verify(mockSyncAll).setContext(mainActivity);
     }

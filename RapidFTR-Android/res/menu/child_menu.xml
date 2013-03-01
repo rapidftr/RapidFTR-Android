@@ -11,4 +11,6 @@
           android:visible="false"/>
     <item android:id="@+id/info" android:icon="@drawable/ic_info"
           android:title="@string/info"/>
+    <item android:id="@+id/change_password"
+          android:title="@string/change_password"/>
 </menu>

@@ -141,7 +141,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     private void toggleChangePassword(Menu menu) {
-        menu.getItem(2).setVisible(RapidFtrApplication.getApplicationInstance().getCurrentUser().isVerified());
+        menu.findItem(R.id.change_password).setVisible((this.getClass() == ChangePasswordActivity.class) ? false : RapidFtrApplication.getApplicationInstance().getCurrentUser().isVerified());
     }
 
     private void setContextToSyncTask() {
