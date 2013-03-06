@@ -4,6 +4,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.task.SyncAllDataAsyncTask;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,17 +63,17 @@ public class ChangePasswordActivityTest {
         changeButton.performClick();
         verify(changePasswordActivity, never()).sendRequestToServer(anyString(),anyString(),anyString());
     }
-    
+
     @Test
-    public void shouldEditPasswordStoredInSharedPreferencesForFutureOfflineLogin() {
-        newPassword = mock(EditText.class);
-        newPasswordConfirm = mock(EditText.class);
-        currentPassword = mock(EditText.class);
+    public void shouldCreateAlertDialogIfNoSyncTaskIsRunningInBackground() {
+        doReturn(true).when(changePasswordActivity).validatesPresenceOfMandatoryFields();
+        doReturn(true).when(changePasswordActivity).isPasswordSameAsConfirmPassword();
 
-        doReturn(currentPassword).when(changePasswordActivity).findViewById(R.id.current_password);
+        RapidFtrApplication context = mock(RapidFtrApplication.class);
+        when(changePasswordActivity.getContext()).thenReturn(context);
+        when(context.getSyncTask()).thenReturn(new SyncAllDataAsyncTask(null,null,null,null));
 
-        
+        changePasswordActivity.changePassword(null);
+        verify(changePasswordActivity).createAlertDialog();
     }
-    
-
 }

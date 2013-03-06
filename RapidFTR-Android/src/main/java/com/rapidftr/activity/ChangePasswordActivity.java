@@ -1,5 +1,7 @@
 package com.rapidftr.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -9,6 +11,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.ChangePasswordTask;
 
 public class ChangePasswordActivity extends RapidFtrActivity{
+    String old, new_password, confirmation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,16 +25,40 @@ public class ChangePasswordActivity extends RapidFtrActivity{
     }
 
     public void changePassword(View view) {
-        String old = getEditText(R.id.current_password);
-        String new_password = getEditText(R.id.new_password);
-        String confirmation = getEditText(R.id.new_password_confirm);
+        old = getEditText(R.id.current_password);
+        new_password = getEditText(R.id.new_password);
+        confirmation = getEditText(R.id.new_password_confirm);
 
-        if(validatesPresenceOfMandatoryFields() && isPasswordSameAsConfirmPassword()) {
-            sendRequestToServer(old, new_password, confirmation);
+        if (validatesPresenceOfMandatoryFields() && isPasswordSameAsConfirmPassword()) {
+            if (getContext().getSyncTask() != null)
+                createAlertDialog();
+            else
+                sendRequestToServer(old, new_password, confirmation);
         }
     }
 
-    private boolean isPasswordSameAsConfirmPassword() {
+    protected void createAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle(R.string.change_password);
+        builder.setMessage(R.string.confirm_change_password_text);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                cancelSync(RapidFtrApplication.getApplicationInstance());
+                sendRequestToServer(old,new_password,confirmation);
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {}
+        });
+
+        builder.create().show();
+    }
+    protected void cancelSync(RapidFtrApplication context) {
+        RapidFtrApplication.getApplicationInstance().cleanSyncTask();
+    }
+
+    protected boolean isPasswordSameAsConfirmPassword() {
         if (!getEditText(R.id.new_password).equals(getEditText(R.id.new_password_confirm))) {
             ((EditText) findViewById(R.id.new_password_confirm)).setError(getString(R.string.password_mismatch));
             return false;

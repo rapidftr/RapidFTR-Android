@@ -52,6 +52,7 @@ public class ChangePasswordTask extends AsyncTask<String, Boolean, Boolean> {
             try {
                 User user = new User(this.username, this.currentPassword).load();
                 user.setPassword(newPassword);
+                user.save();
             } catch (Exception e) {
                 Log.e("ChangePasswordTask",e.getMessage());
             }
