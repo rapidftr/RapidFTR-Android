@@ -64,6 +64,7 @@ public class ViewChildActivity extends BaseChildActivity {
             }
             if (!getCurrentUser().isVerified()) {
                 menu.findItem(R.id.synchronize_child).setVisible(false);
+                menu.getItem(4).setVisible(false);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -74,6 +75,9 @@ public class ViewChildActivity extends BaseChildActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.change_password:
+                startActivity(new Intent(this, ChangePasswordActivity.class));
+                return true;
             case R.id.synchronize_child:
                 sync();
                 return true;

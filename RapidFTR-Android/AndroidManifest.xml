@@ -21,19 +21,20 @@
                  android:theme="@style/Theme.RapidFTRtheme">
 
         <activity android:name="com.crittercism.NotificationActivity"/>
-        <activity android:name=".activity.LoginActivity" android:label="RapidFTR">
+        <activity android:name=".activity.LoginActivity" android:label="RapidFTR" android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.RegisterChildActivity" android:configChanges="orientation" android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activity.RegisterChildActivity" android:configChanges="orientation" android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity android:name=".activity.ChangePasswordActivity" android:configChanges="orientation" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.ViewChildActivity" android:configChanges="orientation" />
-        <activity android:name=".activity.EditChildActivity" android:configChanges="orientation" />
-        <activity android:name=".activity.SignupActivity"/>
+        <activity android:name=".activity.EditChildActivity" android:configChanges="orientation" android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity android:name=".activity.SignupActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.InfoActivity"/>
-        <activity android:name=".activity.SearchActivity"/>
+        <activity android:name=".activity.SearchActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.ViewAllChildrenActivity"/>
         <activity android:name=".activity.ViewPhotoActivity" android:noHistory="true" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
 

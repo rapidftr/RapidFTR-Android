@@ -49,7 +49,7 @@ public class MigrateUnverifiedDataToVerifiedTest {
 
         JSONObject mockJSONObject = mock(JSONObject.class);
         doReturn(verifiedUser.getDbKey()).when(mockJSONObject).getString("db_key");
-        doReturn(verifiedUser.isVerified()).when(mockJSONObject).getBoolean("user_status");
+        doReturn(verifiedUser.isVerified()).when(mockJSONObject).optBoolean("verified");
         MigrateUnverifiedDataToVerified task = new MigrateUnverifiedDataToVerified(mockJSONObject, unverifiedUser);
         task = spy(task);
 
@@ -69,7 +69,7 @@ public class MigrateUnverifiedDataToVerifiedTest {
     public void shouldSetTheResponseDataToCurrentUser() throws JSONException {
         JSONObject mockJSONObject = mock(JSONObject.class);
         doReturn("DB_KEY_FROM_SERVER").when(mockJSONObject).getString("db_key");
-        doReturn(true).when(mockJSONObject).getBoolean("user_status");
+        doReturn(true).when(mockJSONObject).optBoolean("verified");
 
         MigrateUnverifiedDataToVerified task = new MigrateUnverifiedDataToVerified(mockJSONObject, unverifiedUser);
         task = spy(task);

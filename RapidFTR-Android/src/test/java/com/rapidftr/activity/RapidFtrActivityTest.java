@@ -2,26 +2,23 @@ package com.rapidftr.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.NetworkInfo;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.task.AsyncTaskWithDialog;
+import com.rapidftr.task.SynchronisationAsyncTask;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 
 import java.io.IOException;
 
-import static com.rapidftr.CustomTestRunner.createUser;
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
+import static com.rapidftr.CustomTestRunner.createUser;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -52,6 +49,7 @@ public class RapidFtrActivityTest {
         RapidFtrActivity loginActivity = new LoginActivity();
         Menu menu = mock(Menu.class);
         doReturn(mock(MenuItem.class)).when(menu).getItem(anyInt());
+        doReturn(mock(MenuItem.class)).when(menu).findItem(anyInt());
         boolean showMenu = loginActivity.onCreateOptionsMenu(menu);
 
         assertThat(showMenu, is(true));
@@ -106,8 +104,10 @@ public class RapidFtrActivityTest {
         Menu mockMenu = mock(Menu.class);
         MenuItem syncAllMenuItem = mock(MenuItem.class);
         MenuItem cancelSyncAllMenuItem = mock(MenuItem.class);
+        MenuItem changePasswordMenuItem = mock(MenuItem.class);
         doReturn(syncAllMenuItem).when(mockMenu).getItem(0);
         doReturn(cancelSyncAllMenuItem).when(mockMenu).getItem(1);
+        doReturn(changePasswordMenuItem).when(mockMenu).findItem(R.id.change_password);
 
         RapidFtrActivity mainActivity = new ViewAllChildrenActivity();
 
@@ -146,6 +146,7 @@ public class RapidFtrActivityTest {
         RapidFtrActivity mainActivity = new ViewAllChildrenActivity();
         Menu mockMenu = mock(Menu.class);
         when(mockMenu.getItem(anyInt())).thenReturn(mock(MenuItem.class));
+        when(mockMenu.findItem(anyInt())).thenReturn(mock(MenuItem.class));
 	    mainActivity.onCreateOptionsMenu(mockMenu);
 	    verify(mockSyncAll).setContext(mainActivity);
     }

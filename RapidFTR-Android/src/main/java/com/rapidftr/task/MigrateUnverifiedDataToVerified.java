@@ -57,7 +57,7 @@ public class MigrateUnverifiedDataToVerified extends AsyncTask<Void, Void, Void>
 
     private void setNewCurrentUser(JSONObject userFromResponse, User currentUser) throws JSONException {
         currentUser.setDbKey(userFromResponse.getString("db_key"));
-        currentUser.setVerified(userFromResponse.getBoolean("user_status"));
+        currentUser.setVerified(userFromResponse.optBoolean("verified"));
         currentUser.setOrganisation(userFromResponse.getString("organisation"));
         currentUser.setLanguage(userFromResponse.getString("language"));
         RapidFtrApplication.getApplicationInstance().setCurrentUser(currentUser);
@@ -67,7 +67,7 @@ public class MigrateUnverifiedDataToVerified extends AsyncTask<Void, Void, Void>
         User user = new User(unVerifiedUser.getUserName());
         try {
             user.setDbKey(responseFromServer.getString("db_key"));
-            user.setVerified(responseFromServer.getBoolean("user_status"));
+            user.setVerified(responseFromServer.optBoolean("verified"));
         } catch (JSONException e) {
             Log.e("Migrate Data", e.getMessage());
             throw new RuntimeException();

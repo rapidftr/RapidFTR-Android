@@ -133,10 +133,15 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         if (getContext().isLoggedIn()) {
             getMenuInflater().inflate(R.menu.options_menu, menu);
             setMenu(menu);
+            toggleChangePassword(menu);
             toggleSync(menu);
             setContextToSyncTask();
         }
         return getContext().isLoggedIn();
+    }
+
+    private void toggleChangePassword(Menu menu) {
+        menu.findItem(R.id.change_password).setVisible((this.getClass() == ChangePasswordActivity.class) ? false : RapidFtrApplication.getApplicationInstance().getCurrentUser().isVerified());
     }
 
     private void setContextToSyncTask() {
@@ -148,6 +153,13 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.change_password:
+                if (this.getClass() == RegisterChildActivity.class || this.getClass() == EditChildActivity.class) {
+                    saveAlertListener(ChangePasswordActivity.class);
+                } else {
+                    startActivity(new Intent(this, ChangePasswordActivity.class));
+                }
+                return true;
             case R.id.synchronize_all:
                 if (isNullOrEmpty(getCurrentUser().getServerUrl())) {
                     getServerAndSync();

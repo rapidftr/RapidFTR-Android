@@ -103,10 +103,19 @@
     <string name="mandatory">All fields are mandatory</string>
     <string name="registered">You are registered. Login with the username </string>
 
+    <string name="yes">Yes</string>
     <string name="start_record">Start</string>
     <string name="stop_record">Stop</string>
     <string name="play_record">Play</string>
+    <string name="forgot_password">Request password reset</string>
 
     <string name="network_down">Connection to the server lost, the sync process has been cancelled</string>
+    <string name="no_connection">Connection to the server lost, Try again later</string>
     <string name="temp_sync_error">Error occurred while syncing the record with the server, please try again.</string>
+    <string name="current_password_label">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="change_password">Change Password</string>
+    <string name="password_change_success">Password Changed Successfully</string>
+    <string name="password_change_failed">Could not change password. Try again</string>
+    <string name="confirm_change_password_text">Records are still being sychronised. Changing password will stop synchronising. Do you still want to continue? </string>
 </resources>
