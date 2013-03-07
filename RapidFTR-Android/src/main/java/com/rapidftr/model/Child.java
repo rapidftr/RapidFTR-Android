@@ -23,6 +23,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
+import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
+import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
 import static com.rapidftr.model.Child.History.*;
@@ -282,8 +284,8 @@ public class Child extends JSONObject implements Parcelable {
                                 changes.put(names.getString(i), fromTo);
                             }
                         }
-                        history.put(USER_NAME, child.getOwner());
-                        history.put(USER_ORGANISATION, child.optString("created_organisation"));
+                        history.put(History.USER_NAME, RapidFtrApplication.getApplicationInstance().getPreference(USER_NAME));
+                        history.put(USER_ORGANISATION, RapidFtrApplication.getApplicationInstance().getPreference(USER_ORG));
                         history.put(DATETIME, RapidFtrDateTime.now().defaultFormat());
                         break;
                     }
