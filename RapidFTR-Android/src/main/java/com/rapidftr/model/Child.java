@@ -284,8 +284,8 @@ public class Child extends JSONObject implements Parcelable {
                                 changes.put(names.getString(i), fromTo);
                             }
                         }
-                        history.put(History.USER_NAME, RapidFtrApplication.getApplicationInstance().getPreference(USER_NAME));
-                        history.put(USER_ORGANISATION, RapidFtrApplication.getApplicationInstance().getPreference(USER_ORG));
+                        history.put(History.USER_NAME, RapidFtrApplication.getApplicationInstance().getSharedPreferences().getString("USER_NAME", ""));
+                        history.put(USER_ORGANISATION, RapidFtrApplication.getApplicationInstance().getSharedPreferences().getString("USER_ORG", ""));
                         history.put(DATETIME, RapidFtrDateTime.now().defaultFormat());
                         break;
                     }
