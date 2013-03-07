@@ -23,8 +23,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
-import static com.rapidftr.RapidFtrApplication.Preference.USER_NAME;
-import static com.rapidftr.RapidFtrApplication.Preference.USER_ORG;
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
 import static com.rapidftr.model.Child.History.*;
