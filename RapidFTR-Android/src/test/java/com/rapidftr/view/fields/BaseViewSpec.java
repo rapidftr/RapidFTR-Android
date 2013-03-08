@@ -58,4 +58,11 @@ public abstract class BaseViewSpec<F extends BaseView> extends TestCase {
 
     }
 
+    @Test
+    public void testShouldNotReturnDisplayNameForCurrentPhotoKey(){
+        field.setId("current_photo_key");
+        view.initialize(field, child);
+        assertThat(view.getLabel().getText().toString(), equalTo(""));
+    }
+
 }
