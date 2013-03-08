@@ -4,17 +4,48 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:orientation="vertical">
-
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal">
         <include layout="@layout/register_tab"/>
     </LinearLayout>
-    
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="30dp"
+                  android:background="#aaaaaa"
+                  android:orientation="horizontal">
+
+        <TextView android:id="@+id/title"
+                  android:text="New Registration"
+                  style="@style/page_title"
+                  android:gravity="center_vertical"
+                  android:layout_height="fill_parent"
+                  android:layout_width="0dp"
+                  android:layout_weight="3"/>
+
+        <View android:layout_height="20dp"
+              android:layout_width="0.5dp"
+              android:layout_marginTop="5dp"
+              android:background="#999999"/>
+
+        <Button android:id="@+id/submit"
+                android:text="Save"
+                android:layout_height="fill_parent"
+                android:layout_width="70dp"
+                android:background="@drawable/savebtn"
+                style="@style/save_btn"/>
+
+    </LinearLayout>
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
-                  android:orientation="horizontal">
-        <include layout="@layout/activity_common"/>
+            >
+        <Spinner android:id="@+id/spinner"
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:background="@drawable/form_spinner"
+
+                />
+
+
     </LinearLayout>
     <android.support.v4.view.ViewPager
             android:id="@+id/pager"
