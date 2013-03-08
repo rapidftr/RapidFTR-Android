@@ -18,7 +18,7 @@ public class ViewChildActivity extends BaseChildActivity {
 
     @Override
     protected void initializeView() {
-        setContentView(R.layout.activity_register_child);
+        setContentView(R.layout.activity_view_child);
         findViewById(R.id.submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

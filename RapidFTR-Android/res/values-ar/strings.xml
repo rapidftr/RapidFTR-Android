@@ -14,6 +14,7 @@
     <string name="new_user">جديد في RapidFTR? </string>
     <string name="full_name_required">الإسم الكامل ضروري</string>
     <string name="full_name">الإسم الكامل</string>
+    <string name="signup">إشترك!</string>
 
     <string name="username">إسم المستخدم</string>
     <string name="password">كلمة السر</string>
@@ -75,7 +76,6 @@
     <string name="synchronize_step_1">خطوة ١ من ٣ - التزامن من الأقسام&#8230;</string>
     <string name="synchronize_step_2">خطوة ٢ من ٣ - إرسال السجلات إلى المخدم&#8230;</string>
     <string name="synchronize_step_3">خطوة ٣ من ٣ - إستعادة السجلات من المخدم&#8230;</string>
-    <string name="signup">إشترك!</string>
     <string name="confirm">أكد كلمة السر</string>
     <string name="organisation">المنظمة</string>
     <string name="optional_url">الرابط (إختياري)</string>
