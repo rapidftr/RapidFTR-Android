@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
-import static org.apache.http.HttpStatus.SC_CREATED;
 
 public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 
@@ -80,13 +79,16 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
             Log.e(APP_IDENTIFIER, "Failed to login", e);
             return doOfflineLogin();
         }
-		if (response == null || response.getStatusLine() == null || response.getStatusLine().getStatusCode() != SC_CREATED)
+		if (response == null || response.getStatusLine() == null)
 			return doOfflineLogin();
 
-		String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
-		User user = new User(this.userName, this.password, true, this.url);
-        user.read(responseAsString);
         User userFromSharedPreference = getUserFromPreference();
+        if((userFromSharedPreference == null) || (userFromSharedPreference !=null && !userFromSharedPreference.isVerified())) return doOfflineLogin();
+
+        String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
+        User user = new User(this.userName, this.password, true, this.url);
+        user.read(responseAsString);
+
         if(userFromSharedPreference !=null && (!userFromSharedPreference.isVerified() && user.isVerified()))
             migrateUnverifiedData(responseAsString, userFromSharedPreference);
         return user;
