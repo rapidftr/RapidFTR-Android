@@ -137,8 +137,6 @@ public class PhotoCaptureHelperTest {
 
         photoCaptureHelper.saveThumbnail(original, 90, "random_file");
         verify(photoCaptureHelper).save(rotated, "random_file_thumb", QUALITY, "key");
-	    verify(scaled).recycle();
-	    verify(rotated).recycle();
     }
 
     @Test

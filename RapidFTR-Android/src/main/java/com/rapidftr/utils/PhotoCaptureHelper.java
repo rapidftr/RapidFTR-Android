@@ -141,9 +141,6 @@ public class PhotoCaptureHelper extends CaptureHelper {
 	    Bitmap scaled = resizeImageTo(original, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
 	    Bitmap rotated = rotateBitmap(scaled, rotationDegree);
         save(rotated, fileNameWithoutExtension + "_thumb", QUALITY, application.getCurrentUser().getDbKey());
-
-	    scaled.recycle();
-	    rotated.recycle();
     }
 
     public Bitmap loadThumbnail(String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
