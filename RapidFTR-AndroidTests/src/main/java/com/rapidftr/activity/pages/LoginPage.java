@@ -67,4 +67,14 @@ public class LoginPage {
         return ((EditText)solo.getCurrentActivity().findViewById(R.id.password)).getError().toString();
     }
 
+    public void registerUnverifiedUser(String userName, String password, String reEnterPassword, String fullName, String organisation){
+        solo.sleep(5);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.username)," ");
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.username),userName);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.password),password);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.confirm_password),reEnterPassword);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.full_name),fullName);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.organisation),organisation);
+        solo.clickOnButton(solo.getString(R.string.signup));
+    }
 }
