@@ -27,7 +27,7 @@ public class ChildPage {
     }
 
     public void navigateToRegisterPage() {
-        solo.clickOnText("Register Child");
+        solo.clickOnText("Register");
         solo.waitForText("Basic Identity");
     }
 

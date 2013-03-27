@@ -43,13 +43,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 
     @Override
     public void tearDown() throws Exception {
-//        try {
-//            solo.finalize();
-//        } catch (Throwable throwable) {
-//            throwable.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
         solo.finishOpenedActivities();
-//        RapidFtrApplication.getApplicationInstance().setLoggedIn(false);
     }
 
     public boolean isTextPresent(String searchText){

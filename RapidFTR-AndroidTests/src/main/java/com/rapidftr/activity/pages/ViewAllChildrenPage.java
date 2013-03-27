@@ -15,9 +15,6 @@ public class ViewAllChildrenPage {
         this.solo = solo;
     }
 
-    public void navigateToViewAllFromHome() {
-        solo.clickOnText("View All Children");
-    }
 
     public void navigateToViewAllTab(){
         solo.clickOnText("View All");

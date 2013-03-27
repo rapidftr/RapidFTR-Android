@@ -25,20 +25,22 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
         super.tearDown();
     }
 
+    //fdf
+
     public void testSearchChildAndViewDetail() throws JSONException {
         ChildRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(ChildRepository.class);
-        Child child=new Child(getAlphaNumeric(5), "rapidftr","{\"name\":\"SearchTest\"}");
+        Child child=new Child(getAlphaNumeric(5), "admin","{\"name\":\"SearchTest\"}");
         repository.createOrUpdate(child);
-        searchPage.navigateToSearchPage();
+        searchPage.navigateToSearchTab();
         searchPage.searchChild("SearchTest");
         assertTrue(searchPage.isChildPresent(child.getUniqueId(), "SearchTest"));
         viewAllChildrenPage.clickChild(child.getUniqueId());
         viewAllChildrenPage.verifyChildDetails(child);
 
     }
-
+                   //sdsf
     public void testErrorMessageOnNoSearchResultFound(){
-        searchPage.navigateToSearchPage();
+        searchPage.navigateToSearchTab();
         searchPage.searchChild("InvalidChild");
         assertTrue(isTextPresent("No Record Found"));
 
@@ -48,7 +50,7 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
         ChildRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(ChildRepository.class);
         Child child =new Child(getAlphaNumeric(5), "admin","{\"name\":\"SearchEditTest\"}");
         repository.createOrUpdate(child);
-        searchPage.navigateToSearchPage();
+        searchPage.navigateToSearchTab();
         searchPage.searchChild(child.getName());
         viewAllChildrenPage.clickChild(child.getUniqueId());
         childPage.selectEditChild();

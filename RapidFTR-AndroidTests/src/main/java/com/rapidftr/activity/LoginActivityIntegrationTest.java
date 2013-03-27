@@ -18,9 +18,9 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
           assertTrue(loginPage.getPasswordRequiredMessage().equals("Password is required"));
     }
 
-     public void testUserAbleToSeeLastSuccessfulLoginUrl() {
+     public void testUserAbleToSeeLastSuccessfulLoginUrl() throws Exception {
          loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
-         solo.waitForText("Login Successful");
+         waitUntilTextDisappears("Login Successful");
          loginPage.logout();
          loginPage.changeURL();
          assertTrue(loginPage.getUrl().equals(LOGIN_URL));
@@ -34,9 +34,9 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
 	    assertTrue(solo.getCurrentActivity().isFinishing());
     }
 
-    public void testUserIsAlertedWhenAttemptingToLogoutWhileSyncInProgress() throws InterruptedException {
+    public void testUserIsAlertedWhenAttemptingToLogoutWhileSyncInProgress() throws Exception {
         loginPage.login();
-        solo.waitForText("Login Successful");
+        waitUntilTextDisappears("Login Successful");
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         solo.sleep(1000);
         solo.clickOnMenuItem(solo.getString(R.string.log_out));
