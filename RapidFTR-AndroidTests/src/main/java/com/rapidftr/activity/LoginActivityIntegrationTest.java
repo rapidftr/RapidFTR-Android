@@ -48,6 +48,34 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
     }
 
 
+    public void testPasswordReset(){
+        loginPage.login();
+        solo.waitForText("Login Successful");
+        solo.clickOnMenuItem(solo.getString(R.string.change_password));
+        changePasswordPage.changePassword("rapidftr","rapidftr","rapidftr");
+        assertTrue(solo.waitForText("Password Changed Successfully"));
+    }
+
+    public void testPasswordResetErrors(){
+        loginPage.login();
+        solo.waitForText("Login Successful");
+        solo.clickOnMenuItem(solo.getString(R.string.change_password));
+        changePasswordPage.changePassword("","","");
+        assertTrue(changePasswordPage.getCurrentPasswordRequiredMessage().equals("All fields are mandatory"));
+        assertTrue(changePasswordPage.getNewPasswordRequiredMessage().equals("All fields are mandatory"));
+        assertTrue(changePasswordPage.getNewPasswordConfirmRequiredMessage().equals("All fields are mandatory"));
+    }
+
+    public void testPasswordResetWrongCurrentPassword(){
+        loginPage.login();
+        solo.waitForText("Login Successful");
+        solo.clickOnMenuItem(solo.getString(R.string.change_password));
+        changePasswordPage.changePassword("rapidfr","rapidftr","rapidftr");
+        assertTrue(solo.waitForText("Could not change password. Try again"));
+        changePasswordPage.changePassword("rapidftr","rapidftr","rapitr");
+        assertTrue(changePasswordPage.getNewPasswordConfirmRequiredMessage().equals("Password mismatch"));
+    }
+
 
 
 }
