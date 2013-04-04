@@ -7,6 +7,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.IOUtils;
 import com.rapidftr.utils.PhotoCaptureHelper;
@@ -98,13 +99,14 @@ public class FluentRequest {
 
     public FluentRequest context(Context context) {
         this.context = context;
+	    header("Authorization",getAuthorization(context));
         host(getBaseUrl(context));
         config(HttpConnectionParams.CONNECTION_TIMEOUT, getConnectionTimeout(context));
 	    config(HttpConnectionParams.SO_TIMEOUT, getConnectionTimeout(context));
         return this;
     }
 
-    public FluentResponse get() throws IOException {
+	public FluentResponse get() throws IOException {
         return executeUnenclosed(new HttpGet(uri.build().toString()));
     }
 
@@ -232,7 +234,12 @@ public class FluentRequest {
         return context.getResources().getInteger(R.integer.http_timeout);
     }
 
-    private static DefaultHttpClient createHttpClient() {
+	protected String getAuthorization(Context context) {
+		User currentUser = ((RapidFtrApplication) context).getCurrentUser();
+		return currentUser == null ? "" : ("RFTR_Token " + currentUser.getSessionId());
+	}
+
+	private static DefaultHttpClient createHttpClient() {
         try {
             KeyStore trusted = KeyStore.getInstance("BKS");
             @Cleanup InputStream in = RapidFtrApplication.getApplicationInstance().getResources().openRawResource(R.raw.trusted);
