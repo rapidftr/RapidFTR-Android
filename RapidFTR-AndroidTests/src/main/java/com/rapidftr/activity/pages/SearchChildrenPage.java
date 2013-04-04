@@ -12,10 +12,6 @@ public class SearchChildrenPage {
         this.solo=solo;
     }
 
-    public void navigateToSearchPage(){
-        solo.clickOnText("Search for a Child");
-        solo.waitForActivity("SearchActivity");
-    }
 
     public void navigateToSearchTab(){
         solo.clickOnText("Search");

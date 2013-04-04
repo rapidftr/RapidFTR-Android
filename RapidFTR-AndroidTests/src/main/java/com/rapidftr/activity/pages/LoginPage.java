@@ -11,8 +11,8 @@ public class LoginPage {
     public static final String HOST = "https://test.rapidftr.com";
 //    public static final String PORT = "5001";
     public static final String LOGIN_URL = HOST ;
-    public static final String PASSWORD = "rapidftr";
-    public static final String USERNAME = "rapidftr";
+    public static final String PASSWORD = "admin";
+    public static final String USERNAME = "admin";
 
     public final Solo solo;
 
@@ -67,4 +67,14 @@ public class LoginPage {
         return ((EditText)solo.getCurrentActivity().findViewById(R.id.password)).getError().toString();
     }
 
+    public void registerUnverifiedUser(String userName, String password, String reEnterPassword, String fullName, String organisation){
+        solo.sleep(5);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.username)," ");
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.username),userName);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.password),password);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.confirm_password),reEnterPassword);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.full_name),fullName);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.organisation),organisation);
+        solo.clickOnButton(solo.getString(R.string.signup));
+    }
 }
