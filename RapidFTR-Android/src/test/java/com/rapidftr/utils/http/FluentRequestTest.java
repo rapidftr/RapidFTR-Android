@@ -108,6 +108,7 @@ public class FluentRequestTest {
         FluentRequest http = spy(http());
         doReturn("example.com").when(http).getBaseUrl(context);
         doReturn(1234).when(http).getConnectionTimeout(context);
+	    doReturn("").when(http).getAuthorization(context);
 
         Robolectric.getFakeHttpLayer().addHttpResponseRule("http://example.com/test", response);
         assertThat(http.path("/test").context(context).get(), equalTo(response));
@@ -140,6 +141,7 @@ public class FluentRequestTest {
 
 		doReturn("example.com").when(http).getBaseUrl(context);
 		doReturn(1234).when(http).getConnectionTimeout(context);
+		doReturn("").when(http).getAuthorization(context);
 
 		http.context(context);
 		verify(http).config(HttpConnectionParams.CONNECTION_TIMEOUT, 1234);
