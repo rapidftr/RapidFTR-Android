@@ -28,8 +28,8 @@ public class MigrateUnverifiedDataToVerifiedTest {
     @Before
     public void setUp() throws IOException {
         application = RapidFtrApplication.getApplicationInstance();
-        unverifiedUser = new User("username", "pass", false, null, User.UNAUTHENTICATED_DB_KEY, "tw", "user", "pass", "en");
-        verifiedUser = new User("username", "pass", true, null, "new_db_key", "tw", "user", "pass", "en");
+        unverifiedUser = new User("username", "pass", false, null, User.UNAUTHENTICATED_DB_KEY, "tw", "user", "pass", "en", null);
+        verifiedUser = new User("username", "pass", true, null, "new_db_key", "tw", "user", "pass", "en", null);
         application.setCurrentUser(unverifiedUser);
     }
 
