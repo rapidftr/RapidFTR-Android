@@ -80,7 +80,6 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
             Log.e(APP_IDENTIFIER, "Failed to login", e);
             return doOfflineLogin();
         }
-
 		if (response == null || response.getStatusLine() == null || response.getStatusLine().getStatusCode() != SC_CREATED)
 			return doOfflineLogin();
 
