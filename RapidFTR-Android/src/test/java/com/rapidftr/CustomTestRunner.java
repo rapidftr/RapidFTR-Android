@@ -84,7 +84,7 @@ public class CustomTestRunner extends RobolectricTestRunner {
 	}
 
 	public static User createUser(String userName) {
-		return new User(userName, "testPassword", true, "localhost:3000", "testDbKey", "Test Organisation", "Test Name", "testPassword", "en");
+		return new User(userName, "testPassword", true, "localhost:3000", "testDbKey", "Test Organisation", "Test Name", "testPassword", "en", null);
 	}
 
 }

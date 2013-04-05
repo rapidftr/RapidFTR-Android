@@ -3,11 +3,12 @@ package com.rapidftr.activity;
 import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.activity.pages.*;
+import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.activity.pages.ChildPage;
 import com.rapidftr.activity.pages.LoginPage;
 import com.rapidftr.activity.pages.SearchChildrenPage;
 import com.rapidftr.activity.pages.ViewAllChildrenPage;
-import com.rapidftr.repository.ChildRepository;
 
 public abstract class BaseActivityIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
@@ -17,10 +18,11 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     public ChildPage childPage;
     public SearchChildrenPage searchPage;
 	public RapidFtrApplication application;
+    public ChangePasswordPage changePasswordPage;
 
 
-    RapidFtrApplication context = RapidFtrApplication.getApplicationInstance() ;
-    ChildRepository repository=context.getInjector().getInstance(ChildRepository.class);
+//    RapidFtrApplication context = RapidFtrApplication.getApplicationInstance() ;
+//    ChildRepository repository=context.getInjector().getInstance(ChildRepository.class);
 
     final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -35,6 +37,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
         viewAllChildrenPage = new ViewAllChildrenPage(solo);
         childPage = new ChildPage(solo);
         searchPage= new SearchChildrenPage(solo);
+        changePasswordPage = new ChangePasswordPage(solo);
 	    application = RapidFtrApplication.getApplicationInstance();
 
 	    if (application.isLoggedIn()) {
@@ -44,13 +47,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 
     @Override
     public void tearDown() throws Exception {
-//        try {
-//            solo.finalize();
-//        } catch (Throwable throwable) {
-//            throwable.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//        }
         solo.finishOpenedActivities();
-//        RapidFtrApplication.getApplicationInstance().setLoggedIn(false);
     }
 
     public boolean isTextPresent(String searchText){

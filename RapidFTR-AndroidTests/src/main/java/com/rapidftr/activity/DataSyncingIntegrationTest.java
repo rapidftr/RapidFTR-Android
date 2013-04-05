@@ -25,6 +25,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         assertTrue(solo.waitForText("Login Successful"));
         repository = application.getInjector().getInstance(ChildRepository.class);
         RapidFTRDatabase.deleteChildren();
+
     }
 
     @Override
@@ -41,7 +42,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
         Child child = repository.get("abcd1234");
         assertEquals("123456", child.optString("_id"));
-        searchPage.navigateToSearchPage();
+        searchPage.navigateToSearchTab();
         searchPage.searchChild(child.optString("unique_identifier"));
         assertTrue(searchPage.isChildPresent(child.optString("unique_identifier"), "jen"));
         loginPage.logout();
@@ -49,7 +50,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     public void testRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
 
-        Child childToBeSynced = new Child("xyz4321", "rapidftr", "{'name' : 'moses'}");
+        Child childToBeSynced = new Child("xyz4321", "admin", "{'name' : 'moses'}");
         repository.createOrUpdate(childToBeSynced);
         assertFalse(childToBeSynced.isSynced());
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
@@ -62,10 +63,10 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
     }
 
     public void testSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
-        Child child1 = new Child("abc4321", "rapidftr", "{'name' : 'moses'}");
-        Child child2 = new Child("qwe4321", "rapidftr", "{'name' : 'james'}");
-        Child child3 = new Child("zxy4321", "rapidftr", "{'name' : 'kenyata'}");
-        Child child4 = new Child("uye4321", "rapidftr", "{'name' : 'keburingi'}");
+        Child child1 = new Child("abc4321", "admin", "{'name' : 'moses'}");
+        Child child2 = new Child("qwe4321", "admin", "{'name' : 'james'}");
+        Child child3 = new Child("zxy4321", "admin", "{'name' : 'kenyata'}");
+        Child child4 = new Child("uye4321", "admin", "{'name' : 'keburingi'}");
         seedDataToRepository(child1, child2, child3, child4);
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         Thread.sleep(1000);
@@ -92,4 +93,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .param("child", child.values().toString())
                 .post();
     }
+
+
+
 }
