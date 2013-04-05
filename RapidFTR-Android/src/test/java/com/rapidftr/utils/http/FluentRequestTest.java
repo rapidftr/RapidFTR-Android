@@ -2,9 +2,6 @@ package com.rapidftr.utils.http;
 
 import android.content.Context;
 import com.rapidftr.CustomTestRunner;
-import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.model.User;
-import com.rapidftr.utils.RapidFtrDateTime;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.tester.org.apache.http.FakeHttpLayer;
 import com.xtremelabs.robolectric.tester.org.apache.http.RequestMatcher;
@@ -26,7 +23,6 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Security;
 
-import static com.rapidftr.CustomTestRunner.createUser;
 import static com.rapidftr.utils.http.FluentRequest.http;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -108,31 +104,10 @@ public class FluentRequestTest {
         FluentRequest http = spy(http());
         doReturn("example.com").when(http).getBaseUrl(context);
         doReturn(1234).when(http).getConnectionTimeout(context);
-	    doReturn("").when(http).getAuthorization(context);
 
         Robolectric.getFakeHttpLayer().addHttpResponseRule("http://example.com/test", response);
         assertThat(http.path("/test").context(context).get(), equalTo(response));
     }
-
-	@Test
-	public void testSessionIdFromContext() {
-		User user = createUser();
-		user.setSessionId("test_session_id");
-		RapidFtrApplication.getApplicationInstance().setCurrentUser(user);
-
-		FluentRequest http = spy(http());
-		http.context(RapidFtrApplication.getApplicationInstance());
-
-		verify(http).header("Authorization", "RFTR_Token test_session_id");
-	}
-
-	@Test
-	public void shouldNotSetSessionIdIfNoUser() {
-		RapidFtrApplication.getApplicationInstance().setCurrentUser(null);
-		FluentRequest http = spy(http());
-		http.context(RapidFtrApplication.getApplicationInstance());
-		verify(http).header("Authorization", "");
-	}
 
 	@Test
 	public void testTimeoutFromContext() {
@@ -141,7 +116,6 @@ public class FluentRequestTest {
 
 		doReturn("example.com").when(http).getBaseUrl(context);
 		doReturn(1234).when(http).getConnectionTimeout(context);
-		doReturn("").when(http).getAuthorization(context);
 
 		http.context(context);
 		verify(http).config(HttpConnectionParams.CONNECTION_TIMEOUT, 1234);
