@@ -48,12 +48,21 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
     }
 
 
-    public void testPasswordReset(){
+    public void testPasswordReset() throws Exception {
         loginPage.login();
         solo.waitForText("Login Successful");
         solo.clickOnMenuItem(solo.getString(R.string.change_password));
-        changePasswordPage.changePassword("rapidftr","rapidftr","rapidftr");
+        changePasswordPage.changePassword("admin", "rapidftr", "rapidftr");
         assertTrue(solo.waitForText("Password Changed Successfully"));
+        waitUntilTextDisappears("Password Changed Successfully");
+        loginPage.logout();
+        loginPage.login();
+        assertTrue(solo.waitForText("Incorrect username or password"));
+        loginPage.login("admin","rapidftr",LOGIN_URL);
+        solo.waitForText("Login Successful");
+        solo.clickOnMenuItem(solo.getString(R.string.change_password));
+        changePasswordPage.changePassword("rapidftr","admin","admin");
+        waitUntilTextDisappears("Password Changed Successfully");
     }
 
     public void testPasswordResetErrors(){

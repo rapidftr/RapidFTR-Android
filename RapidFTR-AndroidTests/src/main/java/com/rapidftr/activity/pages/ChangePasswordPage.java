@@ -1,7 +1,6 @@
 package com.rapidftr.activity.pages;
 
 
-import android.view.View;
 import android.widget.EditText;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.R;
@@ -22,8 +21,11 @@ public class ChangePasswordPage {
 
     public void changePassword(String password, String newPassword, String confirmPassword) {
         solo.waitForActivity("ChangePasswordActivity") ;
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.current_password), "");
         solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.current_password), password);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById((R.id.new_password)), "");
         solo.enterText((EditText) solo.getCurrentActivity().findViewById((R.id.new_password)), newPassword);
+        solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.new_password_confirm), "");
         solo.enterText((EditText) solo.getCurrentActivity().findViewById(R.id.new_password_confirm), confirmPassword);
         solo.clickOnButton("Change Password");
     }
