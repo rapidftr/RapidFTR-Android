@@ -30,11 +30,17 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
@@ -204,7 +210,6 @@ public class SyncAllDataAsyncTaskTest {
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
         HashMap<String, String> serverIDRevs = createServerIdRevMap();
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-        given(childService.getAllChildren()).willReturn(newArrayList(child1));
         given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
         given(childService.getChild("qwerty0987")).willReturn(mock(Child.class));

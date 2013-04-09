@@ -2,7 +2,6 @@ package com.rapidftr.service;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import com.google.common.base.Function;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
@@ -10,7 +9,6 @@ import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.AudioCaptureHelper;
-import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.RapidFtrDateTime;
 import com.rapidftr.utils.http.FluentRequest;
@@ -30,8 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static com.rapidftr.view.fields.PhotoUploadBox.PHOTO_KEYS;
 import static java.util.Arrays.asList;
@@ -125,61 +121,20 @@ public class ChildService {
         audioAttachments = child.remove("audio_attachments");
     }
 
-    private List<Object> getPhotoKeys(Child child) throws JSONException {
-        JSONArray array = child.has("photo_keys") ? child.getJSONArray("photo_keys") : new JSONArray();
-        return JSONArrays.asList(array);
-    }
-
     private String getAudioKey(Child child) throws JSONException {
         return (child.has("audio_attachments") && child.getJSONObject("audio_attachments").has("original")) ? child.getJSONObject("audio_attachments").optString("original") : "";
-    }
-
-    public void setPrimaryPhoto(Child child, String currentPhotoKey) throws JSONException, IOException {
-        //TODO need to modify this code once we implement multiple images. Can clean the webapp API, so that
-        //TODO we can send the primary photo along with the child put request
-
-        if (!currentPhotoKey.equals("")) {
-            String setPrimaryPhotoPath = "/children/" + child.get(internal_id.getColumnName()) + "/select_primary_photo/" + currentPhotoKey;
-            fluentRequest.path(setPrimaryPhotoPath);
-            fluentRequest.put();
-        }
-    }
-
-    public List<Child> getAllChildren() throws IOException {
-        HttpResponse response = fluentRequest
-                .context(context)
-                .path("/children")
-                .get();
-
-        String childrenJson = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
-        return convertToChildRecords(childrenJson);
     }
 
     public Child getChild(String id) throws IOException, JSONException {
         HttpResponse response = fluentRequest
                 .context(context)
-                .path(String.format("/children/%s", id))
+                .path(String.format("/api/children/%s", id))
                 .get();
 
         String childrenJson = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
         Child child = new Child(childrenJson);
         setChildAttributes(child);
         return child;
-    }
-
-    private List<Child> convertToChildRecords(String childrenJson) throws IOException {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        List<Map> childrenJsonData = asList(objectMapper.readValue(childrenJson, Map[].class));
-
-        return newArrayList(transform(childrenJsonData, new Function<Map, Child>() {
-            public Child apply(Map content) {
-                try {
-                    return new Child(objectMapper.writeValueAsString(content));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }));
     }
 
     public void setPhoto(Child child) throws IOException, JSONException {

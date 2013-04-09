@@ -53,15 +53,6 @@ public class ChildServiceTest {
     }
 
     @Test
-    public void shouldParseJsonResponseAndConvertToChildren() throws IOException, JSONException {
-        getFakeHttpLayer().setDefaultHttpResponse(201, "[" + RESPONSE + "]");
-
-        List<Child> children = new ChildService(mockContext(), repository, fluentRequest).getAllChildren();
-        assertThat(children.size(), is(1));
-        assertThat(children.get(0), equalTo(new Child(RESPONSE)));
-    }
-
-    @Test
     public void shouldMarkChildAsSyncedWhenSyncing() throws IOException, JSONException, GeneralSecurityException {
         Child child = new Child();
         getFakeHttpLayer().setDefaultHttpResponse(201, "{}");
