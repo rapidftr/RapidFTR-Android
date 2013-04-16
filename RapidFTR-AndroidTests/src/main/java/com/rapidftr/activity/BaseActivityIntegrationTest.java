@@ -4,11 +4,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.pages.*;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.activity.pages.ChildPage;
-import com.rapidftr.activity.pages.LoginPage;
-import com.rapidftr.activity.pages.SearchChildrenPage;
-import com.rapidftr.activity.pages.ViewAllChildrenPage;
 
 public abstract class BaseActivityIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
@@ -19,6 +14,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     public SearchChildrenPage searchPage;
 	public RapidFtrApplication application;
     public ChangePasswordPage changePasswordPage;
+    public UnverifiedUserPage unverifiedUserPage;
 
 
 //    RapidFtrApplication context = RapidFtrApplication.getApplicationInstance() ;
@@ -38,6 +34,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
         childPage = new ChildPage(solo);
         searchPage= new SearchChildrenPage(solo);
         changePasswordPage = new ChangePasswordPage(solo);
+        unverifiedUserPage=new UnverifiedUserPage(solo);
 	    application = RapidFtrApplication.getApplicationInstance();
 
 	    if (application.isLoggedIn()) {
