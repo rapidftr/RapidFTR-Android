@@ -3,7 +3,7 @@ package com.rapidftr.activity;
 import android.test.suitebuilder.annotation.Smoke;
 import com.rapidftr.R;
 
-import static com.rapidftr.activity.pages.LoginPage.*;
+import static com.rapidftr.activity.pages.LoginPage.LOGIN_URL;
 
 public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
 
@@ -19,7 +19,7 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
     }
 
      public void testUserAbleToSeeLastSuccessfulLoginUrl() throws Exception {
-         loginPage.login(USERNAME, PASSWORD, LOGIN_URL);
+         loginPage.login();
          waitUntilTextDisappears("Login Successful");
          loginPage.logout();
          loginPage.changeURL();
