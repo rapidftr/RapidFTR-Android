@@ -89,7 +89,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .context(application)
                 .host(LoginPage.LOGIN_URL)
                 .config(HttpConnectionParams.CONNECTION_TIMEOUT, 15000)
-                .path("/children")
+                .path("/api/children")
                 .param("child", child.values().toString())
                 .post();
     }
