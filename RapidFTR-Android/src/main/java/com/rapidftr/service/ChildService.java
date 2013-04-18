@@ -80,9 +80,9 @@ public class ChildService {
     
     protected String getSyncPath(Child child, User currentUser) throws JSONException {
         if (currentUser.isVerified()) {
-            return child.isNew() ? "/children" : String.format("/children/%s", child.get(internal_id.getColumnName()));
+            return child.isNew() ? "/api/children" : String.format("/api/children/%s", child.get(internal_id.getColumnName()));
         } else {
-            return "/children/sync_unverified";
+            return "/api/children/sync_unverified";
         }
     }
 
@@ -198,14 +198,14 @@ public class ChildService {
 
     public HttpResponse getPhoto(Child child, String fileName) throws IOException {
         return fluentRequest
-                .path(String.format("/children/%s/photo/%s", child.optString("_id"), fileName))
+                .path(String.format("/api/children/%s/photo/%s", child.optString("_id"), fileName))
                 .context(context)
                 .get();
     }
 
     public HttpResponse getAudio(Child child) throws IOException {
         return fluentRequest
-                .path(String.format("/children/%s/audio", child.optString("_id")))
+                .path(String.format("/api/children/%s/audio", child.optString("_id")))
                 .context(context)
                 .get();
 

@@ -24,7 +24,6 @@ import org.mockito.Mock;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
@@ -75,16 +74,16 @@ public class ChildServiceTest {
         Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
         child.put(Database.ChildTableColumn.internal_id.getColumnName(), "xyz");
 
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/children/xyz", "{}");
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/xyz", "{}");
         new ChildService(mockContext(), repository, fluentRequest).sync(child, currentUser);
     }
 
     @Test
     public void shouldCreateNewChildIfThereIsNoID() throws Exception {
         Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/children", "{ 'test1' : 'value2', '_id' : 'abcd1234'}");
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children", "{ 'test1' : 'value2', '_id' : 'abcd1234'}");
 
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/children/abcd1234/photo/", "{}");
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/abcd1234/photo/", "{}");
         child = new ChildService(mockContext(), repository, fluentRequest).sync(child, currentUser);
 
         verify(repository).update(child);
@@ -194,7 +193,7 @@ public class ChildServiceTest {
 
         childService.sync(child, currentUser);
 
-        verify(mockFluentRequest).path("/children/abcd/audio");
+        verify(mockFluentRequest).path("/api/children/abcd/audio");
         verify(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-888"));
         verify(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-998"));
         verify(childService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class),eq("photo-777"));
@@ -208,7 +207,7 @@ public class ChildServiceTest {
 
         new ChildService(mockContext(), repository, mockFluentRequest).getPhoto(child, "image_file_name");
 
-        verify(mockFluentRequest).path("/children/1234abcd/photo/image_file_name");
+        verify(mockFluentRequest).path("/api/children/1234abcd/photo/image_file_name");
     }
 
     @Test
@@ -219,7 +218,7 @@ public class ChildServiceTest {
 
         new ChildService(mockContext(), repository, mockFluentRequest).getAudio(child);
 
-        verify(mockFluentRequest).path("/children/1234abcd/audio");
+        verify(mockFluentRequest).path("/api/children/1234abcd/audio");
     }
 
     @Test
@@ -247,13 +246,13 @@ public class ChildServiceTest {
         assertEquals("kavitha working", child.get("name"));
         assertEquals("1-ec347c93b262e7db0e306b77f22c2e19", child.get("_rev"));
 
-        verify(mockFluentRequest).path("/children/0369c92c8e2245e680dc9a580202e285");
+        verify(mockFluentRequest).path("/api/children/0369c92c8e2245e680dc9a580202e285");
     }
 
     @Test
     public void shouldMarkUnverifiedChildAsSyncedOnceSuccessfullySynced() throws Exception {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/children/sync_unverified", new TestHttpResponse(200, "{}"));
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/sync_unverified", new TestHttpResponse(200, "{}"));
         Child child = new Child();
         given(currentUser.isVerified()).willReturn(false);
 
