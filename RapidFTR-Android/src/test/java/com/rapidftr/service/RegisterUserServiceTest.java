@@ -23,7 +23,7 @@ public class RegisterUserServiceTest {
         mockContext.getSharedPreferences().edit().putString(SERVER_URL_PREF, "whatever").commit();
 
         FluentRequest mockFluentRequest = spy(new FluentRequest());
-        getFakeHttpLayer().addHttpResponseRule("POST", "http://whatever/users/register_unverified", new TestHttpResponse(200, "{}"));
+        getFakeHttpLayer().addHttpResponseRule("POST", "http://whatever/api/register", new TestHttpResponse(200, "{}"));
 
         new RegisterUserService(mockContext, mockFluentRequest).register(mock(User.class));
     }
