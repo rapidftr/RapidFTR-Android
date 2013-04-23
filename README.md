@@ -13,12 +13,10 @@ Initial development is focused on building an API and web interface, with subseq
 Find more information at the [project website](http://rapidftr.com)
 and join the [google group](http://groups.google.com/group/rapidftr/)
 
-Latest Downloads
-----------------
+Releases
+--------
 
-* [Android apk](http://ec2-54-224-119-2.compute-1.amazonaws.com:8111/repository/download/bt4/.lastSuccessful/rapidftr-android.apk )
-* [Windows installer](http://ec2-54-224-119-2.compute-1.amazonaws.com:8111/repository/download/bt17/.lastSuccessful/RapidFTR.msi)
-* [All other releases](https://github.com/rapidftr/RapidFTR---Android/wiki/Releases)
+For all latest downloads and artifacts, see [Releases](https://github.com/rapidftr/RapidFTR/wiki/Releases) wiki page.
 
 Developer Info
 --------------
