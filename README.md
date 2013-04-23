@@ -1,4 +1,4 @@
-RapidFTR
+RapidFTR v1.1
 =============
 
 [![Build Status](http://ec2-54-224-119-2.compute-1.amazonaws.com:8111/app/rest/builds/buildType:bt4/statusIcon)](http://ec2-54-224-119-2.compute-1.amazonaws.com:8111/viewType.html?buildTypeId=bt4)
@@ -12,6 +12,12 @@ Initial development is focused on building an API and web interface, with subseq
 
 Find more information at the [project website](http://rapidftr.com)
 and join the [google group](http://groups.google.com/group/rapidftr/)
+
+Latest Artifacts
+----------------
+
+* [Android apk](http://ec2-54-224-119-2.compute-1.amazonaws.com:8111/repository/download/bt4/.lastSuccessful/rapidftr-android.apk )
+* [Windows installer](http://ec2-54-224-119-2.compute-1.amazonaws.com:8111/repository/download/bt17/.lastSuccessful/RapidFTR.msi)
 
 Developer Info
 --------------
