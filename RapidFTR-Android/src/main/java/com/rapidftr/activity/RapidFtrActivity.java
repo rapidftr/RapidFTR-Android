@@ -188,15 +188,11 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     private void synchronise() {
 
         RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
-        if(!application.is3g() || !application.isWifi())
+        if(!application.is3g() && !application.isWifi())
         {
-            System.out.println("*********Connection is off  3g : "+application.is3g() +"   WIFI : " +application.isWifi());
-//            makeToast(R.string.connection_off);
-            makeToast("No connectivity, turn on your WiFi or Data Connection");
-            System.out.println("*********No connectivity, turn on your WiFi or Data Connection");
+            makeToast(R.string.connection_off);
         }
         else if(!application.isOnline()){
-            System.out.println("application is "+application);
             makeToast(R.string.sync_error);
         }
         SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
