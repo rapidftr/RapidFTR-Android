@@ -15,7 +15,7 @@ public class LoginService {
 
         return http()
               .context(context)
-              .path("/sessions")
+              .path("/api/login")
               .host(url)
               .param("imei", telephonyManager.getDeviceId())
               .param("mobile_number", telephonyManager.getLine1Number())
