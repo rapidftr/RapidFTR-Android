@@ -160,10 +160,6 @@ public class RapidFtrApplication extends Application {
     public boolean is3g(){
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-//        if(!is3g && !isWifi)
-//        {
-//            Toast.makeText(getApplicationContext(),R.string.connection_off,Toast.LENGTH_LONG).show();
-//        }
     }
 
     public boolean isWifi(){
