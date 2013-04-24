@@ -77,12 +77,12 @@ public class ChildService {
         }
         return child;
     }
-    
+
     protected String getSyncPath(Child child, User currentUser) throws JSONException {
         if (currentUser.isVerified()) {
             return child.isNew() ? "/api/children" : String.format("/api/children/%s", child.get(internal_id.getColumnName()));
         } else {
-            return "/api/children/sync_unverified";
+            return "/api/children/unverified";
         }
     }
 
@@ -213,7 +213,7 @@ public class ChildService {
 
     public HashMap<String, String> getAllIdsAndRevs() throws IOException, HttpException {
         final ObjectMapper objectMapper = new ObjectMapper();
-        HttpResponse response = fluentRequest.path("/children-ids").context(context).get().ensureSuccess();
+        HttpResponse response = fluentRequest.path("/api/children/ids").context(context).get().ensureSuccess();
         List<Map> idRevs = asList(objectMapper.readValue(response.getEntity().getContent(), Map[].class));
         HashMap<String, String> idRevMapping = new HashMap<String, String>();
         for (Map idRev : idRevs) {

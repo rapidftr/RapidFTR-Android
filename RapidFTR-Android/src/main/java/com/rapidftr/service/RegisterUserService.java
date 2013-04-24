@@ -20,7 +20,7 @@ public class RegisterUserService {
 
     public FluentResponse register(User user) throws IOException {
         return fluentRequest
-                .path("/users/register_unverified")
+                .path("/api/register")
                 .context(context)
                 .param("user", user.asJSON())
                 .post();

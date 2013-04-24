@@ -233,7 +233,7 @@ public class ChildServiceTest {
         assertEquals("5-1ed26a0e5072830a9064361a570684f6", allIdRevs.get("dfb2031ebfcbef39dccdb468f5200edc"));
         assertEquals("4-b011946150a16b0d2c6271aed05e2abe", allIdRevs.get("59cd40f39ab6aa791f73885e3bdd99f9"));
 
-        verify(mockFluentRequest).path("/children-ids");
+        verify(mockFluentRequest).path("/api/children/ids");
     }
 
     @Test
@@ -252,7 +252,7 @@ public class ChildServiceTest {
     @Test
     public void shouldMarkUnverifiedChildAsSyncedOnceSuccessfullySynced() throws Exception {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/sync_unverified", new TestHttpResponse(200, "{}"));
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/unverified", new TestHttpResponse(200, "{}"));
         Child child = new Child();
         given(currentUser.isVerified()).willReturn(false);
 
