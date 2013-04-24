@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import com.google.inject.Guice;
@@ -155,4 +156,20 @@ public class RapidFtrApplication extends Application {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
     }
+
+    public boolean is3g(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
+//        if(!is3g && !isWifi)
+//        {
+//            Toast.makeText(getApplicationContext(),R.string.connection_off,Toast.LENGTH_LONG).show();
+//        }
+    }
+
+    public boolean isWifi(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
+    }
+
+
 }
