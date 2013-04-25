@@ -9,6 +9,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.SQLCipherHelper;
+import com.rapidftr.database.SQLCipherSession;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.*;
