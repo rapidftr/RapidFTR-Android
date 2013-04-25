@@ -154,26 +154,7 @@ public class RapidFtrApplication extends Application {
     public boolean isOnline() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if(networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected())
-        {
-            System.out.println("Network is availble @@@@@@@@@@@@@@@@   "+true);
-            return true;
-        }
-        else {
-            System.out.println("Network is not availble @@@@@@@@@@@@@@@@   "+true);
-            return false;
-        }
+        return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
     }
-
-    public boolean is3g(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnectedOrConnecting();
-    }
-
-    public boolean isWifi(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnectedOrConnecting();
-    }
-
 
 }
