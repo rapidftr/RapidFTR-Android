@@ -25,7 +25,6 @@
                  android:label="@string/app_name"
                  android:theme="@style/Theme.RapidFTRtheme">
 
-        <activity android:name="com.crittercism.NotificationActivity"/>
         <activity android:name=".activity.LoginActivity" android:label="RapidFTR" android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
