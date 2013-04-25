@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import static android.net.ConnectivityManager.EXTRA_EXTRA_INFO;
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 import static com.rapidftr.CustomTestRunner.createUser;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -172,5 +173,21 @@ public class RapidFtrActivityTest {
         receiver.onReceive(rapidFtrActivity, mockIntent);
         MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(), equalTo(rapidFtrActivity.getString(R.string.network_down)));
 
+    }
+
+    @Test
+    public void shouldNotSyncDataWhenNetworkIsNotPresent(){
+        RapidFtrActivity rapidFtrActivity = spy(new ViewAllChildrenActivity());
+        BroadcastReceiver receiver = rapidFtrActivity.getBroadcastReceiver();
+        Intent mockIntent = mock(Intent.class);
+        NetworkInfo mockNetworkInfo = mock(NetworkInfo.class);
+        doReturn(mockNetworkInfo).when(mockIntent).getParcelableExtra(EXTRA_NETWORK_INFO);
+        doReturn(false).when(mockNetworkInfo).isConnected();
+
+        MenuItem syncAll = mock(MenuItem.class);
+        doReturn(R.id.synchronize_all).when(syncAll).getItemId();
+        rapidFtrActivity.onOptionsItemSelected(syncAll);
+        receiver.onReceive(rapidFtrActivity,mockIntent);
+        MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(),equalTo(rapidFtrActivity.getString(R.string.connection_off)));
     }
 }
