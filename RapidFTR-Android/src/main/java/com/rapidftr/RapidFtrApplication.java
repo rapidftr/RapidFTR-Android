@@ -154,7 +154,15 @@ public class RapidFtrApplication extends Application {
     public boolean isOnline() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
+        if(networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected())
+        {
+            System.out.println("Network is availble @@@@@@@@@@@@@@@@   "+true);
+            return true;
+        }
+        else {
+            System.out.println("Network is not availble @@@@@@@@@@@@@@@@   "+true);
+            return false;
+        }
     }
 
     public boolean is3g(){

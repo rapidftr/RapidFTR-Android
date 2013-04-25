@@ -188,17 +188,15 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     private void synchronise() {
 
         RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
-        if(!application.is3g() && !application.isWifi())
-        {
+        if(!application.isOnline()){
             makeToast(R.string.connection_off);
         }
-        else if(!application.isOnline()){
-            makeToast(R.string.sync_error);
-        }
+        else{
         SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
         application.setSyncTask(task);
         task.setContext(this);
         task.execute();
+        }
     }
 
     protected User getCurrentUser() {
