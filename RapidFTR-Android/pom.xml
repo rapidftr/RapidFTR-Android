@@ -28,10 +28,6 @@
         </dependency>
 
         <dependency>
-            <groupId>crittercism</groupId>
-            <artifactId>crittercism</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <classifier>no_aop</classifier>
@@ -98,30 +94,6 @@
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
 
-            <plugin>
-                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                <artifactId>android-maven-plugin</artifactId>
-                <inherited>true</inherited>
-                <extensions>true</extensions>
-                <configuration>
-                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                    <zipalign>
-                        <skip>false</skip>
-                        <verbose>true</verbose>
-                        <inputApk>${project.build.directory}/${project.artifactId}.apk</inputApk>
-                        <outputApk>${project.build.directory}/${project.artifactId}-aligned.apk</outputApk>
-                    </zipalign>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>alignApk</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>zipalign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>keytool-maven-plugin</artifactId>
@@ -201,93 +173,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>run_proguard</id>
-            <activation>
-                <property>
-                    <name>RUN_PROGUARD</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                        <artifactId>android-maven-plugin</artifactId>
-                        <configuration>
-                            <proguard>
-                                <skip>false</skip>
-                                <config>proguard.cfg</config>
-                            </proguard>
-                            <zipalign>
-                                <skip>false</skip>
-                                <verbose>true</verbose>
-                                <inputApk>${project.build.directory}/${project.artifactId}.apk</inputApk>
-                                <outputApk>${project.build.directory}/${project.artifactId}-aligned.apk
-                                </outputApk>
-                            </zipalign>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>alignApk</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>zipalign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>sign</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jarsigner-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>signing</id>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                                <phase>package</phase>
-                                <inherited>true</inherited>
-                                <configuration>
-                                    <archiveDirectory />
-                                    <includes>
-                                        <include>target/*.apk</include>
-                                    </includes>
-                                    <keystore>rapidftr.keystore</keystore>
-                                    <storepass>${keystore.password}</storepass>
-                                    <keypass>${key.password}</keypass>
-                                    <alias>rapidftr</alias>
-                                    <arguments>
-                                        <argument>-sigalg</argument><argument>MD5withRSA</argument>
-                                        <argument>-digestalg</argument><argument>SHA1</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                        <artifactId>android-maven-plugin</artifactId>
-                        <inherited>true</inherited>
-                        <configuration>
-                            <sign>
-                                <debug>false</debug>
-                            </sign>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
