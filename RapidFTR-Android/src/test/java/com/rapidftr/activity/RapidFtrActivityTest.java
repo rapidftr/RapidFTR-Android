@@ -14,6 +14,7 @@ import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import static android.net.ConnectivityManager.EXTRA_EXTRA_INFO;
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 import static com.rapidftr.CustomTestRunner.createUser;
+import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -31,6 +33,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class RapidFtrActivityTest {
+    private RapidFtrApplication mockApplication;
 
     @Test
     public void shouldNotRenderMenuWhenUserIsNotLoggedIn() throws IOException {
@@ -178,18 +181,18 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-public void shouldNotSyncDataWhenNetworkIsNotPresent() {
-        RapidFtrApplication application = spy(RapidFtrApplication.getApplicationInstance());
+    public void shouldNotSyncDataWhenNetworkIsNotPresent() {
+        mockApplication = spy(RapidFtrApplication.getApplicationInstance());
+        mockApplication.setSyncTask(mock(SynchronisationAsyncTask.class));
+        mockApplication.setCurrentUser(createUser());
+        doReturn(false).when(mockApplication).isOnline();
+
         RapidFtrActivity mainActivity = spy(new ViewAllChildrenActivity());
-        application.setCurrentUser(createUser());
-
-        doReturn(false).when(application).isOnline();
-//      when(mock.instane.isOnline).thenReturn(false);
-
+        mainActivity.setApplication(mockApplication);
         MenuItem syncAll = mock(MenuItem.class);
         doReturn(R.id.synchronize_all).when(syncAll).getItemId();
-        mainActivity.onOptionsItemSelected(syncAll);
 
+        mainActivity.onOptionsItemSelected(syncAll);
         MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(),equalTo(mainActivity.getString(R.string.connection_off)));
     }
 }
