@@ -53,6 +53,16 @@ public abstract class RapidFtrActivity extends FragmentActivity {
             finish();
         }
     };
+    protected @Setter RapidFtrApplication application;
+
+    public RapidFtrActivity(){
+        this.application = RapidFtrApplication.getApplicationInstance();
+    }
+
+    public RapidFtrActivity(RapidFtrApplication application) {
+        super();
+        this.application = application;
+    }
 
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
@@ -186,14 +196,12 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     private void synchronise() {
-
-        RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
-        if(!application.isOnline()){
+        if(!this.application.isOnline()){
             makeToast(R.string.connection_off);
         }
         else{
         SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
-        application.setSyncTask(task);
+        this.application.setSyncTask(task);
         task.setContext(this);
         task.execute();
         }
