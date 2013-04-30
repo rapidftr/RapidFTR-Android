@@ -14,6 +14,7 @@ import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 
@@ -26,6 +27,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class RapidFtrActivityTest {
@@ -69,7 +71,7 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldCancelTheAsyncTaskIfCancelSynMenuIsClicked(){
+    public void shouldCancelTheAsyncTaskIfCancelSynMenuIsClicked() {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         SynchronisationAsyncTask mockAsyncTask = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
@@ -84,7 +86,7 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldNotThrowExceptionIfAsyncTaskIsNull(){
+    public void shouldNotThrowExceptionIfAsyncTaskIsNull() {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         instance.setSyncTask(null);
 
@@ -123,7 +125,7 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldPromptUserWhenAttemptingToLogOutWhileSyncIsActive(){
+    public void shouldPromptUserWhenAttemptingToLogOutWhileSyncIsActive() {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         SynchronisationAsyncTask mockAsyncTask = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
@@ -148,12 +150,12 @@ public class RapidFtrActivityTest {
         Menu mockMenu = mock(Menu.class);
         when(mockMenu.getItem(anyInt())).thenReturn(mock(MenuItem.class));
         when(mockMenu.findItem(anyInt())).thenReturn(mock(MenuItem.class));
-	    mainActivity.onCreateOptionsMenu(mockMenu);
-	    verify(mockSyncAll).setContext(mainActivity);
+        mainActivity.onCreateOptionsMenu(mockMenu);
+        verify(mockSyncAll).setContext(mainActivity);
     }
 
     @Test
-    public void shouldShowToastMsgIfSyncIsInProgressAndNetworkLost(){
+    public void shouldShowToastMsgIfSyncIsInProgressAndNetworkLost() {
         RapidFtrActivity rapidFtrActivity = spy(new ViewAllChildrenActivity());
         BroadcastReceiver receiver = rapidFtrActivity.getBroadcastReceiver();
         Intent mockIntent = mock(Intent.class);
@@ -176,18 +178,18 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldNotSyncDataWhenNetworkIsNotPresent(){
-        RapidFtrActivity rapidFtrActivity = spy(new ViewAllChildrenActivity());
-        BroadcastReceiver receiver = rapidFtrActivity.getBroadcastReceiver();
-        Intent mockIntent = mock(Intent.class);
-        NetworkInfo mockNetworkInfo = mock(NetworkInfo.class);
-        doReturn(mockNetworkInfo).when(mockIntent).getParcelableExtra(EXTRA_NETWORK_INFO);
-        doReturn(false).when(mockNetworkInfo).isConnected();
+public void shouldNotSyncDataWhenNetworkIsNotPresent() {
+        RapidFtrApplication application = spy(RapidFtrApplication.getApplicationInstance());
+        RapidFtrActivity mainActivity = spy(new ViewAllChildrenActivity());
+        application.setCurrentUser(createUser());
+
+        doReturn(false).when(application).isOnline();
+//      when(mock.instane.isOnline).thenReturn(false);
 
         MenuItem syncAll = mock(MenuItem.class);
         doReturn(R.id.synchronize_all).when(syncAll).getItemId();
-        rapidFtrActivity.onOptionsItemSelected(syncAll);
-        receiver.onReceive(rapidFtrActivity,mockIntent);
-        MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(),equalTo(rapidFtrActivity.getString(R.string.connection_off)));
+        mainActivity.onOptionsItemSelected(syncAll);
+
+        MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(),equalTo(mainActivity.getString(R.string.connection_off)));
     }
 }
