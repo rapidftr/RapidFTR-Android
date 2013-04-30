@@ -33,7 +33,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class RapidFtrActivityTest {
-    private RapidFtrApplication mockApplication;
 
     @Test
     public void shouldNotRenderMenuWhenUserIsNotLoggedIn() throws IOException {
@@ -182,7 +181,7 @@ public class RapidFtrActivityTest {
 
     @Test
     public void shouldNotSyncDataWhenNetworkIsNotPresent() {
-        mockApplication = spy(RapidFtrApplication.getApplicationInstance());
+        RapidFtrApplication mockApplication = spy(RapidFtrApplication.getApplicationInstance());
         mockApplication.setSyncTask(mock(SynchronisationAsyncTask.class));
         mockApplication.setCurrentUser(createUser());
         doReturn(false).when(mockApplication).isOnline();
