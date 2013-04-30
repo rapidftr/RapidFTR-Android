@@ -26,10 +26,10 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
          assertTrue(loginPage.getUrl().equals(LOGIN_URL));
     }
 
-    @Smoke
-    public void testCannotNavigateBackToLoginPageOnceLoggedIn(){
+    @Smoke  //ssad
+    public void testCannotNavigateBackToLoginPageOnceLoggedIn() throws Exception {
         loginPage.login();
-        solo.waitForText("Login Successful");
+        waitUntilTextDisappears("Login Successful");
         solo.goBack();
 	    assertTrue(solo.getCurrentActivity().isFinishing());
     }

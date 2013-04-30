@@ -29,10 +29,11 @@ public class UnverifiedUsersIntegrationTest extends BaseActivityIntegrationTest{
         super.setUp();
         childName=getAlphaNumeric(5);
         unverifiedUserPage.clickSignUpLink();
-        unverifiedUserPage.registerUnverifiedUser(childName, password, password,childName, organisation);
+        unverifiedUserPage.registerUnverifiedUser(childName, password, password, childName, organisation);
         solo.sleep(5);
-        loginPage.login(childName, password, loginPage.LOGIN_URL);
+        loginPage.login(childName, password,loginPage.LOGIN_URL);
         solo.waitForText("Login Successful");
+        solo.sleep(10);
         repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(ChildRepository.class);
         RapidFTRDatabase.deleteChildren();
 
@@ -41,6 +42,7 @@ public class UnverifiedUsersIntegrationTest extends BaseActivityIntegrationTest{
     @Override
     public void tearDown() throws Exception{
         repository.close();
+
         super.tearDown();
     }
 

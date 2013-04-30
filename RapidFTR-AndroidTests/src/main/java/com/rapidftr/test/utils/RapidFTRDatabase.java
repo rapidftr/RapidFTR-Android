@@ -1,6 +1,7 @@
 package com.rapidftr.test.utils;
 
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.activity.pages.LoginPage;
 
 import java.io.IOException;
 
@@ -11,6 +12,7 @@ public class RapidFTRDatabase {
         http()
                 .path("/database/delete_children")
                 .context(RapidFtrApplication.getApplicationInstance())
+                .host(LoginPage.LOGIN_URL)
                 .delete();
         Thread.sleep(5000);
     }

@@ -1,9 +1,13 @@
 package com.rapidftr.activity;
 
+import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.pages.*;
+
+import java.io.File;
 
 public abstract class BaseActivityIntegrationTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
@@ -24,10 +28,18 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 
     public BaseActivityIntegrationTest() {
         super(LoginActivity.class);
+
+
     }
 
     @Override
     public void setUp() throws Exception {
+//        SharedPreferences defaultPreferences = PreferenceManager.getDefaultSharedPreferences(getInstrumentation().getTargetContext());
+//        defaultPreferences.edit().clear().commit();
+//        deleteDir(new File(getInstrumentation().getTargetContext().getApplicationInfo().dataDir));
+
+
+//        solo = new Solo(this.getInstrumentation(), getActivity());
         solo = new Solo(getInstrumentation(), getActivity());
         loginPage = new LoginPage(solo);
         viewAllChildrenPage = new ViewAllChildrenPage(solo);
@@ -40,6 +52,8 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 	    if (application.isLoggedIn()) {
 		    loginPage.logout();
 	    }
+        clearApplicationData();
+
     }
 
     @Override
@@ -90,8 +104,39 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
           }
 
       }
-
-
    }
+
+    public void clearApplicationData() {
+        Context context = application;
+        File cache = context.getCacheDir();
+        File appDir = new File(cache.getParent());
+        if (appDir.exists()) {
+            String[] children = appDir.list();
+            for (String s : children) {
+                if (!s.equals("lib")) {
+                    deleteDir(new File(appDir, s));
+                    Log.i("TAG", "**************** File /data/data/APP_PACKAGE/" + s + " DELETED *******************");
+                }
+            }
+        }
+    }
+
+
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+               boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
+
+    }
+
+
 
 }

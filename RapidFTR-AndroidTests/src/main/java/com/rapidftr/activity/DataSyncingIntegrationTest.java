@@ -22,10 +22,9 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
     public void setUp() throws Exception {
         super.setUp();
         loginPage.login();
-        assertTrue(solo.waitForText("Login Successful"));
+        solo.waitForText("Login Successful");
         repository = application.getInjector().getInstance(ChildRepository.class);
         RapidFTRDatabase.deleteChildren();
-
     }
 
     @Override
@@ -50,13 +49,13 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     public void testRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
 
-        Child childToBeSynced = new Child("xyz4321", "admin", "{'name' : 'moses'}");
+        Child childToBeSynced = new Child(getAlphaNumeric(6), "admin", "{'name' : 'moses'}");
         repository.createOrUpdate(childToBeSynced);
         assertFalse(childToBeSynced.isSynced());
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         Thread.sleep(10000); //Sleep for synchronization to happen.
-        assertTrue(repository.exists("xyz4321"));
-        List<Child> children = repository.getMatchingChildren("xyz4321");
+        assertTrue(repository.exists(childToBeSynced.getUniqueId()));
+        List<Child> children = repository.getMatchingChildren(childToBeSynced.getUniqueId());
         assertEquals(1, children.size());
         assertTrue(children.get(0).isSynced());
         loginPage.logout();
