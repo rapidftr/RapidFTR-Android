@@ -8,7 +8,7 @@
     <name>RapidFTR Android Client Integration Test Suite</name>
 
     <parent>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>2.0.1-SNAPSHOT</version>
         <groupId>com.rapidftr</groupId>
         <artifactId>rapidftr-android-parent</artifactId>
     </parent>
@@ -80,42 +80,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>with-emulator</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                        <artifactId>android-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>startEmulator</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>emulator-start</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>stopEmulator</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>emulator-stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <emulator>
-                                <avd>rapidftr</avd>
-                                <wait>90000</wait>
-                                <options>-no-window -no-skin</options>
-                            </emulator>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

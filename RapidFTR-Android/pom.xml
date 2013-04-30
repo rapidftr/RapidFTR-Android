@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>rapidftr-android</artifactId>
@@ -9,7 +7,7 @@
     <name>RapidFTR Android Client</name>
 
     <parent>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>2.0.1-SNAPSHOT</version>
         <groupId>com.rapidftr</groupId>
         <artifactId>rapidftr-android-parent</artifactId>
     </parent>
@@ -19,6 +17,8 @@
         <flurry_logging>true</flurry_logging>
         <default.destination.directory>${project.basedir}/target/</default.destination.directory>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+        <key.password />
+        <keystore.password />
     </properties>
 
     <dependencies>
@@ -27,10 +27,6 @@
             <artifactId>support-v4</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>crittercism</groupId>
-            <artifactId>crittercism</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -99,30 +95,6 @@
             </plugin>
 
             <plugin>
-                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                <artifactId>android-maven-plugin</artifactId>
-                <inherited>true</inherited>
-                <extensions>true</extensions>
-                <configuration>
-                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                    <zipalign>
-                        <skip>false</skip>
-                        <verbose>true</verbose>
-                        <inputApk>${project.build.directory}/${project.artifactId}.apk</inputApk>
-                        <outputApk>${project.build.directory}/${project.artifactId}-aligned.apk</outputApk>
-                    </zipalign>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>alignApk</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>zipalign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>keytool-maven-plugin</artifactId>
                 <executions>
@@ -131,7 +103,7 @@
                         <phase>initialize</phase>
                         <configuration>
                             <workingDirectory>${project.basedir}/res/raw</workingDirectory>
-                            <noprompt/>
+                            <noprompt />
                             <trustcacerts>true</trustcacerts>
                             <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
                             <storetype>bks</storetype>
@@ -155,7 +127,7 @@
                         <phase>initialize</phase>
                         <configuration>
                             <workingDirectory>${project.basedir}/res/raw</workingDirectory>
-                            <noprompt/>
+                            <noprompt />
                             <trustcacerts>true</trustcacerts>
                             <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
                             <storetype>bks</storetype>
@@ -178,7 +150,7 @@
                         <phase>initialize</phase>
                         <configuration>
                             <workingDirectory>${project.basedir}/res/raw</workingDirectory>
-                            <noprompt/>
+                            <noprompt />
                             <trustcacerts>true</trustcacerts>
                             <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
                             <storetype>bks</storetype>
@@ -201,86 +173,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>run_proguard</id>
-            <activation>
-                <property>
-                    <name>RUN_PROGUARD</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
-                        <artifactId>android-maven-plugin</artifactId>
-                        <configuration>
-                            <proguard>
-                                <skip>false</skip>
-                                <config>proguard.cfg</config>
-                            </proguard>
-                            <zipalign>
-                                <skip>false</skip>
-                                <verbose>true</verbose>
-                                <inputApk>${project.build.directory}/${project.artifactId}.apk</inputApk>
-                                <outputApk>${project.build.directory}/${project.artifactId}-aligned.apk
-                                </outputApk>
-                            </zipalign>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>alignApk</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>zipalign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>move_artifacts</id>
-            <activation>
-                <property>
-                    <name>move_artifacts</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.4</version>
-                        <executions>
-                            <execution>
-                                <id>copy</id>
-                                <phase>package</phase>
-                                <configuration>
-                                    <tasks>
-                                        <copy file="${project.basedir}/target/${project.artifactId}.apk"
-                                              tofile="${default.destination.directory}/${project.artifactId}${maven.build.timestamp}.apk"/>
-                                        <copy file="${project.basedir}/target/${project.artifactId}-aligned.apk"
-                                              tofile="${default.destination.directory}/${project.artifactId}-aligned${maven.build.timestamp}.apk"/>
-                                        <copy file="${project.basedir}/target/${project.artifactId}.apk"
-                                              tofile="${default.destination.directory}/latest/${project.artifactId}.apk"/>
-                                        <copy file="${project.basedir}/target/${project.artifactId}-aligned.apk"
-                                              tofile="${default.destination.directory}/latest/${project.artifactId}-aligned.apk"/>
-                                    </tasks>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
