@@ -37,6 +37,9 @@ public abstract class RapidFtrActivity extends FragmentActivity {
 
     protected @Getter @Setter Menu menu;
 
+    protected RapidFtrApplication getRapidFTRApplcation(){
+        return RapidFtrApplication.getApplicationInstance();
+    }
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -53,16 +56,6 @@ public abstract class RapidFtrActivity extends FragmentActivity {
             finish();
         }
     };
-    protected @Setter RapidFtrApplication application;
-
-    public RapidFtrActivity(){
-        this.application = RapidFtrApplication.getApplicationInstance();
-    }
-
-    public RapidFtrActivity(RapidFtrApplication application) {
-        super();
-        this.application = application;
-    }
 
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
@@ -196,12 +189,12 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     private void synchronise() {
-        if(!this.application.isOnline()){
+        if(!this.getRapidFTRApplcation().isOnline()){
             makeToast(R.string.connection_off);
         }
         else{
         SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
-        this.application.setSyncTask(task);
+        this.getRapidFTRApplcation().setSyncTask(task);
         task.setContext(this);
         task.execute();
         }
