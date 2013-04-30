@@ -181,7 +181,6 @@ public class RapidFtrActivityTest {
 
     @Test
     public void shouldNotSyncDataWhenNetworkIsNotPresent() {
-
         RapidFtrActivity mainActivity = spy(new ViewAllChildrenActivity());
         MenuItem syncAll = mock(MenuItem.class);
         doReturn(R.id.synchronize_all).when(syncAll).getItemId();
@@ -190,6 +189,7 @@ public class RapidFtrActivityTest {
         mockApplication.setSyncTask(mock(SynchronisationAsyncTask.class));
         mockApplication.setCurrentUser(createUser());
         doReturn(false).when(mockApplication).isOnline();
+        doReturn(mockApplication).when(mainActivity).getRapidFTRApplcation();
 
         mainActivity.onOptionsItemSelected(syncAll);
         MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(),equalTo(mainActivity.getString(R.string.connection_off)));
