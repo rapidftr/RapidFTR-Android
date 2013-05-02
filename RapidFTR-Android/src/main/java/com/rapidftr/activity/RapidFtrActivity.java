@@ -37,13 +37,10 @@ public abstract class RapidFtrActivity extends FragmentActivity {
 
     protected @Getter @Setter Menu menu;
 
-    protected RapidFtrApplication getRapidFTRApplcation(){
-        return RapidFtrApplication.getApplicationInstance();
-    }
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if(!((NetworkInfo) intent.getParcelableExtra(EXTRA_NETWORK_INFO)).isConnected() && RapidFtrApplication.getApplicationInstance().cleanSyncTask()){
+                if(!((NetworkInfo) intent.getParcelableExtra(EXTRA_NETWORK_INFO)).isConnected() && getContext().cleanSyncTask()){
                     makeToast(R.string.network_down);
                 }
             }
@@ -144,11 +141,11 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     private void toggleChangePassword(Menu menu) {
-        menu.findItem(R.id.change_password).setVisible((this.getClass() == ChangePasswordActivity.class) ? false : RapidFtrApplication.getApplicationInstance().getCurrentUser().isVerified());
+        menu.findItem(R.id.change_password).setVisible((this.getClass() == ChangePasswordActivity.class) ? false : getContext().getCurrentUser().isVerified());
     }
 
     private void setContextToSyncTask() {
-        SynchronisationAsyncTask syncTask = RapidFtrApplication.getApplicationInstance().getSyncTask();
+        SynchronisationAsyncTask syncTask = getContext().getSyncTask();
         if (syncTask != null)
             syncTask.setContext(this);
     }
@@ -171,7 +168,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
                 }
                 return true;
             case R.id.cancel_synchronize_all:
-                RapidFtrApplication.getApplicationInstance().cleanSyncTask();
+                getContext().cleanSyncTask();
                 return true;
             case R.id.logout:
                 if (this.getClass() == RegisterChildActivity.class || this.getClass() == EditChildActivity.class) {
@@ -188,15 +185,15 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         return false;
     }
 
-    private void synchronise() {
-        if(!this.getRapidFTRApplcation().isOnline()){
+    protected void synchronise() {
+        if(!this.getContext().isOnline()){
             makeToast(R.string.connection_off);
         }
         else{
-        SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
-        this.getRapidFTRApplcation().setSyncTask(task);
-        task.setContext(this);
-        task.execute();
+            SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
+            this.getContext().setSyncTask(task);
+            task.setContext(this);
+            task.execute();
         }
     }
 
@@ -269,8 +266,8 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     protected void toggleSync(Menu menu) {
-        menu.getItem(0).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() == null);
-        menu.getItem(1).setVisible(RapidFtrApplication.getApplicationInstance().getSyncTask() != null);
+        menu.getItem(0).setVisible(getContext().getSyncTask() == null);
+        menu.getItem(1).setVisible(getContext().getSyncTask() != null);
     }
 
     protected boolean validateTextFieldNotEmpty(int id, int messageId) {

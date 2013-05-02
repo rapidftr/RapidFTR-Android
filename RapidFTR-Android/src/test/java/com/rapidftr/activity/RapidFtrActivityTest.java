@@ -14,22 +14,17 @@ import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.io.IOException;
 
-import static android.net.ConnectivityManager.EXTRA_EXTRA_INFO;
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 import static com.rapidftr.CustomTestRunner.createUser;
-import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class RapidFtrActivityTest {
@@ -182,16 +177,12 @@ public class RapidFtrActivityTest {
     @Test
     public void shouldNotSyncDataWhenNetworkIsNotPresent() {
         RapidFtrActivity mainActivity = spy(new ViewAllChildrenActivity());
-        MenuItem syncAll = mock(MenuItem.class);
-        doReturn(R.id.synchronize_all).when(syncAll).getItemId();
+        RapidFtrApplication mockApplication = spy(mainActivity.getContext());
 
-        RapidFtrApplication mockApplication = spy(mainActivity.getRapidFTRApplcation());
-        mockApplication.setSyncTask(mock(SynchronisationAsyncTask.class));
-        mockApplication.setCurrentUser(createUser());
         doReturn(false).when(mockApplication).isOnline();
-        doReturn(mockApplication).when(mainActivity).getRapidFTRApplcation();
+        doReturn(mockApplication).when(mainActivity).getContext();
 
-        mainActivity.onOptionsItemSelected(syncAll);
+        mainActivity.synchronise();
         MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(),equalTo(mainActivity.getString(R.string.connection_off)));
     }
 }
