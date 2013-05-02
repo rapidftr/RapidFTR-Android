@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import com.google.inject.Guice;
@@ -155,4 +156,5 @@ public class RapidFtrApplication extends Application {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
     }
+
 }
