@@ -34,7 +34,7 @@ public class RapidFtrDateTime {
     }
 
     public static Calendar getDateTime(String dateTime) throws ParseException {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
         SimpleDateFormat simpleDateFormat = getDefaultSimpleDateFormat();
         calendar.setTime(simpleDateFormat.parse(dateTime));
         return calendar;
