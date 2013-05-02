@@ -68,7 +68,7 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldCancelTheAsyncTaskIfCancelSynMenuIsClicked(){
+    public void shouldCancelTheAsyncTaskIfCancelSynMenuIsClicked() {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         SynchronisationAsyncTask mockAsyncTask = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
@@ -83,7 +83,7 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldNotThrowExceptionIfAsyncTaskIsNull(){
+    public void shouldNotThrowExceptionIfAsyncTaskIsNull() {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         instance.setSyncTask(null);
 
@@ -122,7 +122,7 @@ public class RapidFtrActivityTest {
     }
 
     @Test
-    public void shouldPromptUserWhenAttemptingToLogOutWhileSyncIsActive(){
+    public void shouldPromptUserWhenAttemptingToLogOutWhileSyncIsActive() {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         SynchronisationAsyncTask mockAsyncTask = mock(SynchronisationAsyncTask.class);
         instance.setSyncTask(mockAsyncTask);
@@ -147,12 +147,12 @@ public class RapidFtrActivityTest {
         Menu mockMenu = mock(Menu.class);
         when(mockMenu.getItem(anyInt())).thenReturn(mock(MenuItem.class));
         when(mockMenu.findItem(anyInt())).thenReturn(mock(MenuItem.class));
-	    mainActivity.onCreateOptionsMenu(mockMenu);
-	    verify(mockSyncAll).setContext(mainActivity);
+        mainActivity.onCreateOptionsMenu(mockMenu);
+        verify(mockSyncAll).setContext(mainActivity);
     }
 
     @Test
-    public void shouldShowToastMsgIfSyncIsInProgressAndNetworkLost(){
+    public void shouldShowToastMsgIfSyncIsInProgressAndNetworkLost() {
         RapidFtrActivity rapidFtrActivity = spy(new ViewAllChildrenActivity());
         BroadcastReceiver receiver = rapidFtrActivity.getBroadcastReceiver();
         Intent mockIntent = mock(Intent.class);
@@ -172,5 +172,17 @@ public class RapidFtrActivityTest {
         receiver.onReceive(rapidFtrActivity, mockIntent);
         MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(), equalTo(rapidFtrActivity.getString(R.string.network_down)));
 
+    }
+
+    @Test
+    public void shouldNotSyncDataWhenNetworkIsNotPresent() {
+        RapidFtrActivity mainActivity = spy(new ViewAllChildrenActivity());
+        RapidFtrApplication mockApplication = spy(mainActivity.getContext());
+
+        doReturn(false).when(mockApplication).isOnline();
+        doReturn(mockApplication).when(mainActivity).getContext();
+
+        mainActivity.synchronise();
+        MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(),equalTo(mainActivity.getString(R.string.connection_off)));
     }
 }
