@@ -66,7 +66,8 @@ public class UnverifiedUsersIntegrationTest extends BaseActivityIntegrationTest{
         child=new Child(childDetails.get(0).toString());
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         assertTrue(unverifiedUserPage.verifySyncLocationPopUp());
-        unverifiedUserPage.enterSyncLocation(LoginPage.LOGIN_URL);
+        unverifiedUserPage.enterSyncLocationAndStartSync(LoginPage.LOGIN_URL);
+//        waitUntilSyncCompletion();
         assertTrue(repository.exists(child.getUniqueId()));
         List<Child> children=repository.getMatchingChildren(child.getUniqueId());
         assertEquals(1,children.size());
@@ -77,7 +78,8 @@ public class UnverifiedUsersIntegrationTest extends BaseActivityIntegrationTest{
         repository.createOrUpdate(child);
         viewAllChildrenPage.navigateToViewAllTab();
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        unverifiedUserPage.enterSyncLocation(LoginPage.LOGIN_URL);
+        unverifiedUserPage.enterSyncLocationAndStartSync(LoginPage.LOGIN_URL);
+//        waitUntilSyncCompletion();
         assertFalse(searchPage.isChildPresent(child.getUniqueId(),child.getName()));
 
     }

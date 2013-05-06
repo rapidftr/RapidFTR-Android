@@ -3,6 +3,7 @@ package com.rapidftr.activity;
 import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
+import android.view.KeyEvent;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.pages.*;
@@ -62,7 +63,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     }
 
     public boolean isTextPresent(String searchText){
-        return solo.searchText(searchText,true);
+        return solo.searchText(searchText, true);
     }
 
 
@@ -137,6 +138,18 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 
     }
 
+    public void waitUntilSyncCompletion() {
 
+        for(int i=0;i<10;i++){
+            solo.sendKey(KeyEvent.KEYCODE_MENU);
+            if(solo.searchText("Synchronize All",false)){
+                solo.sleep(10);
+            }else{
+            break;
+        }
+        }
+//        solo.waitForText("Synchronize All");
+
+    }
 
 }

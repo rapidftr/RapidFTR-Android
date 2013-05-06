@@ -1,5 +1,6 @@
 package com.rapidftr.activity;
 
+import android.view.KeyEvent;
 import com.rapidftr.R;
 import com.rapidftr.activity.pages.LoginPage;
 import com.rapidftr.model.Child;
@@ -37,8 +38,8 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         String timeStamp = now().defaultFormat();
         seedDataOnServer(new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'unique_identifier' : 'abcd1234', 'one' : '1', 'name' : 'jen' }", timeStamp)));
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        Thread.sleep(10000); //Sleep for synchronization to happen.
-
+        Thread.sleep(20000); //Sleep for synchronization to happen.
+//         waitUntilSyncCompletion();
         Child child = repository.get("abcd1234");
         assertEquals("123456", child.optString("_id"));
         searchPage.navigateToSearchTab();
@@ -53,13 +54,17 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         repository.createOrUpdate(childToBeSynced);
         assertFalse(childToBeSynced.isSynced());
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        Thread.sleep(10000); //Sleep for synchronization to happen.
+//        solo.getCurrentActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+//        waitUntilSyncCompletion();
+        Thread.sleep(20000); //Sleep for synchronization to happen.
         assertTrue(repository.exists(childToBeSynced.getUniqueId()));
         List<Child> children = repository.getMatchingChildren(childToBeSynced.getUniqueId());
         assertEquals(1, children.size());
         assertTrue(children.get(0).isSynced());
         loginPage.logout();
     }
+
+
 
     public void testSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
         Child child1 = new Child("abc4321", "admin", "{'name' : 'moses'}");
@@ -93,6 +98,17 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .post();
     }
 
+    public void waitUntilSyncCompletion() {
+
+        for(int i=0;i<10;i++){
+            solo.sendKey(KeyEvent.KEYCODE_MENU);
+            if(solo.searchText("Synchronize All",false)){
+                solo.sleep(10);
+            }else{
+                break;
+            }
+        }
+    }
 
 
 }
