@@ -19,7 +19,7 @@ public class UnverifiedUserPage {
        return solo.searchText("Enter sync location",true) && solo.searchText("Please enter the the location you wish to synchronise with",true);
     }
 
-    public void enterSyncLocation(String syncUrl) {
+    public void enterSyncLocationAndStartSync(String syncUrl) {
         solo.enterText(solo.getEditText(0),syncUrl);
         solo.clickOnButton("Ok");
         solo.sleep(10000);
