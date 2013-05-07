@@ -34,15 +34,15 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
 	    assertTrue(solo.getCurrentActivity().isFinishing());
     }
 
-    public void testUserIsAlertedWhenAttemptingToLogoutWhileSyncInProgress() throws Exception {
+
+    // this scenario is already covered in DataSyncIntegration Test
+    public void estUserIsAlertedWhenAttemptingToLogoutWhileSyncInProgress() throws Exception {
         loginPage.login();
         waitUntilTextDisappears("Login Successful");
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         solo.sleep(1000);
         solo.clickOnMenuItem(solo.getString(R.string.log_out));
-
         assertTrue("Could not find the dialog!", solo.searchText(solo.getString(R.string.confirm_logout_message)));
-
         solo.clickOnButton(solo.getString(R.string.log_out));
         solo.assertCurrentActivity("should log out and go to login page", LoginActivity.class);
     }
