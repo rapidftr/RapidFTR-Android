@@ -14,13 +14,7 @@ public class ViewAllChildrenActivityIntegrationTest extends BaseActivityIntegrat
         loginPage.login();
         Assert.assertTrue(solo.waitForText("Login Successful"));
         waitUntilTextDisappears("Login Successful");
-//        Thread.sleep(10000);
-    }
-
-    @Override
-    public void tearDown() throws Exception{
-        loginPage.logout();
-        super.tearDown();
+//        solo.sleep(10000);
     }
 
     public void testDisplayAllChildren() throws JSONException {

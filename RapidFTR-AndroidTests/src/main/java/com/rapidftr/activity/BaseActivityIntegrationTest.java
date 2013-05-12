@@ -40,8 +40,6 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 //        defaultPreferences.edit().clear().commit();
 //        deleteDir(new File(getInstrumentation().getTargetContext().getApplicationInfo().dataDir));
 
-
-//        solo = new Solo(this.getInstrumentation(), getActivity());
         solo = new Solo(getInstrumentation(), getActivity());
         loginPage = new LoginPage(solo);
         viewAllChildrenPage = new ViewAllChildrenPage(solo);
@@ -54,13 +52,14 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 	    if (application.isLoggedIn()) {
 		    loginPage.logout();
 	    }
-        clearApplicationData();
 
+        clearApplicationData();
     }
 
     @Override
     public void tearDown() throws Exception {
         solo.finishOpenedActivities();
+        super.tearDown();
     }
 
     public boolean isTextPresent(String searchText){
@@ -100,7 +99,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
        assertTrue(solo.searchText(text,true));
       for(int i=0;i<10;i++){
           if(solo.searchText(text,true)){
-              Thread.sleep(2);
+              solo.sleep(50);
           }else{
               break;
           }
