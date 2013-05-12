@@ -109,9 +109,9 @@
             </dependency>
 
             <dependency>
-                <groupId>com.jayway.android.robotium</groupId>
+                <groupId>robotium</groupId>
                 <artifactId>robotium-solo</artifactId>
-                <version>3.6</version>
+                <version>4.1.1</version>
             </dependency>
 
             <dependency>
@@ -185,6 +185,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
             </plugin>
 
             <plugin>

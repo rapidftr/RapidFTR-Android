@@ -4,6 +4,7 @@ import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.EditText;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.pages.*;
@@ -75,9 +76,9 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 //   check whether edit text present
     public boolean isEditedTextPresent(String editedText){
         boolean result=false;
-        int count = solo.getCurrentEditTexts().size();
+        int count = solo.getCurrentViews(EditText.class).size();
         for(int i=0;i<count;i++){
-           if(solo.getCurrentEditTexts().get(i).getText().toString().equals(editedText)){
+           if(solo.getCurrentViews(EditText.class).get(i).getText().toString().equals(editedText)){
                     result=true;
                break;
            }
