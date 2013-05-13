@@ -19,7 +19,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.jayway.android.robotium</groupId>
+            <groupId>robotium</groupId>
             <artifactId>robotium-solo</artifactId>
         </dependency>
         <dependency>

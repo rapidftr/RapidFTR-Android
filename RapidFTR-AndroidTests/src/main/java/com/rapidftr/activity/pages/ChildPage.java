@@ -1,8 +1,6 @@
 package com.rapidftr.activity.pages;
 
-import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.Spinner;
+import android.widget.*;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.R;
 import com.rapidftr.view.fields.TextField;
@@ -35,7 +33,7 @@ public class ChildPage {
 
       solo.clickOnText("Basic Identity",0);
        solo.waitForText("Automation Form");
-        ListAdapter adapter = solo.getCurrentListViews().get(0).getAdapter();
+        ListAdapter adapter = solo.getCurrentViews(ListView.class).get(0).getAdapter();
         int totalCount = adapter.getCount();
         List<String> formSections = new ArrayList<String>();
        for(int i=0;i<totalCount;i++){
@@ -46,9 +44,9 @@ public class ChildPage {
 
     public void selectFormSection(String formSectionName) {
         solo.waitForText("Save");
-        solo.clickOnView(solo.getCurrentSpinners().get(0));
+        solo.clickOnView(solo.getCurrentViews(Spinner.class).get(0));
         solo.waitForText(formSectionName);
-        ListAdapter adapter= solo.getCurrentListViews().get(0).getAdapter();
+        ListAdapter adapter= solo.getCurrentViews(ListView.class).get(0).getAdapter();
         for(int i=0;i<adapter.getCount();i++){
             if(adapter.getItem(i).toString().equalsIgnoreCase(formSectionName)){
                  formPosition=i;
@@ -82,15 +80,15 @@ public class ChildPage {
         solo.enterText(0, automationFormData.get(0).toString());
         solo.sleep(3);
         solo.enterText(1, automationFormData.get(1).toString());
-        int checkBoxCount=solo.getCurrentCheckBoxes().size();
+        int checkBoxCount=solo.getCurrentViews(CheckBox.class).size();
         for(int i=0;i<checkBoxCount;i++){
-            if (solo.getCurrentCheckBoxes().get(i).getText().toString().equals(automationFormData.get(2).toString())) {
-                solo.waitForText(solo.getCurrentCheckBoxes().get(i).getText().toString(), 1,2000, true);
+            if (solo.getCurrentViews(CheckBox.class).get(i).getText().toString().equals(automationFormData.get(2).toString())) {
+                solo.waitForText(solo.getCurrentViews(CheckBox.class).get(i).getText().toString(), 1,2000, true);
                 solo.clickOnCheckBox(i);
             }
         }
         solo.scrollDown();
-        Spinner spinner = solo.getCurrentSpinners().get(1);
+        Spinner spinner = solo.getCurrentViews(Spinner.class).get(1);
         int selectBoxCount = spinner.getCount();
         for(int i=0;i<selectBoxCount;i++){
             if(spinner.getAdapter().getItem(i).toString().equals(automationFormData.get(3).toString())){

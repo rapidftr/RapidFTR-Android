@@ -18,13 +18,6 @@ public class SearchChildrenActivity extends BaseActivityIntegrationTest{
         waitUntilTextDisappears("Login Successful");
     }
 
-    @Override
-    public void tearDown() throws  Exception{
-        loginPage.logout();
-//        loginPage.clickLoginButton();
-        super.tearDown();
-    }
-
     //fdf
 
     public void testSearchChildAndViewDetail() throws JSONException {

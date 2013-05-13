@@ -30,8 +30,12 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     @Override
     public void tearDown() throws Exception {
-        repository.close();
-        super.tearDown();
+        try {
+            repository.close();
+        } catch (Exception e) {
+        } finally {
+            super.tearDown();
+        }
     }
 
     //commenting for  sync fail
@@ -39,14 +43,13 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         String timeStamp = now().defaultFormat();
         seedDataOnServer(new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'unique_identifier' : 'abcd1234', 'one' : '1', 'name' : 'jen' }", timeStamp)));
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        Thread.sleep(20000); //Sleep for synchronization to happen.
+        solo.sleep(20000);
 //         waitUntilSyncCompletion();
         Child child = repository.get("abcd1234");
         assertEquals("123456", child.optString("_id"));
         searchPage.navigateToSearchTab();
         searchPage.searchChild(child.optString("unique_identifier"));
         assertTrue(searchPage.isChildPresent(child.optString("unique_identifier"), "jen"));
-        loginPage.logout();
     }
 
     //commenting for  sync fail
@@ -57,12 +60,11 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         assertFalse(childToBeSynced.isSynced());
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
 //        waitUntilSyncCompletion();
-        Thread.sleep(30000); //Sleep for synchronization to happen.
+        solo.sleep(30000); //Sleep for synchronization to happen.
         assertTrue(repository.exists(childToBeSynced.getUniqueId()));
         List<Child> children = repository.getMatchingChildren(childToBeSynced.getUniqueId());
         assertEquals(1, children.size());
         assertTrue(children.get(0).isSynced());
-        loginPage.logout();
     }
 
 
@@ -74,7 +76,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         Child child4 = new Child("uye4321", "admin", "{'name' : 'keburingi'}");
         seedDataToRepository(child1, child2, child3, child4);
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        Thread.sleep(1000);
+        solo.sleep(1000);
         solo.clickOnMenuItem(solo.getString(R.string.log_out));
         assertTrue("Could not find the dialog!", solo.searchText(solo.getString(R.string.confirm_logout_message)));
         //Robotium doesn't support asserting on notification bar by default. Below is the hack to get around it.
