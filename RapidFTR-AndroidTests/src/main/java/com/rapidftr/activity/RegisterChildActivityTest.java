@@ -18,12 +18,6 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         childPage.navigateToRegisterPage();
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        loginPage.logout();
-        super.tearDown();
-    }
-
     public void testFormSectionsDisplayed() {
         List<String> actualSections = childPage.getDropDownFormSections();
         List<String> expectedSections = new ArrayList<String>(asList(new String[]{"Basic Identity", "Family details", "Care Arrangements", "Separation History", "Protection Concerns",

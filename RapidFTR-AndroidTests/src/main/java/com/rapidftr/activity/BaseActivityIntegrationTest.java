@@ -4,6 +4,7 @@ import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.widget.EditText;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.pages.*;
@@ -39,8 +40,6 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 //        defaultPreferences.edit().clear().commit();
 //        deleteDir(new File(getInstrumentation().getTargetContext().getApplicationInfo().dataDir));
 
-
-//        solo = new Solo(this.getInstrumentation(), getActivity());
         solo = new Solo(getInstrumentation(), getActivity());
         loginPage = new LoginPage(solo);
         viewAllChildrenPage = new ViewAllChildrenPage(solo);
@@ -53,13 +52,14 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 	    if (application.isLoggedIn()) {
 		    loginPage.logout();
 	    }
-        clearApplicationData();
 
+        clearApplicationData();
     }
 
     @Override
     public void tearDown() throws Exception {
         solo.finishOpenedActivities();
+        super.tearDown();
     }
 
     public boolean isTextPresent(String searchText){
@@ -75,9 +75,9 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 //   check whether edit text present
     public boolean isEditedTextPresent(String editedText){
         boolean result=false;
-        int count = solo.getCurrentEditTexts().size();
+        int count = solo.getCurrentViews(EditText.class).size();
         for(int i=0;i<count;i++){
-           if(solo.getCurrentEditTexts().get(i).getText().toString().equals(editedText)){
+           if(solo.getCurrentViews(EditText.class).get(i).getText().toString().equals(editedText)){
                     result=true;
                break;
            }
@@ -99,7 +99,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
        assertTrue(solo.searchText(text,true));
       for(int i=0;i<10;i++){
           if(solo.searchText(text,true)){
-              Thread.sleep(2);
+              solo.sleep(50);
           }else{
               break;
           }
