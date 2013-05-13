@@ -69,7 +69,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
 
 
-    public void testSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
+    public void estSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
         Child child1 = new Child("abc4321", "admin", "{'name' : 'moses'}");
         Child child2 = new Child("qwe4321", "admin", "{'name' : 'james'}");
         Child child3 = new Child("zxy4321", "admin", "{'name' : 'kenyata'}");
