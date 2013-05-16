@@ -56,7 +56,6 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
         RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
         if(response != null && response.optBoolean("verified") && !application.getCurrentUser().isVerified()){
             startMigrationTask(response, application);
-
         }
         getFormSections();
         sendChildrenToServer(childRepository.currentUsersUnsyncedRecords());
