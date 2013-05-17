@@ -2,7 +2,7 @@
 
     <string name="app_name">RapidFTR</string>
 
-    <string name="log_in">Log In</string>
+    <string name="log_in">登录Log In</string>
     <string name="log_out">Log Out</string>
     <string name="confirm_logout_message">Records are still being sychronised. Logging out now will cancel this process, are you sure you want to log out?</string>
     <string name="session_timeout">Your session is not active on the server, Please logout and login again</string>

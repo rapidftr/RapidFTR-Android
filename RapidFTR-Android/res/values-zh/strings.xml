@@ -4,51 +4,55 @@
 
     <string name="log_in">登录</string>
     <string name="log_out">退出</string>
-    <string name="confirm_logout_message">正在同步，退出将会终止同步，确定要同步吗？</string>
-    <string name="logout_successful">你已成功退出！</string>
-    <string name="change_url">更改 URL</string>
-    <string name="register_child">注册一个孩子</string>
+    <string name="confirm_logout_message">正在同步，退出将终止同步，确实要退出？</string>
+    <string name="session_timeout">会话失效，请退出重新登录</string>
+
+    <string name="logout_successful">退出成功</string>
+    <string name="change_url">更改网址</string>
+    <string name="register_child">注册孩子</string>
     <string name="view_all_children">查看所有孩子</string>
-    <string name="search_for_a_child">查找一個孩子</string>
+    <string name="search_for_a_child">搜索孩子</string>
     <string name="synchronize">同步</string>
-    <string name="new_user">RapidFTR的新用戶? </string>
+    <string name="new_user">RapidFTR新用户? </string>
     <string name="full_name_required">全称是必需的</string>
+    <string name="username_taken">用户名已使用，请重新选择</string>
     <string name="full_name">全称</string>
 
     <string name="username">用户名</string>
     <string name="password">密码</string>
-    <string name="url">URL</string>
+    <string name="url">网址</string>
 
-    <string name="rapidftr_url">https://test.rapidftr.com</string>
-    <string name="rapidftr_username">rapidftr</string>
+    <string name="rapidftr_url"></string>
+    <string name="rapidftr_username"></string>
 
     <string name="username_required">用户名是必需的</string>
     <string name="password_required">密码是必需的</string>
     <string name="organisation_required">组织是必需的</string>
-    <string name="confirm_password_required">确认密码</string>
-    <string name="url_required">服务器地址是必需的</string>
+    <string name="confirm_password_required">重新填写网址</string>
+    <string name="url_required">服务器网址是必需的</string>
     <string name="password_mismatch">密码不匹配</string>
 
     <string name="loading_message">加载&#8230;</string>
     <string name="unauthorized">用户名或密码不正确</string>
     <string name="login_successful">登录成功</string>
-    <string name="invalid_url">请输入一个正确的url</string>
-    <string name="server_not_reachable">不能连接到服务器，请联系系统管理员</string>
+    <string name="invalid_url">请输入一个合法的网址</string>
+    <string name="server_not_reachable">无法连接到服务器，请联系系统管理员</string>
     <string name="RapidFTRLogo">RapidFTR</string>
 
     <string name="new_registration">新注册</string>
     <string name="save_child_progress">保存记录</string>
-    <string name="save_child_invalid">请至少填写一项</string>
+    <string name="save_child_invalid">请至少填写一个表单</string>
     <string name="save_child_success">保存记录成功</string>
     <string name="save_child_failure">保存记录失败！</string>
 
     <string name="photo_capture">拍照</string>
-    <string name="photo_capture_error">拍照出现错误</string>
+    <string name="photo_capture_error">拍照失败</string>
     <string name="photo_view">预览</string>
     <string name="photo_view_error">加载照片出错</string>
     <string name="photo_not_captured">该记录无照片</string>
-    <string name="photo_gallery_delete_error">无法删除照片，请到相册删除</string>
+    <string name="photo_gallery_delete_error">无法删除照片，请去相册删除</string>
     <string name="set_as_primary">设为主要照片</string>
+
 
     <string name="synchronize_all">同步所有</string>
     <string name="cancel_synchronize_all">取消同步所有</string>
@@ -56,14 +60,15 @@
     <string name="sync_progress">正在同步&#8230;</string>
     <string name="sync_success">同步成功</string>
     <string name="sync_failure">同步失败</string>
-    <string name="network_not_available">网络连接不可用，请稍后再试</string>
+    <string name="network_not_available">网络连接失败，请稍后重试</string>
 
     <string name="internal_error">操作出错</string>
-    <string name="fetch_child_error">获取记录失败，请稍后重试</string>
+    <string name="fetch_child_error">获取记录出错，请重试</string>
+    <string name="fetch_form_sections_error">获取会话出错</string>
     <string name="submit">提交</string>
     <string name="edit">编辑</string>
     <string name="save">保存</string>
-    <string name="choose_action">选择一个操作</string>
+    <string name="choose_action">选择一个动作</string>
     <string name="discard">丢弃</string>
     <string name="cancel">取消</string>
     <string name="clear">清除</string>
@@ -72,21 +77,47 @@
     <string name="view_all_tab_name">查看所有</string>
     <string name="search_tab_name">搜索</string>
     <string name="synchronize_log">同步出错</string>
-    <string name="synchronize_step_1">步骤1-同步表单部分&#8230;</string>
+    <string name="synchronize_step_1">步骤1-同步表单&#8230;</string>
     <string name="synchronize_step_2">步骤2-上传记录&#8230;</string>
     <string name="synchronize_step_3">步骤3-下载记录&#8230;</string>
-    <string name="signup">注册!</string>
+    <string name="signup">注册！</string>
     <string name="confirm">确认密码</string>
     <string name="organisation">组织</string>
-    <string name="optional_url">URL(Optional)</string>
+    <string name="optional_url">网址</string>
 
-    <string name="sync_complete">同步完成.</string>
-    <string name="sync_error">同步出错，请稍后再试。</string>
-    <string name="search_child">通过姓名或编号搜索</string>
+    <string name="sync_complete">同步完成</string>
+    <string name="sync_error">同步出错，请稍后再试！</string>
+    <string name="search_child">通过名字或编号搜索</string>
     <string name="go">搜索</string>
     <string name="child_not_found">无此记录</string>
 
-    <string name="this_is_audio_upload_box">这是一个音频上传框</string>
+    <string name="this_is_audio_upload_box">这是一个语音上传框</string>
+    <string name="info">关于</string>
 
+    <string name="info_text">RapidFTR支持如下语言：</string>
+    <string name="full_name_label">全名：</string>
+    <string name="username_label">用户名：</string>
+    <string name="password_label">密码：</string>
+    <string name="confirm_label">确认密码：</string>
+    <string name="organisation_label">组织：</string>
+    <string name="mandatory">所有表单必填</string>
+    <string name="registered">你已注册，请登录使用 </string>
+
+    <string name="yes">确定</string>
+    <string name="start_record">开始</string>
+    <string name="stop_record">停止</string>
+    <string name="play_record">播放</string>
+    <string name="forgot_password">请重设密码</string>
+
+    <string name="network_down">无法连接到服务器，同步取消</string>
+    <string name="no_connection">无法连接到服务器，请稍后重试</string>
+    <string name="connection_off">无网络，请打开wifi或数据重试</string>
+    <string name="temp_sync_error">同步数据出错，请稍后重试</string>
+    <string name="current_password_label">当前密码</string>
+    <string name="new_password">新密码</string>
+    <string name="change_password">更改密码</string>
+    <string name="password_change_success">密码更改成功</string>
+    <string name="password_change_failed">无法更改密码，请重试</string>
+    <string name="confirm_change_password_text">正在同步，更改密码将终止同步，是否继续？</string>
 </resources>
 
