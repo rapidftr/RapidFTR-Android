@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
@@ -16,10 +17,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.stubbing.OngoingStubbing;
 
 import java.io.IOException;
 import java.io.SyncFailedException;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -75,6 +78,17 @@ public class ViewChildActivityTest {
         given(item.getItemId()).willReturn(R.id.synchronize_child);
         activity.onOptionsItemSelected(item);
         verify(activity).sync();
+    }
+
+    @Test
+    public void shouldCallGetServerURLWhenMenuSelected() throws Exception {
+        doNothing().when(activity).getServerAndSync();
+        User currentUser = mock(User.class);
+        doReturn(currentUser).when(activity).getCurrentUser();
+        MenuItem item = mock(MenuItem.class);
+        given(item.getItemId()).willReturn(R.id.synchronize_child);
+        activity.onOptionsItemSelected(item);
+        verify(activity).getServerAndSync();
     }
 
     @Test

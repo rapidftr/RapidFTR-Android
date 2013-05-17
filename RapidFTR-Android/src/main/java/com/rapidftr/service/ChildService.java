@@ -100,9 +100,9 @@ public class ChildService {
     private void addMultiMediaFilesToTheRequest(Child child) throws JSONException {
         JSONArray photoKeys = child.optJSONArray(PHOTO_KEYS);
         JSONArray photoKeysToAdd = new JSONArray();
-        if(photoKeys != null){
-            for(int i = 0; i< photoKeys.length(); i++){
-                if(!photoKeys.optString(i).startsWith("photo-")){
+        if (photoKeys != null) {
+            for (int i = 0; i < photoKeys.length(); i++) {
+                if (!photoKeys.optString(i).startsWith("photo-")) {
                     photoKeysToAdd.put(photoKeys.optString(i));
                 }
             }
@@ -141,21 +141,20 @@ public class ChildService {
         PhotoCaptureHelper photoCaptureHelper = new PhotoCaptureHelper(context);
 
         JSONArray photoKeys = child.optJSONArray("photo_keys");
-        if(photoKeys != null){
+        if (photoKeys != null) {
             getPhotoFromServerIfNeeded(child, photoCaptureHelper, photoKeys);
         }
 
     }
 
     private void getPhotoFromServerIfNeeded(Child child, PhotoCaptureHelper photoCaptureHelper, JSONArray photoKeys) throws JSONException, IOException {
-        for(int i = 0; i < photoKeys.length(); i++){
+        for (int i = 0; i < photoKeys.length(); i++) {
             String photoKey = photoKeys.get(i).toString();
             try {
                 if (!photoKey.equals("")) {
                     photoCaptureHelper.getFile(photoKey, ".jpg");
                 }
-            }
-            catch (FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 getPhotoFromServer(child, photoCaptureHelper, photoKey);
             }
         }

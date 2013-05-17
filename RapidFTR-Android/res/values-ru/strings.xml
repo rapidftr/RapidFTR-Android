@@ -17,6 +17,8 @@
 
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="password_length">Use at least 6 characters or more for your password</string>
+    <string name="password_length_error">Password should be 6 characters or more</string>
     <string name="url">URL</string>
 
     <string name="rapidftr_url">https://test.rapidftr.com</string>

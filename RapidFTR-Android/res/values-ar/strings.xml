@@ -25,6 +25,8 @@
 
     <string name="username_required">إسم المستخدم ضروري</string>
     <string name="password_required">كلمة السر ضرورية</string>
+    <string name="password_length">Use at least 6 characters or more for your password</string>
+    <string name="password_length_error">Password should be 6 characters or more</string>
     <string name="organisation_required">المنظمة ضرورية</string>
     <string name="confirm_password_required">أعد إدخال كلمة السر</string>
     <string name="url_required">رابط المخدم ضروري</string>

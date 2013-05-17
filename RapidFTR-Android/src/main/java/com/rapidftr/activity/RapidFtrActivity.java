@@ -22,6 +22,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.User;
 import com.rapidftr.service.LogOutService;
+import com.rapidftr.task.SyncUnverifiedDataAsyncTask;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,17 +34,20 @@ import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
 public abstract class RapidFtrActivity extends FragmentActivity {
 
-	public static final String LOGOUT_INTENT_FILTER = "com.rapidftr.LOGOUT_INTENT";
+    public static final String LOGOUT_INTENT_FILTER = "com.rapidftr.LOGOUT_INTENT";
 
-    protected @Getter @Setter Menu menu;
+    protected
+    @Getter
+    @Setter
+    Menu menu;
 
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if(!((NetworkInfo) intent.getParcelableExtra(EXTRA_NETWORK_INFO)).isConnected() && getContext().cleanSyncTask()){
-                    makeToast(R.string.network_down);
-                }
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!((NetworkInfo) intent.getParcelableExtra(EXTRA_NETWORK_INFO)).isConnected() && getContext().cleanSyncTask()) {
+                makeToast(R.string.network_down);
             }
+        }
     };
 
     private BroadcastReceiver logoutReceiver = new BroadcastReceiver() {
@@ -186,11 +190,15 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     protected void synchronise() {
-        if(!this.getContext().isOnline()){
+        if (!this.getContext().isOnline()) {
             makeToast(R.string.connection_off);
-        }
-        else{
-            SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
+        } else {
+            SynchronisationAsyncTask task;
+            if (getCurrentUser().isVerified()) {
+                task = inject(SynchronisationAsyncTask.class);
+            } else {
+                task = inject(SyncUnverifiedDataAsyncTask.class);
+            }
             this.getContext().setSyncTask(task);
             task.setContext(this);
             task.execute();
@@ -206,17 +214,17 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         registerReceiver(networkChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         initializeExceptionHandler();
-	    initializeLogoutHandler();
+        initializeLogoutHandler();
     }
 
-	protected void initializeLogoutHandler() {
-		if (shouldEnsureLoggedIn()) {
-			IntentFilter intentFilter = new IntentFilter(LOGOUT_INTENT_FILTER);
-			registerReceiver(logoutReceiver, intentFilter);
-		}
-	}
+    protected void initializeLogoutHandler() {
+        if (shouldEnsureLoggedIn()) {
+            IntentFilter intentFilter = new IntentFilter(LOGOUT_INTENT_FILTER);
+            registerReceiver(logoutReceiver, intentFilter);
+        }
+    }
 
-	protected boolean shouldEnsureLoggedIn() {
+    protected boolean shouldEnsureLoggedIn() {
         return true;
     }
 
@@ -229,12 +237,12 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
-        try{
+        try {
             unregisterReceiver(networkChangeReceiver);
             unregisterReceiver(logoutReceiver);
-        }catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             logError(e.getMessage());
         }
     }
@@ -275,6 +283,17 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         String value = getEditText(id);
 
         if (value == null || "".equals(value)) {
+            editText.setError(getString(messageId));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    protected boolean validateTextFieldLength(int id, int length, int messageId) {
+        EditText editText = (EditText) findViewById(id);
+        String value = getEditText(id);
+        if (value.length() < length) {
             editText.setError(getString(messageId));
             return false;
         } else {
@@ -344,7 +363,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     public void getServerAndSync() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle("Enter sync location");
-        alert.setMessage("Please enter the the location you wish to synchronise with");
+        alert.setMessage("Please enter the location you wish to synchronise with");
         final EditText input = new EditText(this);
         alert.setView(input);
 
@@ -362,8 +381,8 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         });
         alert.create().show();
     }
-    
-    protected BroadcastReceiver getBroadcastReceiver(){
+
+    protected BroadcastReceiver getBroadcastReceiver() {
         return networkChangeReceiver;
     }
 }

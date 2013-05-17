@@ -1,10 +1,13 @@
 package com.rapidftr.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -12,6 +15,9 @@ import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncChildTask;
 import org.json.JSONException;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
 
 public class ViewChildActivity extends BaseChildActivity {
@@ -50,9 +56,13 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     protected void sync() {
-        SyncChildTask task = inject(SyncChildTask.class);
-        task.setActivity(this);
-        RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
+        if (!this.getContext().isOnline()) {
+            makeToast(R.string.connection_off);
+        } else {
+            SyncChildTask task = inject(SyncChildTask.class);
+            task.setActivity(this);
+            RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_error).execute(child));
+        }
     }
 
     @Override
@@ -63,7 +73,6 @@ public class ViewChildActivity extends BaseChildActivity {
                 menu.findItem(R.id.synchronize_log).setVisible(true);
             }
             if (!getCurrentUser().isVerified()) {
-                menu.findItem(R.id.synchronize_child).setVisible(false);
                 menu.getItem(4).setVisible(false);
             }
         } catch (JSONException e) {
@@ -79,7 +88,11 @@ public class ViewChildActivity extends BaseChildActivity {
                 startActivity(new Intent(this, ChangePasswordActivity.class));
                 return true;
             case R.id.synchronize_child:
-                sync();
+                if (isNullOrEmpty(getCurrentUser().getServerUrl())) {
+                    getServerAndSync();
+                } else {
+                    sync();
+                }
                 return true;
             case R.id.synchronize_log:
                 showSyncLog();
@@ -92,6 +105,29 @@ public class ViewChildActivity extends BaseChildActivity {
                 return true;
         }
         return false;
+    }
+
+    public void getServerAndSync() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Enter sync location");
+        alert.setMessage("Please enter the location you wish to synchronise with");
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                getContext().getSharedPreferences().edit().putString(SERVER_URL_PREF, input.getText().toString()).commit();
+                getCurrentUser().setServerUrl(input.getText().toString());
+                sync();
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                finish();
+                startActivity(new Intent(getContext(), ViewAllChildrenActivity.class));
+            }
+        });
+        alert.create().show();
     }
 
     protected void showSyncLog() {
