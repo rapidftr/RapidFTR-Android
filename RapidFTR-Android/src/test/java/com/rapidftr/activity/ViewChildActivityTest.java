@@ -85,7 +85,6 @@ public class ViewChildActivityTest {
         doNothing().when(activity).getServerAndSync();
         User currentUser = mock(User.class);
         doReturn(currentUser).when(activity).getCurrentUser();
-        doReturn(null).when(currentUser).getServerUrl();
         MenuItem item = mock(MenuItem.class);
         given(item.getItemId()).willReturn(R.id.synchronize_child);
         activity.onOptionsItemSelected(item);
