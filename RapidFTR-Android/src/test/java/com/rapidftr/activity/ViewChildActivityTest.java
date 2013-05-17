@@ -83,8 +83,9 @@ public class ViewChildActivityTest {
     @Test
     public void shouldCallGetServerURLWhenMenuSelected() throws Exception {
         doNothing().when(activity).getServerAndSync();
-        User currUser = ((RapidFtrApplication) Robolectric.application).getCurrentUser();
-        currUser.setServerUrl(null);
+        User currentUser = mock(User.class);
+        doReturn(currentUser).when(activity).getCurrentUser();
+        doReturn(null).when(currentUser).getServerUrl();
         MenuItem item = mock(MenuItem.class);
         given(item.getItemId()).willReturn(R.id.synchronize_child);
         activity.onOptionsItemSelected(item);

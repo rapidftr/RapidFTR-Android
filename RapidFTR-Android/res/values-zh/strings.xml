@@ -27,6 +27,8 @@
 
     <string name="username_required">用户名是必需的</string>
     <string name="password_required">密码是必需的</string>
+    <string name="password_length">密码长度应至少6位</string>
+    <string name="password_length_error">密码长度必须不小于6个字符</string>
     <string name="organisation_required">组织是必需的</string>
     <string name="confirm_password_required">重新填写网址</string>
     <string name="url_required">服务器网址是必需的</string>

@@ -27,6 +27,8 @@
 
     <string name="username_required">Username is required</string>
     <string name="password_required">Password is required</string>
+    <string name="password_length">Use at least 6 characters or more for your password</string>
+    <string name="password_length_error">Password should be 6 characters or more</string>
     <string name="organisation_required">Organisation is required</string>
     <string name="confirm_password_required">Re-type password</string>
     <string name="url_required">Server URL is required</string>

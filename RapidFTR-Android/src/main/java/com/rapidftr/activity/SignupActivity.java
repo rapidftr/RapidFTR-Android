@@ -23,33 +23,33 @@ public class SignupActivity extends RapidFtrActivity {
     }
 
     public boolean isValid() {
-        return validatesPresenceOfMandatoryFields() && isPasswordSameAsConfirmPassword();
+        return validatesPresenceOfMandatoryFields() && validateTextFieldLength(R.id.password, 6, R.string.password_length_error ) && isPasswordSameAsConfirmPassword();
     }
 
     public void createUser(View view) throws IOException, GeneralSecurityException {
         if (isValid()) {
-	        User user = buildUser();
+            User user = buildUser();
             if (user.exists()) {
-	            EditText editText = (EditText) findViewById(R.id.username);
-	            editText.setError(getString(R.string.username_taken));
-	            makeToast(getString(R.string.username_taken));
+                EditText editText = (EditText) findViewById(R.id.username);
+                editText.setError(getString(R.string.username_taken));
+                makeToast(getString(R.string.username_taken));
             } else {
-	            user.save();
-	            makeToast(getString(R.string.registered) + " "+ getEditText(R.id.username));
-	            finish();
+                user.save();
+                makeToast(getString(R.string.registered) + " " + getEditText(R.id.username));
+                finish();
             }
         }
     }
 
-	protected User buildUser() {
-		User user = new User(getEditText(R.id.username));
-		user.setVerified(false);
-		user.setFullName(getEditText(R.id.full_name));
-		user.setPassword(getEditText(R.id.password));
-		user.setUnauthenticatedPassword(getEditText(R.id.password));
-		user.setOrganisation(getEditText(R.id.organisation));
-		return user;
-	}
+    protected User buildUser() {
+        User user = new User(getEditText(R.id.username));
+        user.setVerified(false);
+        user.setFullName(getEditText(R.id.full_name));
+        user.setPassword(getEditText(R.id.password));
+        user.setUnauthenticatedPassword(getEditText(R.id.password));
+        user.setOrganisation(getEditText(R.id.organisation));
+        return user;
+    }
 
     protected boolean validatesPresenceOfMandatoryFields() {
         return validateTextFieldNotEmpty(R.id.full_name, R.string.full_name_required) &

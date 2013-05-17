@@ -290,6 +290,17 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         }
     }
 
+    protected boolean validateTextFieldLength(int id, int length, int messageId) {
+        EditText editText = (EditText) findViewById(id);
+        String value = getEditText(id);
+        if (value.length() < length) {
+            editText.setError(getString(messageId));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     protected String getEditText(int resId) {
         CharSequence value = ((EditText) findViewById(resId)).getText();
         return value == null ? null : value.toString().trim();
