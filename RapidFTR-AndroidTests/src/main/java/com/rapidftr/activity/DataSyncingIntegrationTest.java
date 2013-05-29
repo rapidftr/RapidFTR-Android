@@ -39,7 +39,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
     }
 
     //commenting for  sync fail
-    public void estRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
+    public void testRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
         String timeStamp = now().defaultFormat();
         seedDataOnServer(new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'unique_identifier' : 'abcd1234', 'one' : '1', 'name' : 'jen' }", timeStamp)));
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
@@ -53,7 +53,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
     }
 
     //commenting for  sync fail
-    public void estRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
+    public void testRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
 
         Child childToBeSynced = new Child(getAlphaNumeric(6), "admin", "{'name' : 'moses'}");
         repository.createOrUpdate(childToBeSynced);
@@ -69,7 +69,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
 
 
-    public void estSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
+    public void testSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
         Child child1 = new Child("abc4321", "admin", "{'name' : 'moses'}");
         Child child2 = new Child("qwe4321", "admin", "{'name' : 'james'}");
         Child child3 = new Child("zxy4321", "admin", "{'name' : 'kenyata'}");

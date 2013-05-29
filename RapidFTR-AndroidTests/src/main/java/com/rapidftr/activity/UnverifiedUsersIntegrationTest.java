@@ -49,7 +49,7 @@ public class UnverifiedUsersIntegrationTest extends BaseActivityIntegrationTest{
         }
     }
 
-    public void estUnverifiedUserCreationErrorMessages(){
+    public void testUnverifiedUserCreationErrorMessages(){
         loginPage.logout();
         unverifiedUserPage.clickSignUpLink();
         unverifiedUserPage.registerUnverifiedUser(" "," "," "," "," ");
@@ -61,7 +61,7 @@ public class UnverifiedUsersIntegrationTest extends BaseActivityIntegrationTest{
     }
 
     //commenting for  sync fail
-    public void estUnverifiedUserAbleToSyncRecordsToServer() throws JSONException,InterruptedException {
+    public void testUnverifiedUserAbleToSyncRecordsToServer() throws JSONException,InterruptedException {
         childPage.navigateToRegisterPage();
         childPage.selectFormSection("Automation Form");
         childPage.registerChild();
@@ -78,7 +78,7 @@ public class UnverifiedUsersIntegrationTest extends BaseActivityIntegrationTest{
     }
 
     //commenting for  sync fail
-    public void estUnverifiedUserUnableToViewVerifiedUserRecords() throws JSONException,InterruptedException{
+    public void testUnverifiedUserUnableToViewVerifiedUserRecords() throws JSONException,InterruptedException{
         child= new Child(getAlphaNumeric(5), "admin", "{'name' : 'adminuser'}");
         repository.createOrUpdate(child);
         viewAllChildrenPage.navigateToViewAllTab();
