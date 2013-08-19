@@ -123,6 +123,52 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>jonglei_cert</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <workingDirectory>${project.basedir}/res/raw</workingDirectory>
+                            <noprompt />
+                            <trustcacerts>true</trustcacerts>
+                            <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
+                            <storetype>bks</storetype>
+                            <alias>rapid_ftr_jonglei</alias>
+                            <storepass>rapidftr</storepass>
+                            <file>jonglei_rapid_ftr_ca.crt</file>
+                            <arguments>
+                                <argument>-provider</argument>
+                                <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
+                                <argument>-providerpath</argument>
+                                <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>import</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jonglei2_cert</id>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <workingDirectory>${project.basedir}/res/raw</workingDirectory>
+                            <noprompt />
+                            <trustcacerts>true</trustcacerts>
+                            <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
+                            <storetype>bks</storetype>
+                            <alias>rapid_ftr_jonglei2</alias>
+                            <storepass>rapidftr</storepass>
+                            <file>jonglei2_rapid_ftr_ca.crt</file>
+                            <arguments>
+                                <argument>-provider</argument>
+                                <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
+                                <argument>-providerpath</argument>
+                                <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>import</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>uw_cert</id>
                         <phase>initialize</phase>
                         <configuration>

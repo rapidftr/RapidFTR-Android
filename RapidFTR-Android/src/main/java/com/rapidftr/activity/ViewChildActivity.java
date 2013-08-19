@@ -52,7 +52,7 @@ public class ViewChildActivity extends BaseChildActivity {
     protected void sync() {
         SyncChildTask task = inject(SyncChildTask.class);
         task.setActivity(this);
-        RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
+         RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
     }
 
     @Override

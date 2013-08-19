@@ -35,6 +35,7 @@ public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
         saveIncomingChildren(idsToDownload, startProgressForDownloadingChildren);
 
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
+
     }
 
 }
