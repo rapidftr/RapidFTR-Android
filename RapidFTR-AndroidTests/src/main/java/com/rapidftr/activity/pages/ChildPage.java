@@ -88,15 +88,16 @@ public class ChildPage {
             }
         }
         solo.scrollDown();
-        Spinner spinner = solo.getCurrentViews(Spinner.class).get(1);
+        Spinner spinner = solo.getCurrentViews(Spinner.class).get(0);
         int selectBoxCount = spinner.getCount();
+        String checkBox = automationFormData.get(3).toString();
+        String radioBox = automationFormData.get(4).toString();
         for(int i=0;i<selectBoxCount;i++){
-            if(spinner.getAdapter().getItem(i).toString().equals(automationFormData.get(3).toString())){
+            String currentItem = spinner.getAdapter().getItem(i).toString();
+            if (currentItem.equals(checkBox) || currentItem.equals(radioBox)) {
                 solo.pressSpinnerItem(1,i);
-//                solo.clickOnText(automationFormData.get(3).toString(),1,true);
             }
         }
-        solo.clickOnText(automationFormData.get(4).toString(),1,true);
     }
 
     public void verifyRegisterChildDetail(List automationFormData,String formName) {
