@@ -40,6 +40,7 @@
         <activity android:name=".activity.InfoActivity"/>
         <activity android:name=".activity.SearchActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.ViewAllChildrenActivity"/>
+        <activity android:name=".activity.EnquiryActivity"/>
         <activity android:name=".activity.ViewPhotoActivity" android:noHistory="true" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
 
         <uses-library android:name="android.test.runner"/>
