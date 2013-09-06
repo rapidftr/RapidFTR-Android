@@ -2,6 +2,7 @@ package com.rapidftr.activity.pages;
 
 import android.widget.*;
 import com.jayway.android.robotium.solo.Solo;
+import com.jayway.android.robotium.solo.RobotiumUtils;
 import com.rapidftr.R;
 import com.rapidftr.view.fields.TextField;
 import junit.framework.Assert;
@@ -12,10 +13,12 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static junit.framework.Assert.assertEquals;
+import android.view.View;
 
 public class ChildPage {
 
     public Solo solo;
+    public RobotiumUtils rutils;
     int formPosition ;
     List automationFormData = Arrays.asList("Automation TextField value", "Automation TextArea value", "Check 1", "Select 1", "Radio 3", "1", "20", "10", "2012");
     private int nameHashCode = "name".hashCode();
@@ -58,10 +61,23 @@ public class ChildPage {
         solo.sleep(3);
     }
 
+    public List<String> getVisibleText(){
+        List<String> texts = new ArrayList<String>();
+        ArrayList<View> views = rutils.removeInvisibleViews(solo.getViews());
+        for (View v : views) {
+            if (v instanceof TextView) {
+                String text = ((TextView)v).getText().toString();
+                texts.add(text);
+            }
+        }
+        return texts;
+    }
+
     public void verifyFields(List fieldNames, boolean visible) {
+        List<String> texts = getVisibleText();
         for (Object fieldName : fieldNames) {
-            assertEquals(format("Visibility of field %s", fieldName),
-                         visible, solo.searchText(fieldName.toString(), 1, true, true));
+            assertEquals(format("Visibility of field %s", texts),
+                         visible, texts.contains(fieldName));
         }
     }
 
