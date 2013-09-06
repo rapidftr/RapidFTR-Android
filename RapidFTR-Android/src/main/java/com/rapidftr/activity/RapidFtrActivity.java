@@ -76,6 +76,10 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         saveAlertListener(SearchActivity.class);
     }
 
+    public void enquiryTabListener(View view) {
+        saveAlertListener(EnquiryActivity.class);
+    }
+
     public void registerTabListener(View view) {
         saveAlertListener(RegisterChildActivity.class);
     }
@@ -362,7 +366,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         });
         alert.create().show();
     }
-    
+
     protected BroadcastReceiver getBroadcastReceiver(){
         return networkChangeReceiver;
     }
