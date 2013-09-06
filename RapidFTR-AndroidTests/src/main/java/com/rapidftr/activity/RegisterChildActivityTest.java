@@ -21,11 +21,9 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
     public void testFormSectionsDisplayed() {
         List<String> actualSections = childPage.getDropDownFormSections();
         List<String> expectedSections = new ArrayList<String>(asList(new String[]{"Basic Identity", "Family details", "Care Arrangements", "Separation History", "Protection Concerns",
-                "Childs Wishes", "Other Interviews", "Other Tracing Info", "Interview Details", "Photos and Audio","Automation Form"}));
+                "Childs Wishes", "Other Interviews", "Other Tracing Info", "Interview Details", "Photos and Audio","Automation Form", "Feedback"}));
         assertTrue(actualSections.equals(expectedSections));
         solo.goBack();
-//        assertEquals(actualSections, expectedSections);
-
     }
 
     public void testFieldsDisplayed() {
