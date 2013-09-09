@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <Button android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Create New Enquiry"
+            android:onClick="registerEnquiryActivity"
+            />
+    <TextView
+        android:id="@+id/enquiryList"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
+    <!-- TODO adapter to populate enquiries registered -->
+</LinearLayout>

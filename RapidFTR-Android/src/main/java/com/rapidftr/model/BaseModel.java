@@ -103,6 +103,10 @@ public class BaseModel extends JSONObject implements Parcelable {
         return toString();
     }
 
+    public boolean isNew() {
+        return !has(internal_id.getColumnName());
+    }
+
     @Override
     public JSONArray names() {
         JSONArray names = super.names();

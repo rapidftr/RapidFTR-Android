@@ -12,6 +12,7 @@ import org.json.JSONException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static com.rapidftr.database.Database.ChildTableColumn.internal_rev;
@@ -57,5 +58,16 @@ public class EnquiryRepository implements Closeable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<String> getAllEnquirerNames() {
+        @Cleanup Cursor cursor = session.rawQuery("SELECT name FROM enquiry WHERE enquiry_owner = ?", new String[] {user});
+        List<String> enquirerNames = null;
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()){
+            enquirerNames.add(cursor.getString(1));
+            cursor.moveToNext();
+        }
+        return enquirerNames;
     }
 }
