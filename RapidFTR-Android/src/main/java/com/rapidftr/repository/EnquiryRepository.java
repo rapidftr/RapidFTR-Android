@@ -32,7 +32,7 @@ public class EnquiryRepository implements Closeable {
     public void createOrUpdate(Enquiry enquiry) throws JSONException {
         ContentValues enquiryValues = new ContentValues();
         enquiryValues.put(created_by.getColumnName(), enquiry.getOwner());
-        
+
         enquiryValues.put(owner.getColumnName(), enquiry.getOwner());
         enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
         enquiryValues.put(name.getColumnName(), enquiry.getName());
@@ -40,7 +40,6 @@ public class EnquiryRepository implements Closeable {
         enquiryValues.put(synced.getColumnName(), enquiry.isSynced());
         enquiryValues.put(created_at.getColumnName(), enquiry.getCreatedAt());
         enquiryValues.put(internal_id.getColumnName(), enquiry.optString("_id"));
-        enquiryValues.put(internal_rev.getColumnName(), enquiry.optString("_rev"));
         long id =  session.replace(Database.enquiry.getTableName(), null, enquiryValues);
         if(id <= 0) throw new IllegalArgumentException();
         //TODO : Better error handling

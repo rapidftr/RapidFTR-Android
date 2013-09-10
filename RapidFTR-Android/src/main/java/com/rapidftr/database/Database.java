@@ -103,15 +103,14 @@ public enum Database {
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum EnquiryTableColumn {
         id("id"),
-        name("name"),
-        content("enquiry_json"),
+        name("reporter_name"),
+        content("criteria"),
         owner("enquiry_owner"),
         synced("synced"),
 
         internal_id("_id", true, false),
-        internal_rev("_rev", true, false),
-        unique_identifier("unique_identifier", true, false),
         created_by("created_by", true, false),
+
         last_updated_at("last_updated_at", true, false),
 
         created_at("created_at", true, true),
