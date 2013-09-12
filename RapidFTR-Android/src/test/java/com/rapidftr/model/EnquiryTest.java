@@ -1,6 +1,7 @@
 package com.rapidftr.model;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -14,13 +15,22 @@ public class EnquiryTest {
         assertNotNull(enquiry.getUniqueId());
     }
 
+
     @Test
-    public void enquiryShouldHaveChildDetails() throws JSONException {
-        String enquiryDetails = "{" +
-                "\"enquirer_details\":\"Sanchari\"," +
-                "\"child_details\" : {\"name\":\"Subhas\", \"age\":14}" +
-                "}";
-        Enquiry enquiry = new Enquiry("xyz", "kavitha", enquiryDetails);
-        assertEquals("{\"age\":14,\"name\":\"Subhas\"}", enquiry.getString("child_details"));
+    public void createEnquiryWithAllFields() throws JSONException{
+      String createdBy = "Rajni";
+      String reporterName = "Batman";
+      JSONObject reporterDetails = new JSONObject("{\"sex\": \"Male\"}");
+      JSONObject criteria = new JSONObject("{\"name\":\"NAME\"}");
+      Enquiry enquiry = new Enquiry(createdBy, reporterName, reporterDetails, criteria);
+
+      assertEquals(reporterName, enquiry.getReporterName());
+      assertEquals(enquiry.getReporterDetails().getClass(), JSONObject.class);
+      assertEquals(reporterDetails.toString(), enquiry.getReporterDetails().toString());
+      assertEquals(enquiry.getCriteria().getClass(), JSONObject.class);
+      assertEquals(criteria.toString(), enquiry.getCriteria().toString());
+      assertEquals(createdBy, enquiry.getCreatedBy());
+      assertNotNull(enquiry.getCreatedAt());
+      assertNotNull(enquiry.getLastUpdatedAt());
     }
 }

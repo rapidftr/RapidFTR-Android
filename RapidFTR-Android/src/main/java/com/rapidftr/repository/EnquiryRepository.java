@@ -14,8 +14,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 
-import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
-import static com.rapidftr.database.Database.ChildTableColumn.internal_rev;
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 
 public class EnquiryRepository implements Closeable {
@@ -31,22 +29,21 @@ public class EnquiryRepository implements Closeable {
 
     public void createOrUpdate(Enquiry enquiry) throws JSONException {
         ContentValues enquiryValues = new ContentValues();
-        enquiryValues.put(created_by.getColumnName(), enquiry.getOwner());
 
         enquiryValues.put(owner.getColumnName(), enquiry.getOwner());
-        enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
-        enquiryValues.put(name.getColumnName(), enquiry.getName());
-        enquiryValues.put(content.getColumnName(), enquiry.toString());
-        enquiryValues.put(synced.getColumnName(), enquiry.isSynced());
+        enquiryValues.put(reporter_name.getColumnName(), enquiry.getReporterName());
+        enquiryValues.put(reporter_details.getColumnName(), enquiry.getReporterDetails().toString());
+        enquiryValues.put(criteria.getColumnName(), enquiry.getCriteria().toString());
         enquiryValues.put(created_at.getColumnName(), enquiry.getCreatedAt());
-        enquiryValues.put(internal_id.getColumnName(), enquiry.optString("_id"));
+        enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
+
         long id =  session.replace(Database.enquiry.getTableName(), null, enquiryValues);
         if(id <= 0) throw new IllegalArgumentException();
         //TODO : Better error handling
     }
 
     public int size() {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT COUNT(1) FROM enquiry WHERE enquiry_owner = ?", new String[]{user});
+        @Cleanup Cursor cursor = session.rawQuery("SELECT COUNT(1) FROM enquiry WHERE created_by = ?", new String[]{user});
         return cursor.moveToNext() ? cursor.getInt(0) : 0;
     }
 
@@ -60,7 +57,7 @@ public class EnquiryRepository implements Closeable {
     }
 
     public List<String> getAllEnquirerNames() {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT name FROM enquiry WHERE enquiry_owner = ?", new String[] {user});
+        @Cleanup Cursor cursor = session.rawQuery("SELECT name FROM enquiry WHERE created_by = ?", new String[] {user});
         List<String> enquirerNames = null;
         cursor.moveToFirst();
         while (!cursor.isAfterLast()){

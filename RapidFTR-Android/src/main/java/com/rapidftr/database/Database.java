@@ -103,19 +103,13 @@ public enum Database {
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum EnquiryTableColumn {
         id("id"),
-        name("reporter_name"),
-        content("criteria"),
-        owner("enquiry_owner"),
-        synced("synced"),
-
-        internal_id("_id", true, false),
-        created_by("created_by", true, false),
-
-        last_updated_at("last_updated_at", true, false),
-
+        reporter_name("reporter_name"),
+        reporter_details("reporter_details"),
+        criteria("criteria"),
+        owner("created_by"),
         created_at("created_at", true, true),
+        last_updated_at("last_updated_at", true, false);
 
-        last_synced_at("last_synced_at",true, true);
         private @Getter final String columnName;
         private final boolean isInternal;
         private final boolean isSystem;

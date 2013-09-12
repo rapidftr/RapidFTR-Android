@@ -5,6 +5,7 @@ import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Enquiry;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,8 +24,10 @@ public class EnquiryRepositoryTest {
 
     @Test
     public void shouldCreateAnEnquiryInTheDatabase() throws JSONException {
-        EnquiryRepository enquiryRepository = new EnquiryRepository("user", session);
-        enquiryRepository.createOrUpdate(new Enquiry("id", "user", "{\"age\":14,\"name\":\"Subhas\"}"));
+        String user = "user";
+        EnquiryRepository enquiryRepository = new EnquiryRepository(user, session);
+        Enquiry enquiry = new Enquiry(user, "REPORTER NAME", new JSONObject("{\"sex\": \"male\"}"), new JSONObject("{\"age\":14,\"name\":\"Subhas\"}"));
+        enquiryRepository.createOrUpdate(enquiry);
         assertEquals(1, enquiryRepository.size());
     }
 }

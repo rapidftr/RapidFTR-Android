@@ -99,15 +99,12 @@ class MigrationSQL {
     public static final String createEnquiryTable = "create table "
             + Database.enquiry.getTableName() + "("
             + Database.EnquiryTableColumn.id.getColumnName() + " text primary key,"
-            + Database.EnquiryTableColumn.name.getColumnName() + " text not null,"
+            + Database.EnquiryTableColumn.reporter_name.getColumnName() + " text not null,"
+            + Database.EnquiryTableColumn.reporter_details.getColumnName() + " text not null,"
+            + Database.EnquiryTableColumn.criteria.getColumnName() + " text not null,"
             + Database.EnquiryTableColumn.owner.getColumnName() + " text not null,"
-            + Database.EnquiryTableColumn.content.getColumnName() + " text not null,"
-            + Database.EnquiryTableColumn.synced.getColumnName() + " text not null,"
-            + Database.EnquiryTableColumn.internal_id.getColumnName() + " text,"
-            + Database.EnquiryTableColumn.created_by.getColumnName() + " text not null,"
-            + Database.EnquiryTableColumn.last_updated_at.getColumnName() + " text,"
             + Database.EnquiryTableColumn.created_at.getColumnName() + " text not null default '" + RapidFtrDateTime.now().defaultFormat() + "',"
-            + Database.EnquiryTableColumn.last_synced_at.getColumnName() + " text"
+            + Database.EnquiryTableColumn.last_updated_at.getColumnName() + " text"
             + ");";
 }
 

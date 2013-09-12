@@ -136,4 +136,8 @@ public class BaseModel extends JSONObject implements Parcelable {
     public JSONObject values() throws JSONException {
         return null;
     }
+
+    public String getCreatedBy() throws JSONException {
+        return getString(created_by.getColumnName());
+    }
 }
