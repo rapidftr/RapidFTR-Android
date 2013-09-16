@@ -48,7 +48,7 @@ public class EnquiryRepository implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close(){
         try {
             session.close();
         } catch (IOException e) {

@@ -119,4 +119,7 @@
     <string name="password_change_success">Password Changed Successfully</string>
     <string name="password_change_failed">Could not change password. Try again</string>
     <string name="confirm_change_password_text">Records are still being sychronised. Changing password will stop synchronising. Do you still want to continue? </string>
+    <string name="save_enquiry_progress">Saving Enquiry</string>
+    <string name="save_enqury_success">Enquiry Saved</string>
+    <string name="save_enquiry_failed">Enquiry Save Failed</string>
 </resources>
