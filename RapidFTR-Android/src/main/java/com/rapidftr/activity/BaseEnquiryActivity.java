@@ -1,8 +1,8 @@
 package com.rapidftr.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -107,6 +107,18 @@ public abstract class BaseEnquiryActivity extends RapidFtrActivity {
                 throw new RuntimeException(e);
             }
         }
+
+        @Override
+        protected void onPostExecute(Enquiry result) {
+            if (result != null)
+                view();
+        }
+    }
+
+    private void view() {
+        Intent intent = new Intent(this, CreateEnquiryActivity.class);
+        finish();
+        startActivity(intent);
     }
 
     private Enquiry saveEnquiry() throws JSONException {

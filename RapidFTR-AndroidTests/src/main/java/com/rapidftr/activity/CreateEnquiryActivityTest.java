@@ -41,11 +41,10 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         }
     }
 
-    public void testCreateEnquriy(){
+    public void testAfterSaveShouldShowNewForm() throws Exception {
         List<String> enquirerDetails = asList("Rajni");
         enquiryPage.enterEnquirerDetails(enquirerDetails);
-
         enquiryPage.save();
-        enquiryPage.verifyEnquirerDetails(enquirerDetails);
+        enquiryPage.verifyNewEnquiryFormPresence();
     }
 }

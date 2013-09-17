@@ -1,5 +1,6 @@
 package com.rapidftr.activity.pages;
 
+import android.text.Editable;
 import android.view.View;
 import android.widget.*;
 import com.jayway.android.robotium.solo.RobotiumUtils;
@@ -7,6 +8,7 @@ import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.R;
 import com.rapidftr.view.fields.TextField;
 import junit.framework.Assert;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +16,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 public class EnquiryPage {
     public Solo solo;
@@ -106,5 +109,13 @@ public class EnquiryPage {
         solo.searchButton("Edit", true);
         selectFormSection("Enquirer Details");
         Assert.assertTrue(solo.searchEditText(enquirerDetails.get(0).toString()));
+    }
+
+    public void verifyNewEnquiryFormPresence() {
+        TextField textField = (TextField) solo.getCurrentActivity().findViewById("enquirer_name".hashCode());
+        EditText nameField = (EditText) textField.findViewById(R.id.value);
+        Editable text = nameField.getText();
+        assertEquals("", text.toString());
+        solo.searchButton("Save");
     }
 }
