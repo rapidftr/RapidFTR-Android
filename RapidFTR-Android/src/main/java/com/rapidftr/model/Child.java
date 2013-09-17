@@ -77,10 +77,6 @@ public class Child extends BaseModel {
         return length > 7 ? getUniqueId().substring(length - 7) : getUniqueId();
     }
 
-    public void setOrganisation(String userOrg) throws JSONException {
-        put(created_organisation.getColumnName(), userOrg);
-    }
-
     public void setLastSyncedAt(String lastSyncedAt) throws JSONException {
         put(last_synced_at.getColumnName(), lastSyncedAt);
     }

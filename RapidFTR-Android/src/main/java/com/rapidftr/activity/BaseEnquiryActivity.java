@@ -2,6 +2,7 @@ package com.rapidftr.activity;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -110,6 +111,10 @@ public abstract class BaseEnquiryActivity extends RapidFtrActivity {
 
     private Enquiry saveEnquiry() throws JSONException {
         @Cleanup EnquiryRepository repository = inject(EnquiryRepository.class);
+        if (enquiry.isNew()) {
+            enquiry.setOwner(getCurrentUser().getUserName());
+            enquiry.setOrganisation(getCurrentUser().getOrganisation());
+        }
         repository.createOrUpdate(enquiry);
         return enquiry;
     }

@@ -12,7 +12,7 @@
   "visible": "true",
   "order": 1,
   "fields": [{
-    "name": "65292af2",
+    "name": "enquirer_name",
     "visible": "true",
     "type": "text_field",
     "highlight_information": {

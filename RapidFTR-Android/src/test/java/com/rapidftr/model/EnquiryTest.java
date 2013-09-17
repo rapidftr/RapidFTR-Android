@@ -20,13 +20,10 @@ public class EnquiryTest {
     public void createEnquiryWithAllFields() throws JSONException{
       String createdBy = "Rajni";
       String reporterName = "Batman";
-      JSONObject reporterDetails = new JSONObject("{\"sex\": \"Male\"}");
       JSONObject criteria = new JSONObject("{\"name\":\"NAME\"}");
-      Enquiry enquiry = new Enquiry(createdBy, reporterName, reporterDetails, criteria);
+      Enquiry enquiry = new Enquiry(createdBy, reporterName, criteria);
 
-      assertEquals(reporterName, enquiry.getReporterName());
-      assertEquals(enquiry.getReporterDetails().getClass(), JSONObject.class);
-      assertEquals(reporterDetails.toString(), enquiry.getReporterDetails().toString());
+      assertEquals(reporterName, enquiry.getEnquirerName());
       assertEquals(enquiry.getCriteria().getClass(), JSONObject.class);
       assertEquals(criteria.toString(), enquiry.getCriteria().toString());
       assertEquals(createdBy, enquiry.getCreatedBy());

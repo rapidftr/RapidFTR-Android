@@ -2,6 +2,7 @@ package com.rapidftr.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
@@ -31,12 +32,10 @@ public class EnquiryRepository implements Closeable {
         ContentValues enquiryValues = new ContentValues();
 
         enquiryValues.put(owner.getColumnName(), enquiry.getOwner());
-        enquiryValues.put(reporter_name.getColumnName(), enquiry.getReporterName());
-        enquiryValues.put(reporter_details.getColumnName(), enquiry.getReporterDetails().toString());
-        enquiryValues.put(criteria.getColumnName(), enquiry.getCriteria().toString());
+        enquiryValues.put(enquirer_name.getColumnName(), enquiry.getEnquirerName());
+        enquiryValues.put(criteria.getColumnName(), enquiry.toString());
         enquiryValues.put(created_at.getColumnName(), enquiry.getCreatedAt());
         enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
-
         long id =  session.replace(Database.enquiry.getTableName(), null, enquiryValues);
         if(id <= 0) throw new IllegalArgumentException();
         //TODO : Better error handling

@@ -41,10 +41,11 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         }
     }
 
-//    public void testCreateEnquriy(){
-//        List<String> enquirerDetails = asList("Rajni");
-//        enquiryPage.enterEnquirerDetails(enquirerDetails);
-//        enquiryPage.save();
-//        enquiryPage.verifyEnquirerDetails(enquirerDetails);
-//    }
+    public void testCreateEnquriy(){
+        List<String> enquirerDetails = asList("Rajni");
+        enquiryPage.enterEnquirerDetails(enquirerDetails);
+
+        enquiryPage.save();
+        enquiryPage.verifyEnquirerDetails(enquirerDetails);
+    }
 }

@@ -1,13 +1,11 @@
 package com.rapidftr.activity.pages;
 
 import android.view.View;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.*;
 import com.jayway.android.robotium.solo.RobotiumUtils;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.R;
+import com.rapidftr.view.fields.TextField;
 import junit.framework.Assert;
 
 import java.util.ArrayList;
@@ -92,12 +90,15 @@ public class EnquiryPage {
     }
 
     public void enterEnquirerDetails(List<String> enquirerDetails) {
-        solo.enterText(0, enquirerDetails.get(0).toString());
+        TextField textField = (TextField) solo.getCurrentActivity().findViewById("enquirer_name".hashCode());
+        EditText nameField = (EditText) textField.findViewById(R.id.value);
+        solo.enterText(nameField, "");
+        solo.enterText(nameField, enquirerDetails.get(0).toString());
     }
 
     public void save() {
         solo.clickOnButton("Save");
-        Assert.assertTrue(solo.waitForText(String.valueOf(R.string.save_enqury_success)));
+        Assert.assertTrue(solo.waitForText("Enquiry Saved"));
         solo.waitForText("Edit");
     }
 
