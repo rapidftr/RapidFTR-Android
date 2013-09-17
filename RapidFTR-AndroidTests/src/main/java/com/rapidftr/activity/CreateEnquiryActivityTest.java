@@ -41,6 +41,13 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         }
     }
 
+    public void testEnquirerNameValidation(){
+        List<String> enquirerDetails = asList("");
+        enquiryPage.enterEnquirerDetails(enquirerDetails);
+        enquiryPage.save();
+        enquiryPage.assertPresenceOfValidationMessage();
+    }
+
     public void testAfterSaveShouldShowNewForm() throws Exception {
         List<String> enquirerDetails = asList("Rajni");
         enquiryPage.enterEnquirerDetails(enquirerDetails);

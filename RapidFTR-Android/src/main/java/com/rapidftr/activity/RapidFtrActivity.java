@@ -23,6 +23,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.User;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SynchronisationAsyncTask;
+import com.rapidftr.view.fields.TextField;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -275,8 +276,15 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     protected boolean validateTextFieldNotEmpty(int id, int messageId) {
-        EditText editText = (EditText) findViewById(id);
-        String value = getEditText(id);
+        View view = findViewById(id);
+        EditText editText;
+        if (view instanceof EditText){
+            editText = (EditText) findViewById(id);
+        }else{
+            TextField textField = (TextField) view;
+            editText = (EditText) textField.findViewById(R.id.value);
+        }
+        String value = editText.getText().toString().trim();
 
         if (value == null || "".equals(value)) {
             editText.setError(getString(messageId));

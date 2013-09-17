@@ -89,8 +89,14 @@ public abstract class BaseEnquiryActivity extends RapidFtrActivity {
 
 
     public Enquiry save(){
-        AsyncTaskWithDialog.wrap(this, new SaveEnquiryTask(), R.string.save_enquiry_progress, R.string.save_enqury_success, R.string.save_enquiry_failed).execute();
+        if (isValid()){
+            AsyncTaskWithDialog.wrap(this, new SaveEnquiryTask(), R.string.save_enquiry_progress, R.string.save_enqury_success, R.string.save_enquiry_failed).execute();
+        }
         return enquiry;
+    }
+
+    private boolean isValid() {
+        return validateTextFieldNotEmpty("enquirer_name".hashCode(), R.string.enquirer_name_required);
     }
 
     private class SaveEnquiryTask extends AsyncTaskWithDialog<Void, Void, Enquiry> {

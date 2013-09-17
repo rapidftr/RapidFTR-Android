@@ -101,8 +101,6 @@ public class EnquiryPage {
 
     public void save() {
         solo.clickOnButton("Save");
-        Assert.assertTrue(solo.waitForText("Enquiry Saved"));
-        solo.waitForText("Edit");
     }
 
     public void verifyEnquirerDetails(List<String> enquirerDetails) {
@@ -117,5 +115,11 @@ public class EnquiryPage {
         Editable text = nameField.getText();
         assertEquals("", text.toString());
         solo.searchButton("Save");
+    }
+
+    public void assertPresenceOfValidationMessage() {
+        TextField textField = (TextField) solo.getCurrentActivity().findViewById("enquirer_name".hashCode());
+        EditText nameField = (EditText) textField.findViewById(R.id.value);
+        assertEquals("Enquirer name is required", nameField.getError().toString());
     }
 }
