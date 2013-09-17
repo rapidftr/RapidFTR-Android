@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.view.fields.BaseView;
 
@@ -16,7 +17,7 @@ public class FormSectionView extends ScrollView {
 
     private FormSection formSection;
 
-    private Child child;
+    private BaseModel child;
 
     public FormSectionView(Context context) {
         super(context);
@@ -42,7 +43,7 @@ public class FormSectionView extends ScrollView {
         return (LinearLayout) findViewById(R.id.container);
     }
 
-    public void initialize(FormSection formSection, Child child) {
+    public void initialize(FormSection formSection, BaseModel child) {
         if (this.formSection != null)
             throw new IllegalArgumentException("Form section is already initialized!");
 

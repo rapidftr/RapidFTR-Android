@@ -28,7 +28,7 @@ public class CreateEnquiryActivityTest {
     }
 
     @Test
-    public void testInitializeEnquiry() throws JSONException {
+    public void testInitializeEnquiry() throws Exception {
         activity.initializeData(null);
         assertEquals(activity.enquiry.getClass(), Enquiry.class);
     }

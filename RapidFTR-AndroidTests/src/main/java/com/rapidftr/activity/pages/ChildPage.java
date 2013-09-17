@@ -76,7 +76,7 @@ public class ChildPage {
     public void verifyFields(List fieldNames, boolean visible) {
         List<String> texts = getVisibleText();
         for (Object fieldName : fieldNames) {
-            assertEquals(format("Visibility of field %s", texts),
+            assertEquals(format("Visibility of field %s", fieldName),
                          visible, texts.contains(fieldName));
         }
     }

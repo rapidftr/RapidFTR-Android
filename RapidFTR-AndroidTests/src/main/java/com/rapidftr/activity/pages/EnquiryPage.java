@@ -3,18 +3,24 @@ package com.rapidftr.activity.pages;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import com.jayway.android.robotium.solo.RobotiumUtils;
 import com.jayway.android.robotium.solo.Solo;
+import com.rapidftr.R;
+import junit.framework.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.String.format;
+import static junit.framework.Assert.assertEquals;
+
 public class EnquiryPage {
     public Solo solo;
     public RobotiumUtils rutils;
-    List automationFormData = Arrays.asList("Automation TextField name", "Automation TextArea location");
+    int formPosition;
 
     public EnquiryPage(Solo solo) {
         this.solo = solo;
@@ -35,5 +41,69 @@ public class EnquiryPage {
             }
         }
         return texts;
+    }
+
+    public List<String> getAllFormSections() {
+        solo.clickOnText("Enquirer Details",0);
+        solo.waitForText("Tracing Information");
+        ListAdapter adapter = solo.getCurrentViews(ListView.class).get(0).getAdapter();
+        int totalCount = adapter.getCount();
+        List<String> formSections = new ArrayList<String>();
+        for(int i=0;i<totalCount;i++){
+            formSections.add(adapter.getItem(i).toString());
+        }
+        return formSections;
+    }
+
+    public void selectFormSection(String formSectionName) {
+        solo.waitForText("Save");
+        solo.clickOnView(solo.getCurrentViews(Spinner.class).get(0));
+        solo.waitForText(formSectionName);
+        ListAdapter adapter= solo.getCurrentViews(ListView.class).get(0).getAdapter();
+        for(int i=0;i<adapter.getCount();i++){
+            if(adapter.getItem(i).toString().equalsIgnoreCase(formSectionName)){
+                formPosition=i;
+                break;
+            }
+        }
+        solo.clickOnText(adapter.getItem(formPosition).toString());
+        solo.waitForText(formSectionName);
+        solo.sleep(3);
+    }
+
+    public void verifyFieldsDisplayed(List<String> formFields) {
+        List<String> visibleText = getVisibleText();
+        for (Object fieldName : formFields) {
+            assertEquals(format("Visibility of field %s", fieldName),
+                    true, visibleText.contains(fieldName));
+        }
+    }
+
+    private List<String> getVisibleText(){
+        List<String> texts = new ArrayList<String>();
+        ArrayList<View> views = rutils.removeInvisibleViews(solo.getViews());
+        for (View v : views) {
+            if (v instanceof TextView) {
+                String text = ((TextView)v).getText().toString();
+                texts.add(text);
+            }
+        }
+        return texts;
+    }
+
+    public void enterEnquirerDetails(List<String> enquirerDetails) {
+        solo.enterText(0, enquirerDetails.get(0).toString());
+    }
+
+    public void save() {
+        solo.clickOnButton("Save");
+        Assert.assertTrue(solo.waitForText(String.valueOf(R.string.save_enqury_success)));
+        solo.waitForText("Edit");
+    }
+
+    public void verifyEnquirerDetails(List<String> enquirerDetails) {
+        solo.searchButton("Edit", true);
+        selectFormSection("Enquirer Details");
+        Assert.assertTrue(solo.searchEditText(enquirerDetails.get(0).toString()));
     }
 }
