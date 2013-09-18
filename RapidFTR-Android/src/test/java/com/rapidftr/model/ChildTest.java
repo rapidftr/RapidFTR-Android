@@ -7,7 +7,6 @@ import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -144,6 +143,27 @@ public class ChildTest {
         Child child = new Child();
         assertFalse(child.isSynced());
     }
+    @Test
+    public void shouldRemoveFieldIfNull() throws JSONException {
+        Child child = new Child();
+        child.put("name", "test");
+
+        assertEquals(child.get("name"), "test");
+
+        Object value = null;
+        child.put("name", value);
+        assertNull(child.opt("name"));
+    }
+
+    @Test
+    public void shouldRemoveFieldIfJSONArrayIsEmtpy() throws JSONException {
+        Child child = new Child();
+        child.put("name", new JSONArray(Arrays.asList("one")));
+        assertThat(child.values().names().length(), equalTo(1));
+
+        child.put("name", new JSONArray());
+        assertNull(child.values().names());
+    }
 
     @Test
     public void shouldTrimFieldValues() throws JSONException {
@@ -190,15 +210,5 @@ public class ChildTest {
         child.put(internal_id.getColumnName(), "xyz");
         assertThat(child.isNew(), is(false));
     }
-    @Test
-    public void testAtLeastOneFieldIsFilledExcludingOwner() throws JSONException {
-        Child child = new Child("id1", "owner1", "");
-        Assert.assertThat(child.isValid(), is(false));
-
-        child.put("test1", "value1");
-        Assert.assertThat(child.isValid(), is(true));
-
-        child.remove("test1");
-        Assert.assertThat(child.isValid(), is(false));
-    }
+    
 }

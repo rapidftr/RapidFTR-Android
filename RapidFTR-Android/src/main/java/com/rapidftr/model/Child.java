@@ -9,6 +9,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.RapidFtrDateTime;
+import lombok.Getter;
+import lombok.Setter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +21,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
@@ -26,13 +29,23 @@ import static com.rapidftr.model.Child.History.*;
 import static com.rapidftr.utils.JSONArrays.asJSONArray;
 import static com.rapidftr.utils.JSONArrays.asList;
 
-public class Child extends BaseModel {
+public class Child extends JSONObject implements Parcelable {
 
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     public static final String EMPTY_STRING = "";
 
+    protected
+    @Getter
+    @Setter
+    boolean synced;
+
     public Child() {
-      super();
+        try {
+            setSynced(false);
+            setCreatedAt(RapidFtrDateTime.now().defaultFormat());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Child(Parcel parcel) throws JSONException {
@@ -40,17 +53,22 @@ public class Child extends BaseModel {
     }
 
     public Child(String id, String owner, String content) throws JSONException {
-      super(id, owner, content);
+        this(content);
+        setUniqueId(id);
+        setOwner(owner);
     }
 
     public Child(String id, String owner, String content, boolean synced) throws JSONException {
-        super(id, owner, content);
+        this(id, owner, content);
         setSynced(synced);
     }
 
     public Child(String content) throws JSONException {
-        super(content);
+        super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
         setHistories();
+        if (!has(created_at.getColumnName())) {
+            setCreatedAt(RapidFtrDateTime.now().defaultFormat());
+        }
     }
 
     private void setHistories() throws JSONException {
@@ -73,6 +91,11 @@ public class Child extends BaseModel {
         return null;
     }
 
+    @Override
+    public JSONArray names() {
+        JSONArray names = super.names();
+        return names == null ? new JSONArray() : names;
+    }
 
     @Override
     public JSONObject put(String key, Object value) {
@@ -89,11 +112,23 @@ public class Child extends BaseModel {
         return null;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(getJsonString());
+    }
 
     public String getId() throws JSONException {
         return getString(internal_id.getColumnName());
     }
 
+    public String getUniqueId() throws JSONException {
+        return has(unique_identifier.getColumnName()) ? getString(unique_identifier.getColumnName()) : null;
+    }
 
     public String getShortId() throws JSONException {
         if (!has(unique_identifier.getColumnName()))
@@ -101,6 +136,18 @@ public class Child extends BaseModel {
 
         int length = getUniqueId().length();
         return length > 7 ? getUniqueId().substring(length - 7) : getUniqueId();
+    }
+
+    public void setUniqueId(String id) throws JSONException {
+        put(unique_identifier.getColumnName(), id);
+    }
+
+    public String getOwner() throws JSONException {
+        return getString(created_by.getColumnName());
+    }
+
+    public void setOwner(String owner) throws JSONException {
+        put(created_by.getColumnName(), owner);
     }
 
     public void setOrganisation(String userOrg) throws JSONException {
@@ -113,6 +160,14 @@ public class Child extends BaseModel {
 
     public void setName(String childName) throws JSONException {
         put(name.getColumnName(), childName);
+    }
+
+    public String getCreatedAt() throws JSONException {
+        return getString(created_at.getColumnName());
+    }
+
+    protected void setCreatedAt(String createdAt) throws JSONException {
+        put(created_at.getColumnName(), createdAt);
     }
 
     public String getLastUpdatedAt() throws JSONException {
@@ -146,6 +201,32 @@ public class Child extends BaseModel {
             list.add(element);
 
         put(key, asJSONArray(list));
+    }
+
+    public void removeFromJSONArray(String key, Object element) throws JSONException {
+        if (!has(key))
+            return;
+
+        JSONArray array = getJSONArray(key);
+        List<Object> list = asList(array);
+        list.remove(element);
+        put(key, asJSONArray(list));
+    }
+
+    public String getJsonString() {
+        return toString();
+    }
+
+    public void generateUniqueId() throws JSONException {
+        if (has(unique_identifier.getColumnName())) {
+            /* do nothing */
+        } else {
+            setUniqueId(createUniqueId());
+        }
+    }
+
+    protected String createUniqueId() throws JSONException {
+        return UUID.randomUUID().toString();
     }
 
     public boolean isValid() {
