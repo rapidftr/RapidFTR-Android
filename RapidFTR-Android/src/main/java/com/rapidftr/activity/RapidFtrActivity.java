@@ -278,13 +278,15 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     protected boolean validateTextFieldNotEmpty(int id, int messageId) {
         View view = findViewById(id);
         EditText editText;
+        String value;
         if (view instanceof EditText){
             editText = (EditText) findViewById(id);
+            value = getEditText(id);
         }else{
             TextField textField = (TextField) view;
             editText = (EditText) textField.findViewById(R.id.value);
+            value = getText(editText);
         }
-        String value = editText.getText().toString().trim();
 
         if (value == null || "".equals(value)) {
             editText.setError(getString(messageId));
@@ -295,7 +297,11 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     protected String getEditText(int resId) {
-        CharSequence value = ((EditText) findViewById(resId)).getText();
+        return getText((EditText) findViewById(resId));
+    }
+
+    protected String getText(EditText editText){
+        CharSequence value = editText.getText();
         return value == null ? null : value.toString().trim();
     }
 
