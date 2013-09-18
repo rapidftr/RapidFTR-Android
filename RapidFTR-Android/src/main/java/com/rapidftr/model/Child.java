@@ -29,6 +29,7 @@ import static com.rapidftr.utils.JSONArrays.asList;
 public class Child extends BaseModel {
 
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    public static final String EMPTY_STRING = "";
 
     public Child() {
       super();
@@ -104,6 +105,22 @@ public class Child extends BaseModel {
 
     public void setOrganisation(String userOrg) throws JSONException {
         put(created_organisation.getColumnName(), userOrg);
+    }
+
+    public String getName() {
+        return optString(name.getColumnName(), EMPTY_STRING);
+    }
+
+    public void setName(String childName) throws JSONException {
+        put(name.getColumnName(), childName);
+    }
+
+    public String getLastUpdatedAt() throws JSONException {
+        return optString(last_updated_at.getColumnName(), null);
+    }
+
+    public void setLastUpdatedAt(String lastUpdatedAt) throws JSONException {
+        put(last_updated_at.getColumnName(), lastUpdatedAt);
     }
 
     public void setLastSyncedAt(String lastSyncedAt) throws JSONException {

@@ -10,7 +10,7 @@ import net.sqlcipher.database.SQLiteOpenHelper;
 
 public class SQLCipherHelper extends SQLiteOpenHelper implements DatabaseHelper {
 
-    public static final int DB_VERSION = 2;
+    public static final int DB_VERSION = 1;
 
     protected @Getter final DatabaseSession session;
 

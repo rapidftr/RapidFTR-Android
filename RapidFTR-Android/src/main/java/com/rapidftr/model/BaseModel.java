@@ -23,7 +23,6 @@ public class BaseModel extends JSONObject implements Parcelable {
     @Getter
     @Setter
     boolean synced;
-    public static final String EMPTY_STRING = "";
 
     public BaseModel(String content) throws JSONException {
         super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
@@ -61,22 +60,6 @@ public class BaseModel extends JSONObject implements Parcelable {
 
     protected void setCreatedAt(String createdAt) throws JSONException {
         put(created_at.getColumnName(), createdAt);
-    }
-
-    public String getName() {
-        return optString(name.getColumnName(), EMPTY_STRING);
-    }
-
-    public void setName(String childName) throws JSONException {
-        put(name.getColumnName(), childName);
-    }
-
-    public String getLastUpdatedAt() throws JSONException {
-        return optString(last_updated_at.getColumnName(), null);
-    }
-
-    public void setLastUpdatedAt(String lastUpdatedAt) throws JSONException {
-        put(last_updated_at.getColumnName(), lastUpdatedAt);
     }
 
     protected String createUniqueId() throws JSONException {
