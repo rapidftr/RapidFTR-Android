@@ -49,22 +49,6 @@
                 android:onClick="searchTabListener"
                 />
     </LinearLayout>
-    <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            >
-        <Button
-                android:id="@+id/enquiry_tab"
-                android:text="Enquiry"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                style="@style/tab"
-                android:layout_weight="1"
-                android:background="@drawable/tab"
-                android:onClick="enquiryTabListener"
-                />
-
-    </LinearLayout>
 
     <View android:background="@color/tab_partition"
           android:layout_height="5dp"
