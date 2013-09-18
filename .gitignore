@@ -16,6 +16,7 @@ classes/
 .project
 .classpath
 local.properties
+proguard-project.txt
 
 RapidFTR-Android/libs/server-standalone.jar
 RapidFTR-AndroidTests/bin/
