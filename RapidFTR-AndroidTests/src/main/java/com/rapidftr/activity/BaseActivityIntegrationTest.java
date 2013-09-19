@@ -21,6 +21,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 	public RapidFtrApplication application;
     public ChangePasswordPage changePasswordPage;
     public EnquiryPage enquiryPage;
+    public ViewAllEnquiriesPage viewAllEnquiriesPage;
     public UnverifiedUserPage unverifiedUserPage;
 
 
@@ -49,6 +50,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
         changePasswordPage = new ChangePasswordPage(solo);
         unverifiedUserPage=new UnverifiedUserPage(solo);
         enquiryPage = new EnquiryPage(solo);
+        viewAllEnquiriesPage = new ViewAllEnquiriesPage(solo);
 	    application = RapidFtrApplication.getApplicationInstance();
 
 	    if (application.isLoggedIn()) {

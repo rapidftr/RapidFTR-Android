@@ -124,4 +124,8 @@
     <string name="save_enquiry_failed">Enquiry Save Failed</string>
     <string name="enquirer_name_required">Enquirer name is required</string>
     <string name="enquiry_not_found">No Enquiries found</string>
+    <string name="enquiry_tab">Enquiry</string>
+    <string name="child_tab">Child</string>
+    <string name="create_enquiry_tab">New</string>
+    <string name="view_all_enquiry_tab">View All</string>
 </resources>

@@ -39,6 +39,8 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         return enquiry;
     }
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +56,9 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
+
     }
+
 
     protected abstract void initializeView();
 

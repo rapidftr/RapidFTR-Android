@@ -3,6 +3,7 @@ package com.rapidftr.activity.pages;
 import android.text.Editable;
 import android.view.View;
 import android.widget.*;
+import com.jayway.android.robotium.solo.Condition;
 import com.jayway.android.robotium.solo.RobotiumUtils;
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.R;
@@ -110,10 +111,13 @@ public class EnquiryPage {
     }
 
     public void verifyNewEnquiryFormPresence() {
-        TextField textField = (TextField) solo.getCurrentActivity().findViewById("enquirer_name".hashCode());
-        EditText nameField = (EditText) textField.findViewById(R.id.value);
-        Editable text = nameField.getText();
-        assertEquals("", text.toString());
+        solo.waitForCondition(new Condition() {
+            @Override
+            public boolean isSatisfied() {
+                EditText view = (EditText) solo.getCurrentActivity().findViewById("enquirer_name".hashCode()).findViewById(R.id.value);
+                return "".equals(view.getText().toString());
+            }
+        }, 10000);
         solo.searchButton("Save");
     }
 

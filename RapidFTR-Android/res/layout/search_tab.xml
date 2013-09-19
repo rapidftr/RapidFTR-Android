@@ -20,7 +20,7 @@
                 style="@style/tab"
                 android:drawableLeft="@drawable/icon_register"
                 android:background="@drawable/tab"
-                android:onClick="registerTabListener"/>
+                android:onClick="registerChildTabListener"/>
 
         <View android:background="#aaaaaa"
               android:layout_height="20dp"
