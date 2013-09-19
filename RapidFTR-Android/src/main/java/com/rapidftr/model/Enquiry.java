@@ -1,9 +1,12 @@
 package com.rapidftr.model;
 
+import android.database.Cursor;
 import com.rapidftr.database.Database;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Iterator;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 
@@ -21,6 +24,21 @@ public class Enquiry extends BaseModel {
         this.setCriteria(criteria);
         this.setUniqueId(createUniqueId());
         this.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
+    }
+
+    public Enquiry(Cursor cursor) throws JSONException {
+        int index = cursor.getColumnIndex(Database.EnquiryTableColumn.criteria.getColumnName());
+        buildFromContent(cursor.getString(index));
+    }
+
+    private void buildFromContent(String string) throws JSONException {
+        JSONObject contents = new JSONObject(string);
+        Iterator<String> keys = contents.keys();
+        String key;
+        while (keys.hasNext()){
+            key = keys.next();
+            this.put(key, contents.get(key));
+        }
     }
 
     public void setEnquirerName(String reporterName) throws JSONException {

@@ -123,4 +123,5 @@
     <string name="save_enqury_success">Enquiry Saved</string>
     <string name="save_enquiry_failed">Enquiry Save Failed</string>
     <string name="enquirer_name_required">Enquirer name is required</string>
+    <string name="enquiry_not_found">No Enquiries found</string>
 </resources>
