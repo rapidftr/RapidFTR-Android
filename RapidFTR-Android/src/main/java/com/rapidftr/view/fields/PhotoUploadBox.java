@@ -85,7 +85,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
                 break;
             case SHOW_FULL_IMAGE_REQUEST:
                 if (data != null && data.getStringExtra("file_name") != null) {
-                    child.put(CURRENT_PHOTO_KEY, data.getStringExtra("file_name"));
+                    model.put(CURRENT_PHOTO_KEY, data.getStringExtra("file_name"));
                 }
                 break;
         }
@@ -98,7 +98,7 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     protected void deleteCapture() {
-        if (!child.optBoolean("saved", false)) {
+        if (!model.optBoolean("saved", false)) {
             // TODO: Delete taken image
         }
     }
@@ -155,18 +155,18 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
     }
 
     private void addCurrentPhotoKeyIfNotPresent(String fileName) {
-        if (child.optString(CURRENT_PHOTO_KEY).equals("")) {
-            child.put(CURRENT_PHOTO_KEY, fileName);
+        if (model.optString(CURRENT_PHOTO_KEY).equals("")) {
+            model.put(CURRENT_PHOTO_KEY, fileName);
         }
     }
 
     private void addPhotoToPhotoKeys(String fileName) throws JSONException {
-        if (child.optJSONArray(PHOTO_KEYS) == null) {
+        if (model.optJSONArray(PHOTO_KEYS) == null) {
             JSONArray photo_keys = new JSONArray();
             photo_keys.put(fileName);
-            child.put(PHOTO_KEYS, photo_keys);
+            model.put(PHOTO_KEYS, photo_keys);
         } else {
-            child.getJSONArray(PHOTO_KEYS).put(fileName);
+            model.getJSONArray(PHOTO_KEYS).put(fileName);
         }
     }
 
@@ -180,11 +180,11 @@ public class PhotoUploadBox extends BaseView implements RapidFtrActivity.ResultL
 
     public void repaint() throws JSONException {
         GridView photoGridView = getGalleryView();
-        final JSONArray photoKeys = child.optJSONArray(PHOTO_KEYS);
+        final JSONArray photoKeys = model.optJSONArray(PHOTO_KEYS);
         addImageClickListener(photoGridView, photoKeys);
         if (photoKeys != null) {
             setGridAttributes(photoGridView, photoKeys);
-            photoGridView.setAdapter(new ImageAdapter(getContext(), child, photoCaptureHelper, enabled));
+            photoGridView.setAdapter(new ImageAdapter(getContext(), model, photoCaptureHelper, enabled));
         }
     }
 

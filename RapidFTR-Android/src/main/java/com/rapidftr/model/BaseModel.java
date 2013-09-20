@@ -2,7 +2,9 @@ package com.rapidftr.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import com.google.common.base.Strings;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -139,5 +141,42 @@ public class BaseModel extends JSONObject implements Parcelable {
 
     public String getCreatedBy() throws JSONException {
         return getString(created_by.getColumnName());
+    }
+
+    @Override
+    public JSONObject put(String key, Object value) {
+        if (value != null && value instanceof String) {
+            value = Strings.emptyToNull(((String) value).trim());
+        } else if (value != null && value instanceof JSONArray && ((JSONArray) value).length() == 0) {
+            value = null;
+        }
+        try {
+            return super.put(key, value);
+        } catch (JSONException e) {
+            Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
+        }
+        return null;
+    }
+
+    public void addToJSONArray(String key, Object element) throws JSONException {
+        JSONArray array = has(key) ? getJSONArray(key) : new JSONArray();
+        List<Object> list = asList(array);
+        if (!list.contains(element))
+            list.add(element);
+
+        put(key, asJSONArray(list));
+    }
+
+    public String getString(String key) {
+        try {
+            return super.getString(key);
+        } catch (JSONException e) {
+            Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
+        }
+        return null;
+    }
+
+    public void setOrganisation(String userOrg) throws JSONException {
+        put(created_organisation.getColumnName(), userOrg);
     }
 }

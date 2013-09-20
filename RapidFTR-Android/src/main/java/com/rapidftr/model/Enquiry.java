@@ -1,9 +1,12 @@
 package com.rapidftr.model;
 
+import android.database.Cursor;
 import com.rapidftr.database.Database;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Iterator;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 
@@ -15,22 +18,33 @@ public class Enquiry extends BaseModel {
         this.setUniqueId(createUniqueId());
     }
 
-    public Enquiry(String createdBy, String reporterName, JSONObject reporterDetails, JSONObject criteria) throws JSONException {
+    public Enquiry(String createdBy, String reporterName, JSONObject criteria) throws JSONException {
         this.setOwner(createdBy);
-        this.setReporterName(reporterName);
-        this.setReporterDetails(reporterDetails);
+        this.setEnquirerName(reporterName);
         this.setCriteria(criteria);
         this.setUniqueId(createUniqueId());
         this.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
     }
 
-    public void setReporterName(String reporterName) throws JSONException {
-        this.setColumn(reporter_name, reporterName);
+    public Enquiry(Cursor cursor) throws JSONException {
+        int index = cursor.getColumnIndex(Database.EnquiryTableColumn.criteria.getColumnName());
+        buildFromContent(cursor.getString(index));
     }
 
-    public void setReporterDetails(JSONObject reporterDetails) throws JSONException {
-        this.setColumn(reporter_details, reporterDetails.toString());
+    private void buildFromContent(String string) throws JSONException {
+        JSONObject contents = new JSONObject(string);
+        Iterator<String> keys = contents.keys();
+        String key;
+        while (keys.hasNext()){
+            key = keys.next();
+            this.put(key, contents.get(key));
+        }
     }
+
+    public void setEnquirerName(String reporterName) throws JSONException {
+        this.setColumn(enquirer_name, reporterName);
+    }
+
 
     public void setCriteria(JSONObject criteria) throws JSONException {
         this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
@@ -44,12 +58,8 @@ public class Enquiry extends BaseModel {
         put(column.getColumnName(), value);
     }
 
-    public String getReporterName() throws JSONException {
-        return getString(reporter_name.getColumnName());
-    }
-
-    public JSONObject getReporterDetails() throws JSONException {
-        return new JSONObject(getString(reporter_details.getColumnName()));
+    public String getEnquirerName() throws JSONException {
+        return getString(enquirer_name.getColumnName());
     }
 
     public JSONObject getCriteria() throws JSONException {

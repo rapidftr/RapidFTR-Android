@@ -63,31 +63,6 @@ public class Child extends BaseModel {
         setSynced(synced);
     }
 
-    public String getString(String key) {
-        try {
-            return super.getString(key);
-        } catch (JSONException e) {
-            Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
-        }
-        return null;
-    }
-
-
-    @Override
-    public JSONObject put(String key, Object value) {
-        if (value != null && value instanceof String) {
-            value = Strings.emptyToNull(((String) value).trim());
-        } else if (value != null && value instanceof JSONArray && ((JSONArray) value).length() == 0) {
-            value = null;
-        }
-        try {
-            return super.put(key, value);
-        } catch (JSONException e) {
-            Log.e(RapidFtrApplication.APP_IDENTIFIER, e.getMessage());
-        }
-        return null;
-    }
-
 
     public String getId() throws JSONException {
         return getString(internal_id.getColumnName());
@@ -100,10 +75,6 @@ public class Child extends BaseModel {
 
         int length = getUniqueId().length();
         return length > 7 ? getUniqueId().substring(length - 7) : getUniqueId();
-    }
-
-    public void setOrganisation(String userOrg) throws JSONException {
-        put(created_organisation.getColumnName(), userOrg);
     }
 
     public void setLastSyncedAt(String lastSyncedAt) throws JSONException {
@@ -120,15 +91,6 @@ public class Child extends BaseModel {
 
     public void setSyncLog(String syncLog1) throws JSONException {
         put(syncLog.getColumnName(), syncLog1);
-    }
-
-    public void addToJSONArray(String key, Object element) throws JSONException {
-        JSONArray array = has(key) ? getJSONArray(key) : new JSONArray();
-        List<Object> list = asList(array);
-        if (!list.contains(element))
-            list.add(element);
-
-        put(key, asJSONArray(list));
     }
 
     public boolean isValid() {

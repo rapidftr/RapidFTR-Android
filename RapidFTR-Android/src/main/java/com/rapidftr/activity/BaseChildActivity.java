@@ -11,6 +11,7 @@ import android.widget.*;
 import com.rapidftr.R;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.task.AsyncTaskWithDialog;
@@ -21,31 +22,25 @@ import org.json.JSONException;
 
 import java.util.List;
 
-public abstract class BaseChildActivity extends RapidFtrActivity {
+public abstract class BaseChildActivity extends CollectionActivity {
 
     public static final int CLOSE_ACTIVITY = 999;
 
-    protected List<FormSection> formSections;
     protected Child child;
     protected boolean editable = true;
     @Getter @Setter MediaRecorder mediaRecorder;
     @Getter @Setter MediaPlayer mediaPlayer;
 
+    @Override
+    protected Boolean getEditable() {
+        return editable;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        try {
-            initializeView();
-            initializeData(savedInstanceState);
-            initializePager();
-            initializeSpinner();
-            initializeLabels();
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
+    protected BaseModel getModel() {
+        return child;
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -74,17 +69,8 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
         ((TextView) findViewById(R.id.title)).setText(title);
     }
 
-    protected Spinner getSpinner() {
-        return ((Spinner) findViewById(R.id.spinner));
-    }
-
-    protected ViewPager getPager() {
-        return (ViewPager) findViewById(R.id.pager);
-    }
-
     protected abstract void initializeView();
 
-    protected abstract void initializeLabels() throws JSONException;
     protected abstract void saveChild();
 
     protected void initializeData(Bundle savedInstanceState) throws JSONException {
@@ -95,30 +81,6 @@ public abstract class BaseChildActivity extends RapidFtrActivity {
         } else if (child == null) {
             child = new Child();
         }
-    }
-
-    protected void initializePager() {
-        getPager().setAdapter(new FormSectionPagerAdapter(formSections, child, editable));
-        getPager().setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                getSpinner().setSelection(position);
-            }
-
-        });
-    }
-
-    protected void initializeSpinner() {
-        getSpinner().setAdapter(new ArrayAdapter<FormSection>(this, android.R.layout.simple_spinner_item, formSections));
-        getSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                getPager().setCurrentItem(position);
-            }
-
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
     }
 
     public Child load() throws JSONException {
