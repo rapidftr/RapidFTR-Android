@@ -74,6 +74,9 @@
                         </goals>
                         <configuration>
                             <executable>${basedir}/src/scripts/unlock_keyguard.sh</executable>
+                            <arguments>
+                                <argument>${android.sdk.path}</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>
