@@ -37,6 +37,18 @@ public class NavigationIntegrationTest extends BaseActivityIntegrationTest {
         assertEquals(View.VISIBLE, child_nav_bar.getVisibility());
     }
 
+    public void testTabStyleIsSelected() throws Exception {
+        View child_nav_bar;
+
+        child_nav_bar = solo.getView(R.id.child_nav_bar);
+        assertEquals(View.VISIBLE, child_nav_bar.getVisibility());
+
+
+        solo.clickOnButton("Enquiry");
+        solo.sleep(1000);
+
+    }
+
     private void assertAbsenceOfView(int viewId) {
         for (View v : solo.getCurrentViews()){
             assertNotSame(v.getId(), viewId);

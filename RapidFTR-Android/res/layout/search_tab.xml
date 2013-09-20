@@ -1,33 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:background="#333333"
               android:orientation="vertical"
               android:layout_height="fill_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:layout_width="fill_parent"
-                  android:background="#cccccc"
-                  android:orientation="horizontal"
-                  android:layout_height="wrap_content">
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            >
+        <Button
+                android:id="@+id/child_tab"
+                android:text="@string/child_tab"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/tab_sel"
+                android:layout_weight="1"
+                android:background="@drawable/tab_active"
+                android:onClick="registerChildTabListener"
+                />
 
-        <Button android:text="@string/register_tab_name"
+        <Button
+                android:id="@+id/enquiry_tab"
+                android:text="@string/enquiry_tab"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                style="@style/tab"
+                android:layout_weight="1"
+                android:background="@drawable/tab"
+                android:onClick="createEnquiryTabListener"
+                />
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/child_nav_bar"
+            android:layout_width="fill_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+        <Button
+                android:id="@+id/register_child_tab"
+                android:text="@string/register_tab_name"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 style="@style/tab"
                 android:drawableLeft="@drawable/icon_register"
                 android:background="@drawable/tab"
-                android:onClick="registerChildTabListener"/>
+                android:onClick="registerChildTabListener"
+                />
 
-        <View android:background="#aaaaaa"
-              android:layout_height="20dp"
-              android:layout_width="1dp"
-                android:layout_marginTop="5dp"/>
-
-        <Button android:text="@string/view_all_tab_name"
+        <Button
+                android:text="@string/view_all_tab_name"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 style="@style/tab"
@@ -36,8 +61,8 @@
                 android:drawableLeft="@drawable/icon_viewall"
                 android:onClick="viewAllChildrenListener"/>
 
-
-        <Button android:id="@+id/search_tab"
+        <Button
+                android:id="@+id/search_tab"
                 android:text="@string/search_tab_name"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -45,24 +70,10 @@
                 android:layout_weight="1"
                 android:background="@drawable/tab_active"
                 android:drawableLeft="@drawable/icon_search_sel"
-                android:onClick="searchTabListener"/>
-    </LinearLayout>
-    <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            >
-        <Button
-                android:id="@+id/enquiry_tab"
-                android:text="Enquiry"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                style="@style/tab"
-                android:layout_weight="1"
-                android:background="@drawable/tab"
-                android:onClick="enquiryTabListener"
+                android:onClick="searchChildrenTabListener"
                 />
-
     </LinearLayout>
+
     <View android:background="@color/tab_partition"
           android:layout_height="3dp"
           android:layout_width="fill_parent"/>

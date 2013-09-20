@@ -1,5 +1,6 @@
 package com.rapidftr.activity;
 
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.AdapterView;
@@ -9,7 +10,9 @@ import com.rapidftr.R;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.BaseModel;
+import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.List;
 
 public abstract class CollectionActivity extends RapidFtrActivity {
@@ -49,4 +52,28 @@ public abstract class CollectionActivity extends RapidFtrActivity {
             }
         });
     }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        try {
+            initializeView();
+            try {
+                initializeData(savedInstanceState);
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            initializePager();
+            initializeSpinner();
+            initializeLabels();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    protected void initializeLabels() throws JSONException{};
+
+    protected abstract void initializeView();
+    protected abstract void initializeData(Bundle savedInstanceState) throws JSONException, IOException;
 }

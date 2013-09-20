@@ -40,28 +40,6 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
     }
 
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try {
-            initializeView();
-            try {
-                initializeData(savedInstanceState);
-            } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            initializePager();
-            initializeSpinner();
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-
-    protected abstract void initializeView();
-
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         enquiry = new Enquiry();
         @Cleanup InputStream in = getResources().openRawResource(R.raw.enquiry_form_sections);
