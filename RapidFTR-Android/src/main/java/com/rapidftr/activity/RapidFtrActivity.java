@@ -23,6 +23,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.User;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SynchronisationAsyncTask;
+import com.rapidftr.view.fields.TextField;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -76,7 +77,12 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         saveAlertListener(SearchActivity.class);
     }
 
-    public void registerTabListener(View view) {
+    public void createEnquiryTabListener(View view) {
+        saveAlertListener(CreateEnquiryActivity.class);
+    }
+
+
+    public void registerChildTabListener(View view) {
         saveAlertListener(RegisterChildActivity.class);
     }
 
@@ -271,8 +277,17 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     protected boolean validateTextFieldNotEmpty(int id, int messageId) {
-        EditText editText = (EditText) findViewById(id);
-        String value = getEditText(id);
+        View view = findViewById(id);
+        EditText editText;
+        String value;
+        if (view instanceof EditText){
+            editText = (EditText) findViewById(id);
+            value = getEditText(id);
+        }else{
+            TextField textField = (TextField) view;
+            editText = (EditText) textField.findViewById(R.id.value);
+            value = getText(editText);
+        }
 
         if (value == null || "".equals(value)) {
             editText.setError(getString(messageId));
@@ -283,7 +298,11 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     }
 
     protected String getEditText(int resId) {
-        CharSequence value = ((EditText) findViewById(resId)).getText();
+        return getText((EditText) findViewById(resId));
+    }
+
+    protected String getText(EditText editText){
+        CharSequence value = editText.getText();
         return value == null ? null : value.toString().trim();
     }
 
@@ -362,7 +381,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         });
         alert.create().show();
     }
-    
+
     protected BroadcastReceiver getBroadcastReceiver(){
         return networkChangeReceiver;
     }

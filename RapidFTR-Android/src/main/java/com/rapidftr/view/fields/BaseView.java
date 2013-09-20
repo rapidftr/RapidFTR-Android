@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormField;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import org.json.JSONException;
 
@@ -13,7 +14,7 @@ public abstract class BaseView extends LinearLayout {
 
     protected FormField formField;
 
-    protected Child child;
+    protected BaseModel model;
 
     public BaseView(Context context) {
         super(context);
@@ -23,12 +24,12 @@ public abstract class BaseView extends LinearLayout {
         super(context, attrs);
     }
 
-    public void initialize(FormField formField, Child child) {
+    public void initialize(FormField formField, BaseModel model) {
         if (this.formField != null)
             throw new IllegalArgumentException("Form field already initialized!");
 
         this.formField = formField;
-        this.child = child;
+        this.model = model;
         this.setTag(formField.getId());
         this.setId(formField.getId().hashCode());
 

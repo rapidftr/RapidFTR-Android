@@ -42,8 +42,8 @@ public class CheckBoxes extends BaseView {
         checkBox.setText(optionName);
         checkBox.setTag(optionName);
 
-        if (child.has(formField.getId()) && child.get(formField.getId()) instanceof JSONArray) {
-            JSONArray options = child.getJSONArray(formField.getId());
+        if (model.has(formField.getId()) && model.get(formField.getId()) instanceof JSONArray) {
+            JSONArray options = model.getJSONArray(formField.getId());
             for (int i = 0; i < options.length(); i++) {
                 if (options.getString(i).equals(optionName)){
                     checkBox.setChecked(true);
@@ -58,9 +58,9 @@ public class CheckBoxes extends BaseView {
                     String value = buttonView.getText().toString();
 
                     if (isChecked) {
-                        child.addToJSONArray(formField.getId(), value);
+                        model.addToJSONArray(formField.getId(), value);
                     } else {
-                        child.removeFromJSONArray(formField.getId(), value);
+                        model.removeFromJSONArray(formField.getId(), value);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

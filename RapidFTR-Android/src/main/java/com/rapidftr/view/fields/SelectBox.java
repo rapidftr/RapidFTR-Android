@@ -39,8 +39,8 @@ public class SelectBox extends BaseView {
         ArrayAdapter<String> optionsAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, selectOptions);
         getSpinner().setAdapter(optionsAdapter);
 
-        if (child.has(formField.getId())) {
-            String formFieldValue = child.getString(formField.getId());
+        if (model.has(formField.getId())) {
+            String formFieldValue = model.getString(formField.getId());
             if (selectOptions.contains(formFieldValue)) {
                 getSpinner().setSelection(selectOptions.indexOf(formFieldValue));
             }
@@ -49,12 +49,12 @@ public class SelectBox extends BaseView {
         getSpinner().setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                child.put(formField.getId(), getSpinner().getAdapter().getItem(position));
+                model.put(formField.getId(), getSpinner().getAdapter().getItem(position));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                child.put(formField.getId(), "");
+                model.put(formField.getId(), "");
             }
         });
     }
