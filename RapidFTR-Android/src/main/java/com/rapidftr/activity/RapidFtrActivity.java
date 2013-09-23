@@ -81,6 +81,10 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         saveAlertListener(CreateEnquiryActivity.class);
     }
 
+public void viewAllEnquiryTabListener(View view) {
+        saveAlertListener(ViewAllEnquiryActivity.class);
+    }
+
 
     public void registerChildTabListener(View view) {
         saveAlertListener(RegisterChildActivity.class);

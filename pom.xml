@@ -196,6 +196,7 @@
                                     <version>[1.6, 1.7)</version>
                                     <message>You need to build this project using java version 1.6, otherwise some of the tests will fail. You can specify the correct version by setting the JAVA_HOME environment variable with the value being the root directory of your jdk 1.6 installation</message>
                                 </requireJavaVersion>
+
                             </rules>
                         </configuration>
                     </execution>
