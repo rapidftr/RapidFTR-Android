@@ -31,6 +31,7 @@
 
     <properties>
         <android.version>2.2</android.version>
+        <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
         <platform.version>2.2.1</platform.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>MM/dd/yy hh:mm a z</maven.build.timestamp.format>
@@ -63,10 +64,17 @@
     </repositories>
 
     <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>org.projectlombok</groupId>-->
+            <!--<artifactId>lombok</artifactId>-->
+            <!--<version>0.11.4</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>0.11.4</version>
+            <artifactId>lombok-maven-plugin</artifactId>
+            <version>0.12.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -135,8 +143,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.10</version>
-                <scope>test</scope>
+                <version>4.8.2</version>
             </dependency>
 
             <dependency>
@@ -171,7 +178,9 @@
     <build>
         <finalName>${project.artifactId}</finalName>
 
+
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -187,12 +196,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
-
-            <plugin>
+                  <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -212,7 +216,6 @@
                 <configuration>
                     <sdk>
                         <platform>${android.version}</platform>
-                        <path>${env.ANDROID_HOME}</path>
                     </sdk>
                     <dex>
                         <jvmArguments>

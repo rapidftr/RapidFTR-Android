@@ -41,14 +41,14 @@ public class RadioButtons extends BaseView {
         radioButton.setText(optionName);
         radioButton.setTag(optionName);
 
-        if (child.has(formField.getId()) && child.getString(formField.getId()).equals(optionName)) {
+        if (model.has(formField.getId()) && model.getString(formField.getId()).equals(optionName)) {
             radioButton.setChecked(true);
         }
 
         radioButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                child.put(formField.getId(), radioButton.getText());
+                model.put(formField.getId(), radioButton.getText());
                 for (int i = 0; i < getRadioGroup().getChildCount(); i++) {
                     RadioButton button = (RadioButton) getRadioGroup().getChildAt(i);
                     if (!button.getText().equals(radioButton.getText())) {
