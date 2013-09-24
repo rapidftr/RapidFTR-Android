@@ -1,8 +1,9 @@
 package com.rapidftr.activity.pages;
 
+import android.view.View;
 import android.widget.*;
-import com.jayway.android.robotium.solo.Solo;
 import com.jayway.android.robotium.solo.RobotiumUtils;
+import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.R;
 import com.rapidftr.view.fields.TextField;
 import junit.framework.Assert;
@@ -13,7 +14,6 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static junit.framework.Assert.assertEquals;
-import android.view.View;
 
 public class ChildPage {
 
@@ -93,9 +93,10 @@ public class ChildPage {
     }
 
     public void enterAutomationFormDetails(List automationFormData) {
-        solo.enterText(0, automationFormData.get(0).toString());
+        ArrayList<EditText> editTexts = solo.getCurrentViews(EditText.class);
+        solo.enterText(editTexts.get(0), automationFormData.get(0).toString());
         solo.sleep(3);
-        solo.enterText(1, automationFormData.get(1).toString());
+        solo.enterText(editTexts.get(1), automationFormData.get(1).toString());
         int checkBoxCount=solo.getCurrentViews(CheckBox.class).size();
         for(int i=0;i<checkBoxCount;i++){
             if (solo.getCurrentViews(CheckBox.class).get(i).getText().toString().equals(automationFormData.get(2).toString())) {
