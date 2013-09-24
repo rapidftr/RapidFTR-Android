@@ -113,8 +113,9 @@ public class EnquiryPage {
             public boolean isSatisfied() {
                 Activity currentActivity = solo.getCurrentActivity();
                 View enquirerNameView = currentActivity.findViewById("enquirer_name".hashCode());
-                EditText view = (EditText) enquirerNameView.findViewById(R.id.value);
-                return "".equals(view.getText().toString());
+                EditText enquirerNameEditText = (null == enquirerNameView ? null : (EditText) enquirerNameView.findViewById(R.id.value) );
+                String enquirerNameText = (null == enquirerNameEditText ? null : enquirerNameEditText.getText().toString());
+                return (null != enquirerNameText) && ( "".equals(enquirerNameText));
             }
         }, 10000);
         solo.searchButton("Save");
