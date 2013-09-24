@@ -31,6 +31,10 @@ public class Enquiry extends BaseModel {
         buildFromContent(cursor.getString(index));
     }
 
+    public Enquiry(String enquiryJSON) throws JSONException {
+        super(enquiryJSON);
+    }
+
     private void buildFromContent(String string) throws JSONException {
         JSONObject contents = new JSONObject(string);
         Iterator<String> keys = contents.keys();
