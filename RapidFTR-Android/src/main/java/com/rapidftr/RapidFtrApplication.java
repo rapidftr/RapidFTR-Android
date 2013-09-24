@@ -45,6 +45,7 @@ public class RapidFtrApplication extends Application {
 
     protected @Getter List<FormSection> formSections;
 	protected @Getter User currentUser;
+    protected @Getter @Setter Boolean blacklisted = false;
     protected @Getter @Setter SynchronisationAsyncTask syncTask;
     public static final String DEFAULT_LANGUAGE = "en";
     protected @Getter @Setter AsyncTaskWithDialog asyncTaskWithDialog;
@@ -156,5 +157,4 @@ public class RapidFtrApplication extends Application {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
     }
-
 }

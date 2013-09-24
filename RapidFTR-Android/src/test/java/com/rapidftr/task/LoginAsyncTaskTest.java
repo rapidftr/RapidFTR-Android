@@ -20,6 +20,7 @@ import java.security.GeneralSecurityException;
 
 import static com.rapidftr.CustomTestRunner.createUser;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -143,6 +144,17 @@ public class LoginAsyncTaskTest {
         doNothing().when(loginAsyncTask).migrateUnverifiedData(anyString(), eq(userFromSharedPreference));
         loginAsyncTask.doOnlineLogin();
         verify(loginAsyncTask).migrateUnverifiedData("{\"verified\":true, \"db_key\":\"hey_from_server\", \"organisation\":\"tw\",\"language\":\"en\"}", userFromSharedPreference);
+    }
+
+    @Test
+    public void shouldSaveBlacklistedFlagAfterAnyLoginAttempt() throws IOException, GeneralSecurityException, JSONException {
+        User userFromSharedPreference = mock(User.class);
+        HttpResponse loginResponse =  new TestHttpResponse(201, "{\"verified\":true, \"db_key\":\"hey_from_server\", \"organisation\":\"tw\",\"language\":\"en\", \"blacklisted\":\"false\"}");
+        doReturn(userFromSharedPreference).when(loginAsyncTask).getUserFromPreference();
+        doReturn(loginResponse).when(loginAsyncTask).getLoginResponse();
+        doNothing().when(loginAsyncTask).migrateUnverifiedData(anyString(), eq(userFromSharedPreference));
+        loginAsyncTask.doOnlineLogin();
+        assertFalse(application.getBlacklisted());
     }
 
 }

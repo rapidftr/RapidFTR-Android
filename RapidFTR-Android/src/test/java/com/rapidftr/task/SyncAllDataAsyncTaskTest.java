@@ -27,26 +27,19 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyObject;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class SyncAllDataAsyncTaskTest {
 
-    @Mock private FormService formService;
     @Mock private ChildService childService;
     @Mock private ChildRepository childRepository;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) private RapidFtrActivity rapidFtrActivity;
@@ -55,6 +48,10 @@ public class SyncAllDataAsyncTaskTest {
     @Mock private MenuItem syncAll;
     @Mock private MenuItem cancelSyncAll;
     @Mock private User currentUser;
+    @Mock private FormService formService;
+
+    private RapidFtrApplication application;
+
     private SyncAllDataAsyncTask syncTask;
 
     @Before
@@ -66,7 +63,9 @@ public class SyncAllDataAsyncTaskTest {
 
         given(rapidFtrActivity.getSystemService(Matchers.<String>any())).willReturn(notificationManager);
 
-        syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository, currentUser);
+        application = spy(RapidFtrApplication.getApplicationInstance());
+
+        syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository, currentUser, application);
     }
 
     @Test
@@ -128,6 +127,21 @@ public class SyncAllDataAsyncTaskTest {
         verify(childService).getChild(any(String.class));
         verify(childRepository, never()).createOrUpdate((Child) any());
         verify(childService, never()).setPhoto((Child) any());
+    }
+
+    @Test
+    public void shouldNotGetIncomingChildrenFromServerIfBlacklisted() throws Exception {
+        syncTask.setContext(rapidFtrActivity);
+        Child child1 = mock(Child.class);
+        ArrayList<Child> childList = new ArrayList<Child>();
+        childList.add(child1);
+
+        given(childRepository.toBeSynced()).willReturn(childList);
+        when(application.getBlacklisted()).thenReturn(true);
+
+        syncTask.execute();
+
+        verify(childService, never()).getAllIdsAndRevs();
     }
 
     @Test

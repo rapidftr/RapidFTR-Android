@@ -71,7 +71,7 @@ public class ChangePasswordActivityTest {
 
         RapidFtrApplication context = mock(RapidFtrApplication.class);
         when(changePasswordActivity.getContext()).thenReturn(context);
-        when(context.getSyncTask()).thenReturn(new SyncAllDataAsyncTask(null,null,null,null));
+        when(context.getSyncTask()).thenReturn(new SyncAllDataAsyncTask(null,null,null,null,null));
 
         changePasswordActivity.changePassword(null);
         verify(changePasswordActivity).createAlertDialog();

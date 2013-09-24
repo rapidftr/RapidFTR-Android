@@ -2,6 +2,7 @@ package com.rapidftr.task;
 
 import com.google.inject.Inject;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
@@ -18,24 +19,47 @@ import java.util.List;
 
 public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
 
+    private RapidFtrApplication application;
+
     @Inject
-    public SyncAllDataAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository, User user) {
+    public SyncAllDataAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository, User user, RapidFtrApplication application) {
         super(formService, childService, childRepository, user);
+        this.application = application;
     }
 
     protected void sync() throws JSONException, IOException, HttpException {
-        ArrayList<String> idsToDownload = getAllIdsForDownload();
+
+        ArrayList<String> idsToDownload = new ArrayList<String>();
+
+        Boolean blacklisted = application.getBlacklisted();
+        System.out.println("Blacklisted:" + blacklisted);
+
+        if(!blacklisted){
+            idsToDownload = getAllIdsForDownload();
+        }
+
+        int startProgressForDownloadingChildren = uploadChildrenToSyncWithServer(idsToDownload);
+
+        if(!RapidFtrApplication.getApplicationInstance().getBlacklisted()){
+            downloadChildrenFromServerToSync(idsToDownload, startProgressForDownloadingChildren);
+        }
+    }
+
+    private int uploadChildrenToSyncWithServer( ArrayList<String> idsToDownload) throws JSONException, IOException {
         List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
         setProgressBarParameters(idsToDownload, childrenToSyncWithServer);
-
         setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
         getFormSections();
         sendChildrenToServer(childrenToSyncWithServer);
-        int startProgressForDownloadingChildren = formSectionProgress + childrenToSyncWithServer.size();
+
+        return formSectionProgress + childrenToSyncWithServer.size();
+    }
+
+    private void downloadChildrenFromServerToSync(ArrayList<String> idsToDownload,
+                                                  int startProgressForDownloadingChildren)
+            throws IOException, JSONException {
         saveIncomingChildren(idsToDownload, startProgressForDownloadingChildren);
-
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
-
     }
 
 }
