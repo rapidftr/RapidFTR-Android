@@ -141,6 +141,9 @@ public class SyncAllDataAsyncTaskTest {
 
         syncTask.execute();
 
+        verify(childRepository).toBeSynced();
+        verify(childService).sync(child1, currentUser);
+        verify(childService, never()).getChild(any(String.class));
         verify(childService, never()).getAllIdsAndRevs();
     }
 

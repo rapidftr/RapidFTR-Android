@@ -30,18 +30,14 @@ public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
     protected void sync() throws JSONException, IOException, HttpException {
 
         ArrayList<String> idsToDownload = new ArrayList<String>();
-
         Boolean blacklisted = application.getBlacklisted();
-        System.out.println("Blacklisted:" + blacklisted);
 
         if(!blacklisted){
             idsToDownload = getAllIdsForDownload();
-        }
-
-        int startProgressForDownloadingChildren = uploadChildrenToSyncWithServer(idsToDownload);
-
-        if(!RapidFtrApplication.getApplicationInstance().getBlacklisted()){
+            int startProgressForDownloadingChildren = uploadChildrenToSyncWithServer(idsToDownload);
             downloadChildrenFromServerToSync(idsToDownload, startProgressForDownloadingChildren);
+        } else {
+            uploadChildrenToSyncWithServer(idsToDownload);
         }
     }
 
