@@ -25,7 +25,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <scope>provided</scope>
+            <version>4.8.2</version>
         </dependency>
 
         <dependency>
@@ -74,6 +74,9 @@
                         </goals>
                         <configuration>
                             <executable>${basedir}/src/scripts/unlock_keyguard.sh</executable>
+                            <arguments>
+                                <argument>${android.sdk.path}</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>

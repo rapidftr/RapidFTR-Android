@@ -19,7 +19,8 @@ public enum Migrations {
     v001_addNameColumn(1, MigrationSQL.addNameColumn),
     v001_add_idColumn(1, MigrationSQL.addIdColumn),
     v001_add_revColumn(1, MigrationSQL.addRevColumn),
-    v001_add_last_synced_at_column(1,MigrationSQL.addLastSyncedAtColumn)
+    v001_add_last_synced_at_column(1,MigrationSQL.addLastSyncedAtColumn),
+    v002_createEnquiryTable(2, MigrationSQL.createEnquiryTable),
     ;
 
     private int databaseVersion;
@@ -94,5 +95,15 @@ class MigrationSQL {
             + " ADD COLUMN "
             + Database.ChildTableColumn.last_synced_at.getColumnName()
             + " text not null default '"+ RapidFtrDateTime.now().defaultFormat() +"'";
+
+    public static final String createEnquiryTable = "create table "
+            + Database.enquiry.getTableName() + "("
+            + Database.EnquiryTableColumn.id.getColumnName() + " text primary key,"
+            + Database.EnquiryTableColumn.enquirer_name.getColumnName() + " text not null,"
+            + Database.EnquiryTableColumn.criteria.getColumnName() + " text not null,"
+            + Database.EnquiryTableColumn.owner.getColumnName() + " text not null,"
+            + Database.EnquiryTableColumn.created_at.getColumnName() + " text not null default '" + RapidFtrDateTime.now().defaultFormat() + "',"
+            + Database.EnquiryTableColumn.last_updated_at.getColumnName() + " text"
+            + ");";
 }
 

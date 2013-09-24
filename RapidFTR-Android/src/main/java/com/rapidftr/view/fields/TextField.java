@@ -36,9 +36,9 @@ public class TextField extends BaseView {
         super.initialize();
         setText(formField.getValue());
 
-        if (child.has(formField.getId())) {
+        if (model.has(formField.getId())) {
             try {
-                getEditTextView().setText(child.get(formField.getId()).toString());
+                getEditTextView().setText(model.get(formField.getId()).toString());
             } catch (JSONException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
@@ -56,7 +56,7 @@ public class TextField extends BaseView {
 
             @Override
             public void afterTextChanged(Editable s) {
-                child.put(formField.getId(), s.toString());
+                model.put(formField.getId(), s.toString());
             }
         });
     }

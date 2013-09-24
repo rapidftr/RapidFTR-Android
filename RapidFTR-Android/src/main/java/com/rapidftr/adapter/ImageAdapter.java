@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import org.json.JSONArray;
@@ -17,13 +18,13 @@ public class ImageAdapter extends BaseAdapter {
 
 	public static final int NO_PADDING = 0;
 
-	private final Child child;
+	private final BaseModel model;
     private final boolean enabled;
     private final PhotoCaptureHelper photoCaptureHelper;
     private final Context context;
 
-    public ImageAdapter(Context context, Child child, PhotoCaptureHelper photoCaptureHelper, boolean enabled) {
-        this.child = child;
+    public ImageAdapter(Context context, BaseModel model, PhotoCaptureHelper photoCaptureHelper, boolean enabled) {
+        this.model = model;
         this.enabled = enabled;
         this.photoCaptureHelper = photoCaptureHelper;
         this.context = context;
@@ -31,7 +32,7 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return child.optJSONArray(PHOTO_KEYS).length();
+        return model.optJSONArray(PHOTO_KEYS).length();
     }
 
     @Override
@@ -49,7 +50,7 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView != null) {
             return convertView;
         }
-        JSONArray photoKeys = child.optJSONArray(PHOTO_KEYS);
+        JSONArray photoKeys = model.optJSONArray(PHOTO_KEYS);
         ImageView imageView;
         Bitmap bitmap;
         try {
