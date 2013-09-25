@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.rapidftr.activity.CollectionActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.ViewChildActivity;
 import com.rapidftr.model.BaseModel;
@@ -74,7 +75,7 @@ public class BaseModelViewAdapter<T> extends ArrayAdapter<T> {
         return null;
     }
 
-    protected View.OnClickListener createClickListener(final BaseModel object, final Class<ViewChildActivity> activityToLaunch) {
+    protected View.OnClickListener createClickListener(final BaseModel object, final Class<? extends CollectionActivity> activityToLaunch) {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {

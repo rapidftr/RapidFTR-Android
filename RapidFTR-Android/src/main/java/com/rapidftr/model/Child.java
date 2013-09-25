@@ -69,14 +69,6 @@ public class Child extends BaseModel {
     }
 
 
-    public String getShortId() throws JSONException {
-        if (!has(unique_identifier.getColumnName()))
-            return null;
-
-        int length = getUniqueId().length();
-        return length > 7 ? getUniqueId().substring(length - 7) : getUniqueId();
-    }
-
     public void setLastSyncedAt(String lastSyncedAt) throws JSONException {
         put(last_synced_at.getColumnName(), lastSyncedAt);
     }

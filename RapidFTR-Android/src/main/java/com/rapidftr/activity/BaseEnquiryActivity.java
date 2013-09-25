@@ -28,10 +28,11 @@ import java.util.List;
 public abstract class BaseEnquiryActivity extends CollectionActivity {
     protected Enquiry enquiry;
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    protected boolean editable = true;
 
     @Override
     protected Boolean getEditable() {
-        return true;
+        return editable;
     }
 
     @Override
