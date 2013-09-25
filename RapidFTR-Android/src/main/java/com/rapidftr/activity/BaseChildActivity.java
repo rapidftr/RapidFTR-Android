@@ -61,14 +61,6 @@ public abstract class BaseChildActivity extends CollectionActivity {
         }
     }
 
-    protected void setLabel(int label) {
-        ((Button) findViewById(R.id.submit)).setText(label);
-    }
-
-    protected void setTitle(String title) {
-        ((TextView) findViewById(R.id.title)).setText(title);
-    }
-
     protected abstract void initializeView();
 
     protected abstract void saveChild();

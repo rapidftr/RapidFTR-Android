@@ -74,4 +74,13 @@ public class EnquiryRepository implements Closeable {
     private Enquiry buildEnquiry(Cursor cursor) throws JSONException {
         return new Enquiry(cursor);
     }
+
+    public Enquiry get(String enquiryId) throws JSONException {
+        @Cleanup Cursor cursor = session.rawQuery("SELECT * from enquiry where id = ?", new String[]{enquiryId});
+        if (cursor.moveToNext()){
+            return buildEnquiry(cursor);
+        }else{
+            throw new NullPointerException(enquiryId);
+        }
+    }
 }

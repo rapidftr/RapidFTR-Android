@@ -2,10 +2,9 @@ package com.rapidftr.activity;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.widget.*;
 import com.rapidftr.R;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.forms.FormSection;
@@ -76,4 +75,12 @@ public abstract class CollectionActivity extends RapidFtrActivity {
 
     protected abstract void initializeView();
     protected abstract void initializeData(Bundle savedInstanceState) throws JSONException, IOException;
+
+    protected void setLabel(int label) {
+        ((Button) findViewById(R.id.submit)).setText(label);
+    }
+
+    protected void setTitle(String title) {
+        ((TextView) findViewById(R.id.title)).setText(title);
+    }
 }

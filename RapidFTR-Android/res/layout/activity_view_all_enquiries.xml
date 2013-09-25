@@ -8,7 +8,7 @@
                   android:id="@+id/nav_bar"
                   android:layout_height="wrap_content"
                   android:orientation="horizontal">
-        <include layout="@layout/enquiry_tab"/>
+        <include layout="@layout/view_all_enquiry_tab"/>
     </LinearLayout>
 
     <ListView

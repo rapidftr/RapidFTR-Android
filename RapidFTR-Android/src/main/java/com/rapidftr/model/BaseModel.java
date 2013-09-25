@@ -179,4 +179,12 @@ public class BaseModel extends JSONObject implements Parcelable {
     public void setOrganisation(String userOrg) throws JSONException {
         put(created_organisation.getColumnName(), userOrg);
     }
+
+    public String getShortId() throws JSONException {
+        if (!has(unique_identifier.getColumnName()))
+            return null;
+
+        int length = getUniqueId().length();
+        return length > 7 ? getUniqueId().substring(length - 7) : getUniqueId();
+    }
 }

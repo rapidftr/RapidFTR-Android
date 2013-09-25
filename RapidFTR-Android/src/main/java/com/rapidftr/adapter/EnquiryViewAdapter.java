@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.rapidftr.R;
+import com.rapidftr.activity.ViewEnquiryActivity;
 import com.rapidftr.model.Enquiry;
 import org.json.JSONException;
 
@@ -34,6 +35,7 @@ public class EnquiryViewAdapter extends BaseModelViewAdapter<Enquiry> {
             try {
                 setFields(enquiry.getCreatedAt(), dateView);
                 setFields(enquiry.getEnquirerName(), nameView);
+                view.setOnClickListener(createClickListener(enquiry, ViewEnquiryActivity.class));
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
