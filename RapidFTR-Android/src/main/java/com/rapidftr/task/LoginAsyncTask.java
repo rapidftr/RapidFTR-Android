@@ -86,8 +86,6 @@ public class LoginAsyncTask extends AsyncTask<String, Void, User> {
 		String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
 		User user = new User(this.userName, this.password, true, this.url);
         user.read(responseAsString);
-        Boolean blacklistedResponse = new JSONObject(responseAsString).optBoolean("blacklisted");
-        application.setBlacklisted(blacklistedResponse);
         User userFromSharedPreference = getUserFromPreference();
         if(userFromSharedPreference !=null && (!userFromSharedPreference.isVerified() && user.isVerified()))
             migrateUnverifiedData(responseAsString, userFromSharedPreference);
