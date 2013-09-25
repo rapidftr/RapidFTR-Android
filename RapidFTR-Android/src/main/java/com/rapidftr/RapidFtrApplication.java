@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.widget.Toast;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import com.google.inject.Guice;
@@ -86,7 +85,7 @@ public class RapidFtrApplication extends Application {
 	protected void reloadFormSections() throws IOException {
 		String formSections = getSharedPreferences().getString(FORM_SECTIONS_PREF, null);
 		if (formSections == null) {
-			@Cleanup InputStream in = getResources().openRawResource(R.raw.form_sections);
+			@Cleanup InputStream in = getResources().openRawResource(R.raw.child_form_sections);
 			formSections = CharStreams.toString(new InputStreamReader(in));
 		}
 

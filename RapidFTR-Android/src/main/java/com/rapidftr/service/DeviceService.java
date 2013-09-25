@@ -21,7 +21,7 @@ public class DeviceService {
         this.context = context;
     }
 
-    public void isBlacklisted() throws IOException, JSONException {
+    public Boolean isBlacklisted() throws IOException, JSONException {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String imei = telephonyManager.getDeviceId();
 
@@ -32,6 +32,6 @@ public class DeviceService {
 
         String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
         JSONObject device = new JSONObject(responseAsString);
-        context.setBlacklisted(device.getBoolean("blacklisted"));
+        return device.getBoolean("blacklisted");
     }
 }

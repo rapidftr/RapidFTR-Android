@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.view.FormSectionView;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.List;
 public class FormSectionPagerAdapter extends PagerAdapter {
 
     protected List<FormSection> formSections;
-    protected Child child;
+    protected BaseModel child;
     protected boolean editable;
 
     @Override

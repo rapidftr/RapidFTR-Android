@@ -49,6 +49,9 @@ public class ShadowSQLiteHelper extends SQLiteOpenHelper implements DatabaseHelp
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        for (Migrations migration : Migrations.forVersion(newVersion)) {
+            db.execSQL(migration.getSql());
+        }
     }
 
 }

@@ -85,7 +85,7 @@ public class AudioUploadBox extends BaseView {
         try {
             String newFileName = null;
             while(newFileName == null || (fileName !=null && fileName.equals(newFileName))){
-               newFileName = (child.getUniqueId() == null? "" : child.getUniqueId()) + new Date().getTime();
+               newFileName = (model.getUniqueId() == null? "" : model.getUniqueId()) + new Date().getTime();
             }
             fileName = newFileName;
         } catch (JSONException e) {
@@ -102,7 +102,7 @@ public class AudioUploadBox extends BaseView {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
-        child.put(formField.getId(), fileName);
+        model.put(formField.getId(), fileName);
     }
 
     protected void playRecording(View view) {
@@ -127,7 +127,7 @@ public class AudioUploadBox extends BaseView {
 
 	        mPlayer = null;
             mPlayer = getMediaPlayer();
-            mPlayer.setDataSource(audioCaptureHelper.getCompleteFileName(child.getString(formField.getId())));
+            mPlayer.setDataSource(audioCaptureHelper.getCompleteFileName(model.getString(formField.getId())));
             mPlayer.prepare();
             mPlayer.start();
             mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -148,7 +148,7 @@ public class AudioUploadBox extends BaseView {
     @Override
     protected void initialize() throws JSONException {
         super.initialize();
-        if (child.getString(formField.getId()) != null) {
+        if (model.getString(formField.getId()) != null) {
             enableButton(findViewById(R.id.play_record), R.drawable.play_active);
         }
     }

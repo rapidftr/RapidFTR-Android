@@ -15,6 +15,8 @@ import java.io.IOException;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,9 +45,7 @@ public class DeviceServiceTest {
                 new TestHttpResponse(200, "{\"blacklisted\":\"true\"}"));
 
         DeviceService service = new DeviceService(context);
-        service.isBlacklisted();
-
-        verify(context).setBlacklisted(true);
+        assertTrue(service.isBlacklisted());
     }
 
     @Test
@@ -56,8 +56,6 @@ public class DeviceServiceTest {
                         new TestHttpResponse(200, "{\"blacklisted\":\"false\"}"));
 
         DeviceService service = new DeviceService(context);
-        service.isBlacklisted();
-
-        verify(context).setBlacklisted(false);
+        assertFalse(service.isBlacklisted());
     }
 }
