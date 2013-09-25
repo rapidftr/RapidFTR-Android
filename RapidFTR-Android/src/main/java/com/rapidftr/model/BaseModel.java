@@ -13,18 +13,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
-import java.util.UUID;
 
-import static com.rapidftr.database.Database.ChildTableColumn.*;
+import static com.rapidftr.database.Database.ChildTableColumn.created_at;
+import static com.rapidftr.database.Database.ChildTableColumn.created_by;
+import static com.rapidftr.database.Database.ChildTableColumn.created_organisation;
+import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
+import static com.rapidftr.database.Database.ChildTableColumn.last_updated_at;
+import static com.rapidftr.database.Database.ChildTableColumn.name;
 import static com.rapidftr.utils.JSONArrays.asJSONArray;
 import static com.rapidftr.utils.JSONArrays.asList;
 
 public class BaseModel extends JSONObject implements Parcelable {
 
-    protected
-    @Getter
-    @Setter
-    boolean synced;
+    protected @Getter @Setter boolean synced;
     public static final String EMPTY_STRING = "";
 
     public BaseModel(String content) throws JSONException {
@@ -43,18 +44,9 @@ public class BaseModel extends JSONObject implements Parcelable {
         }
     }
 
-    public BaseModel(String id, String owner, String content) throws JSONException {
+    public BaseModel(String owner, String content) throws JSONException {
         this(content);
-        setUniqueId(id);
         setOwner(owner);
-    }
-
-    public String getUniqueId() throws JSONException {
-        return has(unique_identifier.getColumnName()) ? getString(unique_identifier.getColumnName()) : null;
-    }
-
-    public void setUniqueId(String id) throws JSONException {
-        put(unique_identifier.getColumnName(), id);
     }
 
     public String getCreatedAt() throws JSONException {
@@ -63,6 +55,10 @@ public class BaseModel extends JSONObject implements Parcelable {
 
     protected void setCreatedAt(String createdAt) throws JSONException {
         put(created_at.getColumnName(), createdAt);
+    }
+
+    public String getId() throws JSONException {
+        return getString("id");
     }
 
     public String getName() {
@@ -79,18 +75,6 @@ public class BaseModel extends JSONObject implements Parcelable {
 
     public void setLastUpdatedAt(String lastUpdatedAt) throws JSONException {
         put(last_updated_at.getColumnName(), lastUpdatedAt);
-    }
-
-    protected String createUniqueId() throws JSONException {
-        return UUID.randomUUID().toString();
-    }
-
-    public void generateUniqueId() throws JSONException {
-        if (has(unique_identifier.getColumnName())) {
-            /* do nothing */
-        } else {
-            setUniqueId(createUniqueId());
-        }
     }
 
     public String getOwner() throws JSONException {

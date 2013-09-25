@@ -26,7 +26,7 @@ import static com.rapidftr.database.Database.ChildTableColumn.*;
 import static com.rapidftr.model.Child.History.HISTORIES;
 import static java.lang.String.format;
 
-public class ChildRepository implements Closeable {
+public class ChildRepository implements Closeable, Repository<Child> {
 
     protected final String userName;
     protected final DatabaseSession session;
@@ -37,8 +37,9 @@ public class ChildRepository implements Closeable {
         this.session = session;
     }
 
+    @Override
     public Child get(String id) throws JSONException {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ?", new String[]{id});
+        @Cleanup  Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ?", new String[]{id});
         if (cursor.moveToNext()) {
             return childFrom(cursor);
         } else {
@@ -46,11 +47,13 @@ public class ChildRepository implements Closeable {
         }
     }
 
+    @Override
     public boolean exists(String childId) {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE id = ?", new String[]{childId == null ? "" : childId});
         return cursor.moveToNext() && cursor.getCount() > 0;
     }
 
+    @Override
     public int size() {
         @Cleanup Cursor cursor = session.rawQuery("SELECT COUNT(1) FROM children WHERE child_owner = ?", new String[]{userName});
         return cursor.moveToNext() ? cursor.getInt(0) : 0;
@@ -61,7 +64,8 @@ public class ChildRepository implements Closeable {
         return toChildren(cursor);
     }
 
-    public ArrayList<String> getIdsChildrenByOwner() throws JSONException {
+    @Override
+    public ArrayList<String> getRecordIdsByOwner() throws JSONException {
         ArrayList<String> ids = new ArrayList<String>();
         @Cleanup Cursor cursor = session.rawQuery("SELECT _id FROM children WHERE child_owner = ? ", new String[]{userName});
         while (cursor.moveToNext()){
@@ -90,6 +94,7 @@ public class ChildRepository implements Closeable {
 	    }
     }
 
+    @Override
     public void createOrUpdate(Child child) throws JSONException {
         ContentValues values = new ContentValues();
         if (exists(child.getUniqueId())) {
@@ -121,6 +126,7 @@ public class ChildRepository implements Closeable {
             child.put(HISTORIES, JSONArrays.asJSONObjectArray(histories));
     }
 
+    @Override
     public void update(Child child) throws JSONException {
         ContentValues values = new ContentValues();
         values.put(content.getColumnName(), child.toString());
@@ -129,16 +135,19 @@ public class ChildRepository implements Closeable {
         session.update(Database.child.getTableName(), values, format("%s=?", id.getColumnName()), new String[]{child.getUniqueId()});
     }
 
+    @Override
     public List<Child> toBeSynced() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE synced = ?", new String[]{falseValue.getColumnValue()});
         return toChildren(cursor);
     }
 
+    @Override
     public List<Child> currentUsersUnsyncedRecords() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE synced = ? AND child_owner = ?", new String[]{falseValue.getColumnValue(), userName});
         return toChildren(cursor);
     }
 
+    @Override
     public HashMap<String, String> getAllIdsAndRevs() throws JSONException {
         HashMap<String, String> idRevs = new HashMap<String, String>();
         @Cleanup Cursor cursor = session.rawQuery("SELECT "

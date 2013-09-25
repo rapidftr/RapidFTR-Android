@@ -85,7 +85,7 @@ public class AudioUploadBox extends BaseView {
         try {
             String newFileName = null;
             while(newFileName == null || (fileName !=null && fileName.equals(newFileName))){
-               newFileName = (model.getUniqueId() == null? "" : model.getUniqueId()) + new Date().getTime();
+               newFileName = (model.getId() == null? "" : model.getId()) + new Date().getTime();
             }
             fileName = newFileName;
         } catch (JSONException e) {

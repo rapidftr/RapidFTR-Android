@@ -12,11 +12,11 @@ import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
-import com.rapidftr.model.Child;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.repository.Repository;
 import com.rapidftr.service.FormService;
+import com.rapidftr.service.SyncService;
 import org.apache.http.HttpException;
 import org.json.JSONException;
 
@@ -28,15 +28,15 @@ import java.util.Map;
 
 import static java.lang.System.currentTimeMillis;
 
-public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, Boolean> {
+public abstract class SynchronisationAsyncTask<T extends BaseModel> extends AsyncTask<Void, String, Boolean> {
 
     public static final int NOTIFICATION_ID = 1010;
     private static final String SYNC_ALL = "SYNC_ALL";
     private static final String CANCEL_SYNC_ALL = "CANCEL_SYNC_ALL";
 
     protected FormService formService;
-    protected ChildService childService;
-    protected ChildRepository childRepository;
+    protected SyncService<T> recordService;
+    protected Repository<T> repository;
     protected User currentUser;
     protected RapidFtrActivity context;
     protected Notification notification;
@@ -45,10 +45,10 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
     protected int formSectionProgress;
     protected int maxProgress;
 
-    public SynchronisationAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository, User user) {
+    public SynchronisationAsyncTask(FormService formService, SyncService<T> recordService, Repository<T> repository, User user) {
         this.formService = formService;
-        this.childService = childService;
-        this.childRepository = childRepository;
+        this.recordService = recordService;
+        this.repository = repository;
         currentUser = user;
     }
 
@@ -94,15 +94,15 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
         }
     }
 
-    void setProgressBarParameters(ArrayList<String> idsToDownload, List<Child> childrenToSyncWithServer) {
-        int totalRecordsToSynchronize = idsToDownload.size() + childrenToSyncWithServer.size();
+    void setProgressBarParameters(ArrayList<String> idsToDownload, List<?> recordsToSyncWithServer) {
+        int totalRecordsToSynchronize = idsToDownload.size() + recordsToSyncWithServer.size();
         formSectionProgress = totalRecordsToSynchronize/4 == 0 ? 20 : totalRecordsToSynchronize/4;
         maxProgress = totalRecordsToSynchronize + formSectionProgress;
     }
 
     public ArrayList<String> getAllIdsForDownload() throws IOException, JSONException, HttpException {
-        HashMap<String,String> serverIdsRevs = childService.getAllIdsAndRevs();
-        HashMap<String, String> repoIdsAndRevs = childRepository.getAllIdsAndRevs();
+        HashMap<String,String> serverIdsRevs = recordService.getAllIdsAndRevs();
+        HashMap<String, String> repoIdsAndRevs = repository.getAllIdsAndRevs();
         ArrayList<String> idsToDownload = new ArrayList<String>();
         for(Map.Entry<String,String> serverIdRev : serverIdsRevs.entrySet()){
             if(!isServerIdExistingInRepository(repoIdsAndRevs, serverIdRev) || (repoIdsAndRevs.get(serverIdRev.getKey()) != null && isRevisionMismatch(repoIdsAndRevs, serverIdRev))){
@@ -157,43 +157,42 @@ public abstract class SynchronisationAsyncTask extends AsyncTask<Void, String, B
         }
     }
 
-    void sendChildrenToServer(List<Child> childrenToSyncWithServer) throws IOException, JSONException {
+    void sendRecordsToServer(List<T> recordsToSyncWithServer) throws IOException, JSONException {
         setProgressAndNotify(context.getString(R.string.synchronize_step_2), formSectionProgress);
-        String subStatusFormat = "Uploading Child %s of " + childrenToSyncWithServer.size();
+        String subStatusFormat = "Uploading Record %s of " + recordsToSyncWithServer.size();
         int counter = 0;
         int startProgress = formSectionProgress;
-        for (Child child : childrenToSyncWithServer) {
+        for (T baseModel : recordsToSyncWithServer) {
             if (isCancelled()) {
                 break;
             }
-            childService.sync(child, currentUser);
+            recordService.sync(baseModel, currentUser);
             setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
             startProgress += 1;
         }
     }
 
-    protected void saveIncomingChildren(ArrayList<String> idsToDownload, int startProgress) throws IOException, JSONException {
-        String subStatusFormat = "Downloading Child %s of" + idsToDownload.size();
+    protected void saveIncomingRecords(ArrayList<String> idsToDownload, int startProgress) throws IOException, JSONException {
+        String subStatusFormat = "Downloading Record %s of" + idsToDownload.size();
         int counter = 0;
         setProgressAndNotify(context.getString(R.string.synchronize_step_3), startProgress);
 
         for (String idToDownload : idsToDownload) {
-            Child incomingChild = childService.getChild(idToDownload);
+            T incomingRecord = recordService.getRecord(idToDownload);
             if (isCancelled()) {
                 break;
             }
             try {
-                if (childRepository.exists(incomingChild.getUniqueId())) {
-                    childRepository.update(incomingChild);
+                if (repository.exists(incomingRecord.getId())) {
+                    repository.update(incomingRecord);
                 } else {
-                    childRepository.createOrUpdate(incomingChild);
+                    repository.createOrUpdate(incomingRecord);
                 }
-                childService.setPhoto(incomingChild);
-                childService.setAudio(incomingChild);
+                recordService.setMedia(incomingRecord);
                 setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
                 startProgress += 1 ;
             } catch (Exception e) {
-                Log.e("SyncAllDataTask", "Error syncing child", e);
+                Log.e("SyncAllDataTask", "Error syncing record", e);
                 throw new RuntimeException(e);
             }
         }

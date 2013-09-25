@@ -103,7 +103,10 @@ class MigrationSQL {
             + Database.EnquiryTableColumn.criteria.getColumnName() + " text not null,"
             + Database.EnquiryTableColumn.owner.getColumnName() + " text not null,"
             + Database.EnquiryTableColumn.created_at.getColumnName() + " text not null default '" + RapidFtrDateTime.now().defaultFormat() + "',"
-            + Database.EnquiryTableColumn.last_updated_at.getColumnName() + " text"
+            + Database.EnquiryTableColumn.last_updated_at.getColumnName() + " text,"
+            + Database.EnquiryTableColumn.synced.getColumnName() + "  text not null,"
+            + Database.EnquiryTableColumn.internal_id.getColumnName() + "  text ,"
+            + Database.EnquiryTableColumn.internal_rev.getColumnName() + "  text "
             + ");";
 }
 

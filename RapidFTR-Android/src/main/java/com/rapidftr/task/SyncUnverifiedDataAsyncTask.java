@@ -5,13 +5,13 @@ import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
-import com.rapidftr.model.Child;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.repository.Repository;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import com.rapidftr.service.RegisterUserService;
+import com.rapidftr.service.SyncService;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -27,18 +27,21 @@ import java.util.List;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.apache.http.HttpStatus.SC_OK;
 
-public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
+public class SyncUnverifiedDataAsyncTask<T extends BaseModel> extends SynchronisationAsyncTask<T> {
 
     private LoginService loginService;
     private RegisterUserService registerUserService;
     private RapidFtrApplication applicationContext;
 
     @Inject
-    public SyncUnverifiedDataAsyncTask(FormService formService, ChildService childService,
-                                       ChildRepository childRepository, LoginService loginService,
+    public SyncUnverifiedDataAsyncTask(FormService formService,
+                                       SyncService<T> recordService,
+                                       Repository<T> repository,
+                                       LoginService loginService,
                                        RegisterUserService registerUserService,
                                        User user) {
-        super(formService, childService, childRepository, user);
+
+        super(formService, recordService, repository, user);
         this.loginService = loginService;
         this.registerUserService = registerUserService;
     }
@@ -59,12 +62,12 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
 
         }
         getFormSections();
-        sendChildrenToServer(childRepository.currentUsersUnsyncedRecords());
+        sendRecordsToServer(repository.currentUsersUnsyncedRecords());
         ArrayList<String> idsToDownload = getAllIdsForDownload();
-        List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
+        List<T> recordsToSyncWithServer = repository.toBeSynced();
 
         if(!application.getCurrentUser().isVerified()) {
-            ArrayList<String> idsOfCurrentUser = childRepository.getIdsChildrenByOwner();
+            List<String> idsOfCurrentUser = repository.getRecordIdsByOwner();
             Iterator<String> idIterator = idsToDownload.iterator();
             while (idIterator.hasNext()) {
                 String id = idIterator.next();
@@ -73,8 +76,8 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
                 }
             }
         }
-        int startProgressForDownloadingChildren = formSectionProgress + childrenToSyncWithServer.size();
-        saveIncomingChildren(idsToDownload, startProgressForDownloadingChildren);
+        int startProgressForDownloadingChildren = formSectionProgress + recordsToSyncWithServer.size();
+        saveIncomingRecords(idsToDownload, startProgressForDownloadingChildren);
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
     }
 
@@ -101,10 +104,6 @@ public class SyncUnverifiedDataAsyncTask extends SynchronisationAsyncTask {
 
     protected String getResponse(HttpResponse response) throws IOException {
         return CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
-    }
-
-    private User getUser() {
-        return RapidFtrApplication.getApplicationInstance().getCurrentUser();
     }
 
 }

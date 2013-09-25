@@ -108,11 +108,11 @@ public enum Database {
         owner("created_by"),
         created_at("created_at", true, true),
         last_updated_at("last_updated_at", true, false),
+        synced("synced"),
 
         created_organisation("created_organisation", true, false),
         internal_id("_id", true, false),
-        internal_rev("_rev", true, false),
-        unique_identifier("unique_identifier", true, false);
+        internal_rev("_rev", true, false);
 
         private @Getter final String columnName;
         private final boolean isInternal;

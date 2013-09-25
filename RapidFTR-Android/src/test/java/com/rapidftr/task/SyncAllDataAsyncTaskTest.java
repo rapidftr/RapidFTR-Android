@@ -125,9 +125,9 @@ public class SyncAllDataAsyncTaskTest {
         syncTask.onPreExecute();
         syncTask.doInBackground();
 
-        verify(childService).getChild(any(String.class));
+        verify(childService).getRecord(any(String.class));
         verify(childRepository, never()).createOrUpdate((Child) any());
-        verify(childService, never()).setPhoto((Child) any());
+        verify(childService, never()).setMedia((Child) any());
     }
 
     @Test
@@ -142,8 +142,8 @@ public class SyncAllDataAsyncTaskTest {
         given(child1.getUniqueId()).willReturn("1234");
         given(child2.getUniqueId()).willReturn("5678");
 
-        given(childService.getChild("qwerty0987")).willReturn(child1);
-        given(childService.getChild("abcd1234")).willReturn(child2);
+        given(childService.getRecord("qwerty0987")).willReturn(child1);
+        given(childService.getRecord("abcd1234")).willReturn(child2);
 
         given(childRepository.exists("1234")).willReturn(true);
         given(childRepository.exists("5678")).willReturn(false);
@@ -151,7 +151,7 @@ public class SyncAllDataAsyncTaskTest {
         syncTask.setContext(rapidFtrActivity);
         syncTask.execute();
 
-        verify(childService).getChild("qwerty0987");
+        verify(childService).getRecord("qwerty0987");
         verify(childRepository).update(child1);
         verify(childRepository).createOrUpdate(child2);
     }
@@ -196,7 +196,7 @@ public class SyncAllDataAsyncTaskTest {
 	public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
 		Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
 		given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
-		syncTask.childService = new ChildService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
+		syncTask.recordService = new ChildService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
 		syncTask.setContext(rapidFtrActivity);
 		syncTask.execute();
 
@@ -212,8 +212,8 @@ public class SyncAllDataAsyncTaskTest {
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
         given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
-        given(childService.getChild("qwerty0987")).willReturn(mock(Child.class));
-        given(childService.getChild("abcd1234")).willReturn(mock(Child.class));
+        given(childService.getRecord("qwerty0987")).willReturn(mock(Child.class));
+        given(childService.getRecord("abcd1234")).willReturn(mock(Child.class));
 
         syncTask.setContext(rapidFtrActivity);
         syncTask.execute();
@@ -223,8 +223,8 @@ public class SyncAllDataAsyncTaskTest {
         verify(childService).sync(child2, currentUser);
         verify(childService).getAllIdsAndRevs();
         verify(childRepository).getAllIdsAndRevs();
-        verify(childService).getChild("qwerty0987");
-        verify(childService).getChild("abcd1234");
+        verify(childService).getRecord("qwerty0987");
+        verify(childService).getRecord("abcd1234");
     }
 
     private HashMap<String, String> createServerIdRevMap() {

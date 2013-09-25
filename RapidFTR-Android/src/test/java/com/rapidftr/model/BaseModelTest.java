@@ -19,7 +19,7 @@ public class BaseModelTest {
 
     @Test
     public void shouldDecodeIDFromJSON() throws JSONException {
-        BaseModel child = new BaseModel("{ 'unique_identifier' : 'test1' }");
+        Child child = new Child("{ 'unique_identifier' : 'test1' }");
         assertThat(child.getUniqueId(), is("test1"));
     }
 
@@ -49,7 +49,7 @@ public class BaseModelTest {
 
     @Test
     public void shouldGenerateWithIdAndOwnerAndContent() throws JSONException {
-        BaseModel child = new BaseModel("id1", "owner1", "{ 'test1' : 'value1' }");
+        Child child = new Child("id1", "owner1", "{ 'test1' : 'value1' }");
         assertThat(child.getUniqueId(), is("id1"));
         assertThat(child.getOwner(), is("owner1"));
         assertThat(child.getString("test1"), is("value1"));
@@ -63,7 +63,7 @@ public class BaseModelTest {
 
     @Test
     public void shouldGenerateUniqueId() throws JSONException {
-        BaseModel child = new BaseModel(null, "rapidftr", null);
+        Child child = new Child("id", "rapidftr", null);
         child = spy(child);
 
         doReturn("xyz").when(child).createUniqueId();
@@ -74,7 +74,7 @@ public class BaseModelTest {
 
     @Test
     public void shouldNotOverwriteIdIfAlreadyPresent() throws JSONException {
-        BaseModel child = new BaseModel("id1", "owner1", null);
+        Child child = new Child("id1", "owner1", null);
         child.generateUniqueId();
         assertThat(child.getUniqueId(), equalTo("id1"));
     }

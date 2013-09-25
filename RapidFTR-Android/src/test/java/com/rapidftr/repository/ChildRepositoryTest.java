@@ -2,6 +2,7 @@ package com.rapidftr.repository;
 
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Child;
@@ -234,11 +235,13 @@ public class ChildRepositoryTest {
     public void shouldUpdateAnExstingChild() throws JSONException {
         Child child = new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         repository.createOrUpdate(child);
+        child.put(Database.ChildTableColumn.owner.getColumnName(), "new owner");
         child.put("someNewField", "someNewValue");
 
         repository.update(child);
         Child updatedChild = repository.get("id1");
 
+        assertThat((String)updatedChild.get(Database.ChildTableColumn.owner.getColumnName()), is("new owner"));
         assertThat(updatedChild.get("someNewField").toString(), is("someNewValue"));
     }
 

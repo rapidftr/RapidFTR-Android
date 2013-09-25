@@ -6,49 +6,38 @@ import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Iterator;
-
-import static com.rapidftr.database.Database.EnquiryTableColumn.*;
+import static com.rapidftr.database.Database.EnquiryTableColumn.criteria;
+import static com.rapidftr.database.Database.EnquiryTableColumn.enquirer_name;
+import static com.rapidftr.database.Database.EnquiryTableColumn.owner;
 
 
 public class Enquiry extends BaseModel {
 
     public Enquiry() throws JSONException {
         super();
-        this.setUniqueId(createUniqueId());
     }
 
     public Enquiry(String createdBy, String reporterName, JSONObject criteria) throws JSONException {
         this.setOwner(createdBy);
         this.setEnquirerName(reporterName);
         this.setCriteria(criteria);
-        this.setUniqueId(createUniqueId());
         this.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
     }
 
-    public Enquiry(Cursor cursor) throws JSONException {
-        int index = cursor.getColumnIndex(Database.EnquiryTableColumn.criteria.getColumnName());
-        buildFromContent(cursor.getString(index));
+    public Enquiry(Cursor cursor) throws JSONException { // TODO fix me - inflate with all columns
+        for(Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
+            final int idColumnIndex = cursor.getColumnIndex(column.getColumnName());
+            this.put(column.getColumnName(), cursor.getString(idColumnIndex));
+        }
     }
 
     public Enquiry(String enquiryJSON) throws JSONException {
         super(enquiryJSON);
     }
 
-    private void buildFromContent(String string) throws JSONException {
-        JSONObject contents = new JSONObject(string);
-        Iterator<String> keys = contents.keys();
-        String key;
-        while (keys.hasNext()){
-            key = keys.next();
-            this.put(key, contents.get(key));
-        }
-    }
-
     public void setEnquirerName(String reporterName) throws JSONException {
         this.setColumn(enquirer_name, reporterName);
     }
-
 
     public void setCriteria(JSONObject criteria) throws JSONException {
         this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
