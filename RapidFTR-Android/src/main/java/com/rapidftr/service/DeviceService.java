@@ -3,6 +3,7 @@ package com.rapidftr.service;
 import android.content.Context;
 import android.telephony.TelephonyManager;
 import com.google.common.io.CharStreams;
+import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
@@ -17,6 +18,7 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 public class DeviceService {
     private RapidFtrApplication context;
 
+    @Inject
     public DeviceService(RapidFtrApplication context) {
         this.context = context;
     }

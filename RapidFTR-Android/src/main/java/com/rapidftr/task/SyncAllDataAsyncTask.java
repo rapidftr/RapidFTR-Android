@@ -7,6 +7,7 @@ import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
+import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.FormService;
 import org.apache.http.HttpException;
 import org.json.JSONException;
@@ -20,17 +21,19 @@ import java.util.List;
 public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
 
     private RapidFtrApplication application;
+    private DeviceService deviceService;
 
     @Inject
-    public SyncAllDataAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository, User user, RapidFtrApplication application) {
+    public SyncAllDataAsyncTask(FormService formService, ChildService childService, DeviceService deviceService, ChildRepository childRepository, User user, RapidFtrApplication application) {
         super(formService, childService, childRepository, user);
         this.application = application;
+        this.deviceService = deviceService;
     }
 
     protected void sync() throws JSONException, IOException, HttpException {
 
         ArrayList<String> idsToDownload = new ArrayList<String>();
-        Boolean blacklisted = application.getBlacklisted();
+        Boolean blacklisted = deviceService.isBlacklisted();
 
         if(!blacklisted){
             idsToDownload = getAllIdsForDownload();

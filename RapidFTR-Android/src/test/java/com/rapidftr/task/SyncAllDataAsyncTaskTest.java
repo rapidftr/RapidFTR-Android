@@ -13,6 +13,7 @@ import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
+import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.FormService;
 import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.Robolectric;
@@ -49,6 +50,7 @@ public class SyncAllDataAsyncTaskTest {
     @Mock private MenuItem cancelSyncAll;
     @Mock private User currentUser;
     @Mock private FormService formService;
+    @Mock private DeviceService deviceService;
 
     private RapidFtrApplication application;
 
@@ -65,7 +67,7 @@ public class SyncAllDataAsyncTaskTest {
 
         application = spy(RapidFtrApplication.getApplicationInstance());
 
-        syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository, currentUser, application);
+        syncTask = new SyncAllDataAsyncTask(formService, childService, deviceService, childRepository, currentUser, application);
     }
 
     @Test
@@ -137,7 +139,7 @@ public class SyncAllDataAsyncTaskTest {
         childList.add(child1);
 
         given(childRepository.toBeSynced()).willReturn(childList);
-        when(application.getBlacklisted()).thenReturn(true);
+        given(deviceService.isBlacklisted()).willReturn(true);
 
         syncTask.execute();
 
