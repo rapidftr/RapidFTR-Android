@@ -23,7 +23,7 @@ import static com.rapidftr.database.Database.EnquiryTableColumn.enquirer_name;
 import static com.rapidftr.database.Database.EnquiryTableColumn.id;
 import static com.rapidftr.database.Database.EnquiryTableColumn.internal_id;
 import static com.rapidftr.database.Database.EnquiryTableColumn.internal_rev;
-import static com.rapidftr.database.Database.EnquiryTableColumn.owner;
+import static com.rapidftr.database.Database.EnquiryTableColumn.created_by;
 import static com.rapidftr.database.Database.EnquiryTableColumn.synced;
 import static com.rapidftr.database.Database.EnquiryTableColumn.unique_identifier;
 import static com.rapidftr.database.Database.enquiry;
@@ -44,11 +44,11 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     public void createOrUpdate(Enquiry enquiry) throws JSONException {
         ContentValues enquiryValues = new ContentValues();
 
-        enquiryValues.put(owner.getColumnName(), enquiry.getOwner());
+        enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
+        enquiryValues.put(created_by.getColumnName(), enquiry.getCreatedBy());
         enquiryValues.put(enquirer_name.getColumnName(), enquiry.getEnquirerName());
         enquiryValues.put(criteria.getColumnName(), enquiry.getCriteria().toString());
         enquiryValues.put(created_at.getColumnName(), enquiry.getCreatedAt());
-        enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
         enquiryValues.put(unique_identifier.getColumnName(), enquiry.getUniqueId());
         enquiryValues.put(synced.getColumnName(), enquiry.isSynced());
         enquiryValues.put(internal_id.getColumnName(), enquiry.optString(internal_id.getColumnName()));
@@ -75,6 +75,11 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     public void update(Enquiry enquiry) throws JSONException {
         ContentValues values = new ContentValues();
         values.put(enquirer_name.getColumnName(), enquiry.getEnquirerName());
+        values.put(criteria.getColumnName(), enquiry.getCriteria().toString());
+        values.put(created_by.getColumnName(), enquiry.getCreatedBy());
+        values.put(synced.getColumnName(), enquiry.isSynced() ? 1 : 0);
+        values.put(internal_id.getColumnName(), enquiry.getString(internal_id.getColumnName()));
+        values.put(internal_rev.getColumnName(), enquiry.getString(internal_rev.getColumnName()));
         session.update(
                 Database.enquiry.getTableName(),
                 values,

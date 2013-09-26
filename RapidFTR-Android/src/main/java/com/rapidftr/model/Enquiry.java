@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.criteria;
 import static com.rapidftr.database.Database.EnquiryTableColumn.enquirer_name;
-import static com.rapidftr.database.Database.EnquiryTableColumn.owner;
 
 
 public class Enquiry extends BaseModel {
@@ -32,7 +31,11 @@ public class Enquiry extends BaseModel {
             if(idColumnIndex < 0) {
                 throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
             }
-            this.put(column.getColumnName(), cursor.getString(idColumnIndex));
+            if(column.getPrimitiveType().equals(Boolean.class)) {
+                this.put(column.getColumnName(), cursor.getInt(idColumnIndex) == 1);
+            } else {
+                this.put(column.getColumnName(), cursor.getString(idColumnIndex));
+            }
         }
     }
 
@@ -47,10 +50,6 @@ public class Enquiry extends BaseModel {
 
     public void setCriteria(JSONObject criteria) throws JSONException {
         this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
-    }
-
-    public String getOwner() throws JSONException {
-        return getString(owner.getColumnName());
     }
 
     private void setColumn(Database.EnquiryTableColumn column, String value) throws JSONException {

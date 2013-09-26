@@ -2,6 +2,7 @@ package com.rapidftr.repository;
 
 import android.database.Cursor;
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Enquiry;
@@ -65,7 +66,7 @@ public class EnquiryRepositoryTest {
 
     private void compareEnquiries(Enquiry enquiry1, Enquiry enquiry2) throws JSONException {
         assertThat(enquiry1.getUniqueId(), is(enquiry2.getUniqueId()));
-        assertThat(enquiry1.getOwner(), is(enquiry2.getOwner()));
+        assertThat(enquiry1.getCreatedBy(), is(enquiry2.getCreatedBy()));
         assertThat(enquiry1.getEnquirerName(), is(enquiry2.getEnquirerName()));
         assertThat(enquiry1.getCreatedAt(), is(enquiry2.getCreatedAt()));
     }
@@ -129,7 +130,6 @@ public class EnquiryRepositoryTest {
         assertThat(allIdsAndRevs.get(enquiry2CouchId), is(enquiry2CouchRev));
     }
 
-    @Ignore // Not going to work until createOrUpdate and Enquiry constructor are fixed
     @Test
     public void update_shouldUpdateTheFieldsOfAnEnquiry() throws Exception {
         Enquiry enquiry1 = new Enquiry(user, "REPORTER NAME", new JSONObject("{age:14,name:Subhas}"));
@@ -138,10 +138,20 @@ public class EnquiryRepositoryTest {
         assertThat(enquiryRepository.all().size(), is(1));
 
         enquiry1.setEnquirerName("New Reporter Name");
+        enquiry1.setCriteria(new JSONObject("{}"));
+        enquiry1.setCreatedBy("NEW USER");
+        enquiry1.setSynced(true);
+        enquiry1.put(Database.ChildTableColumn.internal_id.getColumnName(), "new internal id");
+        enquiry1.put(Database.ChildTableColumn.internal_rev.getColumnName(), "new internal revision");
         enquiryRepository.update(enquiry1);
 
-        final List<Enquiry> enquiries = enquiryRepository.all();
-        assertThat(enquiries.get(0).getEnquirerName(), is("New Reporter Name"));
+        final Enquiry retrieved = enquiryRepository.all().get(0);
+        assertThat(retrieved.getEnquirerName(), is("New Reporter Name"));
+        assertThat(retrieved.getCriteria().toString(), is("{}"));
+        assertThat(retrieved.getCreatedBy().toString(), is("NEW USER"));
+        assertTrue(retrieved.isSynced());
+        assertThat(retrieved.getString(Database.ChildTableColumn.internal_id.getColumnName()), is("new internal id"));
+        assertThat(retrieved.getString(Database.ChildTableColumn.internal_rev.getColumnName()), is("new internal revision"));
     }
 
     

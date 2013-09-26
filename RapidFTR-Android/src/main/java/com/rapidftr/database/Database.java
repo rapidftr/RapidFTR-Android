@@ -106,40 +106,23 @@ public enum Database {
         unique_identifier("unique_identifier"),
         enquirer_name("enquirer_name"),
         criteria("criteria"),
-        owner("created_by"),
-        created_at("created_at", true, true),
-        last_updated_at("last_updated_at", true, false),
-        synced("synced"),
+        created_by("created_by"),
+        created_at("created_at"),
+        last_updated_at("last_updated_at"),
+        synced("synced", Boolean.class),
 
-        created_organisation("created_organisation", true, false),
-        internal_id("_id", true, false),
-        internal_rev("_rev", true, false);
+        created_organisation("created_organisation"),
+        internal_id("_id"),
+        internal_rev("_rev");
 
         private @Getter final String columnName;
-        private final boolean isInternal;
-        private final boolean isSystem;
+        private @Getter final Class<?> primitiveType;
+
 
         EnquiryTableColumn(String columnName) {
-            this(columnName, false, false);
+            this(columnName, String.class);
         }
 
-        public static Iterable<EnquiryTableColumn> internalFields() {
-            List<EnquiryTableColumn> allColumns = Arrays.asList(EnquiryTableColumn.values());
-            return filter(allColumns, new Predicate<EnquiryTableColumn>() {
-                public boolean apply(EnquiryTableColumn column) {
-                    return column.isInternal;
-                }
-            });
-        }
-
-        public static Iterable<EnquiryTableColumn> systemFields() {
-            List<EnquiryTableColumn> allColumns = Arrays.asList(EnquiryTableColumn.values());
-            return filter(allColumns, new Predicate<EnquiryTableColumn>() {
-                public boolean apply(EnquiryTableColumn column) {
-                    return column.isSystem;
-                }
-            });
-        }
     }
 
 }

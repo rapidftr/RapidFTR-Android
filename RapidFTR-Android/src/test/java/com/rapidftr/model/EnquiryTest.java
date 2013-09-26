@@ -52,7 +52,7 @@ public class EnquiryTest {
 
         assertThat(enquiry.getUniqueId(), is("unique_identifier_value"));
         assertThat(enquiry.getEnquirerName(), is("enquirer_name_value"));
-        assertThat(enquiry.getOwner(), is("created_by_value"));
+        assertThat(enquiry.getCreatedBy(), is("created_by_value"));
     }
 
 
