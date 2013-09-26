@@ -1,6 +1,7 @@
 package com.rapidftr.activity.pages;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.jayway.android.robotium.solo.Condition;
@@ -78,7 +79,7 @@ public class EnquiryPage {
         }
     }
 
-    private List<String> getVisibleText(){
+    public List<String> getVisibleText(){
         List<String> texts = new ArrayList<String>();
         ArrayList<View> views = rutils.removeInvisibleViews(solo.getViews());
         for (View v : views) {
@@ -135,5 +136,19 @@ public class EnquiryPage {
         TextField textField = (TextField) solo.getCurrentActivity().findViewById("enquirer_name".hashCode());
         EditText nameField = (EditText) textField.findViewById(R.id.value);
         assertEquals("Enquirer name is required", nameField.getError().toString());
+    }
+
+    public List<String> getAllEnquiryData() {
+        List<String> allVisibleTexts = new ArrayList<String>();
+        List<String> formSections = getAllFormSections();
+        solo.clickOnText("Enquirer Details",0);
+        for (String formSection : formSections){
+            selectFormSection(formSection);
+            List<String> visibleTexts = getVisibleText();
+            for (String text: visibleTexts){
+                allVisibleTexts.add(text);
+            }
+        }
+        return allVisibleTexts;
     }
 }
