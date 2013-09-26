@@ -2,14 +2,8 @@ package com.rapidftr.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import com.google.common.io.CharStreams;
 import com.rapidftr.R;
-import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Enquiry;
@@ -23,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.List;
 
 public abstract class BaseEnquiryActivity extends CollectionActivity {
     protected Enquiry enquiry;
@@ -50,14 +43,13 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
 
 
     public Enquiry save(){
-        if (isValid()){
+        if ( enquiry.isValid()){
             AsyncTaskWithDialog.wrap(this, new SaveEnquiryTask(), R.string.save_enquiry_progress, R.string.save_enqury_success, R.string.save_enquiry_failed).execute();
+            return enquiry;
+        } else {
+            makeToast(R.string.save_enquiry_invalid);
+            return null;
         }
-        return enquiry;
-    }
-
-    private boolean isValid() {
-        return validateTextFieldNotEmpty("enquirer_name".hashCode(), R.string.enquirer_name_required);
     }
 
     private class SaveEnquiryTask extends AsyncTaskWithDialog<Void, Void, Enquiry> {
