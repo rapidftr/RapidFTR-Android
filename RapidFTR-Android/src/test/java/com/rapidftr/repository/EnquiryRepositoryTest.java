@@ -41,7 +41,7 @@ public class EnquiryRepositoryTest {
         enquiryRepository.createOrUpdate(enquiry);
         assertEquals(1, enquiryRepository.size());
 
-        final Cursor cursor = session.rawQuery("SELECT criteria FROM enquiry WHERE id = ?", new String[]{enquiry.getId()});
+        final Cursor cursor = session.rawQuery("SELECT criteria FROM enquiry WHERE id = ?", new String[]{enquiry.getUniqueId()});
         cursor.moveToNext();
 
         JSONObject criteria = new JSONObject(cursor.getString(0));
@@ -59,17 +59,22 @@ public class EnquiryRepositoryTest {
 
         List<Enquiry> enquiries = enquiryRepository.all();
         assertEquals(2, enquiryRepository.size());
-        assertEquals(enquiry1.getClass(), enquiries.get(0).getClass());
-        assertEquals(enquiry1.toString(), enquiries.get(0).toString());
-        assertEquals(enquiry2.getClass(), enquiries.get(1).getClass());
-        assertEquals(enquiry2.toString(), enquiries.get(1).toString());
+        compareEnquiries(enquiry1, enquiries.get(0));
+        compareEnquiries(enquiry2, enquiries.get(1));
+    }
+
+    private void compareEnquiries(Enquiry enquiry1, Enquiry enquiry2) throws JSONException {
+        assertThat(enquiry1.getUniqueId(), is(enquiry2.getUniqueId()));
+        assertThat(enquiry1.getOwner(), is(enquiry2.getOwner()));
+        assertThat(enquiry1.getEnquirerName(), is(enquiry2.getEnquirerName()));
+        assertThat(enquiry1.getCreatedAt(), is(enquiry2.getCreatedAt()));
     }
 
     @Ignore // get(i) Doesn't need to be implemented for sync all story
     @Test
     public void get_shouldReturnEnquiryForId() throws Exception {
         Enquiry enquiry1 = new Enquiry(user, "REPORTER NAME", new JSONObject("{age:14,name:Subhas}"));
-        String enquiryId = enquiry1.getId();
+        String enquiryId = enquiry1.getUniqueId();
 
         enquiryRepository.createOrUpdate(enquiry1);
 
@@ -89,7 +94,7 @@ public class EnquiryRepositoryTest {
         final List<Enquiry> enquiries = enquiryRepository.toBeSynced();
 
         assertThat(enquiries.size(), is(1));
-        assertThat(enquiries.get(0).getId(), is(enquiry1.getId()));
+        assertThat(enquiries.get(0).getUniqueId(), is(enquiry1.getUniqueId()));
     }
 
     @Test
@@ -97,7 +102,7 @@ public class EnquiryRepositoryTest {
         Enquiry enquiry1 = new Enquiry(user, "REPORTER NAME", new JSONObject("{age:14,name:Subhas}"));
         enquiryRepository.createOrUpdate(enquiry1);
 
-        assertTrue(enquiryRepository.exists(enquiry1.getId()));
+        assertTrue(enquiryRepository.exists(enquiry1.getUniqueId()));
         assertFalse(enquiryRepository.exists("100"));
     }
     

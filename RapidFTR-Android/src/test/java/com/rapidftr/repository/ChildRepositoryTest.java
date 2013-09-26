@@ -73,7 +73,7 @@ public class ChildRepositoryTest {
     @Test
     public void shouldSaveInternalIdAndRevDuringChildCreation() throws JSONException {
         Child child1 = new ChildBuilder().withName("tester").withCreatedBy("user1").withUniqueId("abcd1234").build();
-        Child child2 = new ChildBuilder().withId("59cd40f39ab6aa791f73885e3bdd99f9").withName("tester").withUniqueId("1234abcd").withRev("4-b011946150a16b0d2c6271aed05e2abe").withCreatedBy("user1").build();
+        Child child2 = new ChildBuilder().withInternalId("59cd40f39ab6aa791f73885e3bdd99f9").withName("tester").withUniqueId("1234abcd").withRev("4-b011946150a16b0d2c6271aed05e2abe").withCreatedBy("user1").build();
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
@@ -338,8 +338,20 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldRetrieveAllIdsAndRevs() throws JSONException {
-        Child child1 = new ChildBuilder().withId("dfb2031ebfcbef39dccdb468f5200edc").withName("tester").withRev("5-1ed26a0e5072830a9064361a570684f6").withCreatedBy("user1").build();
-        Child child2 = new ChildBuilder().withId("59cd40f39ab6aa791f73885e3bdd99f9").withName("tester").withRev("4-b011946150a16b0d2c6271aed05e2abe").withCreatedBy("user1").build();
+        Child child1 = new ChildBuilder()
+                .withInternalId("dfb2031ebfcbef39dccdb468f5200edc")
+                .withName("tester")
+                .withRev("5-1ed26a0e5072830a9064361a570684f6")
+                .withCreatedBy("user1")
+                .withUniqueId("abc123")
+                .build();
+        Child child2 = new ChildBuilder()
+                .withInternalId("59cd40f39ab6aa791f73885e3bdd99f9")
+                .withName("tester")
+                .withRev("4-b011946150a16b0d2c6271aed05e2abe")
+                .withCreatedBy("user1")
+                .withUniqueId("bcs234")
+                .build();
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
@@ -365,29 +377,30 @@ public class ChildRepositoryTest {
         Child child = new Child();
 
         public ChildBuilder withName(String name) throws JSONException {
-            child.put("name", name);
+            child.put(Database.ChildTableColumn.name.getColumnName(), name);
             return this;
         }
 
-        public ChildBuilder withId(String id) throws JSONException {
-            child.put("_id", id);
+        public ChildBuilder withInternalId(String id) throws JSONException {
+            child.put(Database.ChildTableColumn.internal_id.getColumnName(), id);
             return this;
         }
 
         public ChildBuilder withRev(String rev) throws JSONException {
-            child.put("_rev", rev);
+            child.put(Database.ChildTableColumn.internal_rev.getColumnName(), rev);
             return this;
         }
 
         public ChildBuilder withCreatedBy(String createdBy) throws JSONException {
-            child.put("created_by", createdBy);
+            child.put(Database.ChildTableColumn.created_by.getColumnName(), createdBy);
             return this;
         }
 
         public ChildBuilder withUniqueId(String uniqueId) throws JSONException {
-            child.put("unique_identifier", uniqueId);
+            child.put(Database.ChildTableColumn.unique_identifier.getColumnName(), uniqueId);
             return this;
         }
+
         public Child build() {
             return child;
         }

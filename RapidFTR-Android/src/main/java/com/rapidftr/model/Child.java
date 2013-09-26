@@ -18,7 +18,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.UUID;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
@@ -37,21 +36,19 @@ public class Child extends BaseModel {
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     public Child() {
-      super();
+        super();
     }
 
     public Child(Parcel parcel) throws JSONException {
         this(parcel.readString());
     }
 
-    public Child(String uniqueId, String owner, String content) throws JSONException {
-        super(owner, content);
-        setUniqueId(uniqueId);
+    public Child(String id, String createdBy, String content) throws JSONException {
+        super(id, createdBy, content);
     }
 
-    public Child(String uniqueId, String owner, String content, boolean synced) throws JSONException {
-        super(owner, content);
-        setUniqueId(uniqueId);
+    public Child(String id, String createdBy, String content, boolean synced) throws JSONException {
+        super(id, createdBy, content);
         setSynced(synced);
     }
 
@@ -72,29 +69,10 @@ public class Child extends BaseModel {
     }
 
 
-    public String getInternalId() throws JSONException {
+    public String getId() throws JSONException {
         return getString(internal_id.getColumnName());
     }
 
-    public String getUniqueId() throws JSONException {
-        return has(unique_identifier.getColumnName()) ? getString(unique_identifier.getColumnName()) : null;
-    }
-
-    public void setUniqueId(String id) throws JSONException {
-        put(unique_identifier.getColumnName(), id);
-    }
-
-    public void generateUniqueId() throws JSONException {
-        if (has(unique_identifier.getColumnName())) {
-            /* do nothing */
-        } else {
-            setUniqueId(createUniqueId());
-        }
-    }
-
-    protected String createUniqueId() throws JSONException {
-        return UUID.randomUUID().toString();
-    }
 
     public String getShortId() throws JSONException {
         if (!has(unique_identifier.getColumnName()))

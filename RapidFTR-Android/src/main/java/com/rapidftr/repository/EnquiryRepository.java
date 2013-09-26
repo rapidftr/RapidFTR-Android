@@ -25,6 +25,7 @@ import static com.rapidftr.database.Database.EnquiryTableColumn.internal_id;
 import static com.rapidftr.database.Database.EnquiryTableColumn.internal_rev;
 import static com.rapidftr.database.Database.EnquiryTableColumn.owner;
 import static com.rapidftr.database.Database.EnquiryTableColumn.synced;
+import static com.rapidftr.database.Database.EnquiryTableColumn.unique_identifier;
 import static com.rapidftr.database.Database.enquiry;
 import static java.lang.String.format;
 
@@ -47,7 +48,8 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         enquiryValues.put(enquirer_name.getColumnName(), enquiry.getEnquirerName());
         enquiryValues.put(criteria.getColumnName(), enquiry.getCriteria().toString());
         enquiryValues.put(created_at.getColumnName(), enquiry.getCreatedAt());
-        enquiryValues.put(id.getColumnName(), enquiry.getId());
+        enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
+        enquiryValues.put(unique_identifier.getColumnName(), enquiry.getUniqueId());
         enquiryValues.put(synced.getColumnName(), enquiry.isSynced());
         enquiryValues.put(internal_id.getColumnName(), enquiry.optString(internal_id.getColumnName()));
         enquiryValues.put(internal_rev.getColumnName(), enquiry.optString(internal_rev.getColumnName()));
@@ -77,7 +79,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
                 Database.enquiry.getTableName(),
                 values,
                 format("%s=?", id.getColumnName()),
-                new String[]{enquiry.getId()});
+                new String[]{enquiry.getUniqueId()});
     }
 
     @Override

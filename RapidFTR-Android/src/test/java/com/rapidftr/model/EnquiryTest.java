@@ -18,7 +18,10 @@ public class EnquiryTest {
     @Test
     public void shouldAutoGenerateAUniqueID() throws JSONException {
         Enquiry enquiry = new Enquiry();
-        assertNotNull(enquiry.getId());
+        assertNotNull(enquiry.getUniqueId());
+
+        enquiry = new Enquiry("createdBy", "reporterName", new JSONObject("{}"));
+        assertNotNull(enquiry.getUniqueId());
     }
 
 
@@ -47,7 +50,7 @@ public class EnquiryTest {
 
         Enquiry enquiry = new Enquiry(cursor);
 
-        assertThat(enquiry.getId(), is("id_value"));
+        assertThat(enquiry.getUniqueId(), is("unique_identifier_value"));
         assertThat(enquiry.getEnquirerName(), is("enquirer_name_value"));
         assertThat(enquiry.getOwner(), is("created_by_value"));
     }

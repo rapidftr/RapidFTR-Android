@@ -101,16 +101,16 @@ public class ChildRepository implements Closeable, Repository<Child> {
             addHistory(child);
         }
         child.setLastUpdatedAt(getTimeStamp());
-        values.put(Database.ChildTableColumn.owner.getColumnName(), child.getOwner());
+        values.put(Database.ChildTableColumn.owner.getColumnName(), child.getCreatedBy());
         values.put(id.getColumnName(), child.getUniqueId());
         values.put(name.getColumnName(), child.getName());
-        values.put(content.getColumnName(), child.toString());
+        values.put(content.getColumnName(), child.getJsonString());
         values.put(synced.getColumnName(), child.isSynced());
         values.put(created_at.getColumnName(), child.getCreatedAt());
         populateInternalColumns(child, values);
+//        session.replaceOrThrow(Database.child.getTableName(), null, values);
         long id = session.replace(Database.child.getTableName(), null, values);
-        if (id <= 0)
-            throw new IllegalArgumentException();
+        if (id <= 0) throw new IllegalArgumentException(id + "");
     }
 
     private void populateInternalColumns(Child child, ContentValues values) {

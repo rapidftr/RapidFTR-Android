@@ -5,12 +5,8 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.widget.*;
 import com.rapidftr.R;
-import com.rapidftr.adapter.FormSectionPagerAdapter;
-import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
@@ -19,8 +15,6 @@ import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONException;
-
-import java.util.List;
 
 public abstract class BaseChildActivity extends CollectionActivity {
 
@@ -112,7 +106,7 @@ public abstract class BaseChildActivity extends CollectionActivity {
         }
 
         if (child.isNew()) {
-            child.setOwner(getCurrentUser().getUserName());
+            child.setCreatedBy(getCurrentUser().getUserName());
             child.setOrganisation(getCurrentUser().getOrganisation());
         }
 

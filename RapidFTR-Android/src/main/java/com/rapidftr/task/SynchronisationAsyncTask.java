@@ -28,7 +28,7 @@ import java.util.Map;
 
 import static java.lang.System.currentTimeMillis;
 
-public abstract class SynchronisationAsyncTask<T extends BaseModel> extends AsyncTask<Void, String, Boolean> {
+public abstract class SynchronisationAsyncTask<T extends BaseModel> extends AsyncTask<Object, String, Boolean> {
 
     public static final int NOTIFICATION_ID = 1010;
     private static final String SYNC_ALL = "SYNC_ALL";
@@ -61,7 +61,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
     }
 
     @Override
-    protected Boolean doInBackground(Void... notRelevant) {
+    protected Boolean doInBackground(Object... notRelevant) {
         try {
             sync();
             return true;
@@ -183,7 +183,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
                 break;
             }
             try {
-                if (repository.exists(incomingRecord.getId())) {
+                if (repository.exists(incomingRecord.getUniqueId())) {
                     repository.update(incomingRecord);
                 } else {
                     repository.createOrUpdate(incomingRecord);

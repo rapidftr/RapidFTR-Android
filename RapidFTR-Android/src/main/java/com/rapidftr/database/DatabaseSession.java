@@ -11,4 +11,5 @@ public interface DatabaseSession extends Closeable {
     public void execSQL(String sql);
     public int update(String table, ContentValues contentvalues, String whereClause, String[] whereArgs);
     public long replace(String table, String nullColumnHack, ContentValues values);
+    public long replaceOrThrow(String table, String nullColumnHack, ContentValues values);
 }

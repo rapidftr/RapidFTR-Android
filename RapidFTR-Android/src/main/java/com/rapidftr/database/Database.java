@@ -103,6 +103,7 @@ public enum Database {
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum EnquiryTableColumn {
         id("id"),
+        unique_identifier("unique_identifier"),
         enquirer_name("enquirer_name"),
         criteria("criteria"),
         owner("created_by"),

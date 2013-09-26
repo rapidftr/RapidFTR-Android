@@ -15,18 +15,23 @@ public class Enquiry extends BaseModel {
 
     public Enquiry() throws JSONException {
         super();
+        this.setUniqueId(createUniqueId());
     }
 
     public Enquiry(String createdBy, String reporterName, JSONObject criteria) throws JSONException {
-        this.setOwner(createdBy);
+        this.setCreatedBy(createdBy);
         this.setEnquirerName(reporterName);
         this.setCriteria(criteria);
+        this.setUniqueId(createUniqueId());
         this.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
     }
 
-    public Enquiry(Cursor cursor) throws JSONException { // TODO fix me - inflate with all columns
+    public Enquiry(Cursor cursor) throws JSONException {
         for(Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
             final int idColumnIndex = cursor.getColumnIndex(column.getColumnName());
+            if(idColumnIndex < 0) {
+                throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
+            }
             this.put(column.getColumnName(), cursor.getString(idColumnIndex));
         }
     }
@@ -38,6 +43,7 @@ public class Enquiry extends BaseModel {
     public void setEnquirerName(String reporterName) throws JSONException {
         this.setColumn(enquirer_name, reporterName);
     }
+
 
     public void setCriteria(JSONObject criteria) throws JSONException {
         this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());

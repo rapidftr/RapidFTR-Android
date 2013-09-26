@@ -32,7 +32,7 @@ public class BaseModelTest {
     @Test
     public void shouldDecodeOwnerFromJSON() throws JSONException {
         BaseModel child = new BaseModel("{ 'created_by' : 'test1' }");
-        assertThat(child.getOwner(), is("test1"));
+        assertThat(child.getCreatedBy(), is("test1"));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class BaseModelTest {
     public void shouldGenerateWithIdAndOwnerAndContent() throws JSONException {
         Child child = new Child("id1", "owner1", "{ 'test1' : 'value1' }");
         assertThat(child.getUniqueId(), is("id1"));
-        assertThat(child.getOwner(), is("owner1"));
+        assertThat(child.getCreatedBy(), is("owner1"));
         assertThat(child.getString("test1"), is("value1"));
     }
 
@@ -63,7 +63,7 @@ public class BaseModelTest {
 
     @Test
     public void shouldGenerateUniqueId() throws JSONException {
-        Child child = new Child("id", "rapidftr", null);
+        Child child = new Child();
         child = spy(child);
 
         doReturn("xyz").when(child).createUniqueId();
