@@ -98,6 +98,16 @@ public class EnquiryPage {
         solo.enterText(nameField, enquirerDetails.get(0).toString());
     }
 
+    public void enterFamilyDetails(List<String> familyDetails) {
+        ArrayList<EditText> editTexts = solo.getCurrentViews(EditText.class);
+        for (int i = 0; i < familyDetails.size() && i < editTexts.size(); i++) {
+            solo.enterText(editTexts.get(i), familyDetails.get(i));
+        }
+
+    }
+
+
+
     public void save() {
         solo.clickOnButton("Save");
     }
