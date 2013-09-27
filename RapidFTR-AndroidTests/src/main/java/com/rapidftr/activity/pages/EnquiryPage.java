@@ -1,7 +1,6 @@
 package com.rapidftr.activity.pages;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.jayway.android.robotium.solo.Condition;
@@ -133,9 +132,7 @@ public class EnquiryPage {
     }
 
     public void assertPresenceOfValidationMessage() {
-        TextField textField = (TextField) solo.getCurrentActivity().findViewById("enquirer_name".hashCode());
-        EditText nameField = (EditText) textField.findViewById(R.id.value);
-        assertEquals("Enquirer name is required", nameField.getError().toString());
+        Assert.assertTrue(solo.waitForText("Enquirer name is required"));
     }
 
     public List<String> getAllEnquiryData() {
