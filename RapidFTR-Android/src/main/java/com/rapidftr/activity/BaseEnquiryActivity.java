@@ -2,6 +2,7 @@ package com.rapidftr.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import com.google.common.io.CharStreams;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormSection;
@@ -41,8 +42,14 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         formSections = Arrays.asList(JSON_MAPPER.readValue(x, FormSection[].class));
     }
 
+    protected Enquiry load() throws JSONException {
+        @Cleanup EnquiryRepository repository = inject(EnquiryRepository.class);
+        String enquiryId = getIntent().getExtras().getString("id");
+        enquiry = repository.get(enquiryId);
+        return enquiry;
+    }
 
-    public Enquiry save(){
+    public Enquiry save(View view){
         if ( enquiry.isValid()){
             AsyncTaskWithDialog.wrap(this, new SaveEnquiryTask(), R.string.save_enquiry_progress, R.string.save_enqury_success, R.string.save_enquiry_failed).execute();
             return enquiry;

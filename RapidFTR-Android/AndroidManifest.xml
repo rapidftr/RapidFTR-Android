@@ -43,6 +43,7 @@
         <activity android:name=".activity.ViewAllEnquiryActivity"/>
         <activity android:name=".activity.CreateEnquiryActivity"/>
         <activity android:name=".activity.ViewEnquiryActivity"/>
+        <activity android:name=".activity.EditEnquiryActivity"/>
         <activity android:name=".activity.ViewPhotoActivity" android:noHistory="true" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
 
         <uses-library android:name="android.test.runner"/>
