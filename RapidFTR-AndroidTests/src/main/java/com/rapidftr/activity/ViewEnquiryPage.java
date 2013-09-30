@@ -2,7 +2,6 @@ package com.rapidftr.activity;
 
 import android.widget.EditText;
 import com.jayway.android.robotium.solo.Solo;
-import com.rapidftr.R;
 import com.rapidftr.activity.pages.EnquiryPage;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.view.fields.TextField;
@@ -27,7 +26,7 @@ public class ViewEnquiryPage extends EnquiryPage {
         solo.waitForActivity(EditEnquiryActivity.class);
 
         TextField textField = (TextField) solo.getCurrentActivity().findViewById("enquirer_name".hashCode());
-        EditText nameField = (EditText) textField.findViewById(R.id.value);
+        EditText nameField = textField.getEditTextView();
 
         solo.enterText(nameField, "");
         solo.enterText(nameField, newName);
