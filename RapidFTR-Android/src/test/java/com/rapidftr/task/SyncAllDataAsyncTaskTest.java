@@ -15,6 +15,7 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
 import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.FormService;
+import com.rapidftr.utils.DeviceAdmin;
 import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
@@ -52,6 +53,8 @@ public class SyncAllDataAsyncTaskTest {
     @Mock private FormService formService;
     @Mock private DeviceService deviceService;
 
+
+    @Mock private DeviceAdmin deviceAdmin;
     private RapidFtrApplication application;
 
     private SyncAllDataAsyncTask syncTask;
@@ -67,7 +70,7 @@ public class SyncAllDataAsyncTaskTest {
 
         application = spy(RapidFtrApplication.getApplicationInstance());
 
-        syncTask = new SyncAllDataAsyncTask(formService, childService, deviceService, childRepository, currentUser, application);
+        syncTask = new SyncAllDataAsyncTask(formService, childService, deviceService, childRepository, currentUser, application, deviceAdmin);
     }
 
     @Test
@@ -244,6 +247,22 @@ public class SyncAllDataAsyncTaskTest {
         verify(childRepository).getAllIdsAndRevs();
         verify(childService).getChild("qwerty0987");
         verify(childService).getChild("abcd1234");
+    }
+
+    @Test
+    public void shouldWipeDeviceIfItIsBlacklisted() throws IOException, JSONException {
+        syncTask.setContext(rapidFtrActivity);
+        ArrayList<Child> childList = new ArrayList<Child>();
+
+        given(childRepository.toBeSynced()).willReturn(childList);
+
+        given(deviceService.isBlacklisted()).willReturn(true);
+
+        doNothing().when(deviceAdmin).wipeData();
+
+        syncTask.execute();
+
+        verify(deviceAdmin).wipeData();
     }
 
     private HashMap<String, String> createServerIdRevMap() {
