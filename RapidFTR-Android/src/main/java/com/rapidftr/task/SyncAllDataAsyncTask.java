@@ -20,17 +20,14 @@ import java.util.List;
 
 
 public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
-
-    private RapidFtrApplication application;
     private DeviceService deviceService;
     private DeviceAdmin deviceAdmin;
 
     @Inject
     public SyncAllDataAsyncTask(FormService formService, ChildService childService,
                                 DeviceService deviceService, ChildRepository childRepository,
-                                User user, RapidFtrApplication application, DeviceAdmin deviceAdmin) {
+                                User user, DeviceAdmin deviceAdmin) {
         super(formService, childService, childRepository, user);
-        this.application = application;
         this.deviceService = deviceService;
         this.deviceAdmin = deviceAdmin;
     }

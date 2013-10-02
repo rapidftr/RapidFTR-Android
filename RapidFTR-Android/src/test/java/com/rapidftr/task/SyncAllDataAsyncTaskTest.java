@@ -70,7 +70,7 @@ public class SyncAllDataAsyncTaskTest {
 
         application = spy(RapidFtrApplication.getApplicationInstance());
 
-        syncTask = new SyncAllDataAsyncTask(formService, childService, deviceService, childRepository, currentUser, application, deviceAdmin);
+        syncTask = new SyncAllDataAsyncTask(formService, childService, deviceService, childRepository, currentUser, deviceAdmin);
     }
 
     @Test
