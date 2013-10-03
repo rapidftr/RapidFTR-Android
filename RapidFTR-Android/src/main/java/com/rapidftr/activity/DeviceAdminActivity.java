@@ -5,9 +5,12 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
+import com.rapidftr.BuildConfig;
 import com.rapidftr.utils.DeviceAdmin;
 
-public class DeviceAdminActivity extends RapidFtrActivity{
+public class DeviceAdminActivity extends FragmentActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
