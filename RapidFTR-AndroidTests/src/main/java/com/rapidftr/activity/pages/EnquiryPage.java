@@ -30,6 +30,14 @@ public class EnquiryPage {
         solo.waitForText("Enquiry details");
     }
 
+    public void navigateToEditPageOf(String enquirerName) {
+        solo.clickOnText("Enquiry");
+        solo.clickOnText("View All");
+        solo.clickOnText(enquirerName);
+        solo.clickOnText("Edit");
+        solo.assertCurrentActivity("In edit mode", "EditEnquiryActivity");
+    }
+
     public List<String> getAllFormFields() {
         List<String> texts = new ArrayList<String>();
         ArrayList<View> views = rutils.removeInvisibleViews(solo.getViews());
@@ -104,8 +112,6 @@ public class EnquiryPage {
         }
 
     }
-
-
 
     public void save() {
         solo.clickOnButton("Save");
