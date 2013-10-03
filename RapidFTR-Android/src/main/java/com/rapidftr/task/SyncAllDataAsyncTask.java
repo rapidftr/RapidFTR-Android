@@ -39,7 +39,10 @@ public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
 
         if(blacklisted){
             uploadChildrenToSyncWithServer(idsToDownload);
-            deviceAdmin.wipeData();
+            if (childRepository.toBeSynced().isEmpty())
+            {
+                deviceAdmin.wipeData();
+            }
         } else {
             idsToDownload = getAllIdsForDownload();
             int startProgressForDownloadingChildren = uploadChildrenToSyncWithServer(idsToDownload);

@@ -146,7 +146,6 @@ public class SyncAllDataAsyncTaskTest {
 
         syncTask.execute();
 
-        verify(childRepository).toBeSynced();
         verify(childService).sync(child1, currentUser);
         verify(childService, never()).getChild(any(String.class));
         verify(childService, never()).getAllIdsAndRevs();
@@ -255,14 +254,25 @@ public class SyncAllDataAsyncTaskTest {
         ArrayList<Child> childList = new ArrayList<Child>();
 
         given(childRepository.toBeSynced()).willReturn(childList);
-
         given(deviceService.isBlacklisted()).willReturn(true);
-
         doNothing().when(deviceAdmin).wipeData();
 
         syncTask.execute();
-
         verify(deviceAdmin).wipeData();
+    }
+
+    @Test
+    public void shouldNotWipeDeviceIfChildRecordsArePending() throws JSONException, IOException {
+        syncTask.setContext(rapidFtrActivity);
+        ArrayList<Child> childList = new ArrayList<Child>();
+        Child child = mock(Child.class);
+        childList.add(child);
+        given(childRepository.toBeSynced()).willReturn(childList);
+        given(deviceService.isBlacklisted()).willReturn(true);
+
+        syncTask.execute();
+        verify(childRepository, times(2)).toBeSynced();
+        verify(deviceAdmin, never()).wipeData();
     }
 
     private HashMap<String, String> createServerIdRevMap() {
