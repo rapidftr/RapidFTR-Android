@@ -14,7 +14,6 @@ public class DeviceAdmin extends DeviceAdminReceiver {
     }
 
     public void wipeData() {
-        System.out.println("IN WIPEDATA");
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService(context.DEVICE_POLICY_SERVICE);
         devicePolicyManager.wipeData(0);
     }

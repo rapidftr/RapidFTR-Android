@@ -25,6 +25,8 @@
                  android:label="@string/app_name"
                  android:theme="@style/Theme.RapidFTRtheme">
 
+        <meta-data android:name="device.wipe.flag" android:value="${device.wipe.flag}"/>
+
         <activity android:name=".activity.DeviceAdminActivity" android:label="RapidFTR" android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

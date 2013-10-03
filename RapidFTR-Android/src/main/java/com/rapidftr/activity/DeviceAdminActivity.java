@@ -4,6 +4,8 @@ package com.rapidftr.activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -16,6 +18,14 @@ public class DeviceAdminActivity extends FragmentActivity{
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
+//        ApplicationInfo ai = null;
+//        try {
+//            ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+//            Object value = (Object)ai.metaData.get("device.wipe.flag");
+//            System.out.println(value);
+//        } catch (PackageManager.NameNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
         if(!devicePolicyManager.isAdminActive(null)) {
             requestDeviceAdminPermissions();
