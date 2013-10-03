@@ -176,4 +176,11 @@ public class ChildRepository implements Closeable {
         return RapidFtrDateTime.now().defaultFormat();
     }
 
+    public List<Child> getChildrenByIds(ArrayList<String> listOfIds) throws JSONException {
+        ArrayList<Child> children = new ArrayList<Child>();
+        for (String childId : listOfIds){
+            children.add(get(childId));
+        }
+        return children;
+    }
 }
