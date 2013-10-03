@@ -811,4 +811,21 @@
   }],
   "editable": true,
   "base_language": "en"
-}]
+},
+ {
+ "name": {
+ "en": "Potential matches"
+ },
+ "help_text": {
+ "en": ""
+ },
+ "description": {
+ "en": ""
+ },
+ "unique_id": "e98c765c",
+ "visible": "true",
+ "order": 7,
+ "editable": false,
+ "base_language": "en"
+ }
+]

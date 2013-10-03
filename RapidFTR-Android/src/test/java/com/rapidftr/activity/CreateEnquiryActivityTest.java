@@ -3,11 +3,12 @@ package com.rapidftr.activity;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Enquiry;
-import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -33,4 +34,9 @@ public class CreateEnquiryActivityTest {
         assertEquals(activity.enquiry.getClass(), Enquiry.class);
     }
 
+    @Test
+    public void testRemovePotentialMatchesSectionWhenExist() throws Exception {
+        activity.initializeData(null);
+        assertThat(activity.formSections.size(), is(6));
+    }
 }
