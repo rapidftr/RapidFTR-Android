@@ -205,7 +205,7 @@ public class ChildServiceTest {
         Child child = new Child("id1", "user1", "{ '_id' : '1234abcd' ,'current_photo_key' : 'image_file_name'}");
         getFakeHttpLayer().setDefaultHttpResponse(200, "image stream");
 
-        new ChildService(mockContext(), repository, mockFluentRequest).getPhoto(child, "image_file_name");
+        new ChildService(mockContext(), repository, mockFluentRequest).issueGetPhotoRequest(child, "image_file_name");
 
         verify(mockFluentRequest).path("/api/children/1234abcd/photo/image_file_name");
     }
