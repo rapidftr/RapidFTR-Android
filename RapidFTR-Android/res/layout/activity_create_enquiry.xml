@@ -30,6 +30,7 @@
 
         <Button android:id="@+id/submit"
                 android:text="Save"
+                android:onClick="save"
                 android:layout_height="fill_parent"
                 android:layout_width="70dp"
                 android:background="@drawable/savebtn"
