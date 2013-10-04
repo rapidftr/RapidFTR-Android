@@ -6,6 +6,7 @@ import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
@@ -52,6 +53,10 @@ public class Enquiry extends BaseModel {
 
     public String getOwner() throws JSONException {
         return getString(owner.getColumnName());
+    }
+    
+    public ArrayList<String> getPotentialMatches() throws JSONException {
+        return new ArrayList<String>(); //To be implemented
     }
 
     private void setColumn(Database.EnquiryTableColumn column, String value) throws JSONException {
