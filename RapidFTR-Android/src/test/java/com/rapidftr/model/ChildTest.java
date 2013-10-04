@@ -126,7 +126,7 @@ public class ChildTest {
     @Test
     public void shouldReturnNamesWithLengthOneInsteadOfNull() throws JSONException {
         Child child = new Child();
-        assertThat(child.names().length(), equalTo(1));
+        assertThat(child.names().length(), equalTo(2)); // synced and created_at
     }
 
     @Test

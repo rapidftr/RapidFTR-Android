@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.SyncFailedException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -214,15 +215,39 @@ public class ChildService implements SyncService<Child> {
 
     }
 
-    @Override
-    public HashMap<String, String> getAllIdsAndRevs() throws IOException, HttpException {
+    private HashMap<String, String> getAllIdsAndRevs() throws IOException {
         final ObjectMapper objectMapper = new ObjectMapper();
-        HttpResponse response = fluentRequest.path("/api/children/ids").context(context).get().ensureSuccess();
+        HttpResponse response;
+        try {
+            response = fluentRequest.path("/api/children/ids").context(context).get().ensureSuccess();
+        } catch (HttpException e) {
+            throw new ApiException(400); // done so that http exception doesn't have to be in sync service interface
+        }
         List<Map> idRevs = asList(objectMapper.readValue(response.getEntity().getContent(), Map[].class));
         HashMap<String, String> idRevMapping = new HashMap<String, String>();
         for (Map idRev : idRevs) {
             idRevMapping.put(idRev.get("_id").toString(), idRev.get("_rev").toString());
         }
         return idRevMapping;
+    }
+
+    public List<String> getIdsToDownload() throws IOException, JSONException {
+        HashMap<String,String> serverIdsRevs = getAllIdsAndRevs();
+        HashMap<String, String> repoIdsAndRevs = repository.getAllIdsAndRevs();
+        ArrayList<String> idsToDownload = new ArrayList<String>();
+        for(Map.Entry<String,String> serverIdRev : serverIdsRevs.entrySet()){
+            if(!isServerIdExistingInRepository(repoIdsAndRevs, serverIdRev) || (repoIdsAndRevs.get(serverIdRev.getKey()) != null && isRevisionMismatch(repoIdsAndRevs, serverIdRev))){
+                idsToDownload.add(serverIdRev.getKey());
+            }
+        }
+        return idsToDownload;
+    }
+
+    private boolean isRevisionMismatch(HashMap<String, String> repoIdsAndRevs, Map.Entry<String, String> serverIdRev) {
+        return !repoIdsAndRevs.get(serverIdRev.getKey()).equals(serverIdRev.getValue());
+    }
+
+    private boolean isServerIdExistingInRepository(HashMap<String, String> repoIdsAndRevs, Map.Entry<String, String> serverIdRev) {
+        return repoIdsAndRevs.get(serverIdRev.getKey()) != null;
     }
 }

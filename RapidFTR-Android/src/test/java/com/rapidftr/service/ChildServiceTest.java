@@ -10,7 +10,6 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
-import org.apache.http.HttpException;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,15 +23,24 @@ import org.mockito.Mock;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
@@ -222,16 +230,19 @@ public class ChildServiceTest {
     }
 
     @Test
-    public void shouldFetchAllIdRevs() throws IOException, HttpException {
+    public void shouldFetchListOfIdsToUpdate() throws Exception {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
 
         String response = "[{\"_rev\":\"5-1ed26a0e5072830a9064361a570684f6\",\"_id\":\"dfb2031ebfcbef39dccdb468f5200edc\"},{\"_rev\":\"4-b011946150a16b0d2c6271aed05e2abe\",\"_id\":\"59cd40f39ab6aa791f73885e3bdd99f9\"}]";
         getFakeHttpLayer().setDefaultHttpResponse(200, response);
+        HashMap<String, String> repositoryIdsAndRevs = new HashMap<String, String>();
+        repositoryIdsAndRevs.put("59cd40f39ab6aa791f73885e3bdd99f9", "4-b011946150a16b0d2c6271aed05e2abe");
+        repositoryIdsAndRevs.put("dfb2031ebfcbef39dccdb468f5200edc", "old revision id");
+        when(repository.getAllIdsAndRevs()).thenReturn(repositoryIdsAndRevs);
 
-        Map<String,String> allIdRevs = new ChildService(mockContext(), repository, mockFluentRequest).getAllIdsAndRevs();
-        assertEquals(2, allIdRevs.size());
-        assertEquals("5-1ed26a0e5072830a9064361a570684f6", allIdRevs.get("dfb2031ebfcbef39dccdb468f5200edc"));
-        assertEquals("4-b011946150a16b0d2c6271aed05e2abe", allIdRevs.get("59cd40f39ab6aa791f73885e3bdd99f9"));
+        List<String> idsToChange = new ChildService(mockContext(), repository, mockFluentRequest).getIdsToDownload();
+        assertEquals(1, idsToChange.size());
+        assertEquals("dfb2031ebfcbef39dccdb468f5200edc", idsToChange.get(0));
 
         verify(mockFluentRequest).path("/api/children/ids");
     }

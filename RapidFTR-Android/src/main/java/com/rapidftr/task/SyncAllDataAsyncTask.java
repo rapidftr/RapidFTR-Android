@@ -11,7 +11,6 @@ import org.apache.http.HttpException;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,7 +23,7 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
     }
 
     protected void sync() throws JSONException, IOException, HttpException {
-        ArrayList<String> idsToDownload = getAllIdsForDownload();
+        List<String> idsToDownload = recordService.getIdsToDownload();
         List<T> recordsToSyncWithServer = repository.toBeSynced();
         setProgressBarParameters(idsToDownload, recordsToSyncWithServer);
 

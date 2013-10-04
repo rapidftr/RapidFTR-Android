@@ -20,7 +20,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -63,7 +62,7 @@ public class SyncUnverifiedDataAsyncTask<T extends BaseModel> extends Synchronis
         }
         getFormSections();
         sendRecordsToServer(repository.currentUsersUnsyncedRecords());
-        ArrayList<String> idsToDownload = getAllIdsForDownload();
+        List<String> idsToDownload = recordService.getIdsToDownload();
         List<T> recordsToSyncWithServer = repository.toBeSynced();
 
         if(!application.getCurrentUser().isVerified()) {

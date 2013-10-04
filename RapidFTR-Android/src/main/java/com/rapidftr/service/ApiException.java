@@ -1,6 +1,8 @@
 package com.rapidftr.service;
 
-public class ApiException extends Exception {
+import java.io.IOException;
+
+public class ApiException extends IOException {
     private final int statusCode;
 
     public ApiException(int statusCode) {

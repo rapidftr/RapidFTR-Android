@@ -21,10 +21,7 @@ import org.apache.http.HttpException;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.lang.System.currentTimeMillis;
 
@@ -94,30 +91,10 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
         }
     }
 
-    void setProgressBarParameters(ArrayList<String> idsToDownload, List<?> recordsToSyncWithServer) {
+    void setProgressBarParameters(List<String> idsToDownload, List<?> recordsToSyncWithServer) {
         int totalRecordsToSynchronize = idsToDownload.size() + recordsToSyncWithServer.size();
         formSectionProgress = totalRecordsToSynchronize/4 == 0 ? 20 : totalRecordsToSynchronize/4;
         maxProgress = totalRecordsToSynchronize + formSectionProgress;
-    }
-
-    public ArrayList<String> getAllIdsForDownload() throws IOException, JSONException, HttpException {
-        HashMap<String,String> serverIdsRevs = recordService.getAllIdsAndRevs();
-        HashMap<String, String> repoIdsAndRevs = repository.getAllIdsAndRevs();
-        ArrayList<String> idsToDownload = new ArrayList<String>();
-        for(Map.Entry<String,String> serverIdRev : serverIdsRevs.entrySet()){
-            if(!isServerIdExistingInRepository(repoIdsAndRevs, serverIdRev) || (repoIdsAndRevs.get(serverIdRev.getKey()) != null && isRevisionMismatch(repoIdsAndRevs, serverIdRev))){
-                idsToDownload.add(serverIdRev.getKey());
-            }
-        }
-        return idsToDownload;
-    }
-
-    private boolean isRevisionMismatch(HashMap<String, String> repoIdsAndRevs, Map.Entry<String, String> serverIdRev) {
-        return !repoIdsAndRevs.get(serverIdRev.getKey()).equals(serverIdRev.getValue());
-    }
-
-    private boolean isServerIdExistingInRepository(HashMap<String, String> repoIdsAndRevs, Map.Entry<String, String> serverIdRev) {
-        return repoIdsAndRevs.get(serverIdRev.getKey()) != null;
     }
 
     @Override
@@ -172,7 +149,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
         }
     }
 
-    protected void saveIncomingRecords(ArrayList<String> idsToDownload, int startProgress) throws IOException, JSONException {
+    protected void saveIncomingRecords(List<String> idsToDownload, int startProgress) throws IOException, JSONException {
         String subStatusFormat = "Downloading Record %s of" + idsToDownload.size();
         int counter = 0;
         setProgressAndNotify(context.getString(R.string.synchronize_step_3), startProgress);

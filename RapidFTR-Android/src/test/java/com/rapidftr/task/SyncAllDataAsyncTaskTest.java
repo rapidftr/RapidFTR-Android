@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.google.common.collect.Maps;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -74,7 +73,7 @@ public class SyncAllDataAsyncTaskTest {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-        given(childService.getAllIdsAndRevs()).willReturn(Maps.<String, String>newHashMap());
+//        given(childService.getAllIdsAndRevs()).willReturn(Maps.<String, String>newHashMap());
         syncTask.setContext(rapidFtrActivity);
 
         syncTask.execute();
@@ -116,7 +115,7 @@ public class SyncAllDataAsyncTaskTest {
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
         HashMap<String, String> serverIDRevs = createServerIdRevMap();
 
-        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
+//        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
 
         syncTask = spy(syncTask);
@@ -137,7 +136,7 @@ public class SyncAllDataAsyncTaskTest {
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
         HashMap<String, String> serverIDRevs = createServerIdRevMap();
 
-        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
+//        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
         given(child1.getUniqueId()).willReturn("1234");
         given(child2.getUniqueId()).willReturn("5678");
@@ -210,7 +209,7 @@ public class SyncAllDataAsyncTaskTest {
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
         HashMap<String, String> serverIDRevs = createServerIdRevMap();
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
+//        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
         given(childService.getRecord("qwerty0987")).willReturn(mock(Child.class));
         given(childService.getRecord("abcd1234")).willReturn(mock(Child.class));
@@ -221,7 +220,7 @@ public class SyncAllDataAsyncTaskTest {
         verify(formService).getPublishedFormSections();
         verify(childService).sync(child1, currentUser);
         verify(childService).sync(child2, currentUser);
-        verify(childService).getAllIdsAndRevs();
+//        verify(childService).getAllIdsAndRevs();
         verify(childRepository).getAllIdsAndRevs();
         verify(childService).getRecord("qwerty0987");
         verify(childService).getRecord("abcd1234");
