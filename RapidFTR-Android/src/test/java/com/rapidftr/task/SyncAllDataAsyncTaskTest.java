@@ -26,6 +26,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -65,7 +66,7 @@ public class SyncAllDataAsyncTaskTest {
 
         given(rapidFtrActivity.getSystemService(Matchers.<String>any())).willReturn(notificationManager);
 
-        syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository, currentUser);
+        syncTask = new SyncAllDataAsyncTask<Child>(formService, childService, childRepository, currentUser);
     }
 
     @Test
@@ -73,7 +74,6 @@ public class SyncAllDataAsyncTaskTest {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-//        given(childService.getAllIdsAndRevs()).willReturn(Maps.<String, String>newHashMap());
         syncTask.setContext(rapidFtrActivity);
 
         syncTask.execute();
@@ -113,9 +113,8 @@ public class SyncAllDataAsyncTaskTest {
     public void shouldNotGetIncomingChildrenFromServerIfCancelled() throws Exception {
         syncTask.setContext(rapidFtrActivity);
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
-        HashMap<String, String> serverIDRevs = createServerIdRevMap();
 
-//        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
+        given(childService.getIdsToDownload()).willReturn(Arrays.asList("asd97"));
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
 
         syncTask = spy(syncTask);
@@ -134,9 +133,8 @@ public class SyncAllDataAsyncTaskTest {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
-        HashMap<String, String> serverIDRevs = createServerIdRevMap();
 
-//        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
+        given(childService.getIdsToDownload()).willReturn(Arrays.asList("qwerty0987","abcd1234"));
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
         given(child1.getUniqueId()).willReturn("1234");
         given(child2.getUniqueId()).willReturn("5678");
@@ -206,11 +204,8 @@ public class SyncAllDataAsyncTaskTest {
     public void shouldCompareAndRetrieveIdsToBeDownloadedFromServer() throws JSONException, IOException, HttpException {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
-        HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
-        HashMap<String, String> serverIDRevs = createServerIdRevMap();
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-//        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
-        given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
+        given(childService.getIdsToDownload()).willReturn(Arrays.asList("qwerty0987", "abcd1234"));
         given(childService.getRecord("qwerty0987")).willReturn(mock(Child.class));
         given(childService.getRecord("abcd1234")).willReturn(mock(Child.class));
 
@@ -220,18 +215,9 @@ public class SyncAllDataAsyncTaskTest {
         verify(formService).getPublishedFormSections();
         verify(childService).sync(child1, currentUser);
         verify(childService).sync(child2, currentUser);
-//        verify(childService).getAllIdsAndRevs();
-        verify(childRepository).getAllIdsAndRevs();
+        verify(childService).getIdsToDownload();
         verify(childService).getRecord("qwerty0987");
         verify(childService).getRecord("abcd1234");
-    }
-
-    private HashMap<String, String> createServerIdRevMap() {
-        HashMap<String, String> serverIdRev = new HashMap<String, String>();
-        serverIdRev.put("qwerty0987", "4-mnbvc");
-        serverIdRev.put("abcd5678", "2-zxy765");
-        serverIdRev.put("abcd1234", "2-zxy321");
-        return serverIdRev;
     }
 
     private HashMap<String, String> createRepositoryIdRevMap() {

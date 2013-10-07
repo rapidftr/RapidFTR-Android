@@ -33,6 +33,9 @@ public class BaseModel extends JSONObject implements Parcelable {
         if (!has(created_at.getColumnName())) {
             setCreatedAt(RapidFtrDateTime.now().defaultFormat());
         }
+        if (!has(Database.ChildTableColumn.synced.getColumnName())) {
+            setSynced(false);
+        }
     }
 
     public BaseModel() {
@@ -48,6 +51,9 @@ public class BaseModel extends JSONObject implements Parcelable {
         this(content);
         setUniqueId(id);
         setCreatedBy(owner);
+        if (!has(Database.ChildTableColumn.synced.getColumnName())) {
+            setSynced(false);
+        }
     }
 
     public String getUniqueId() throws JSONException {

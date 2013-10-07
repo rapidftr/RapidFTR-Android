@@ -215,14 +215,10 @@ public class ChildService implements SyncService<Child> {
 
     }
 
-    private HashMap<String, String> getAllIdsAndRevs() throws IOException {
+    private HashMap<String, String> getAllIdsAndRevs() throws IOException, HttpException {
         final ObjectMapper objectMapper = new ObjectMapper();
-        HttpResponse response;
-        try {
-            response = fluentRequest.path("/api/children/ids").context(context).get().ensureSuccess();
-        } catch (HttpException e) {
-            throw new ApiException(400); // done so that http exception doesn't have to be in sync service interface
-        }
+        HttpResponse response = fluentRequest.path("/api/children/ids").context(context).get().ensureSuccess();
+
         List<Map> idRevs = asList(objectMapper.readValue(response.getEntity().getContent(), Map[].class));
         HashMap<String, String> idRevMapping = new HashMap<String, String>();
         for (Map idRev : idRevs) {
@@ -231,7 +227,7 @@ public class ChildService implements SyncService<Child> {
         return idRevMapping;
     }
 
-    public List<String> getIdsToDownload() throws IOException, JSONException {
+    public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {
         HashMap<String,String> serverIdsRevs = getAllIdsAndRevs();
         HashMap<String, String> repoIdsAndRevs = repository.getAllIdsAndRevs();
         ArrayList<String> idsToDownload = new ArrayList<String>();

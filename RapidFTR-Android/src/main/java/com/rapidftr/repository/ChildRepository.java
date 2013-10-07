@@ -147,7 +147,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
         return toChildren(cursor);
     }
 
-    @Override
+    @Override // TODO remove this method - we no longer want to work out what to update by comparing _revs
     public HashMap<String, String> getAllIdsAndRevs() throws JSONException {
         HashMap<String, String> idRevs = new HashMap<String, String>();
         @Cleanup Cursor cursor = session.rawQuery("SELECT "
