@@ -6,4 +6,19 @@
               android:layout_height="fill_parent"
               android:background="@drawable/list_bg">
 
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:orientation="vertical"
+        android:layout_height="fill_parent">
+        <TextView android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            style="@style/childid"
+            android:id="@+id/row_enquiry_enquirer_name"/>
+        <TextView android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            style="@style/childid"
+            android:id="@+id/row_enquiry_creation_date"/>
+    </LinearLayout>
+
 </LinearLayout>

@@ -6,7 +6,6 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.EnquiryRepository;
-import com.sun.xml.internal.xsom.impl.scd.Iterators;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;

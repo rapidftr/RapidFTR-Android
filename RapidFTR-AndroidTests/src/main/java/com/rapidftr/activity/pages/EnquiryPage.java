@@ -1,6 +1,6 @@
 package com.rapidftr.activity.pages;
 
-import android.text.Editable;
+import android.app.Activity;
 import android.view.View;
 import android.widget.*;
 import com.jayway.android.robotium.solo.Condition;
@@ -9,15 +9,12 @@ import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.R;
 import com.rapidftr.view.fields.TextField;
 import junit.framework.Assert;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.String.format;
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
 public class EnquiryPage {
     public Solo solo;
@@ -31,6 +28,14 @@ public class EnquiryPage {
     public void navigateToCreatePage() {
         solo.clickOnText("Enquiry");
         solo.waitForText("Enquiry details");
+    }
+
+    public void navigateToEditPageOf(String enquirerName) {
+        solo.clickOnText("Enquiry");
+        solo.clickOnText("View All");
+        solo.clickOnText(enquirerName);
+        solo.clickOnText("Edit");
+        solo.assertCurrentActivity("In edit mode", "EditEnquiryActivity");
     }
 
     public List<String> getAllFormFields() {
@@ -81,7 +86,7 @@ public class EnquiryPage {
         }
     }
 
-    private List<String> getVisibleText(){
+    public List<String> getVisibleText(){
         List<String> texts = new ArrayList<String>();
         ArrayList<View> views = rutils.removeInvisibleViews(solo.getViews());
         for (View v : views) {
@@ -100,6 +105,14 @@ public class EnquiryPage {
         solo.enterText(nameField, enquirerDetails.get(0).toString());
     }
 
+    public void enterFamilyDetails(List<String> familyDetails) {
+        ArrayList<EditText> editTexts = solo.getCurrentViews(EditText.class);
+        for (int i = 0; i < familyDetails.size() && i < editTexts.size(); i++) {
+            solo.enterText(editTexts.get(i), familyDetails.get(i));
+        }
+
+    }
+
     public void save() {
         solo.clickOnButton("Save");
     }
@@ -114,16 +127,31 @@ public class EnquiryPage {
         solo.waitForCondition(new Condition() {
             @Override
             public boolean isSatisfied() {
-                EditText view = (EditText) solo.getCurrentActivity().findViewById("enquirer_name".hashCode()).findViewById(R.id.value);
-                return "".equals(view.getText().toString());
+                Activity currentActivity = solo.getCurrentActivity();
+                View enquirerNameView = currentActivity.findViewById("enquirer_name".hashCode());
+                EditText enquirerNameEditText = (null == enquirerNameView ? null : (EditText) enquirerNameView.findViewById(R.id.value) );
+                String enquirerNameText = (null == enquirerNameEditText ? null : enquirerNameEditText.getText().toString());
+                return (null != enquirerNameText) && ( "".equals(enquirerNameText));
             }
         }, 10000);
         solo.searchButton("Save");
     }
 
     public void assertPresenceOfValidationMessage() {
-        TextField textField = (TextField) solo.getCurrentActivity().findViewById("enquirer_name".hashCode());
-        EditText nameField = (EditText) textField.findViewById(R.id.value);
-        assertEquals("Enquirer name is required", nameField.getError().toString());
+        Assert.assertTrue(solo.waitForText("Enquirer name is required"));
+    }
+
+    public List<String> getAllEnquiryData() {
+        List<String> allVisibleTexts = new ArrayList<String>();
+        List<String> formSections = getAllFormSections();
+        solo.clickOnText("Enquirer Details",0);
+        for (String formSection : formSections){
+            selectFormSection(formSection);
+            List<String> visibleTexts = getVisibleText();
+            for (String text: visibleTexts){
+                allVisibleTexts.add(text);
+            }
+        }
+        return allVisibleTexts;
     }
 }

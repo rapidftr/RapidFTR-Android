@@ -35,20 +35,6 @@ public abstract class BaseChildActivity extends CollectionActivity {
         return child;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        try {
-            initializeView();
-            initializeData(savedInstanceState);
-            initializePager();
-            initializeSpinner();
-            initializeLabels();
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -69,17 +55,8 @@ public abstract class BaseChildActivity extends CollectionActivity {
         }
     }
 
-    protected void setLabel(int label) {
-        ((Button) findViewById(R.id.submit)).setText(label);
-    }
-
-    protected void setTitle(String title) {
-        ((TextView) findViewById(R.id.title)).setText(title);
-    }
-
     protected abstract void initializeView();
 
-    protected abstract void initializeLabels() throws JSONException;
     protected abstract void saveChild();
 
     protected void initializeData(Bundle savedInstanceState) throws JSONException {

@@ -46,7 +46,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/tab"
                 android:drawableLeft="@drawable/icon_search"
-                android:onClick="searchTabListener"
+                android:onClick="searchChildrenTabListener"
                 />
     </LinearLayout>
     <LinearLayout

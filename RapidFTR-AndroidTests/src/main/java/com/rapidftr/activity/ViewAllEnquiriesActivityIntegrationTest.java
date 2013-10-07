@@ -7,7 +7,8 @@ import junit.framework.Assert;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ViewAllEnquiriesActivityTest  extends BaseActivityIntegrationTest {
+public class ViewAllEnquiriesActivityIntegrationTest extends BaseActivityIntegrationTest {
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -16,15 +17,16 @@ public class ViewAllEnquiriesActivityTest  extends BaseActivityIntegrationTest {
         waitUntilTextDisappears("Login Successful");
     }
 
-    public void testListAllEnquiries() throws JSONException {
+    public void testDisplayAllEnquiries() throws JSONException {
         EnquiryRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(EnquiryRepository.class);
-        Enquiry rajni = new Enquiry("FIELD WORKER 1", "Rajni", new JSONObject("{name:NAME}"));
-        repository.createOrUpdate(rajni);
-        Enquiry kamal = new Enquiry("FIELD WORKER 2", "Kamal", new JSONObject("{name:NAME}"));
-        repository.createOrUpdate(kamal);
+        Enquiry enquiry1 = new Enquiry("CREATEDBY", "Enq1Reportername", new JSONObject("{name:NAME}"));
+        Enquiry enquiry2 = new Enquiry("CREATEDBY", "Enq2Reportername", new JSONObject("{name:NAME}"));
+        repository.createOrUpdate(enquiry1);
+        repository.createOrUpdate(enquiry2);
         viewAllEnquiriesPage.navigateToPage();
-        assertTrue(viewAllEnquiriesPage.isEnquiryPresent(rajni));
-        assertTrue(viewAllEnquiriesPage.isEnquiryPresent(kamal));
+        assertTrue(viewAllEnquiriesPage.isEnquiryPresent(enquiry1));
+        assertTrue(viewAllEnquiriesPage.isEnquiryPresent(enquiry2));
     }
+
 
 }

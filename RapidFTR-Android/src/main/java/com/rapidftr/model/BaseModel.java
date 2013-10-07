@@ -190,4 +190,12 @@ public class BaseModel extends JSONObject implements Parcelable {
     public boolean isSynced() {
         return optBoolean(Database.ChildTableColumn.synced.getColumnName());
     }
+
+    public String getShortId() throws JSONException {
+        if (!has(unique_identifier.getColumnName()))
+            return null;
+
+        int length = getUniqueId().length();
+        return length > 7 ? getUniqueId().substring(length - 7) : getUniqueId();
+    }
 }

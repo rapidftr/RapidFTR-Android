@@ -2,6 +2,7 @@ package com.rapidftr.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import com.google.common.io.CharStreams;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormSection;
@@ -21,10 +22,11 @@ import java.util.Arrays;
 public abstract class BaseEnquiryActivity extends CollectionActivity {
     protected Enquiry enquiry;
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    protected boolean editable = true;
 
     @Override
     protected Boolean getEditable() {
-        return true;
+        return editable;
     }
 
     @Override
@@ -33,28 +35,6 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
     }
 
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try {
-            initializeView();
-            try {
-                initializeData(savedInstanceState);
-            } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            initializePager();
-            initializeSpinner();
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-
-    protected abstract void initializeView();
-
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         enquiry = new Enquiry();
         @Cleanup InputStream in = getResources().openRawResource(R.raw.enquiry_form_sections);
@@ -62,16 +42,21 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         formSections = Arrays.asList(JSON_MAPPER.readValue(x, FormSection[].class));
     }
 
-
-    public Enquiry save(){
-        if (isValid()){
-            AsyncTaskWithDialog.wrap(this, new SaveEnquiryTask(), R.string.save_enquiry_progress, R.string.save_enqury_success, R.string.save_enquiry_failed).execute();
-        }
+    protected Enquiry load() throws JSONException {
+        @Cleanup EnquiryRepository repository = inject(EnquiryRepository.class);
+        String enquiryId = getIntent().getExtras().getString("id");
+        enquiry = repository.get(enquiryId);
         return enquiry;
     }
 
-    private boolean isValid() {
-        return validateTextFieldNotEmpty("enquirer_name".hashCode(), R.string.enquirer_name_required);
+    public Enquiry save(View view){
+        if ( enquiry.isValid()){
+            AsyncTaskWithDialog.wrap(this, new SaveEnquiryTask(), R.string.save_enquiry_progress, R.string.save_enqury_success, R.string.save_enquiry_failed).execute();
+            return enquiry;
+        } else {
+            makeToast(R.string.save_enquiry_invalid);
+            return null;
+        }
     }
 
     private class SaveEnquiryTask extends AsyncTaskWithDialog<Void, Void, Enquiry> {

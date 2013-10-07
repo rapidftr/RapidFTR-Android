@@ -23,6 +23,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     public EnquiryPage enquiryPage;
     public ViewAllEnquiriesPage viewAllEnquiriesPage;
     public UnverifiedUserPage unverifiedUserPage;
+    public ViewEnquiryPage viewEnquiryPage;
 
 
 //    RapidFtrApplication context = RapidFtrApplication.getApplicationInstance() ;
@@ -51,6 +52,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
         unverifiedUserPage=new UnverifiedUserPage(solo);
         enquiryPage = new EnquiryPage(solo);
         viewAllEnquiriesPage = new ViewAllEnquiriesPage(solo);
+        viewEnquiryPage = new ViewEnquiryPage(solo);
 	    application = RapidFtrApplication.getApplicationInstance();
 
 	    if (application.isLoggedIn()) {

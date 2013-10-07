@@ -63,4 +63,14 @@ public class Enquiry extends BaseModel {
     public JSONObject getCriteria() throws JSONException {
         return new JSONObject(getString(criteria.getColumnName()));
     }
+
+    public boolean isValid() {
+        String enquirerName = null;
+        try {
+            enquirerName = getEnquirerName();
+        } catch (JSONException e) {
+            return false;
+        }
+        return null != enquirerName && !"".equals(enquirerName);
+    }
 }

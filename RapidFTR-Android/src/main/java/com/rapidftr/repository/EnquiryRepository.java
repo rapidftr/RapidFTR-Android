@@ -111,11 +111,6 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     }
 
     @Override
-    public Enquiry get(String id) throws JSONException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public int size() {
         @Cleanup Cursor cursor = session.rawQuery("SELECT COUNT(1) FROM enquiry", new String[]{});
         return cursor.moveToNext() ? cursor.getInt(0) : 0;
@@ -145,5 +140,14 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
     private Enquiry buildEnquiry(Cursor cursor) throws JSONException {
         return new Enquiry(cursor);
+    }
+
+    public Enquiry get(String enquiryId) throws JSONException {
+        @Cleanup Cursor cursor = session.rawQuery("SELECT * from enquiry where id = ?", new String[]{enquiryId});
+        if (cursor.moveToNext()){
+            return buildEnquiry(cursor);
+        }else{
+            throw new NullPointerException(enquiryId);  //  I don't think it's cool to throw NullPointerExceptions - love John
+        }
     }
 }

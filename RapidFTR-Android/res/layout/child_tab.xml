@@ -40,6 +40,7 @@
             android:orientation="horizontal"
             android:layout_height="wrap_content">
         <Button
+                android:id="@+id/register_child_tab"
                 android:text="@string/register_tab_name"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

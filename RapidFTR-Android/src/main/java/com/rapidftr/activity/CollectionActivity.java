@@ -1,15 +1,17 @@
 package com.rapidftr.activity;
 
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.widget.*;
 import com.rapidftr.R;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.BaseModel;
+import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.List;
 
 public abstract class CollectionActivity extends RapidFtrActivity {
@@ -48,5 +50,37 @@ public abstract class CollectionActivity extends RapidFtrActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        try {
+            initializeView();
+            try {
+                initializeData(savedInstanceState);
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            initializePager();
+            initializeSpinner();
+            initializeLabels();
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    protected void initializeLabels() throws JSONException{};
+
+    protected abstract void initializeView();
+    protected abstract void initializeData(Bundle savedInstanceState) throws JSONException, IOException;
+
+    protected void setLabel(int label) {
+        ((Button) findViewById(R.id.submit)).setText(label);
+    }
+
+    protected void setTitle(String title) {
+        ((TextView) findViewById(R.id.title)).setText(title);
     }
 }

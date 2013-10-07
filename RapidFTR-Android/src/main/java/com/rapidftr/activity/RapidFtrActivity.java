@@ -73,12 +73,16 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         });
     }
 
-    public void searchTabListener(View view) {
+    public void searchChildrenTabListener(View view) {
         saveAlertListener(SearchActivity.class);
     }
 
     public void createEnquiryTabListener(View view) {
         saveAlertListener(CreateEnquiryActivity.class);
+    }
+
+public void viewAllEnquiryTabListener(View view) {
+        saveAlertListener(ViewAllEnquiryActivity.class);
     }
 
 
@@ -215,7 +219,18 @@ public abstract class RapidFtrActivity extends FragmentActivity {
 	    initializeLogoutHandler();
     }
 
-	protected void initializeLogoutHandler() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceivers();
+    }
+
+    private void unregisterReceivers() {
+        try{ unregisterReceiver(logoutReceiver); }catch (IllegalArgumentException e){ logError(e.getMessage()); }
+        try{ unregisterReceiver(networkChangeReceiver); }catch (IllegalArgumentException e){ logError(e.getMessage()); }
+    }
+
+    protected void initializeLogoutHandler() {
 		if (shouldEnsureLoggedIn()) {
 			IntentFilter intentFilter = new IntentFilter(LOGOUT_INTENT_FILTER);
 			registerReceiver(logoutReceiver, intentFilter);
@@ -237,12 +252,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
     @Override
     protected void onStop(){
         super.onStop();
-        try{
-            unregisterReceiver(networkChangeReceiver);
-            unregisterReceiver(logoutReceiver);
-        }catch(IllegalArgumentException e){
-            logError(e.getMessage());
-        }
+        unregisterReceivers();
     }
 
     protected void initializeExceptionHandler() {
