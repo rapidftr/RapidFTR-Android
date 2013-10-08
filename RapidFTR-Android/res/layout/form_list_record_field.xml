@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.rapidftr.view.fields.ListRecordField xmlns:android="http://schemas.android.com/apk/res/android"
+                                          android:orientation="vertical"
+                                          android:layout_width="match_parent"
+                                          android:layout_height="match_parent"
+        >
+    <include layout="@layout/form_label"/>
+
+    <ListView android:layout_height="wrap_content"
+              android:layout_width="fill_parent"
+              android:id="@+id/list_records"
+            />
+    <LinearLayout android:id="@+id/no_matches"
+                  android:layout_weight="4"
+                  android:layout_width="fill_parent"
+                  style="@style/no_child_text"
+                  android:gravity="center_horizontal"
+                  android:layout_height="wrap_content"
+            >
+
+        <TextView android:text="@string/no_matches"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/text"
+                >
+        </TextView>
+
+    </LinearLayout>
+    <include layout="@layout/form_help_text"/>
+
+</com.rapidftr.view.fields.ListRecordField>

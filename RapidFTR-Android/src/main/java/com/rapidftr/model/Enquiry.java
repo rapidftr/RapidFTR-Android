@@ -35,23 +35,18 @@ public class Enquiry extends BaseModel {
         JSONObject contents = new JSONObject(string);
         Iterator<String> keys = contents.keys();
         String key;
-        while (keys.hasNext()){
+        while (keys.hasNext()) {
             key = keys.next();
             this.put(key, contents.get(key));
         }
     }
 
-    public void setEnquirerName(String reporterName) throws JSONException {
-        this.setColumn(enquirer_name, reporterName);
-    }
-
-
-    public void setCriteria(JSONObject criteria) throws JSONException {
-        this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
-    }
-
     public String getOwner() throws JSONException {
         return getString(owner.getColumnName());
+    }
+
+    public String[] getPotentialMatches() throws JSONException {
+       return new String[]{"8dab5561-6a3e-450a-89da-a0660e58fdc5","dc8fb3bf-420f-468e-ad3c-3790732cd186"};
     }
 
     private void setColumn(Database.EnquiryTableColumn column, String value) throws JSONException {
@@ -62,8 +57,16 @@ public class Enquiry extends BaseModel {
         return getString(enquirer_name.getColumnName());
     }
 
+    public void setEnquirerName(String reporterName) throws JSONException {
+        this.setColumn(enquirer_name, reporterName);
+    }
+
     public JSONObject getCriteria() throws JSONException {
         return new JSONObject(getString(criteria.getColumnName()));
+    }
+
+    public void setCriteria(JSONObject criteria) throws JSONException {
+        this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
     }
 
     public boolean isValid() {

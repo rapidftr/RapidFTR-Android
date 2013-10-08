@@ -112,7 +112,8 @@ public enum Database {
         created_organisation("created_organisation", true, false),
         internal_id("_id", true, false),
         internal_rev("_rev", true, false),
-        unique_identifier("unique_identifier", true, false);
+        unique_identifier("unique_identifier", true, false),
+        potential_matches("potential_matches", false, true);
 
         private @Getter final String columnName;
         private final boolean isInternal;

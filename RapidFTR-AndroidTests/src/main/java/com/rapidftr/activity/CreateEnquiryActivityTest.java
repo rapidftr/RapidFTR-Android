@@ -27,6 +27,7 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         addFormSection("Siblings Details", "1) Name of sibling or other child accompanying the child", "Relationship", "Date of birth", "Place of birth", "Current address", "Telephone", "2) Name of sibling or other child accompanying the child", "Relationship", "Date of birth", "Place of birth", "Current address", "Telephone", "3) Name of sibling or other child accompanying the child", "Relationship", "Date of birth", "Place of birth", "Current address", "Telephone");
         addFormSection("Separation History", "Date of separation", "Place of separation", "Circumstances of separation");
         addFormSection("Tracing Information", "Latest news received");
+        addFormSection("Photo");
     }
 
     private void addFormSection(String formSectionName, String... formSectionFields) {

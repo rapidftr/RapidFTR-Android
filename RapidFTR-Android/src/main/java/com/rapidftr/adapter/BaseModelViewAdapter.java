@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.CollectionActivity;
-import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.task.AssignThumbnailAsyncTask;
 import com.rapidftr.utils.PhotoCaptureHelper;
@@ -28,7 +28,7 @@ public class BaseModelViewAdapter<T> extends ArrayAdapter<T> {
         this.context = context;
         this.textViewResourceId = textViewResourceId;
         this.objects = objects;
-        this.photoCaptureHelper = new PhotoCaptureHelper(((RapidFtrActivity) context).getContext());
+        this.photoCaptureHelper = new PhotoCaptureHelper(RapidFtrApplication.getApplicationInstance());
     }
 
     protected void setFields(String text, TextView textView) {

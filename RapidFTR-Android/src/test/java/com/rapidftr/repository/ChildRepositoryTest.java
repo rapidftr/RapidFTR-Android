@@ -16,10 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.rapidftr.CustomTestRunner.createUser;
 import static com.rapidftr.model.Child.History.*;
@@ -30,6 +27,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.*;
@@ -152,6 +150,32 @@ public class ChildRepositoryTest {
 
         List<Child> children = repository.getMatchingChildren("hiLd");
         assertEquals(1, children.size());
+    }
+
+    @Test
+    public void shouldReturnChildRecordsGivenListOfIds() throws Exception{
+        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ] }");
+        Child child4 = new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
+
+        repository.createOrUpdate(child1);
+        repository.createOrUpdate(child2);
+        repository.createOrUpdate(child3);
+        repository.createOrUpdate(child4);
+        
+        ArrayList<String> listOfIds = new ArrayList<String>();
+        listOfIds.add("id1");
+        listOfIds.add("id2");
+        listOfIds.add("id3");
+        listOfIds.add("child1");
+
+        List<Child> children = repository.getChildrenByIds(listOfIds);
+        assertEquals(4, children.size());
+        assertTrue(children.contains(child1));
+        assertTrue(children.contains(child2));
+        assertTrue(children.contains(child3));
+        assertTrue(children.contains(child4));
     }
     
     @Test
