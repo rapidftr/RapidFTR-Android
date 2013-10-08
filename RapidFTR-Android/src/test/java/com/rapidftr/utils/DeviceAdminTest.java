@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import sun.rmi.runtime.Log;
 
 import static android.content.Context.DEVICE_POLICY_SERVICE;
 import static org.mockito.BDDMockito.given;
