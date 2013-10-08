@@ -41,9 +41,10 @@
         <activity android:name=".activity.SearchActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.ViewAllChildrenActivity"/>
         <activity android:name=".activity.ViewAllEnquiryActivity"/>
-        <activity android:name=".activity.CreateEnquiryActivity"/>
+        <activity android:name=".activity.CreateEnquiryActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.ViewEnquiryActivity"/>
         <activity android:name=".activity.LoginActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity android:name=".activity.EditEnquiryActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.ViewPhotoActivity" android:noHistory="true" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
 
         <receiver android:name=".utils.DeviceAdmin" android:permission="android.permission.BIND_DEVICE_ADMIN">

@@ -18,7 +18,7 @@ public class TextField extends BaseView {
         super(context, attrs);
     }
 
-    protected EditText getEditTextView() {
+    public EditText getEditTextView() {
         return (EditText) findViewById(R.id.value);
     }
 

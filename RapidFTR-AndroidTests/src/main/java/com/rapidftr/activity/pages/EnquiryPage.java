@@ -1,7 +1,6 @@
 package com.rapidftr.activity.pages;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.jayway.android.robotium.solo.Condition;
@@ -29,6 +28,14 @@ public class EnquiryPage {
     public void navigateToCreatePage() {
         solo.clickOnText("Enquiry");
         solo.waitForText("Enquiry details");
+    }
+
+    public void navigateToEditPageOf(String enquirerName) {
+        solo.clickOnText("Enquiry");
+        solo.clickOnText("View All");
+        solo.clickOnText(enquirerName);
+        solo.clickOnText("Edit");
+        solo.assertCurrentActivity("In edit mode", "EditEnquiryActivity");
     }
 
     public List<String> getAllFormFields() {
@@ -98,6 +105,14 @@ public class EnquiryPage {
         solo.enterText(nameField, enquirerDetails.get(0).toString());
     }
 
+    public void enterFamilyDetails(List<String> familyDetails) {
+        ArrayList<EditText> editTexts = solo.getCurrentViews(EditText.class);
+        for (int i = 0; i < familyDetails.size() && i < editTexts.size(); i++) {
+            solo.enterText(editTexts.get(i), familyDetails.get(i));
+        }
+
+    }
+
     public void save() {
         solo.clickOnButton("Save");
     }
@@ -123,9 +138,7 @@ public class EnquiryPage {
     }
 
     public void assertPresenceOfValidationMessage() {
-        TextField textField = (TextField) solo.getCurrentActivity().findViewById("enquirer_name".hashCode());
-        EditText nameField = (EditText) textField.findViewById(R.id.value);
-        assertEquals("Enquirer name is required", nameField.getError().toString());
+        Assert.assertTrue(solo.waitForText("Enquirer name is required"));
     }
 
     public List<String> getAllEnquiryData() {
