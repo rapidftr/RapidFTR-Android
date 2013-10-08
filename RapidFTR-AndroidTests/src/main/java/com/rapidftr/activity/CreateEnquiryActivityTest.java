@@ -1,5 +1,11 @@
 package com.rapidftr.activity;
 
+import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.Enquiry;
+import com.rapidftr.repository.EnquiryRepository;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -27,21 +33,21 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         this.formSectionMap.put(formSectionName, new ArrayList<String>(asList(formSectionFields)));
     }
 
-    public void testFormSectionsAvailableForDisplay(){
+    public void testFormSectionsAvailableForDisplay() {
         Set<String> actualSections = new HashSet<String>(enquiryPage.getAllFormSections());
         Set<String> expectedSections = this.formSectionMap.keySet();
 
         assertTrue(String.format("Actual %s\n Expected %s", actualSections, expectedSections), actualSections.equals(expectedSections));
     }
 
-    public void testFormFieldsDisplayed(){
+    public void testFormFieldsDisplayed() {
         for (Map.Entry<String, List<String>> formSection : formSectionMap.entrySet()) {
             enquiryPage.selectFormSection(formSection.getKey());
             enquiryPage.verifyFieldsDisplayed(formSection.getValue());
         }
     }
 
-    public void testEnquirerNameValidation(){
+    public void testEnquirerNameValidation() {
         List<String> enquirerDetails = asList("");
         enquiryPage.enterEnquirerDetails(enquirerDetails);
         enquiryPage.save();
@@ -64,5 +70,18 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         enquiryPage.enterEnquirerDetails(enquirerDetails);
         enquiryPage.save();
         enquiryPage.verifyNewEnquiryFormPresence();
+    }
+
+    public void estShouldEditAnEnquiry() throws JSONException {
+        Enquiry enquiry = new Enquiry("CREATEDBY", "Enq2Reportername", new JSONObject("{enquirer_name:Enq2Enquirername}"));
+        EnquiryRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(EnquiryRepository.class);
+        List<String> updatedEnquirerDetails = asList("Nile");
+
+        repository.createOrUpdate(enquiry);
+        enquiry = repository.get(enquiry.getUniqueId());
+
+        enquiryPage.navigateToEditPageOf(enquiry.getEnquirerName());
+        enquiryPage.enterEnquirerDetails(updatedEnquirerDetails);
+        enquiryPage.save();
     }
 }
