@@ -154,7 +154,4 @@ public class EnquiryRepositoryTest {
         assertThat(retrieved.getString(Database.ChildTableColumn.internal_rev.getColumnName()), is("new internal revision"));
     }
 
-    
-
-
 }

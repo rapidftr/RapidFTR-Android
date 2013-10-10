@@ -149,7 +149,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
         }
     }
 
-    protected void saveIncomingRecords(List<String> idsToDownload, int startProgress) throws IOException, JSONException {
+    protected void saveIncomingRecords(List<String> idsToDownload, int startProgress) throws IOException, JSONException, HttpException {
         String subStatusFormat = "Downloading Record %s of" + idsToDownload.size();
         int counter = 0;
         setProgressAndNotify(context.getString(R.string.synchronize_step_3), startProgress);

@@ -28,7 +28,7 @@ public class EnquiryHttpDaoTest {
 
     @Test
     public void getEnquiry_shouldRetrieveEnquiryFromApi() throws Exception {
-        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao(httpClient, apiRoot);
+        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao(apiRoot);
         String url = "blah.com/123";
 
         when(httpClient.get(url)).thenReturn("{\"id\":\"123\"}");
@@ -42,7 +42,7 @@ public class EnquiryHttpDaoTest {
     public void postEnquiry_shouldPostEnquiryToApi() throws Exception {
         final String id = "123";
         final String json = "some json";
-        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao(httpClient, apiRoot);
+        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao( apiRoot);
 
         Enquiry enquiry = mock(Enquiry.class);
         when(enquiry.get("id")).thenReturn(id);
@@ -55,8 +55,7 @@ public class EnquiryHttpDaoTest {
 
     @Test
     public void getIdsOfUpdated_shouldRetrieveJsonAndReturnListOfUrls() throws Exception {
-        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao(httpClient, apiRoot);
-;
+        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao( apiRoot);
 
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.putSingle("updated_after", "2013-09-25 18:07:31UTC");

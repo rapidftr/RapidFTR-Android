@@ -1,5 +1,6 @@
 package com.rapidftr.service;
 
+import com.google.inject.Inject;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -10,6 +11,7 @@ public class JsonClient {
 
     private final Client client;
 
+    @Inject
     public JsonClient(Client client) {
         this.client = client;
     }

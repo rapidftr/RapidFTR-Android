@@ -13,7 +13,7 @@ public interface SyncService<T extends BaseModel> {
     public T sync(T record, User currentUser) throws IOException, JSONException;
 
     // TODO change signature to accept a URI, not a string
-    public T getRecord(String id) throws IOException, JSONException;
+    public T getRecord(String id) throws IOException, JSONException, HttpException;
 
 
 
