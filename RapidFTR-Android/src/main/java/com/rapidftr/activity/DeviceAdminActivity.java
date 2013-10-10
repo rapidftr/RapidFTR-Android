@@ -18,14 +18,6 @@ public class DeviceAdminActivity extends FragmentActivity{
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService(DEVICE_POLICY_SERVICE);
-//        ApplicationInfo ai = null;
-//        try {
-//            ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-//            Object value = (Object)ai.metaData.get("device.wipe.flag");
-//            System.out.println(value);
-//        } catch (PackageManager.NameNotFoundException e) {
-//            e.printStackTrace();
-//        }
 
         if(!devicePolicyManager.isAdminActive(null)) {
             requestDeviceAdminPermissions();
