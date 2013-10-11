@@ -32,37 +32,12 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
         super.initializeData(savedInstanceState);
         this.editable = false;
         load();
-        listingAllViewsInCurrentActivity();
-    }
-
-    private void listingAllViewsInCurrentActivity() {
-
-
-    }
-
-    private void loadPotentialMatches() throws JSONException {
-        @Cleanup ChildRepository childRepository = inject(ChildRepository.class);
-        ArrayList<String> strings = new ArrayList<String>(Arrays.asList(enquiry.getPotentialMatches()));
-        List<Child> children = childRepository.getChildrenByIds(strings);
-
-         ChildViewAdapter childViewAdapter;
-
-        childViewAdapter = new ChildViewAdapter(this, R.layout.row_child, children);
-
-        TextView text = (TextView) findViewById(R.id.text);
-        ListView childListView = (ListView) findViewById(R.id.list_records);
-        if (children.isEmpty()) {
-            childListView.setEmptyView(findViewById(R.id.no_matches));
-        }
-
-        childListView.setAdapter(childViewAdapter);
     }
 
     @Override
     protected void initializeLabels() throws JSONException {
         setLabel(R.string.edit);
         setTitle(enquiry.getShortId());
-        loadPotentialMatches();
     }
 
     public void edit(View view) throws JSONException {
