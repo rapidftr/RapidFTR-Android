@@ -99,6 +99,14 @@
             <resource>
                 <directory>libs</directory>
             </resource>
+            <resource>
+                <directory>${project.basedir}/</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.basedir}/target/filtered-manifest/</targetPath>
+                <includes>
+                    <include>AndroidManifest.xml</include>
+                </includes>
+            </resource>
         </resources>
 
         <plugins>
@@ -209,5 +217,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

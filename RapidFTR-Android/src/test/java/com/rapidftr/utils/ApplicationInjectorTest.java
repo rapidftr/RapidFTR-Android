@@ -7,9 +7,11 @@ import com.google.inject.name.Names;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.User;
+import com.rapidftr.service.DeviceService;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 import com.rapidftr.task.SyncUnverifiedDataAsyncTask;
 import com.rapidftr.task.SynchronisationAsyncTask;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,4 +60,14 @@ public class ApplicationInjectorTest {
         assertThat(application.getInjector().getInstance(SynchronisationAsyncTask.class), instanceOf(SyncUnverifiedDataAsyncTask.class));
     }
 
+    @Test
+    public void testReturnDeviceServiceInstance() {
+        Assert.assertThat(application.getInjector().getInstance(DeviceService.class), instanceOf(DeviceService.class));
+    }
+
+
+    @Test
+    public void testReturnDeviceAdminInstance() {
+        Assert.assertThat(application.getInjector().getInstance(DeviceAdmin.class), instanceOf(DeviceAdmin.class));
+    }
 }

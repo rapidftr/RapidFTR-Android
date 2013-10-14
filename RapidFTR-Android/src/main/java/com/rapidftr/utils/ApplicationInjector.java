@@ -34,6 +34,8 @@ public class ApplicationInjector extends AbstractModule {
         bind(LogOutService.class);
         bind(LoginService.class);
         bind(SyncChildTask.class);
+        bind(DeviceService.class);
+        bind(DeviceAdmin.class);
     }
 
     @Provides @Named("USER_NAME")
