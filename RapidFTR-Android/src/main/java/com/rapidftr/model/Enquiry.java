@@ -1,25 +1,18 @@
 package com.rapidftr.model;
 
 import android.database.Cursor;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
-import lombok.Cleanup;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
-
 
 public class Enquiry extends BaseModel {
 
@@ -55,21 +48,24 @@ public class Enquiry extends BaseModel {
         return getString(owner.getColumnName());
     }
 
-    @Inject
     public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
-//       return new String[]{"8dab5561-6a3e-450a-89da-a0660e58fdc5","dc8fb3bf-420f-468e-ad3c-3790732cd186"};
-//        String matchingChildIds = getString(potential_matches.getColumnName());
-        JSONArray ja = new JSONArray(matchingChildIds());
-        List<String> matchingChildIds = new ArrayList<String>();
+        try{
+            JSONArray matchingChildIdArray = new JSONArray(matchingChildIds());
+            List<String> matchingChildList = getListOfMatchingChildsFrom(matchingChildIdArray);
 
-        for(int i=0; i<ja.length(); i++){
-            matchingChildIds.add((String)ja.get(i));
+            return childRepository.getChildrenByIds(new ArrayList<String>(matchingChildList));
+        }catch (JSONException exception){
+            return new ArrayList<Child>();
         }
+    }
 
-        Injector injector = RapidFtrApplication.getApplicationInstance().getInjector();
-//        @Cleanup ChildRepository repo = injector.getInstance(ChildRepository.class);
-//        return repo.getChildrenByIds(new ArrayList<String>(x));
-        return childRepository.getChildrenByIds(new ArrayList<String>(matchingChildIds));
+    private List<String> getListOfMatchingChildsFrom(JSONArray matchingChildIdArray) throws JSONException {
+        List<String> matchingChildList = new ArrayList<String>();
+
+        for(int i=0; i<matchingChildIdArray.length(); i++){
+            matchingChildList.add((String) matchingChildIdArray.get(i));
+        }
+        return matchingChildList;
     }
 
     private void setColumn(Database.EnquiryTableColumn column, String value) throws JSONException {
@@ -103,6 +99,8 @@ public class Enquiry extends BaseModel {
     }
 
     public String matchingChildIds() throws JSONException {
-        return getString(potential_matches.getColumnName());  //To change body of created methods use File | Settings | File Templates.
+        String ids = getString(potential_matches.getColumnName());
+        if(ids == null) throw new JSONException("No key" + potential_matches.getColumnName());
+        return ids;
     }
 }

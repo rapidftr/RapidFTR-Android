@@ -13,21 +13,21 @@
               android:layout_weight="1"
               android:id="@+id/list_records"
             />
-    <!--<LinearLayout android:id="@+id/no_matches"-->
-                  <!--android:layout_weight="4"-->
-                  <!--android:layout_width="fill_parent"-->
-                  <!--style="@style/no_child_text"-->
-                  <!--android:gravity="center_horizontal"-->
-                  <!--android:layout_height="0dip"-->
-                  <!--android:visibility="gone"-->
-            <!-->-->
-        <!--<TextView android:text="@string/no_matches"-->
-                  <!--android:layout_width="wrap_content"-->
-                  <!--android:layout_height="wrap_content"-->
-                  <!--android:id="@+id/text"-->
-                <!-->-->
-        <!--</TextView>-->
-    <!--</LinearLayout>-->
+    <LinearLayout android:id="@+id/no_matches"
+                  android:layout_weight="4"
+                  android:layout_width="fill_parent"
+                  style="@style/no_child_text"
+                  android:gravity="center_horizontal"
+                  android:layout_height="0dip"
+                  android:visibility="gone"
+            >
+        <TextView android:text="@string/no_matches"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/text"
+                >
+        </TextView>
+    </LinearLayout>
     <include layout="@layout/form_help_text"/>
 
 </com.rapidftr.view.fields.ListRecordField>

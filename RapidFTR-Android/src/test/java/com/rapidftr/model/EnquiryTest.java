@@ -61,16 +61,6 @@ public class EnquiryTest {
       assertNotNull(enquiry.getLastUpdatedAt());
     }
 
-    @Ignore //need to write this test better
-    @Test
-    public void newEnquiryShouldNotHaveMatchingIds() {
-        try {
-            Enquiry enquiry = new Enquiry(createdBy, reporterName, criteria);
-            enquiry.matchingChildIds();
-        } catch (Exception e) {
-            assertEquals("not found", e.getMessage());
-        }
-    }
 
     @Test
     public void enquiryShouldGetPotentialMatches() throws JSONException {
@@ -88,11 +78,31 @@ public class EnquiryTest {
         childRepository.createOrUpdate(child1);
         childRepository.createOrUpdate(child2);
 
-//        Enquiry enquiry = new Enquiry("owner1", "faris", new JSONObject("{ 'test1' : 'value1', 'test2' : 0 }"));
         Enquiry enquiry = new Enquiry(cursor);
 
         assertEquals(2, enquiry.getPotentialMatches(childRepository).size());
         assertTrue(enquiry.getPotentialMatches(childRepository).contains(child1));
         assertTrue(enquiry.getPotentialMatches(childRepository).contains(child2));
+    }
+
+    @Test
+    public void enquiryShouldGetMatchingIds() throws JSONException {
+        String enquiryJSON = "{\"createdBy\":\"user\"," +
+                "\"enquirer_name\":\"faris\"," +
+                "\"criteria\":{\"age\":14,\"name\":\"Subhas\"}, " +
+                "\"potential_matches\":\"[\\\"id1\\\", \\\"id2\\\"]\"}";
+
+        doReturn(2).when(cursor).getColumnIndex(Database.EnquiryTableColumn.criteria.getColumnName());
+        doReturn(enquiryJSON).when(cursor).getString(2);
+
+        Enquiry enquiry = new Enquiry(cursor);
+
+        assertEquals("[\"id1\", \"id2\"]",enquiry.matchingChildIds());
+    }
+
+    @Test(expected=JSONException.class)
+    public void newEnquiryShouldNotHaveMatchingIds() throws JSONException {
+        Enquiry enquiry = new Enquiry(createdBy, reporterName, criteria);
+        enquiry.matchingChildIds();
     }
 }
