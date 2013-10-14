@@ -53,8 +53,6 @@ public class SyncAllDataAsyncTaskTest {
     @Mock private FormService formService;
     @Mock private DeviceService deviceService;
 
-
-    @Mock private DeviceAdmin deviceAdmin;
     private RapidFtrApplication application;
 
     private SyncAllDataAsyncTask syncTask;
@@ -70,7 +68,7 @@ public class SyncAllDataAsyncTaskTest {
 
         application = spy(RapidFtrApplication.getApplicationInstance());
 
-        syncTask = new SyncAllDataAsyncTask(formService, childService, deviceService, childRepository, currentUser, deviceAdmin);
+        syncTask = new SyncAllDataAsyncTask(formService, childService, deviceService, childRepository, currentUser);
     }
 
     @Test
@@ -255,10 +253,10 @@ public class SyncAllDataAsyncTaskTest {
 
         given(childRepository.toBeSynced()).willReturn(childList);
         given(deviceService.isBlacklisted()).willReturn(true);
-        doNothing().when(deviceAdmin).wipeData();
+        doNothing().when(deviceService).wipeData();
 
         syncTask.execute();
-        verify(deviceAdmin).wipeData();
+        verify(deviceService).wipeData();
     }
 
     @Test
@@ -272,7 +270,7 @@ public class SyncAllDataAsyncTaskTest {
 
         syncTask.execute();
         verify(childRepository, times(2)).toBeSynced();
-        verify(deviceAdmin, never()).wipeData();
+        verify(deviceService, never()).wipeData();
     }
 
     private HashMap<String, String> createServerIdRevMap() {

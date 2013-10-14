@@ -1,6 +1,9 @@
 package com.rapidftr.service;
 
+import android.app.admin.DevicePolicyManager;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.telephony.TelephonyManager;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
@@ -35,5 +38,25 @@ public class DeviceService {
         String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
         JSONObject device = new JSONObject(responseAsString);
         return device.getBoolean("blacklisted");
+    }
+
+    public void wipeData() {
+        if(getDeviceWipeFlag() == true) {
+            DevicePolicyManager devicePolicyManager = (DevicePolicyManager) context.getSystemService(context.DEVICE_POLICY_SERVICE);
+            devicePolicyManager.wipeData(0);
+        }
+    }
+
+    protected boolean getDeviceWipeFlag(){
+        try {
+            ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            Integer deviceWipeFlag = (Integer)applicationInfo.metaData.get("device.wipe.flag");
+
+            return deviceWipeFlag == 1;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

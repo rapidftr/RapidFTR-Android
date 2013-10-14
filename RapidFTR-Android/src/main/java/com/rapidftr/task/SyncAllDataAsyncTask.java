@@ -21,15 +21,13 @@ import java.util.List;
 
 public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
     private DeviceService deviceService;
-    private DeviceAdmin deviceAdmin;
 
     @Inject
     public SyncAllDataAsyncTask(FormService formService, ChildService childService,
                                 DeviceService deviceService, ChildRepository childRepository,
-                                User user, DeviceAdmin deviceAdmin) {
+                                User user) {
         super(formService, childService, childRepository, user);
         this.deviceService = deviceService;
-        this.deviceAdmin = deviceAdmin;
     }
 
     protected void sync() throws JSONException, IOException, HttpException {
@@ -41,7 +39,7 @@ public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
             uploadChildrenToSyncWithServer(idsToDownload);
             if (childRepository.toBeSynced().isEmpty())
             {
-                deviceAdmin.wipeData();
+                deviceService.wipeData();
             }
         } else {
             idsToDownload = getAllIdsForDownload();

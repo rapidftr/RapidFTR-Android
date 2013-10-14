@@ -64,10 +64,4 @@ public class ApplicationInjectorTest {
     public void testReturnDeviceServiceInstance() {
         Assert.assertThat(application.getInjector().getInstance(DeviceService.class), instanceOf(DeviceService.class));
     }
-
-
-    @Test
-    public void testReturnDeviceAdminInstance() {
-        Assert.assertThat(application.getInjector().getInstance(DeviceAdmin.class), instanceOf(DeviceAdmin.class));
-    }
 }
