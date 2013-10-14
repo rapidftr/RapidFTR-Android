@@ -108,7 +108,6 @@ public class ChildRepository implements Closeable, Repository<Child> {
         values.put(synced.getColumnName(), child.isSynced());
         values.put(created_at.getColumnName(), child.getCreatedAt());
         populateInternalColumns(child, values);
-//        session.replaceOrThrow(Database.child.getTableName(), null, values);
         long id = session.replace(Database.child.getTableName(), null, values);
         if (id <= 0) throw new IllegalArgumentException(id + "");
     }

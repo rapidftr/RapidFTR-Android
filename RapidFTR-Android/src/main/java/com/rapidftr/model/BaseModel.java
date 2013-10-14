@@ -36,7 +36,7 @@ public class BaseModel extends JSONObject implements Parcelable {
         if (!has(Database.ChildTableColumn.synced.getColumnName())) {
             setSynced(false);
         }
-        if (!has(Database.ChildTableColumn.id.getColumnName())) {
+        if (!has(Database.ChildTableColumn.unique_identifier.getColumnName())) {
             setUniqueId(createUniqueId());
         }
     }

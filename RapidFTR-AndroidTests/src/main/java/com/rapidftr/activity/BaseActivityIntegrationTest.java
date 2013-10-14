@@ -27,7 +27,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 
 
 //    RapidFtrApplication context = RapidFtrApplication.getApplicationInstance() ;
-//    ChildRepository repository=context.getInjector().getInstance(ChildRepository.class);
+//    ChildRepository childRepository=context.getInjector().getInstance(ChildRepository.class);
 
     final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 

@@ -14,6 +14,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class EnquiryHttpDao {
         String utcString = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").withZone(DateTimeZone.UTC).print(lastUpdate) + "UTC";
         final FluentResponse fluentResponse = http().context(RapidFtrApplication.getApplicationInstance())
                 .host(apiRoot + "/api/enquiries")
-                .param("updated_after", utcString)
+                .param("updated_after", URLEncoder.encode(utcString, "UTF-8"))
                 .get()
                 .ensureSuccess();
         String json = CharStreams.toString(new InputStreamReader(fluentResponse.getEntity().getContent()));
