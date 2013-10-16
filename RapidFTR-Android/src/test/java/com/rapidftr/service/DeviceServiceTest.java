@@ -2,23 +2,25 @@ package com.rapidftr.service;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
+import android.os.Environment;
 import android.telephony.TelephonyManager;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.utils.DeviceAdmin;
-import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.json.JSONException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 
+import java.io.File;
 import java.io.IOException;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -32,12 +34,14 @@ public class DeviceServiceTest {
     @Mock private DevicePolicyManager devicePolicyManager;
     private RapidFtrApplication context;
     private TelephonyManager telephonyManager;
+    private DeviceService deviceService;
 
     @Before
     public void setUp() {
         initMocks(this);
         context = spy(RapidFtrApplication.getApplicationInstance());
         context.getSharedPreferences().edit().putString(SERVER_URL_PREF, "whatever").commit();
+        deviceService = spy(new DeviceService(context));
 
         telephonyManager = spy((TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE));
         when(context.getSystemService(Context.TELEPHONY_SERVICE)).thenReturn(telephonyManager);
@@ -54,8 +58,7 @@ public class DeviceServiceTest {
                 "http://whatever/api/is_blacklisted/1234",
                 new TestHttpResponse(200, "{\"blacklisted\":\"true\"}"));
 
-        DeviceService service = new DeviceService(context);
-        assertTrue(service.isBlacklisted());
+        assertTrue(deviceService.isBlacklisted());
     }
 
     @Test
@@ -71,21 +74,81 @@ public class DeviceServiceTest {
 
     @Test
     public void shouldNotWipeInternalDataFromPhoneIfWipeDeviceFlagIsFalse(){
-        DeviceService service = spy(new DeviceService(context));
-        doReturn(false).when(service).getDeviceWipeFlag();
+        doReturn(false).when(deviceService).getDeviceWipeFlag();
 
-        service.wipeData();
+        deviceService.wipeData();
 
         verify(devicePolicyManager, never()).wipeData(0);
     }
 
     @Test
-    public void shouldWipeInternalDataFromPhoneIfWipeDeviceFlagIsTrue(){
-        DeviceService service = spy(new DeviceService(context));
-        doReturn(true).when(service).getDeviceWipeFlag();
+    public void shouldNotCallWipeExternalSdCardIfWipeDeviceFlagIsFlag() {
+        doReturn(false).when(deviceService).getDeviceWipeFlag();
+        deviceService.wipeData();
 
-        service.wipeData();
+        verify(deviceService, never()).wipeDirectory(any(File.class));
+    }
+
+    @Test
+    public void shouldWipeInternalDataFromPhoneIfWipeDeviceFlagIsTrue(){
+        doReturn(true).when(deviceService).getDeviceWipeFlag();
+
+        deviceService.wipeData();
 
         verify(devicePolicyManager).wipeData(0);
+    }
+
+    @Test
+    public void shouldCallWipeExternalSdCardFromPhoneIfWipeDeviceFlagIsTrue(){
+        doReturn(true).when(deviceService).getDeviceWipeFlag();
+        doNothing().when(deviceService).wipeDirectory(any(File.class));
+
+        deviceService.wipeData();
+
+        verify(deviceService).wipeDirectory(new File(Environment.getExternalStorageDirectory().toString()));
+    }
+
+    @Test
+    public void shouldWipeExternalSdCardWhenRequested(){
+        File root = Mockito.mock(File.class);
+        File picturesDirectory = Mockito.mock(File.class);
+        File pictureFile = Mockito.mock(File.class);
+        File rootFile = Mockito.mock(File.class);
+
+
+        File[] listFiles = new File[2];
+        listFiles[0] = picturesDirectory;
+        listFiles[1] = rootFile;
+        File[] listFilesPictures = new File[1];
+        listFilesPictures[0] = pictureFile;
+
+        doReturn(listFiles).when(root).listFiles();
+        doReturn(listFilesPictures).when(picturesDirectory).listFiles();
+        doReturn(true).when(picturesDirectory).isDirectory();
+
+        deviceService.wipeDirectory(root);
+
+        verify(rootFile).delete();
+        verify(pictureFile).delete();
+        verify(picturesDirectory).delete();
+
+    }
+
+    @Test
+    public void shouldNotIterateFileListIfDirectoryIsEmpty()
+    {
+        File root = Mockito.mock(File.class);
+        File emptyDirectory = Mockito.mock(File.class);
+
+        File[] filesList = new File[1];
+        filesList[0] = emptyDirectory;
+
+        doReturn(filesList).when(root).listFiles();
+        doReturn(null).when(emptyDirectory).listFiles();
+        doReturn(true).when(emptyDirectory).isDirectory();
+
+        deviceService.wipeDirectory(root);
+
+        verify(emptyDirectory).delete();
     }
 }
