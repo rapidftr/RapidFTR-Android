@@ -15,21 +15,18 @@ import com.rapidftr.service.LoginService;
 import com.rapidftr.service.RegisterUserService;
 import com.rapidftr.utils.http.FluentResponse;
 import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
-import org.apache.http.HttpResponse;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 
-import java.io.IOException;
-
 import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
@@ -68,7 +65,7 @@ public class SyncUnverifiedDataAsyncTaskTest {
         given(rapidFtrActivity.getContext()).willReturn(applicationContext);
         given(registerUserService.register(any(User.class))).willReturn(new FluentResponse(new TestHttpResponse(200, "")));
 
-        task = new SyncUnverifiedDataAsyncTask(formService, childService, childRepository, loginService, registerUserService, currentUser);
+        task = new SyncUnverifiedDataAsyncTask<Child>(formService, childService, childRepository, loginService, registerUserService, currentUser);
         task.setContext(rapidFtrActivity);
     }
 

@@ -54,7 +54,7 @@ class MigrationSQL {
 
     public static final String createChildTable = "create table "
             + Database.child.getTableName() + "("
-            + Database.ChildTableColumn.id.getColumnName() + " text primary key,"
+            + Database.ChildTableColumn.id.getColumnName() + " text primary key not null,"  // NOTE Sqlite doesn't implicitly set 'not null' for primary keys !!
             + Database.ChildTableColumn.owner.getColumnName() + " text not null,"
             + Database.ChildTableColumn.content.getColumnName() + " text not null,"
             + Database.ChildTableColumn.synced.getColumnName() + " text not null"
@@ -64,7 +64,8 @@ class MigrationSQL {
             + Database.child.getTableName()
             + " ADD COLUMN "
             + Database.ChildTableColumn.created_at.getColumnName()
-            + " text not null default '"+ RapidFtrDateTime.now().defaultFormat() +"'";
+            + " text not null default '"+ RapidFtrDateTime.now().defaultFormat() +"'";  // <--- WTF
+            // every record that is created without a created_at will have a created_at of when the migration was run
 
     public static final String addLastUpdatedAtColumn = "ALTER TABLE "
             + Database.child.getTableName()
@@ -98,12 +99,17 @@ class MigrationSQL {
 
     public static final String createEnquiryTable = "create table "
             + Database.enquiry.getTableName() + "("
-            + Database.EnquiryTableColumn.id.getColumnName() + " text primary key,"
+            + Database.EnquiryTableColumn.id.getColumnName() + " text primary key not null,"
             + Database.EnquiryTableColumn.enquirer_name.getColumnName() + " text not null,"
             + Database.EnquiryTableColumn.criteria.getColumnName() + " text not null,"
-            + Database.EnquiryTableColumn.owner.getColumnName() + " text not null,"
+            + Database.EnquiryTableColumn.created_by.getColumnName() + " text not null,"
             + Database.EnquiryTableColumn.created_at.getColumnName() + " text not null default '" + RapidFtrDateTime.now().defaultFormat() + "',"
-            + Database.EnquiryTableColumn.last_updated_at.getColumnName() + " text"
+            + Database.EnquiryTableColumn.last_updated_at.getColumnName() + " text,"
+            + Database.EnquiryTableColumn.synced.getColumnName() + "  text not null,"
+            + Database.EnquiryTableColumn.created_organisation.getColumnName() + "  text ,"
+            + Database.EnquiryTableColumn.internal_id.getColumnName() + "  text ,"
+            + Database.EnquiryTableColumn.internal_rev.getColumnName() + "  text ,"
+            + Database.EnquiryTableColumn.unique_identifier.getColumnName() + " text "
             + ");";
 }
 

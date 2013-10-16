@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.SyncFailedException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static com.rapidftr.view.fields.PhotoUploadBox.PHOTO_KEYS;
 import static java.util.Arrays.asList;
 
-public class ChildService {
+public class ChildService implements SyncService<Child> {
 
     private RapidFtrApplication context;
     private ChildRepository repository;
@@ -47,6 +48,7 @@ public class ChildService {
         this.fluentRequest = fluentRequest;
     }
 
+    @Override
     public Child sync(Child child, User currentUser) throws IOException, JSONException {
         addMultiMediaFilesToTheRequest(child);
         removeUnusedParametersBeforeSync(child);
@@ -86,7 +88,8 @@ public class ChildService {
         }
     }
 
-    private void setMedia(Child child) throws IOException, JSONException {
+    @Override
+    public void setMedia(Child child) throws IOException, JSONException {
         setPhoto(child);
         setAudio(child);
     }
@@ -125,7 +128,8 @@ public class ChildService {
         return (child.has("audio_attachments") && child.getJSONObject("audio_attachments").has("original")) ? child.getJSONObject("audio_attachments").optString("original") : "";
     }
 
-    public Child getChild(String id) throws IOException, JSONException {
+    @Override
+    public Child getRecord(String id) throws IOException, JSONException {
         HttpResponse response = fluentRequest
                 .context(context)
                 .path(String.format("/api/children/%s", id))
@@ -137,7 +141,7 @@ public class ChildService {
         return child;
     }
 
-    public void setPhoto(Child child) throws IOException, JSONException {
+    private void setPhoto(Child child) throws IOException, JSONException {
         PhotoCaptureHelper photoCaptureHelper = new PhotoCaptureHelper(context);
 
         JSONArray photoKeys = child.optJSONArray("photo_keys");
@@ -168,7 +172,7 @@ public class ChildService {
     }
 
 
-    public void setAudio(Child child) throws IOException, JSONException {
+    private void setAudio(Child child) throws IOException, JSONException {
         AudioCaptureHelper audioCaptureHelper = new AudioCaptureHelper(context);
         String recordedAudio = child.optString("recorded_audio");
         try {
@@ -211,14 +215,35 @@ public class ChildService {
 
     }
 
-    public HashMap<String, String> getAllIdsAndRevs() throws IOException, HttpException {
+    private HashMap<String, String> getAllIdsAndRevs() throws IOException, HttpException {
         final ObjectMapper objectMapper = new ObjectMapper();
         HttpResponse response = fluentRequest.path("/api/children/ids").context(context).get().ensureSuccess();
+
         List<Map> idRevs = asList(objectMapper.readValue(response.getEntity().getContent(), Map[].class));
         HashMap<String, String> idRevMapping = new HashMap<String, String>();
         for (Map idRev : idRevs) {
             idRevMapping.put(idRev.get("_id").toString(), idRev.get("_rev").toString());
         }
         return idRevMapping;
+    }
+
+    public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {
+        HashMap<String,String> serverIdsRevs = getAllIdsAndRevs();
+        HashMap<String, String> repoIdsAndRevs = repository.getAllIdsAndRevs();
+        ArrayList<String> idsToDownload = new ArrayList<String>();
+        for(Map.Entry<String,String> serverIdRev : serverIdsRevs.entrySet()){
+            if(!isServerIdExistingInRepository(repoIdsAndRevs, serverIdRev) || (repoIdsAndRevs.get(serverIdRev.getKey()) != null && isRevisionMismatch(repoIdsAndRevs, serverIdRev))){
+                idsToDownload.add(serverIdRev.getKey());
+            }
+        }
+        return idsToDownload;
+    }
+
+    private boolean isRevisionMismatch(HashMap<String, String> repoIdsAndRevs, Map.Entry<String, String> serverIdRev) {
+        return !repoIdsAndRevs.get(serverIdRev.getKey()).equals(serverIdRev.getValue());
+    }
+
+    private boolean isServerIdExistingInRepository(HashMap<String, String> repoIdsAndRevs, Map.Entry<String, String> serverIdRev) {
+        return repoIdsAndRevs.get(serverIdRev.getKey()) != null;
     }
 }

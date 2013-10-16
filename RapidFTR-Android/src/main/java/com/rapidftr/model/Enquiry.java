@@ -6,10 +6,8 @@ import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import static com.rapidftr.database.Database.EnquiryTableColumn.*;
+import static com.rapidftr.database.Database.EnquiryTableColumn.criteria;
+import static com.rapidftr.database.Database.EnquiryTableColumn.enquirer_name;
 
 
 public class Enquiry extends BaseModel {
@@ -20,7 +18,7 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(String createdBy, String reporterName, JSONObject criteria) throws JSONException {
-        this.setOwner(createdBy);
+        this.setCreatedBy(createdBy);
         this.setEnquirerName(reporterName);
         this.setCriteria(criteria);
         this.setUniqueId(createUniqueId());
@@ -28,18 +26,21 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(Cursor cursor) throws JSONException {
-        int index = cursor.getColumnIndex(Database.EnquiryTableColumn.criteria.getColumnName());
-        buildFromContent(cursor.getString(index));
+        for(Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
+            final int idColumnIndex = cursor.getColumnIndex(column.getColumnName());
+            if(idColumnIndex < 0) {
+                throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
+            }
+            if(column.getPrimitiveType().equals(Boolean.class)) {
+                this.put(column.getColumnName(), cursor.getInt(idColumnIndex) == 1);
+            } else {
+                this.put(column.getColumnName(), cursor.getString(idColumnIndex));
+            }
+        }
     }
 
-    private void buildFromContent(String string) throws JSONException {
-        JSONObject contents = new JSONObject(string);
-        Iterator<String> keys = contents.keys();
-        String key;
-        while (keys.hasNext()){
-            key = keys.next();
-            this.put(key, contents.get(key));
-        }
+    public Enquiry(String enquiryJSON) throws JSONException {
+        super(enquiryJSON);
     }
 
     public void setEnquirerName(String reporterName) throws JSONException {
@@ -49,14 +50,6 @@ public class Enquiry extends BaseModel {
 
     public void setCriteria(JSONObject criteria) throws JSONException {
         this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
-    }
-
-    public String getOwner() throws JSONException {
-        return getString(owner.getColumnName());
-    }
-    
-    public ArrayList<String> getPotentialMatches() throws JSONException {
-        return new ArrayList<String>(); //To be implemented
     }
 
     private void setColumn(Database.EnquiryTableColumn column, String value) throws JSONException {

@@ -58,7 +58,7 @@ public enum Database {
         name("name"),
         content("child_json"),
         owner("child_owner"),
-        synced("synced"),
+        synced("synced", true, true),
         syncLog("syncLog"),
 
         internal_id("_id", true, false),
@@ -103,43 +103,26 @@ public enum Database {
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum EnquiryTableColumn {
         id("id"),
+        unique_identifier("unique_identifier"),
         enquirer_name("enquirer_name"),
         criteria("criteria"),
-        owner("created_by"),
-        created_at("created_at", true, true),
-        last_updated_at("last_updated_at", true, false),
+        created_by("created_by"),
+        created_at("created_at"),
+        last_updated_at("last_updated_at"),
+        synced("synced", Boolean.class),
 
-        created_organisation("created_organisation", true, false),
-        internal_id("_id", true, false),
-        internal_rev("_rev", true, false),
-        unique_identifier("unique_identifier", true, false),
-        potential_matches("potential_matches", false, true);
+        created_organisation("created_organisation"),
+        internal_id("_id"),
+        internal_rev("_rev");
 
         private @Getter final String columnName;
-        private final boolean isInternal;
-        private final boolean isSystem;
+        private @Getter final Class<?> primitiveType;
+
 
         EnquiryTableColumn(String columnName) {
-            this(columnName, false, false);
+            this(columnName, String.class);
         }
 
-        public static Iterable<EnquiryTableColumn> internalFields() {
-            List<EnquiryTableColumn> allColumns = Arrays.asList(EnquiryTableColumn.values());
-            return filter(allColumns, new Predicate<EnquiryTableColumn>() {
-                public boolean apply(EnquiryTableColumn column) {
-                    return column.isInternal;
-                }
-            });
-        }
-
-        public static Iterable<EnquiryTableColumn> systemFields() {
-            List<EnquiryTableColumn> allColumns = Arrays.asList(EnquiryTableColumn.values());
-            return filter(allColumns, new Predicate<EnquiryTableColumn>() {
-                public boolean apply(EnquiryTableColumn column) {
-                    return column.isSystem;
-                }
-            });
-        }
     }
 
 }
