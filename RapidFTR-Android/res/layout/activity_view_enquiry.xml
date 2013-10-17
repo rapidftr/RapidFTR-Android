@@ -36,13 +36,6 @@
                 android:background="@drawable/savebtn"
                 style="@style/save_btn"/>
 
-        <ListView
-                android:layout_below="@id/nav_bar"
-                android:id="@+id/child_list"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-        </ListView>
-
     </LinearLayout>
 
     <LinearLayout android:layout_width="fill_parent"

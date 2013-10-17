@@ -54,7 +54,7 @@ public class EnquiryHttpDaoTest {
     }
 
     @Test
-    public void getIdsOfUpdated_shouldRetrieveJsonAndReturnListOfUrls() throws Exception {
+    public void getIdsOfUpdatedShouldRetrieveJsonAndReturnListOfUrls() throws Exception {
         EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao( apiRoot);
 
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
@@ -67,11 +67,4 @@ public class EnquiryHttpDaoTest {
         assertThat(idsOfUpdated.get(0), is("blah.com/1"));
         assertThat(idsOfUpdated.get(1), is("blah.com/2"));
     }
-
-
-    
-
-
-
-
 }

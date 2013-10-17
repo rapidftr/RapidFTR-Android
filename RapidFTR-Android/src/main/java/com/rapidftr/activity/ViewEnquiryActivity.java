@@ -2,6 +2,7 @@ package com.rapidftr.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import com.rapidftr.R;
 import org.json.JSONException;
@@ -12,7 +13,9 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity{
 
     @Override
     protected void initializeView() {
+        Log.e("Check","Setting the content view" );
         setContentView(R.layout.activity_view_enquiry);
+        Log.e("Check", "Setting the content view DONE");
     }
 
     @Override

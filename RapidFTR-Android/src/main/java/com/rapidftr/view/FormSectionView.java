@@ -10,14 +10,13 @@ import com.rapidftr.R;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.BaseModel;
-import com.rapidftr.model.Child;
 import com.rapidftr.view.fields.BaseView;
 
 public class FormSectionView extends ScrollView {
 
     private FormSection formSection;
 
-    private BaseModel child;
+    private BaseModel model;
 
     public FormSectionView(Context context) {
         super(context);
@@ -43,12 +42,12 @@ public class FormSectionView extends ScrollView {
         return (LinearLayout) findViewById(R.id.container);
     }
 
-    public void initialize(FormSection formSection, BaseModel child) {
+    public void initialize(FormSection formSection, BaseModel model) {
         if (this.formSection != null)
             throw new IllegalArgumentException("Form section is already initialized!");
 
         this.formSection = formSection;
-        this.child = child;
+        this.model = model;
         this.initialize();
     }
 
@@ -71,7 +70,7 @@ public class FormSectionView extends ScrollView {
 
         if (resourceId > 0) {
             BaseView fieldView = (BaseView) LayoutInflater.from(getContext()).inflate(resourceId, null);
-            fieldView.initialize(field, child);
+            fieldView.initialize(field, model);
 
             return fieldView;
         }

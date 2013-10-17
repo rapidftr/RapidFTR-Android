@@ -2,15 +2,16 @@ package com.rapidftr.model;
 
 import android.database.Cursor;
 import com.rapidftr.database.Database;
+import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import static com.rapidftr.database.Database.EnquiryTableColumn.criteria;
-import static com.rapidftr.database.Database.EnquiryTableColumn.enquirer_name;
-
+import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 
 public class Enquiry extends BaseModel {
 
@@ -45,17 +46,25 @@ public class Enquiry extends BaseModel {
         super(enquiryJSON);
     }
 
-    public void setEnquirerName(String reporterName) throws JSONException {
-        this.setColumn(enquirer_name, reporterName);
+    public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
+        try{
+            JSONArray matchingChildIdArray = new JSONArray(matchingChildIds());
+            List<String> matchingChildList = getListOfMatchingChildsFrom(matchingChildIdArray);
+
+            return childRepository.getChildrenByIds(new ArrayList<String>(matchingChildList));
+        }catch (JSONException exception){
+            return new ArrayList<Child>();
+        }
     }
 
 
-    public void setCriteria(JSONObject criteria) throws JSONException {
-        this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
-    }
+    private List<String> getListOfMatchingChildsFrom(JSONArray matchingChildIdArray) throws JSONException {
+        List<String> matchingChildList = new ArrayList<String>();
 
-    public ArrayList<String> getPotentialMatches() throws JSONException {
-        return new ArrayList<String>(); //To be implemented
+        for(int i=0; i<matchingChildIdArray.length(); i++){
+            matchingChildList.add((String) matchingChildIdArray.get(i));
+        }
+        return matchingChildList;
     }
 
     private void setColumn(Database.EnquiryTableColumn column, String value) throws JSONException {
@@ -66,8 +75,16 @@ public class Enquiry extends BaseModel {
         return getString(enquirer_name.getColumnName());
     }
 
+    public void setEnquirerName(String reporterName) throws JSONException {
+        this.setColumn(enquirer_name, reporterName);
+    }
+
     public JSONObject getCriteria() throws JSONException {
         return new JSONObject(getString(criteria.getColumnName()));
+    }
+
+    public void setCriteria(JSONObject criteria) throws JSONException {
+        this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
     }
 
     public boolean isValid() {
@@ -78,5 +95,11 @@ public class Enquiry extends BaseModel {
             return false;
         }
         return null != enquirerName && !"".equals(enquirerName);
+    }
+
+    public String matchingChildIds() throws JSONException {
+        String ids = getString(potential_matches.getColumnName());
+        if(ids == null) throw new JSONException("No key " + potential_matches.getColumnName());
+        return ids;
     }
 }

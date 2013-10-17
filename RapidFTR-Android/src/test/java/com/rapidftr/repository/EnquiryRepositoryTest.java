@@ -73,7 +73,7 @@ public class EnquiryRepositoryTest {
 
     @Ignore // get(i) Doesn't need to be implemented for sync all story
     @Test
-    public void get_shouldReturnEnquiryForId() throws Exception {
+    public void getShouldReturnEnquiryForId() throws Exception {
         Enquiry enquiry1 = new Enquiry(user, "REPORTER NAME", new JSONObject("{age:14,name:Subhas}"));
         String enquiryId = enquiry1.getUniqueId();
 
@@ -153,5 +153,4 @@ public class EnquiryRepositoryTest {
         assertThat(retrieved.getString(Database.ChildTableColumn.internal_id.getColumnName()), is("new internal id"));
         assertThat(retrieved.getString(Database.ChildTableColumn.internal_rev.getColumnName()), is("new internal revision"));
     }
-
 }
