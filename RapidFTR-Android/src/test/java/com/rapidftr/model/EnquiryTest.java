@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
+import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -95,19 +96,12 @@ public class EnquiryTest {
         assertTrue(enquiry.getPotentialMatches(childRepository).contains(child2));
     }
 
+    //need to rewrite this test
     @Test
     public void enquiryShouldGetMatchingIds() throws JSONException {
-        String enquiryJSON = "{\"createdBy\":\"user\"," +
-                "\"enquirer_name\":\"faris\"," +
-                "\"criteria\":{\"age\":14,\"name\":\"Subhas\"}, " +
-                "\"potential_matches\":\"[\\\"id1\\\", \\\"id2\\\"]\"}";
-
-        doReturn(2).when(cursor).getColumnIndex(Database.EnquiryTableColumn.criteria.getColumnName());
-        doReturn(enquiryJSON).when(cursor).getString(2);
-
+        mockCursor(cursor);
         Enquiry enquiry = new Enquiry(cursor);
-
-        assertEquals("[\"id1\", \"id2\"]",enquiry.matchingChildIds());
+        assertEquals("potential_matches_value", enquiry.matchingChildIds());
     }
 
     @Ignore //
@@ -132,16 +126,20 @@ public class EnquiryTest {
     @Test
     public void createEnquiryFromCursor_shouldPopulateEnquiryUsingAllColumns() throws Exception {
         Cursor cursor = mock(Cursor.class);
-        for(Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
-            when(cursor.getColumnIndex(column.getColumnName())).thenReturn(column.ordinal());
-            when(cursor.getString(column.ordinal())).thenReturn(column.getColumnName() + "_value");
-        }
+        mockCursor(cursor);
 
         Enquiry enquiry = new Enquiry(cursor);
 
         assertThat(enquiry.getUniqueId(), is("unique_identifier_value"));
         assertThat(enquiry.getEnquirerName(), is("enquirer_name_value"));
         assertThat(enquiry.getCreatedBy(), is("created_by_value"));
+    }
+
+    private void mockCursor(Cursor cursor) {
+        for(Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
+            when(cursor.getColumnIndex(column.getColumnName())).thenReturn(column.ordinal());
+            when(cursor.getString(column.ordinal())).thenReturn(column.getColumnName() + "_value");
+        }
     }
 
 
