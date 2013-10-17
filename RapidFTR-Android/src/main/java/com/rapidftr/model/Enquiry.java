@@ -6,6 +6,8 @@ import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import static com.rapidftr.database.Database.EnquiryTableColumn.criteria;
 import static com.rapidftr.database.Database.EnquiryTableColumn.enquirer_name;
 
@@ -50,6 +52,10 @@ public class Enquiry extends BaseModel {
 
     public void setCriteria(JSONObject criteria) throws JSONException {
         this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
+    }
+
+    public ArrayList<String> getPotentialMatches() throws JSONException {
+        return new ArrayList<String>(); //To be implemented
     }
 
     private void setColumn(Database.EnquiryTableColumn column, String value) throws JSONException {

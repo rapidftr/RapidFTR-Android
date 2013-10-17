@@ -27,7 +27,7 @@ public class EnquiryHttpDaoTest {
     private String apiRoot = "root.api.com";
 
     @Test
-    public void getEnquiry_shouldRetrieveEnquiryFromApi() throws Exception {
+    public void getEnquiryShouldRetrieveEnquiryFromApi() throws Exception {
         EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao(apiRoot);
         String url = "blah.com/123";
 
@@ -39,7 +39,7 @@ public class EnquiryHttpDaoTest {
     }
 
     @Test
-    public void postEnquiry_shouldPostEnquiryToApi() throws Exception {
+    public void postEnquiryShouldPostEnquiryToApi() throws Exception {
         final String id = "123";
         final String json = "some json";
         EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao( apiRoot);

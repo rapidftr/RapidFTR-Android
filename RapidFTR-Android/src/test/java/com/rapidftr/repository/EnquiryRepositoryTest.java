@@ -83,7 +83,7 @@ public class EnquiryRepositoryTest {
     }
 
     @Test
-    public void toBeSynced_shouldReturnAListOfEnquiriesWithSyncedStatusFalse() throws Exception {
+    public void toBeSyncedShouldReturnAListOfEnquiriesWithSyncedStatusFalse() throws Exception {
         Enquiry enquiry1 = new Enquiry(user, "REPORTER NAME", new JSONObject("{age:14,name:Subhas}"));
         enquiry1.setSynced(false);
         enquiryRepository.createOrUpdate(enquiry1);
@@ -99,7 +99,7 @@ public class EnquiryRepositoryTest {
     }
 
     @Test
-    public void exists_shouldReturnTrueGivenAnIdOfAnEnquiryThatAlreadyExists() throws Exception {
+    public void existsShouldReturnTrueGivenAnIdOfAnEnquiryThatAlreadyExists() throws Exception {
         Enquiry enquiry1 = new Enquiry(user, "REPORTER NAME", new JSONObject("{age:14,name:Subhas}"));
         enquiryRepository.createOrUpdate(enquiry1);
 
@@ -131,7 +131,7 @@ public class EnquiryRepositoryTest {
     }
 
     @Test
-    public void update_shouldUpdateTheFieldsOfAnEnquiry() throws Exception {
+    public void updateShouldUpdateTheFieldsOfAnEnquiry() throws Exception {
         Enquiry enquiry1 = new Enquiry(user, "REPORTER NAME", new JSONObject("{age:14,name:Subhas}"));
         enquiryRepository.createOrUpdate(enquiry1);
 
