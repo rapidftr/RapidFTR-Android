@@ -6,6 +6,8 @@ import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.database.Database;
+import com.rapidftr.repository.EnquiryRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -19,6 +21,10 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(CustomTestRunner.class)
 public class EnquiryTest {
@@ -30,6 +36,7 @@ public class EnquiryTest {
     private DatabaseSession session;
     private ChildRepository childRepository;
     @Mock private Cursor cursor;
+    private EnquiryRepository enquiryRepository;
 
     @Before
     public void setUp() throws JSONException {
@@ -44,6 +51,9 @@ public class EnquiryTest {
     @Test
     public void shouldAutoGenerateAUniqueID() throws JSONException {
         Enquiry enquiry = new Enquiry();
+        assertNotNull(enquiry.getUniqueId());
+
+        enquiry = new Enquiry("createdBy", "reporterName", new JSONObject("{}"));
         assertNotNull(enquiry.getUniqueId());
     }
 
@@ -100,9 +110,39 @@ public class EnquiryTest {
         assertEquals("[\"id1\", \"id2\"]",enquiry.matchingChildIds());
     }
 
+    @Ignore //
+    @Test
+    public void shouldSaveEnquiryFromServer() throws JSONException {
+        String enquiryJSON = "{\"createdBy\":\"user\"," +
+                "\"enquirer_name\":\"faris\"," +
+                "\"criteria\":{\"age\":14,\"name\":\"Subhas\"}, " +
+                "\"potential_matches\":\"[\\\"id1\\\", \\\"id2\\\"]\"}";
+
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        enquiryRepository = new EnquiryRepository("user1", session);
+        enquiryRepository.createOrUpdate(enquiry);
+    }
+
     @Test(expected=JSONException.class)
     public void newEnquiryShouldNotHaveMatchingIds() throws JSONException {
         Enquiry enquiry = new Enquiry(createdBy, reporterName, criteria);
         enquiry.matchingChildIds();
     }
+
+    @Test
+    public void createEnquiryFromCursor_shouldPopulateEnquiryUsingAllColumns() throws Exception {
+        Cursor cursor = mock(Cursor.class);
+        for(Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
+            when(cursor.getColumnIndex(column.getColumnName())).thenReturn(column.ordinal());
+            when(cursor.getString(column.ordinal())).thenReturn(column.getColumnName() + "_value");
+        }
+
+        Enquiry enquiry = new Enquiry(cursor);
+
+        assertThat(enquiry.getUniqueId(), is("unique_identifier_value"));
+        assertThat(enquiry.getEnquirerName(), is("enquirer_name_value"));
+        assertThat(enquiry.getCreatedBy(), is("created_by_value"));
+    }
+
+
 }

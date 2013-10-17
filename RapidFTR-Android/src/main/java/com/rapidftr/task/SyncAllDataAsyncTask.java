@@ -2,40 +2,38 @@ package com.rapidftr.task;
 
 import com.google.inject.Inject;
 import com.rapidftr.R;
-import com.rapidftr.model.Child;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.repository.Repository;
 import com.rapidftr.service.FormService;
+import com.rapidftr.service.SyncService;
 import org.apache.http.HttpException;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
 
-public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
+public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAsyncTask<T> {
 
     @Inject
-    public SyncAllDataAsyncTask(FormService formService, ChildService childService, ChildRepository childRepository, User user) {
-        super(formService, childService, childRepository, user);
+    public SyncAllDataAsyncTask(FormService formService, SyncService<T> recordService, Repository<T> repository, User user) {
+        super(formService, recordService, repository, user);
     }
 
     protected void sync() throws JSONException, IOException, HttpException {
-        ArrayList<String> idsToDownload = getAllIdsForDownload();
-        List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
-        setProgressBarParameters(idsToDownload, childrenToSyncWithServer);
+        List<String> idsToDownload = recordService.getIdsToDownload();
+        List<T> recordsToSyncWithServer = repository.toBeSynced();
+        setProgressBarParameters(idsToDownload, recordsToSyncWithServer);
 
         setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
         getFormSections();
-        sendChildrenToServer(childrenToSyncWithServer);
-        int startProgressForDownloadingChildren = formSectionProgress + childrenToSyncWithServer.size();
-        saveIncomingChildren(idsToDownload, startProgressForDownloadingChildren);
+        sendRecordsToServer(recordsToSyncWithServer);
+        int startProgressForDownloadingRecords = formSectionProgress + recordsToSyncWithServer.size();
+        saveIncomingRecords(idsToDownload, startProgressForDownloadingRecords);
 
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
-
-    }
+     }
 
 }

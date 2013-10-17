@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ViewEnquiryActivity extends BaseEnquiryActivity {
+public class ViewEnquiryActivity extends BaseEnquiryActivity{
 
     @Override
     protected void initializeView() {
@@ -45,5 +45,4 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
         editEnquiryIntent.putExtra("id", enquiry.getUniqueId());
         startActivity(editEnquiryIntent);
     }
-
 }
