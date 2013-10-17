@@ -1,5 +1,21 @@
 [{
   "name": {
+  "en": "Potential matches"
+  },
+  "help_text": {
+  "en": ""
+  },
+  "description": {
+  "en": ""
+  },
+  "unique_id": "e98c765c",
+  "visible": "true",
+  "order": 1,
+  "editable": false,
+  "base_language": "en"
+  },
+  {
+  "name": {
     "en": "Enquirer Details"
   },
   "help_text": {
@@ -10,7 +26,7 @@
   },
   "unique_id": "5aaeeac6",
   "visible": "true",
-  "order": 1,
+  "order": 2,
   "fields": [{
     "name": "enquirer_name",
     "visible": "true",
@@ -179,7 +195,7 @@
   },
   "unique_id": "6fd43e0e",
   "visible": "true",
-  "order": 2,
+  "order": 3,
   "fields": [{
     "name": "e078c116",
     "visible": "true",
@@ -318,7 +334,7 @@
   },
   "unique_id": "3b92cdc6",
   "visible": "true",
-  "order": 3,
+  "order": 4,
   "fields": [{
     "name": "42f16c80",
     "visible": "true",
@@ -445,7 +461,7 @@
   },
   "unique_id": "c5b7c470",
   "visible": "true",
-  "order": 4,
+  "order": 5,
   "fields": [{
     "name": "cc937e6a",
     "visible": "true",
@@ -731,7 +747,7 @@
   },
   "unique_id": "988771d4",
   "visible": "true",
-  "order": 5,
+  "order": 6,
   "fields": [{
     "name": "9f1a1a9c",
     "visible": "true",
@@ -792,7 +808,7 @@
   },
   "unique_id": "e803e21a",
   "visible": "true",
-  "order": 6,
+  "order": 7,
   "fields": [{
     "name": "fa2f96fa",
     "visible": "true",
@@ -811,21 +827,5 @@
   }],
   "editable": true,
   "base_language": "en"
-},
- {
- "name": {
- "en": "Potential matches"
- },
- "help_text": {
- "en": ""
- },
- "description": {
- "en": ""
- },
- "unique_id": "e98c765c",
- "visible": "true",
- "order": 7,
- "editable": false,
- "base_language": "en"
- }
+}
 ]
