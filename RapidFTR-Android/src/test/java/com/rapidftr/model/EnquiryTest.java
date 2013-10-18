@@ -84,24 +84,18 @@ public class EnquiryTest {
 
     @Test
     public void enquiryShouldGetPotentialMatches() throws JSONException {
-        
-//        String enquiryJSON = "{\"createdBy\":\"user\"," +
-//                "\"enquirer_name\":\"faris\"," +
-//                "\"criteria\":{\"age\":14,\"name\":\"Subhas\"}, " +
-//                "\"potential_matches\":\"[\\\"id1\\\", \\\"id2\\\"]\"}";
-//
-//        doReturn(enquiryJSON).when(cursor).getString(2);
-//        doReturn(2).when(cursor).getColumnIndex(Database.EnquiryTableColumn.criteria.getColumnName());
+        String enquiryJSON = "{\"createdBy\":\"user\"," +
+                "\"enquirer_name\":\"faris\"," +
+                "\"criteria\":{\"age\":14,\"name\":\"Subhas\"}, " +
+                "\"potential_matches\":\"[\\\"id1\\\", \\\"id2\\\"]\"}";
 
-        Cursor cursor = mockedCursor();
-        
         Child child1 = new Child("id1", "owner1", "{ 'test1' : 'value1' }");
         Child child2 = new Child("id2", "owner1", "{ 'test1' : 'value1' }");
 
         childRepository.createOrUpdate(child1);
         childRepository.createOrUpdate(child2);
 
-        Enquiry enquiry = new Enquiry(cursor);
+        Enquiry enquiry = new Enquiry(enquiryJSON);
 
         assertEquals(2, enquiry.getPotentialMatches(childRepository).size());
         assertTrue(enquiry.getPotentialMatches(childRepository).contains(child1));
