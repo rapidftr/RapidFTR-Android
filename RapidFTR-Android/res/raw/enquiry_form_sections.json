@@ -811,4 +811,38 @@
   }],
   "editable": true,
   "base_language": "en"
+},
+{
+"name": {
+"en": "Photo"
+},
+"help_text": {
+"en": ""
+},
+"description": {
+"en": "Photo of the enquirer"
+},
+"unique_id": "1e1198ae",
+"visible": "true",
+"order": 7,
+"fields": [
+{
+"name": "current_photo_key",
+"visible": "true",
+"type": "photo_upload_box",
+"highlight_information": {
+"highlighted": false
+},
+"editable": true,
+"display_name": {
+"en": "Photo"
+},
+"help_text": {
+"en": ""
+},
+"base_language": "en"
+}
+],
+"editable": true,
+"base_language": "en"
 }]

@@ -1,15 +1,13 @@
 package com.rapidftr.service;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.AudioCaptureHelper;
-import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.RapidFtrDateTime;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
@@ -23,16 +21,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.SyncFailedException;
-import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
-import static com.rapidftr.view.fields.PhotoUploadBox.PHOTO_KEYS;
 import static java.util.Arrays.asList;
 
-public class ChildService {
+public class ChildService extends MediaFilesSyncService {
 
     private RapidFtrApplication context;
     private ChildRepository repository;
@@ -98,16 +94,7 @@ public class ChildService {
     }
 
     private void addMultiMediaFilesToTheRequest(Child child) throws JSONException {
-        JSONArray photoKeys = child.optJSONArray(PHOTO_KEYS);
-        JSONArray photoKeysToAdd = new JSONArray();
-        if(photoKeys != null){
-            for(int i = 0; i< photoKeys.length(); i++){
-                if(!photoKeys.optString(i).startsWith("photo-")){
-                    photoKeysToAdd.put(photoKeys.optString(i));
-                }
-            }
-            fluentRequest.param("photo_keys", photoKeysToAdd.toString());
-        }
+        fluentRequest.param("photo_keys", updatedPhotoKeys(child).toString());
         if (child.opt("recorded_audio") != null && !child.optString("recorded_audio").equals("")) {
             if (!getAudioKey(child).equals(child.optString("recorded_audio"))) {
                 fluentRequest.param("recorded_audio", child.optString("recorded_audio"));
@@ -137,37 +124,6 @@ public class ChildService {
         return child;
     }
 
-    public void setPhoto(Child child) throws IOException, JSONException {
-        PhotoCaptureHelper photoCaptureHelper = new PhotoCaptureHelper(context);
-
-        JSONArray photoKeys = child.optJSONArray("photo_keys");
-        if(photoKeys != null){
-            getPhotoFromServerIfNeeded(child, photoCaptureHelper, photoKeys);
-        }
-
-    }
-
-    private void getPhotoFromServerIfNeeded(Child child, PhotoCaptureHelper photoCaptureHelper, JSONArray photoKeys) throws JSONException, IOException {
-        for(int i = 0; i < photoKeys.length(); i++){
-            String photoKey = photoKeys.get(i).toString();
-            try {
-                if (!photoKey.equals("")) {
-                    photoCaptureHelper.getFile(photoKey, ".jpg");
-                }
-            }
-            catch (FileNotFoundException e) {
-                getPhotoFromServer(child, photoCaptureHelper, photoKey);
-            }
-        }
-    }
-
-    public void getPhotoFromServer(Child child, PhotoCaptureHelper photoCaptureHelper, String fileName) throws IOException {
-        HttpResponse httpResponse = getPhoto(child, fileName);
-        Bitmap bitmap = BitmapFactory.decodeStream(httpResponse.getEntity().getContent());
-        savePhoto(bitmap, photoCaptureHelper, fileName);
-    }
-
-
     public void setAudio(Child child) throws IOException, JSONException {
         AudioCaptureHelper audioCaptureHelper = new AudioCaptureHelper(context);
         String recordedAudio = child.optString("recorded_audio");
@@ -185,18 +141,8 @@ public class ChildService {
         audioCaptureHelper.saveAudio(child, response.getEntity().getContent());
     }
 
-    public void savePhoto(Bitmap bitmap, PhotoCaptureHelper photoCaptureHelper, String current_photo_key) throws IOException {
-        if (bitmap != null && !current_photo_key.equals("")) {
-            try {
-                photoCaptureHelper.saveThumbnail(bitmap, 0, current_photo_key);
-                photoCaptureHelper.savePhoto(bitmap, 0, current_photo_key);
-            } catch (GeneralSecurityException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    public HttpResponse getPhoto(Child child, String fileName) throws IOException {
+    @Override
+    public HttpResponse issueGetPhotoRequest(BaseModel child, String fileName) throws IOException {
         return fluentRequest
                 .path(String.format("/api/children/%s/photo/%s", child.optString("_id"), fileName))
                 .context(context)

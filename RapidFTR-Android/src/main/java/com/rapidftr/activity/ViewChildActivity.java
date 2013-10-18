@@ -57,13 +57,13 @@ public class ViewChildActivity extends BaseChildActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.child_menu, menu);
+        getMenuInflater().inflate(R.menu.sync_single_menu, menu);
         try {
             if (!child.isSynced() && child.getSyncLog() != null) {
                 menu.findItem(R.id.synchronize_log).setVisible(true);
             }
             if (!getCurrentUser().isVerified()) {
-                menu.findItem(R.id.synchronize_child).setVisible(false);
+                menu.findItem(R.id.sync_single).setVisible(false);
                 menu.getItem(4).setVisible(false);
             }
         } catch (JSONException e) {
@@ -78,7 +78,7 @@ public class ViewChildActivity extends BaseChildActivity {
             case R.id.change_password:
                 startActivity(new Intent(this, ChangePasswordActivity.class));
                 return true;
-            case R.id.synchronize_child:
+            case R.id.sync_single:
                 sync();
                 return true;
             case R.id.synchronize_log:

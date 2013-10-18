@@ -10,9 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.rapidftr.activity.CollectionActivity;
 import com.rapidftr.activity.RapidFtrActivity;
-import com.rapidftr.activity.ViewChildActivity;
 import com.rapidftr.model.BaseModel;
-import com.rapidftr.model.Child;
 import com.rapidftr.task.AssignThumbnailAsyncTask;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import org.json.JSONException;
@@ -40,14 +38,14 @@ public class BaseModelViewAdapter<T> extends ArrayAdapter<T> {
 
     }
 
-    protected void assignThumbnail(Child child, ImageView imageView) {
-        String current_photo_key = child.optString("current_photo_key");
+    protected void assignThumbnail(BaseModel model, ImageView imageView) {
+        String current_photo_key = model.optString("current_photo_key");
         if (cancelPotentialDownload(current_photo_key, imageView)) {
             AssignThumbnailAsyncTask task = new AssignThumbnailAsyncTask(imageView, photoCaptureHelper);
-                ThumbnailDrawable drawable = new ThumbnailDrawable(task);
-                imageView.setImageDrawable(drawable);
-                task.execute(current_photo_key);
-            }
+            ThumbnailDrawable drawable = new ThumbnailDrawable(task);
+            imageView.setImageDrawable(drawable);
+            task.execute(current_photo_key);
+        }
     }
 
     private boolean cancelPotentialDownload(String current_photo_key, ImageView imageView) {
@@ -68,7 +66,7 @@ public class BaseModelViewAdapter<T> extends ArrayAdapter<T> {
         if (imageView != null) {
             Drawable drawable = imageView.getDrawable();
             if (drawable instanceof ThumbnailDrawable) {
-                ThumbnailDrawable thumbnailDrawable = (ThumbnailDrawable)drawable;
+                ThumbnailDrawable thumbnailDrawable = (ThumbnailDrawable) drawable;
                 return thumbnailDrawable.getAssignThumbnailAsyncTask();
             }
         }

@@ -101,7 +101,7 @@ public class ChildServiceTest {
         String childDetails = String.format("{ '_id' : 'abcdef', 'name' : 'child1', 'test2' : 0, 'current_photo_key' : '1234ABC', 'photo_keys' : %s}", photoKeys);
         Child child = new Child("id1", "user1", childDetails);
 
-        doNothing().when(mockFluentRequest).addPhotoToMultipart(Matchers.any(MultipartEntity.class), Matchers.any(String.class));
+        doNothing().when(mockFluentRequest).addPhotoToMultipart(Matchers.any(MultipartEntity.class), Matchers.any(String.class), Matchers.any(String.class));
         doNothing().when(childService).savePhoto(Matchers.any(Bitmap.class), Matchers.any(PhotoCaptureHelper.class), Matchers.anyString());
         childService.sync(child, currentUser);
         verify(mockFluentRequest).param("photo_keys", new JSONArray(Arrays.asList("abcd123", "1234ABC")).toString());
@@ -205,7 +205,7 @@ public class ChildServiceTest {
         Child child = new Child("id1", "user1", "{ '_id' : '1234abcd' ,'current_photo_key' : 'image_file_name'}");
         getFakeHttpLayer().setDefaultHttpResponse(200, "image stream");
 
-        new ChildService(mockContext(), repository, mockFluentRequest).getPhoto(child, "image_file_name");
+        new ChildService(mockContext(), repository, mockFluentRequest).issueGetPhotoRequest(child, "image_file_name");
 
         verify(mockFluentRequest).path("/api/children/1234abcd/photo/image_file_name");
     }

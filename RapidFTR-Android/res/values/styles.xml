@@ -127,7 +127,7 @@
         <item name="android:paddingBottom">2dp</item>
     </style>
 
-    <style name="childphoto">
+    <style name="photoThumbnail">
         <item name="android:padding">1dp</item>
     </style>
 

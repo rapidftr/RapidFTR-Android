@@ -53,7 +53,7 @@
 
     <string name="synchronize_all">تزامن الكل</string>
     <string name="cancel_synchronize_all">إلغاء تزامن الكل</string>
-    <string name="synchronize_child">تزامن هذا السجل</string>
+    <string name="sync_single">تزامن هذا السجل</string>
     <string name="sync_progress">جاري التزامن&#8230;</string>
     <string name="sync_success">تم التزامن بنجاح</string>
     <string name="sync_failure">فشل التزامن</string>
