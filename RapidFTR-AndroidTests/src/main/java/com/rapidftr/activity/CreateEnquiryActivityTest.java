@@ -27,6 +27,7 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         addFormSection("Siblings Details", "1) Name of sibling or other child accompanying the child", "Relationship", "Date of birth", "Place of birth", "Current address", "Telephone", "2) Name of sibling or other child accompanying the child", "Relationship", "Date of birth", "Place of birth", "Current address", "Telephone", "3) Name of sibling or other child accompanying the child", "Relationship", "Date of birth", "Place of birth", "Current address", "Telephone");
         addFormSection("Separation History", "Date of separation", "Place of separation", "Circumstances of separation");
         addFormSection("Tracing Information", "Latest news received");
+        addFormSection("Photo");
     }
 
     private void addFormSection(String formSectionName, String... formSectionFields) {
@@ -72,7 +73,7 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         enquiryPage.verifyNewEnquiryFormPresence();
     }
 
-    public void estShouldEditAnEnquiry() throws JSONException {
+    public void testShouldEditAnEnquiry() throws JSONException {
         Enquiry enquiry = new Enquiry("CREATEDBY", "Enq2Reportername", new JSONObject("{enquirer_name:Enq2Enquirername}"));
         EnquiryRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(EnquiryRepository.class);
         List<String> updatedEnquirerDetails = asList("Nile");
