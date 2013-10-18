@@ -18,6 +18,7 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.Repository;
 import com.rapidftr.service.ChildService;
+import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.EnquirySyncService;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LogOutService;
@@ -51,6 +52,7 @@ public class ApplicationInjector extends AbstractModule {
         bind(LogOutService.class);
         bind(LoginService.class);
         bind(SyncChildTask.class);
+        bind(DeviceService.class);
     }
 
     @Provides @Named("USER_NAME")

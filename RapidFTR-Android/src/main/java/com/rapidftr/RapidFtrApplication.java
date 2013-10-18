@@ -158,5 +158,4 @@ public class RapidFtrApplication extends Application {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
     }
-
 }

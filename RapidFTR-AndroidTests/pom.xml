@@ -66,6 +66,16 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}/filtered-manifest/</targetPath>
+                <includes>
+                    <include>AndroidManifest.xml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -88,5 +98,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

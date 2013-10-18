@@ -12,6 +12,7 @@ import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
+import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.FormService;
 import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.Robolectric;
@@ -27,26 +28,19 @@ import org.mockito.Mock;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyObject;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class SyncAllDataAsyncTaskTest {
 
-    @Mock private FormService formService;
     @Mock private ChildService childService;
     @Mock private ChildRepository childRepository;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) private RapidFtrActivity rapidFtrActivity;
@@ -55,6 +49,11 @@ public class SyncAllDataAsyncTaskTest {
     @Mock private MenuItem syncAll;
     @Mock private MenuItem cancelSyncAll;
     @Mock private User currentUser;
+    @Mock private FormService formService;
+    @Mock private DeviceService deviceService;
+
+    private RapidFtrApplication application;
+
     private SyncAllDataAsyncTask syncTask;
 
     @Before
@@ -66,7 +65,9 @@ public class SyncAllDataAsyncTaskTest {
 
         given(rapidFtrActivity.getSystemService(Matchers.<String>any())).willReturn(notificationManager);
 
-        syncTask = new SyncAllDataAsyncTask<Child>(formService, childService, childRepository, currentUser);
+        application = spy(RapidFtrApplication.getApplicationInstance());
+
+        syncTask = new SyncAllDataAsyncTask(formService, childService, deviceService, childRepository, currentUser);
     }
 
     @Test
@@ -126,6 +127,23 @@ public class SyncAllDataAsyncTaskTest {
         verify(childService).getRecord(any(String.class));
         verify(childRepository, never()).createOrUpdate((Child) any());
         verify(childService, never()).setMedia((Child) any());
+    }
+
+    @Test
+    public void shouldNotGetIncomingChildrenFromServerIfBlacklisted() throws Exception {
+        syncTask.setContext(rapidFtrActivity);
+        Child child1 = mock(Child.class);
+        ArrayList<Child> childList = new ArrayList<Child>();
+        childList.add(child1);
+
+        given(childRepository.toBeSynced()).willReturn(childList);
+        given(deviceService.isBlacklisted()).willReturn(true);
+
+        syncTask.execute();
+
+        verify(childService).sync(child1, currentUser);
+        verify(childService, never()).getRecord(any(String.class));
+        verify(childService, never()).getIdsToDownload();
     }
 
     @Test
@@ -218,6 +236,33 @@ public class SyncAllDataAsyncTaskTest {
         verify(childService).getIdsToDownload();
         verify(childService).getRecord("qwerty0987");
         verify(childService).getRecord("abcd1234");
+    }
+
+    @Test
+    public void shouldWipeDeviceIfItIsBlacklisted() throws IOException, JSONException {
+        syncTask.setContext(rapidFtrActivity);
+        ArrayList<Child> childList = new ArrayList<Child>();
+
+        given(childRepository.toBeSynced()).willReturn(childList);
+        given(deviceService.isBlacklisted()).willReturn(true);
+        doNothing().when(deviceService).wipeData();
+
+        syncTask.execute();
+        verify(deviceService).wipeData();
+    }
+
+    @Test
+    public void shouldNotWipeDeviceIfChildRecordsArePending() throws JSONException, IOException {
+        syncTask.setContext(rapidFtrActivity);
+        ArrayList<Child> childList = new ArrayList<Child>();
+        Child child = mock(Child.class);
+        childList.add(child);
+        given(childRepository.toBeSynced()).willReturn(childList);
+        given(deviceService.isBlacklisted()).willReturn(true);
+
+        syncTask.execute();
+        verify(childRepository, times(2)).toBeSynced();
+        verify(deviceService, never()).wipeData();
     }
 
     private HashMap<String, String> createRepositoryIdRevMap() {
