@@ -168,7 +168,7 @@ public class PhotoCaptureHelper extends CaptureHelper {
         } catch (FileNotFoundException e) {
             return getDefaultThumbnail();
         } catch (Exception e) {
-            Log.e("Child Image", "Error while getting the Thumbnail", e);
+            Log.e("Image", "Error while getting the Thumbnail", e);
             throw new RuntimeException(e);
         }
     }
