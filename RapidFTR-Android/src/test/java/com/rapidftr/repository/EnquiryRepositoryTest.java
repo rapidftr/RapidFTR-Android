@@ -130,6 +130,19 @@ public class EnquiryRepositoryTest {
         assertThat(allIdsAndRevs.get(enquiry2CouchId), is(enquiry2CouchRev));
     }
 
+    @Ignore //
+    @Test
+    public void shouldSaveEnquiryFromServer() throws JSONException {
+        String enquiryJSON = "{\"createdBy\":\"user\"," +
+                "\"enquirer_name\":\"faris\"," +
+                "\"criteria\":{\"age\":14,\"name\":\"Subhas\"}, " +
+                "\"potential_matches\":\"[\\\"id1\\\", \\\"id2\\\"]\"}";
+
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        enquiryRepository = new EnquiryRepository("user1", session);
+        enquiryRepository.createOrUpdate(enquiry);
+    }
+
     @Test
     public void updateShouldUpdateTheFieldsOfAnEnquiry() throws Exception {
         Enquiry enquiry1 = new Enquiry(user, "REPORTER NAME", new JSONObject("{age:14,name:Subhas}"));

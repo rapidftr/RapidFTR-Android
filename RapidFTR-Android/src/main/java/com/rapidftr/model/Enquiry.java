@@ -30,14 +30,14 @@ public class Enquiry extends BaseModel {
 
     public Enquiry(Cursor cursor) throws JSONException {
         for(Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
-            final int idColumnIndex = cursor.getColumnIndex(column.getColumnName());
-            if(idColumnIndex < 0) {
+            final int columnIndex = cursor.getColumnIndex(column.getColumnName());
+            if(columnIndex < 0) {
                 throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
             }
             if(column.getPrimitiveType().equals(Boolean.class)) {
-                this.put(column.getColumnName(), cursor.getInt(idColumnIndex) == 1);
+                this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
             } else {
-                this.put(column.getColumnName(), cursor.getString(idColumnIndex));
+                this.put(column.getColumnName(), cursor.getString(columnIndex));
             }
         }
     }
