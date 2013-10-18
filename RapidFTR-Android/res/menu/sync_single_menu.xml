@@ -2,8 +2,8 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/synchronize_child"
-          android:title="@string/synchronize_child" />
+    <item android:id="@+id/sync_single"
+          android:title="@string/sync_single" />
     <item android:id="@+id/logout"
           android:title="@string/log_out" />
     <item android:id="@+id/synchronize_log"
