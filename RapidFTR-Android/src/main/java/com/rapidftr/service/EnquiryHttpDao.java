@@ -43,12 +43,13 @@ public class EnquiryHttpDao {
         return new Enquiry(enquiryJSON);
     }
 
-    public void updateEnquiry(Enquiry enquiry) throws JSONException, IOException {
+    public void updateEnquiry(Enquiry enquiry) throws JSONException, IOException, HttpException {
         http()
                 .context(RapidFtrApplication.getApplicationInstance())
                 .host(apiRoot + "/api/enquiries/" + enquiry.get("id"))
-                .param("enquiry", enquiry.values().toString())
-                .put();
+                .param("enquiry", enquiry.getJsonString())
+                .put()
+                .ensureSuccess();
     }
 
     public List<String> getIdsOfUpdated(DateTime lastUpdate) throws IOException, JSONException, HttpException {
