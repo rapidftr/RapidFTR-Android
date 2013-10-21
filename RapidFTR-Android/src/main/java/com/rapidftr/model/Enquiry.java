@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
@@ -22,7 +21,7 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(String createdBy, String reporterName, JSONObject criteria) throws JSONException {
-        this.setOwner(createdBy);
+        this.setCreatedBy(createdBy);
         this.setEnquirerName(reporterName);
         this.setCriteria(criteria);
         this.setUniqueId(createUniqueId());
@@ -30,22 +29,21 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(Cursor cursor) throws JSONException {
-        int index = cursor.getColumnIndex(Database.EnquiryTableColumn.criteria.getColumnName());
-        buildFromContent(cursor.getString(index));
-    }
-
-    private void buildFromContent(String string) throws JSONException {
-        JSONObject contents = new JSONObject(string);
-        Iterator<String> keys = contents.keys();
-        String key;
-        while (keys.hasNext()) {
-            key = keys.next();
-            this.put(key, contents.get(key));
+        for(Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
+            final int columnIndex = cursor.getColumnIndex(column.getColumnName());
+            if(columnIndex < 0) {
+                throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
+            }
+            if(column.getPrimitiveType().equals(Boolean.class)) {
+                this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
+            } else {
+                this.put(column.getColumnName(), cursor.getString(columnIndex));
+            }
         }
     }
 
-    public String getOwner() throws JSONException {
-        return getString(owner.getColumnName());
+    public Enquiry(String enquiryJSON) throws JSONException {
+        super(enquiryJSON);
     }
 
     public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
@@ -58,6 +56,7 @@ public class Enquiry extends BaseModel {
             return new ArrayList<Child>();
         }
     }
+
 
     private List<String> getListOfMatchingChildsFrom(JSONArray matchingChildIdArray) throws JSONException {
         List<String> matchingChildList = new ArrayList<String>();
@@ -100,7 +99,7 @@ public class Enquiry extends BaseModel {
 
     public String matchingChildIds() throws JSONException {
         String ids = getString(potential_matches.getColumnName());
-        if(ids == null) throw new JSONException("No key" + potential_matches.getColumnName());
+        if(ids == null) throw new JSONException("No key " + potential_matches.getColumnName());
         return ids;
     }
 }

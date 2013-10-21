@@ -38,6 +38,9 @@ public class RapidFtrApplication extends Application {
 	public static final String SERVER_URL_PREF = "SERVER_URL";
 	public static final String FORM_SECTIONS_PREF = "FORM_SECTION";
 
+    public static final String LAST_CHILD_SYNC = "LAST_CHILD_SYNC";
+    public static final String LAST_ENQUIRY_SYNC = "LAST_ENQUIRY_SYNC";
+
 	private static @Getter RapidFtrApplication applicationInstance;
 
     private @Getter final Injector injector;
@@ -155,5 +158,4 @@ public class RapidFtrApplication extends Application {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
     }
-
 }

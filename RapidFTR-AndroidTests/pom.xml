@@ -58,9 +58,24 @@
             <artifactId>commons-codec</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.0</version>
+        </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}/filtered-manifest/</targetPath>
+                <includes>
+                    <include>AndroidManifest.xml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -83,5 +98,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

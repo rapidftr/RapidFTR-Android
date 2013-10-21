@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.google.common.collect.Maps;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -13,6 +12,7 @@ import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildService;
+import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.FormService;
 import com.rapidftr.utils.http.FluentRequest;
 import com.xtremelabs.robolectric.Robolectric;
@@ -27,26 +27,20 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyObject;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class SyncAllDataAsyncTaskTest {
 
-    @Mock private FormService formService;
     @Mock private ChildService childService;
     @Mock private ChildRepository childRepository;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) private RapidFtrActivity rapidFtrActivity;
@@ -55,6 +49,11 @@ public class SyncAllDataAsyncTaskTest {
     @Mock private MenuItem syncAll;
     @Mock private MenuItem cancelSyncAll;
     @Mock private User currentUser;
+    @Mock private FormService formService;
+    @Mock private DeviceService deviceService;
+
+    private RapidFtrApplication application;
+
     private SyncAllDataAsyncTask syncTask;
 
     @Before
@@ -66,7 +65,9 @@ public class SyncAllDataAsyncTaskTest {
 
         given(rapidFtrActivity.getSystemService(Matchers.<String>any())).willReturn(notificationManager);
 
-        syncTask = new SyncAllDataAsyncTask(formService, childService, childRepository, currentUser);
+        application = spy(RapidFtrApplication.getApplicationInstance());
+
+        syncTask = new SyncAllDataAsyncTask(formService, childService, deviceService, childRepository, currentUser);
     }
 
     @Test
@@ -74,7 +75,6 @@ public class SyncAllDataAsyncTaskTest {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-        given(childService.getAllIdsAndRevs()).willReturn(Maps.<String, String>newHashMap());
         syncTask.setContext(rapidFtrActivity);
 
         syncTask.execute();
@@ -114,9 +114,8 @@ public class SyncAllDataAsyncTaskTest {
     public void shouldNotGetIncomingChildrenFromServerIfCancelled() throws Exception {
         syncTask.setContext(rapidFtrActivity);
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
-        HashMap<String, String> serverIDRevs = createServerIdRevMap();
 
-        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
+        given(childService.getIdsToDownload()).willReturn(Arrays.asList("asd97"));
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
 
         syncTask = spy(syncTask);
@@ -125,9 +124,26 @@ public class SyncAllDataAsyncTaskTest {
         syncTask.onPreExecute();
         syncTask.doInBackground();
 
-        verify(childService).getChild(any(String.class));
+        verify(childService).getRecord(any(String.class));
         verify(childRepository, never()).createOrUpdate((Child) any());
-        verify(childService, never()).setPhoto((Child) any());
+        verify(childService, never()).setMedia((Child) any());
+    }
+
+    @Test
+    public void shouldNotGetIncomingChildrenFromServerIfBlacklisted() throws Exception {
+        syncTask.setContext(rapidFtrActivity);
+        Child child1 = mock(Child.class);
+        ArrayList<Child> childList = new ArrayList<Child>();
+        childList.add(child1);
+
+        given(childRepository.toBeSynced()).willReturn(childList);
+        given(deviceService.isBlacklisted()).willReturn(true);
+
+        syncTask.execute();
+
+        verify(childService).sync(child1, currentUser);
+        verify(childService, never()).getRecord(any(String.class));
+        verify(childService, never()).getIdsToDownload();
     }
 
     @Test
@@ -135,15 +151,14 @@ public class SyncAllDataAsyncTaskTest {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
-        HashMap<String, String> serverIDRevs = createServerIdRevMap();
 
-        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
+        given(childService.getIdsToDownload()).willReturn(Arrays.asList("qwerty0987","abcd1234"));
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
         given(child1.getUniqueId()).willReturn("1234");
         given(child2.getUniqueId()).willReturn("5678");
 
-        given(childService.getChild("qwerty0987")).willReturn(child1);
-        given(childService.getChild("abcd1234")).willReturn(child2);
+        given(childService.getRecord("qwerty0987")).willReturn(child1);
+        given(childService.getRecord("abcd1234")).willReturn(child2);
 
         given(childRepository.exists("1234")).willReturn(true);
         given(childRepository.exists("5678")).willReturn(false);
@@ -151,7 +166,7 @@ public class SyncAllDataAsyncTaskTest {
         syncTask.setContext(rapidFtrActivity);
         syncTask.execute();
 
-        verify(childService).getChild("qwerty0987");
+        verify(childService).getRecord("qwerty0987");
         verify(childRepository).update(child1);
         verify(childRepository).createOrUpdate(child2);
     }
@@ -196,7 +211,7 @@ public class SyncAllDataAsyncTaskTest {
 	public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
 		Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
 		given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
-		syncTask.childService = new ChildService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
+		syncTask.recordService = new ChildService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
 		syncTask.setContext(rapidFtrActivity);
 		syncTask.execute();
 
@@ -207,13 +222,10 @@ public class SyncAllDataAsyncTaskTest {
     public void shouldCompareAndRetrieveIdsToBeDownloadedFromServer() throws JSONException, IOException, HttpException {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
-        HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
-        HashMap<String, String> serverIDRevs = createServerIdRevMap();
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-        given(childService.getAllIdsAndRevs()).willReturn(serverIDRevs);
-        given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
-        given(childService.getChild("qwerty0987")).willReturn(mock(Child.class));
-        given(childService.getChild("abcd1234")).willReturn(mock(Child.class));
+        given(childService.getIdsToDownload()).willReturn(Arrays.asList("qwerty0987", "abcd1234"));
+        given(childService.getRecord("qwerty0987")).willReturn(mock(Child.class));
+        given(childService.getRecord("abcd1234")).willReturn(mock(Child.class));
 
         syncTask.setContext(rapidFtrActivity);
         syncTask.execute();
@@ -221,18 +233,36 @@ public class SyncAllDataAsyncTaskTest {
         verify(formService).getPublishedFormSections();
         verify(childService).sync(child1, currentUser);
         verify(childService).sync(child2, currentUser);
-        verify(childService).getAllIdsAndRevs();
-        verify(childRepository).getAllIdsAndRevs();
-        verify(childService).getChild("qwerty0987");
-        verify(childService).getChild("abcd1234");
+        verify(childService).getIdsToDownload();
+        verify(childService).getRecord("qwerty0987");
+        verify(childService).getRecord("abcd1234");
     }
 
-    private HashMap<String, String> createServerIdRevMap() {
-        HashMap<String, String> serverIdRev = new HashMap<String, String>();
-        serverIdRev.put("qwerty0987", "4-mnbvc");
-        serverIdRev.put("abcd5678", "2-zxy765");
-        serverIdRev.put("abcd1234", "2-zxy321");
-        return serverIdRev;
+    @Test
+    public void shouldWipeDeviceIfItIsBlacklisted() throws IOException, JSONException {
+        syncTask.setContext(rapidFtrActivity);
+        ArrayList<Child> childList = new ArrayList<Child>();
+
+        given(childRepository.toBeSynced()).willReturn(childList);
+        given(deviceService.isBlacklisted()).willReturn(true);
+        doNothing().when(deviceService).wipeData();
+
+        syncTask.execute();
+        verify(deviceService).wipeData();
+    }
+
+    @Test
+    public void shouldNotWipeDeviceIfChildRecordsArePending() throws JSONException, IOException {
+        syncTask.setContext(rapidFtrActivity);
+        ArrayList<Child> childList = new ArrayList<Child>();
+        Child child = mock(Child.class);
+        childList.add(child);
+        given(childRepository.toBeSynced()).willReturn(childList);
+        given(deviceService.isBlacklisted()).willReturn(true);
+
+        syncTask.execute();
+        verify(childRepository, times(2)).toBeSynced();
+        verify(deviceService, never()).wipeData();
     }
 
     private HashMap<String, String> createRepositoryIdRevMap() {

@@ -5,6 +5,7 @@ import com.rapidftr.R;
 import com.rapidftr.activity.pages.LoginPage;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.test.utils.RapidFTRDatabase;
 import org.apache.http.params.HttpConnectionParams;
 import org.json.JSONException;
@@ -17,59 +18,59 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
-    ChildRepository repository;
+    ChildRepository childRepository;
+    EnquiryRepository enquiryRepository;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         loginPage.login();
         solo.waitForText("Login Successful");
-        repository = application.getInjector().getInstance(ChildRepository.class);
+        enquiryRepository = application.getInjector().getInstance(EnquiryRepository.class);
+        childRepository = application.getInjector().getInstance(ChildRepository.class);
         RapidFTRDatabase.deleteChildren();
     }
 
     @Override
     public void tearDown() throws Exception {
         try {
-            repository.close();
+            childRepository.close();
         } catch (Exception e) {
         } finally {
             super.tearDown();
         }
     }
 
-    //commenting for  sync fail
-    public void estRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
+    public void testRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
         String timeStamp = now().defaultFormat();
-        seedDataOnServer(new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'unique_identifier' : 'abcd1234', 'one' : '1', 'name' : 'jen' }", timeStamp)));
+        final Child childToStore = new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'one' : '1', 'name' : 'derek' }", timeStamp));
+        seedDataOnServer(childToStore);
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         solo.sleep(20000);
-//         waitUntilSyncCompletion();
-        Child child = repository.get("abcd1234");
+        waitUntilSyncCompletion();
+        Child child = childRepository.getChildrenByOwner().get(0);
         assertEquals("123456", child.optString("_id"));
         searchPage.navigateToSearchTab();
-        searchPage.searchChild(child.optString("unique_identifier"));
-        assertTrue(searchPage.isChildPresent(child.optString("unique_identifier"), "jen"));
+        searchPage.searchChild("derek");
+        searchPage.clickSearch();
+        assertTrue(searchPage.isChildPresent(child.getShortId(), "derek"));
     }
 
-    //commenting for  sync fail
-    public void estRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
+    public void testRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
 
         Child childToBeSynced = new Child(getAlphaNumeric(6), "admin", "{'name' : 'moses'}");
-        repository.createOrUpdate(childToBeSynced);
+        childRepository.createOrUpdate(childToBeSynced);
         assertFalse(childToBeSynced.isSynced());
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-//        waitUntilSyncCompletion();
         solo.sleep(30000); //Sleep for synchronization to happen.
-        assertTrue(repository.exists(childToBeSynced.getUniqueId()));
-        List<Child> children = repository.getMatchingChildren(childToBeSynced.getUniqueId());
+        assertTrue(childRepository.exists(childToBeSynced.getUniqueId()));
+        List<Child> children = childRepository.getMatchingChildren(childToBeSynced.getUniqueId());
         assertEquals(1, children.size());
         assertTrue(children.get(0).isSynced());
     }
 
 
-
-    public void estSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
+    public void testSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
         Child child1 = new Child("abc4321", "admin", "{'name' : 'moses'}");
         Child child2 = new Child("qwe4321", "admin", "{'name' : 'james'}");
         Child child3 = new Child("zxy4321", "admin", "{'name' : 'kenyata'}");
@@ -87,8 +88,8 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     public void seedDataToRepository(Child... children) throws JSONException {
         for (Child child : children) {
-            repository = application.getInjector().getInstance(ChildRepository.class);
-            repository.createOrUpdate(child);
+            childRepository = application.getInjector().getInstance(ChildRepository.class);
+            childRepository.createOrUpdate(child);
         }
     }
 
@@ -104,11 +105,11 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     public void waitUntilSyncCompletion() {
 
-        for(int i=0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             solo.sendKey(KeyEvent.KEYCODE_MENU);
-            if(solo.searchText("Synchronize All",false)){
+            if (solo.searchText("Synchronize All", false)) {
                 solo.sleep(10);
-            }else{
+            } else {
                 break;
             }
         }

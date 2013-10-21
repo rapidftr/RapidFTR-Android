@@ -176,7 +176,7 @@ public class FluentRequestTest {
         MultipartEntity multipartEntity = spy(new MultipartEntity());
         doReturn(new ByteArrayBody("content body".getBytes(), "abcd")).when(fluentRequest).attachPhoto("abcd");
         doReturn(new ByteArrayBody("content body".getBytes(), "1234")).when(fluentRequest).attachPhoto("1234");
-        fluentRequest.addPhotoToMultipart(multipartEntity, photoKeys);
+        fluentRequest.addPhotoToMultipart(multipartEntity, photoKeys, "child");
         verify(multipartEntity).addPart(eq("child[photo][0]"), Matchers.any(ContentBody.class));
         verify(multipartEntity).addPart(eq("child[photo][1]"), Matchers.any(ContentBody.class));
     }

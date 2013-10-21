@@ -73,7 +73,7 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         enquiryPage.verifyNewEnquiryFormPresence();
     }
 
-    public void estShouldEditAnEnquiry() throws JSONException {
+    public void testShouldEditAnEnquiry() throws JSONException {
         Enquiry enquiry = new Enquiry("CREATEDBY", "Enq2Reportername", new JSONObject("{enquirer_name:Enq2Enquirername}"));
         EnquiryRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(EnquiryRepository.class);
         List<String> updatedEnquirerDetails = asList("Nile");
