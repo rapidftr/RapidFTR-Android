@@ -85,5 +85,9 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         Assert.assertTrue(solo.waitForText(enquiry.getEnquirerName()));
         enquiryPage.enterEnquirerDetails(updatedEnquirerDetails);
         enquiryPage.save();
+
+        Assert.assertTrue(solo.waitForText("Enquiry Saved"));
+        enquiry = repository.get(enquiry.getUniqueId());
+        Assert.assertEquals(enquiry.getEnquirerName(), updatedEnquirerDetails.get(0));
     }
 }
