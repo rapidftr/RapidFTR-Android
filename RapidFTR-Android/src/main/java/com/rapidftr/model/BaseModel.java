@@ -14,13 +14,7 @@ import org.json.JSONObject;
 import java.util.List;
 import java.util.UUID;
 
-import static com.rapidftr.database.Database.ChildTableColumn.created_at;
-import static com.rapidftr.database.Database.ChildTableColumn.created_by;
-import static com.rapidftr.database.Database.ChildTableColumn.created_organisation;
-import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
-import static com.rapidftr.database.Database.ChildTableColumn.last_updated_at;
-import static com.rapidftr.database.Database.ChildTableColumn.name;
-import static com.rapidftr.database.Database.ChildTableColumn.unique_identifier;
+import static com.rapidftr.database.Database.ChildTableColumn.*;
 import static com.rapidftr.utils.JSONArrays.asJSONArray;
 import static com.rapidftr.utils.JSONArrays.asList;
 
