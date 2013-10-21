@@ -31,6 +31,5 @@ public class ViewEnquiryActivityTest extends BaseActivityIntegrationTest {
         enquiry = repository.get(enquiry.getUniqueId());
         viewEnquiryPage.navigateToPage(enquiry.getEnquirerName());
         viewEnquiryPage.validateData(enquiry);
-        assertTrue(solo.searchText("01/01/01"));
     }
 }
