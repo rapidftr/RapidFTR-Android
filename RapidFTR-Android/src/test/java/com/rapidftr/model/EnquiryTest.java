@@ -97,12 +97,15 @@ public class EnquiryTest {
         assertTrue(potentialMatches.contains(child2));
     }
 
-    //need to rewrite this test
     @Test
     public void enquiryShouldGetMatchingIds() throws JSONException {
-        Cursor cursor = mockedCursor();
+        Cursor cursor = mock(Cursor.class);
+        doReturn(potential_matches.ordinal()).when(cursor).getColumnIndex(potential_matches.getColumnName());
+        doReturn("[\"id1\", \"id2\"]").when(cursor).getString(potential_matches.ordinal());
+
         Enquiry enquiry = new Enquiry(cursor);
-        assertEquals("potential_matches_value", enquiry.matchingChildIds());
+
+        assertEquals("[\"id1\", \"id2\"]", enquiry.matchingChildIds());
     }
 
     @Test(expected=JSONException.class)
