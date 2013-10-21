@@ -3,6 +3,7 @@ package com.rapidftr.activity;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.EnquiryRepository;
+import junit.framework.Assert;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -72,7 +73,7 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         enquiryPage.verifyNewEnquiryFormPresence();
     }
 
-    public void estShouldEditAnEnquiry() throws JSONException {
+    public void testShouldEditAnEnquiry() throws JSONException {
         Enquiry enquiry = new Enquiry("CREATEDBY", "Enq2Reportername", new JSONObject("{enquirer_name:Enq2Enquirername}"));
         EnquiryRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(EnquiryRepository.class);
         List<String> updatedEnquirerDetails = asList("Nile");
@@ -81,7 +82,12 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         enquiry = repository.get(enquiry.getUniqueId());
 
         enquiryPage.navigateToEditPageOf(enquiry.getEnquirerName());
+        Assert.assertTrue(solo.waitForText(enquiry.getEnquirerName()));
         enquiryPage.enterEnquirerDetails(updatedEnquirerDetails);
         enquiryPage.save();
+
+        Assert.assertTrue(solo.waitForText("Enquiry Saved"));
+        enquiry = repository.get(enquiry.getUniqueId());
+        Assert.assertEquals(enquiry.getEnquirerName(), updatedEnquirerDetails.get(0));
     }
 }
