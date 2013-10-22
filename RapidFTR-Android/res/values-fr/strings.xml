@@ -53,7 +53,7 @@
 
     <string name="synchronize_all">Synchronize All</string>
     <string name="cancel_synchronize_all">Cancel Synchronize All</string>
-    <string name="synchronize_child">Synchronize This Record</string>
+    <string name="sync_single">Synchronize This Record</string>
     <string name="sync_progress">Sync in progress&#8230;</string>
     <string name="sync_success">Sync successful</string>
     <string name="sync_failure">Sync failed</string>

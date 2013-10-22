@@ -2,6 +2,7 @@ package com.rapidftr.repository;
 
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Child;
@@ -16,10 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.rapidftr.CustomTestRunner.createUser;
 import static com.rapidftr.model.Child.History.*;
@@ -30,6 +28,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.*;
@@ -72,7 +71,7 @@ public class ChildRepositoryTest {
     @Test
     public void shouldSaveInternalIdAndRevDuringChildCreation() throws JSONException {
         Child child1 = new ChildBuilder().withName("tester").withCreatedBy("user1").withUniqueId("abcd1234").build();
-        Child child2 = new ChildBuilder().withId("59cd40f39ab6aa791f73885e3bdd99f9").withName("tester").withUniqueId("1234abcd").withRev("4-b011946150a16b0d2c6271aed05e2abe").withCreatedBy("user1").build();
+        Child child2 = new ChildBuilder().withInternalId("59cd40f39ab6aa791f73885e3bdd99f9").withName("tester").withUniqueId("1234abcd").withRev("4-b011946150a16b0d2c6271aed05e2abe").withCreatedBy("user1").build();
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
@@ -152,6 +151,32 @@ public class ChildRepositoryTest {
 
         List<Child> children = repository.getMatchingChildren("hiLd");
         assertEquals(1, children.size());
+    }
+
+    @Test
+    public void shouldReturnChildRecordsGivenListOfIds() throws Exception{
+        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ] }");
+        Child child4 = new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
+
+        repository.createOrUpdate(child1);
+        repository.createOrUpdate(child2);
+        repository.createOrUpdate(child3);
+        repository.createOrUpdate(child4);
+        
+        ArrayList<String> listOfIds = new ArrayList<String>();
+        listOfIds.add("id1");
+        listOfIds.add("id2");
+        listOfIds.add("id3");
+        listOfIds.add("child1");
+
+        List<Child> children = repository.getChildrenByIds(listOfIds);
+        assertEquals(4, children.size());
+        assertTrue(children.contains(child1));
+        assertTrue(children.contains(child2));
+        assertTrue(children.contains(child3));
+        assertTrue(children.contains(child4));
     }
     
     @Test
@@ -234,11 +259,13 @@ public class ChildRepositoryTest {
     public void shouldUpdateAnExstingChild() throws JSONException {
         Child child = new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         repository.createOrUpdate(child);
+        child.put(Database.ChildTableColumn.owner.getColumnName(), "new owner");
         child.put("someNewField", "someNewValue");
 
         repository.update(child);
         Child updatedChild = repository.get("id1");
 
+        assertThat((String)updatedChild.get(Database.ChildTableColumn.owner.getColumnName()), is("new owner"));
         assertThat(updatedChild.get("someNewField").toString(), is("someNewValue"));
     }
 
@@ -335,8 +362,20 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldRetrieveAllIdsAndRevs() throws JSONException {
-        Child child1 = new ChildBuilder().withId("dfb2031ebfcbef39dccdb468f5200edc").withName("tester").withRev("5-1ed26a0e5072830a9064361a570684f6").withCreatedBy("user1").build();
-        Child child2 = new ChildBuilder().withId("59cd40f39ab6aa791f73885e3bdd99f9").withName("tester").withRev("4-b011946150a16b0d2c6271aed05e2abe").withCreatedBy("user1").build();
+        Child child1 = new ChildBuilder()
+                .withInternalId("dfb2031ebfcbef39dccdb468f5200edc")
+                .withName("tester")
+                .withRev("5-1ed26a0e5072830a9064361a570684f6")
+                .withCreatedBy("user1")
+                .withUniqueId("abc123")
+                .build();
+        Child child2 = new ChildBuilder()
+                .withInternalId("59cd40f39ab6aa791f73885e3bdd99f9")
+                .withName("tester")
+                .withRev("4-b011946150a16b0d2c6271aed05e2abe")
+                .withCreatedBy("user1")
+                .withUniqueId("bcs234")
+                .build();
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
@@ -362,29 +401,30 @@ public class ChildRepositoryTest {
         Child child = new Child();
 
         public ChildBuilder withName(String name) throws JSONException {
-            child.put("name", name);
+            child.put(Database.ChildTableColumn.name.getColumnName(), name);
             return this;
         }
 
-        public ChildBuilder withId(String id) throws JSONException {
-            child.put("_id", id);
+        public ChildBuilder withInternalId(String id) throws JSONException {
+            child.put(Database.ChildTableColumn.internal_id.getColumnName(), id);
             return this;
         }
 
         public ChildBuilder withRev(String rev) throws JSONException {
-            child.put("_rev", rev);
+            child.put(Database.ChildTableColumn.internal_rev.getColumnName(), rev);
             return this;
         }
 
         public ChildBuilder withCreatedBy(String createdBy) throws JSONException {
-            child.put("created_by", createdBy);
+            child.put(Database.ChildTableColumn.created_by.getColumnName(), createdBy);
             return this;
         }
 
         public ChildBuilder withUniqueId(String uniqueId) throws JSONException {
-            child.put("unique_identifier", uniqueId);
+            child.put(Database.ChildTableColumn.unique_identifier.getColumnName(), uniqueId);
             return this;
         }
+
         public Child build() {
             return child;
         }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.activity.ViewEnquiryActivity;
@@ -30,11 +31,14 @@ public class EnquiryViewAdapter extends BaseModelViewAdapter<Enquiry> {
         final Enquiry enquiry = objects.get(position);
         if (enquiry != null) {
             TextView nameView = (TextView) view.findViewById(R.id.row_enquiry_enquirer_name);
-            TextView dateView = (TextView) view.findViewById(R.id.row_enquiry_creation_date);
+            TextView idView = (TextView) view.findViewById(R.id.row_enquiry_id);
+            ImageView imageView = (ImageView) view.findViewById(R.id.row_enquiry_thumbnail);
 
             try {
-                setFields(enquiry.getCreatedAt(), dateView);
                 setFields(enquiry.getEnquirerName(), nameView);
+                setFields(enquiry.getShortId(), idView);
+                assignThumbnail(enquiry, imageView);
+
                 view.setOnClickListener(createClickListener(enquiry, ViewEnquiryActivity.class));
             } catch (JSONException e) {
                 throw new RuntimeException(e);

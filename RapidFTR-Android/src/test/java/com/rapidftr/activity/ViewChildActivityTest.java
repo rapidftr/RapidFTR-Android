@@ -6,8 +6,6 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
 import com.rapidftr.task.SyncChildTask;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
@@ -18,7 +16,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import java.io.IOException;
-import java.io.SyncFailedException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -72,7 +69,7 @@ public class ViewChildActivityTest {
     public void shouldCallSyncWhenMenuSelected() {
         doNothing().when(activity).sync();
         MenuItem item = mock(MenuItem.class);
-        given(item.getItemId()).willReturn(R.id.synchronize_child);
+        given(item.getItemId()).willReturn(R.id.sync_single);
         activity.onOptionsItemSelected(item);
         verify(activity).sync();
     }

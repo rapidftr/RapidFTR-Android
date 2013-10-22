@@ -7,31 +7,32 @@ import static com.rapidftr.activity.pages.LoginPage.LOGIN_URL;
 
 public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
 
-    public void testIncorrectLoginCredentials(){
+    public void testIncorrectLoginCredentials() {
         loginPage.login("wrongUsername", "wrongPassword", LOGIN_URL);
         assertTrue(solo.waitForText("Incorrect username or password"));
     }
 
-    public void testNoLoginDetailsErrorMessages(){
-          loginPage.login("", "", "");
-          assertTrue(loginPage.getUserNameRequiredMessage().equals("Username is required"));
-          assertTrue(loginPage.getPasswordRequiredMessage().equals("Password is required"));
+    public void testNoLoginDetailsErrorMessages() {
+        loginPage.login("", "", "");
+        assertTrue(loginPage.getUserNameRequiredMessage().equals("Username is required"));
+        assertTrue(loginPage.getPasswordRequiredMessage().equals("Password is required"));
     }
 
-     public void testUserAbleToSeeLastSuccessfulLoginUrl() throws Exception {
-         loginPage.login();
-         waitUntilTextDisappears("Login Successful");
-         loginPage.logout();
-         loginPage.changeURL();
-         assertTrue(loginPage.getUrl().equals(LOGIN_URL));
+    public void testUserAbleToSeeLastSuccessfulLoginUrl() throws Exception {
+        loginPage.login();
+        waitUntilTextDisappears("Login Successful");
+        loginPage.logout();
+        loginPage.changeURL();
+        assertTrue(loginPage.getUrl().equals(LOGIN_URL));
     }
 
     @Smoke  //ssad
     public void testCannotNavigateBackToLoginPageOnceLoggedIn() throws Exception {
         loginPage.login();
+//        solo.sleep(100);
         waitUntilTextDisappears("Login Successful");
         solo.goBack();
-	    assertTrue(solo.getCurrentActivity().isFinishing());
+        assertTrue(solo.getCurrentActivity().isFinishing());
     }
 
 
@@ -58,33 +59,32 @@ public class LoginActivityIntegrationTest extends BaseActivityIntegrationTest {
         loginPage.logout();
         loginPage.login();
         assertTrue(solo.waitForText("Incorrect username or password"));
-        loginPage.login("admin","rapidftr",LOGIN_URL);
+        loginPage.login("admin", "rapidftr", LOGIN_URL);
         solo.waitForText("Login Successful");
         solo.clickOnMenuItem(solo.getString(R.string.change_password));
-        changePasswordPage.changePassword("rapidftr","admin","admin");
+        changePasswordPage.changePassword("rapidftr", "admin", "admin");
         waitUntilTextDisappears("Password Changed Successfully");
     }
 
-    public void testPasswordResetErrors(){
+    public void testPasswordResetErrors() {
         loginPage.login();
         solo.waitForText("Login Successful");
         solo.clickOnMenuItem(solo.getString(R.string.change_password));
-        changePasswordPage.changePassword("","","");
+        changePasswordPage.changePassword("", "", "");
         assertTrue(changePasswordPage.getCurrentPasswordRequiredMessage().equals("All fields are mandatory"));
         assertTrue(changePasswordPage.getNewPasswordRequiredMessage().equals("All fields are mandatory"));
         assertTrue(changePasswordPage.getNewPasswordConfirmRequiredMessage().equals("All fields are mandatory"));
     }
 
-    public void testPasswordResetWrongCurrentPassword(){
+    public void testPasswordResetWrongCurrentPassword() {
         loginPage.login();
         solo.waitForText("Login Successful");
         solo.clickOnMenuItem(solo.getString(R.string.change_password));
-        changePasswordPage.changePassword("rapidfr","rapidftr","rapidftr");
+        changePasswordPage.changePassword("rapidfr", "rapidftr", "rapidftr");
         assertTrue(solo.waitForText("Could not change password. Try again"));
-        changePasswordPage.changePassword("rapidftr","rapidftr","rapitr");
+        changePasswordPage.changePassword("rapidftr", "rapidftr", "rapitr");
         assertTrue(changePasswordPage.getNewPasswordConfirmRequiredMessage().equals("Password mismatch"));
     }
-
 
 
 }

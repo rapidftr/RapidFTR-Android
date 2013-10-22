@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import com.google.common.base.Function;
-import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.rapidftr.RapidFtrApplication;
@@ -21,9 +20,15 @@ import java.util.Calendar;
 import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
-import static com.rapidftr.database.Database.ChildTableColumn.*;
-import static com.rapidftr.model.Child.History.*;
-import static com.rapidftr.utils.JSONArrays.asJSONArray;
+import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
+import static com.rapidftr.database.Database.ChildTableColumn.last_synced_at;
+import static com.rapidftr.database.Database.ChildTableColumn.syncLog;
+import static com.rapidftr.database.Database.ChildTableColumn.unique_identifier;
+import static com.rapidftr.model.Child.History.DATETIME;
+import static com.rapidftr.model.Child.History.FROM;
+import static com.rapidftr.model.Child.History.HISTORIES;
+import static com.rapidftr.model.Child.History.TO;
+import static com.rapidftr.model.Child.History.USER_ORGANISATION;
 import static com.rapidftr.utils.JSONArrays.asList;
 
 public class Child extends BaseModel {
@@ -31,19 +36,19 @@ public class Child extends BaseModel {
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     public Child() {
-      super();
+        super();
     }
 
     public Child(Parcel parcel) throws JSONException {
         this(parcel.readString());
     }
 
-    public Child(String id, String owner, String content) throws JSONException {
-      super(id, owner, content);
+    public Child(String id, String createdBy, String content) throws JSONException {
+        super(id, createdBy, content);
     }
 
-    public Child(String id, String owner, String content, boolean synced) throws JSONException {
-        super(id, owner, content);
+    public Child(String id, String createdBy, String content, boolean synced) throws JSONException {
+        super(id, createdBy, content);
         setSynced(synced);
     }
 

@@ -11,8 +11,7 @@ import static com.google.common.collect.Iterables.filter;
 
 public enum Database {
 
-    child("children"), enquiry("enquiry"),
-    ;
+    child("children"), enquiry("enquiry"),;
     private String tableName;
 
     Database(String tableName) {
@@ -40,7 +39,7 @@ public enum Database {
 
         public static BooleanColumn from(String booleanValue) {
             for (BooleanColumn booleanColumn : values()) {
-                if(booleanColumn.getColumnValue().equals(booleanValue)){
+                if (booleanColumn.getColumnValue().equals(booleanValue)) {
                     return booleanColumn;
                 }
             }
@@ -58,7 +57,7 @@ public enum Database {
         name("name"),
         content("child_json"),
         owner("child_owner"),
-        synced("synced"),
+        synced("synced", true, true),
         syncLog("syncLog"),
 
         internal_id("_id", true, false),
@@ -72,7 +71,7 @@ public enum Database {
         created_at("created_at", true, true),
         created_organisation("created_organisation", true, false),
 
-        last_synced_at("last_synced_at",true, true);
+        last_synced_at("last_synced_at", true, true);
         private @Getter final String columnName;
         private final boolean isInternal;
         private final boolean isSystem;
@@ -103,42 +102,24 @@ public enum Database {
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum EnquiryTableColumn {
         id("id"),
+        unique_identifier("unique_identifier"),
         enquirer_name("enquirer_name"),
         criteria("criteria"),
-        owner("created_by"),
-        created_at("created_at", true, true),
-        last_updated_at("last_updated_at", true, false),
+        created_by("created_by"),
+        created_at("created_at"),
+        last_updated_at("last_updated_at"),
+        synced("synced", Boolean.class),
+        potential_matches("potential_matches"),
 
-        created_organisation("created_organisation", true, false),
-        internal_id("_id", true, false),
-        internal_rev("_rev", true, false),
-        unique_identifier("unique_identifier", true, false);
+        created_organisation("created_organisation"),
+        internal_id("_id"),
+        internal_rev("_rev");
 
         private @Getter final String columnName;
-        private final boolean isInternal;
-        private final boolean isSystem;
+        private @Getter final Class<?> primitiveType;
 
         EnquiryTableColumn(String columnName) {
-            this(columnName, false, false);
-        }
-
-        public static Iterable<EnquiryTableColumn> internalFields() {
-            List<EnquiryTableColumn> allColumns = Arrays.asList(EnquiryTableColumn.values());
-            return filter(allColumns, new Predicate<EnquiryTableColumn>() {
-                public boolean apply(EnquiryTableColumn column) {
-                    return column.isInternal;
-                }
-            });
-        }
-
-        public static Iterable<EnquiryTableColumn> systemFields() {
-            List<EnquiryTableColumn> allColumns = Arrays.asList(EnquiryTableColumn.values());
-            return filter(allColumns, new Predicate<EnquiryTableColumn>() {
-                public boolean apply(EnquiryTableColumn column) {
-                    return column.isSystem;
-                }
-            });
+            this(columnName, String.class);
         }
     }
-
 }

@@ -5,9 +5,8 @@ import android.os.Parcelable;
 import android.util.Log;
 import com.google.common.base.Strings;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.Database;
 import com.rapidftr.utils.RapidFtrDateTime;
-import lombok.Getter;
-import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,16 +20,18 @@ import static com.rapidftr.utils.JSONArrays.asList;
 
 public class BaseModel extends JSONObject implements Parcelable {
 
-    protected
-    @Getter
-    @Setter
-    boolean synced;
     public static final String EMPTY_STRING = "";
 
     public BaseModel(String content) throws JSONException {
         super(Strings.nullToEmpty(content).trim().length() == 0 ? "{}" : content);
         if (!has(created_at.getColumnName())) {
             setCreatedAt(RapidFtrDateTime.now().defaultFormat());
+        }
+        if (!has(Database.ChildTableColumn.synced.getColumnName())) {
+            setSynced(false);
+        }
+        if (!has(Database.ChildTableColumn.unique_identifier.getColumnName())) {
+            setUniqueId(createUniqueId());
         }
     }
 
@@ -46,7 +47,10 @@ public class BaseModel extends JSONObject implements Parcelable {
     public BaseModel(String id, String owner, String content) throws JSONException {
         this(content);
         setUniqueId(id);
-        setOwner(owner);
+        setCreatedBy(owner);
+        if (!has(Database.ChildTableColumn.synced.getColumnName())) {
+            setSynced(false);
+        }
     }
 
     public String getUniqueId() throws JSONException {
@@ -93,11 +97,7 @@ public class BaseModel extends JSONObject implements Parcelable {
         }
     }
 
-    public String getOwner() throws JSONException {
-        return getString(created_by.getColumnName());
-    }
-
-    public void setOwner(String owner) throws JSONException {
+    public void setCreatedBy(String owner) throws JSONException {
         put(created_by.getColumnName(), owner);
     }
 
@@ -178,6 +178,14 @@ public class BaseModel extends JSONObject implements Parcelable {
 
     public void setOrganisation(String userOrg) throws JSONException {
         put(created_organisation.getColumnName(), userOrg);
+    }
+
+    public void setSynced(boolean synced) throws JSONException {
+        put(Database.ChildTableColumn.synced.getColumnName(), synced);
+    }
+
+    public boolean isSynced() {
+        return optBoolean(Database.ChildTableColumn.synced.getColumnName());
     }
 
     public String getShortId() throws JSONException {

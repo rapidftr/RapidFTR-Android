@@ -2,14 +2,16 @@ package com.rapidftr.model;
 
 import android.database.Cursor;
 import com.rapidftr.database.Database;
+import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
-
 
 public class Enquiry extends BaseModel {
 
@@ -19,7 +21,7 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(String createdBy, String reporterName, JSONObject criteria) throws JSONException {
-        this.setOwner(createdBy);
+        this.setCreatedBy(createdBy);
         this.setEnquirerName(reporterName);
         this.setCriteria(criteria);
         this.setUniqueId(createUniqueId());
@@ -27,31 +29,42 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(Cursor cursor) throws JSONException {
-        int index = cursor.getColumnIndex(Database.EnquiryTableColumn.criteria.getColumnName());
-        buildFromContent(cursor.getString(index));
-    }
-
-    private void buildFromContent(String string) throws JSONException {
-        JSONObject contents = new JSONObject(string);
-        Iterator<String> keys = contents.keys();
-        String key;
-        while (keys.hasNext()){
-            key = keys.next();
-            this.put(key, contents.get(key));
+        for(Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
+            final int columnIndex = cursor.getColumnIndex(column.getColumnName());
+            if(columnIndex < 0) {
+                throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
+            }
+            if(column.getPrimitiveType().equals(Boolean.class)) {
+                this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
+            } else {
+                this.put(column.getColumnName(), cursor.getString(columnIndex));
+            }
         }
     }
 
-    public void setEnquirerName(String reporterName) throws JSONException {
-        this.setColumn(enquirer_name, reporterName);
+    public Enquiry(String enquiryJSON) throws JSONException {
+        super(enquiryJSON);
+    }
+
+    public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
+        try{
+            JSONArray matchingChildIdArray = new JSONArray(matchingChildIds());
+            List<String> matchingChildList = getListOfMatchingChildsFrom(matchingChildIdArray);
+
+            return childRepository.getChildrenByIds(new ArrayList<String>(matchingChildList));
+        }catch (JSONException exception){
+            return new ArrayList<Child>();
+        }
     }
 
 
-    public void setCriteria(JSONObject criteria) throws JSONException {
-        this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
-    }
+    private List<String> getListOfMatchingChildsFrom(JSONArray matchingChildIdArray) throws JSONException {
+        List<String> matchingChildList = new ArrayList<String>();
 
-    public String getOwner() throws JSONException {
-        return getString(owner.getColumnName());
+        for(int i=0; i<matchingChildIdArray.length(); i++){
+            matchingChildList.add((String) matchingChildIdArray.get(i));
+        }
+        return matchingChildList;
     }
 
     private void setColumn(Database.EnquiryTableColumn column, String value) throws JSONException {
@@ -62,8 +75,16 @@ public class Enquiry extends BaseModel {
         return getString(enquirer_name.getColumnName());
     }
 
+    public void setEnquirerName(String reporterName) throws JSONException {
+        this.setColumn(enquirer_name, reporterName);
+    }
+
     public JSONObject getCriteria() throws JSONException {
         return new JSONObject(getString(criteria.getColumnName()));
+    }
+
+    public void setCriteria(JSONObject criteria) throws JSONException {
+        this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
     }
 
     public boolean isValid() {
@@ -74,5 +95,11 @@ public class Enquiry extends BaseModel {
             return false;
         }
         return null != enquirerName && !"".equals(enquirerName);
+    }
+
+    public String matchingChildIds() throws JSONException {
+        String ids = getString(potential_matches.getColumnName());
+        if(ids == null) throw new JSONException("No key " + potential_matches.getColumnName());
+        return ids;
     }
 }

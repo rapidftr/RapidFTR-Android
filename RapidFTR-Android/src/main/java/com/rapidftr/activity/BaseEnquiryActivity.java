@@ -17,6 +17,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public abstract class BaseEnquiryActivity extends CollectionActivity {
@@ -39,7 +40,7 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         enquiry = new Enquiry();
         @Cleanup InputStream in = getResources().openRawResource(R.raw.enquiry_form_sections);
         String x = CharStreams.toString(new InputStreamReader(in));
-        formSections = Arrays.asList(JSON_MAPPER.readValue(x, FormSection[].class));
+        formSections = new ArrayList<FormSection>(Arrays.asList(JSON_MAPPER.readValue(x, FormSection[].class)));
     }
 
     protected Enquiry load() throws JSONException {
@@ -90,7 +91,7 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
     private Enquiry saveEnquiry() throws JSONException {
         @Cleanup EnquiryRepository repository = inject(EnquiryRepository.class);
         if (enquiry.isNew()) {
-            enquiry.setOwner(getCurrentUser().getUserName());
+            enquiry.setCreatedBy(getCurrentUser().getUserName());
             enquiry.setOrganisation(getCurrentUser().getOrganisation());
         }
         repository.createOrUpdate(enquiry);

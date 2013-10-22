@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.BaseModel;
@@ -16,13 +17,16 @@ public abstract class BaseView extends LinearLayout {
 
     protected BaseModel model;
 
+    @Inject
     public BaseView(Context context) {
         super(context);
+
     }
 
     public BaseView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
+
 
     public void initialize(FormField formField, BaseModel model) {
         if (this.formField != null)
