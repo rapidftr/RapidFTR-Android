@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Enquiry;
@@ -54,6 +56,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         enquiryValues.put(internal_id.getColumnName(), enquiry.optString(internal_id.getColumnName()));
         enquiryValues.put(internal_rev.getColumnName(), enquiry.optString(internal_rev.getColumnName()));
         return enquiryValues;
+
     }
 
     @Override
@@ -63,6 +66,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
                 + internal_id.getColumnName() + ", "
                 + internal_rev.getColumnName()
                 + " FROM "+ enquiry.getTableName(), null);
+        close();
         while(cursor.moveToNext()){
             idRevs.put(cursor.getString(0), cursor.getString(1));
         }
@@ -77,6 +81,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
                 values,
                 format("%s=?", id.getColumnName()),
                 new String[]{enquiry.getUniqueId()});
+        close();
     }
 
     @Override
@@ -93,18 +98,21 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     public List<Enquiry> toBeSynced() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM enquiry WHERE synced" +
                 " = ?", new String[]{falseValue.getColumnValue()});
+        close();
         return toEnquiries(cursor);
     }
 
     @Override
     public boolean exists(String id) {
         @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM enquiry WHERE id = ?", new String[]{id == null ? "" : id});
+        close();
         return cursor.moveToNext() && cursor.getCount() > 0;
     }
 
     @Override
     public int size() {
         @Cleanup Cursor cursor = session.rawQuery("SELECT COUNT(1) FROM enquiry", new String[]{});
+        close();
         return cursor.moveToNext() ? cursor.getInt(0) : 0;
     }
 
@@ -119,6 +127,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
     public List<Enquiry> all() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM enquiry", new String[]{});
+        close();
         return toEnquiries(cursor);
     }
 
@@ -136,6 +145,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
     public Enquiry get(String enquiryId) throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT * from enquiry where id = ?", new String[]{enquiryId});
+        close();
         if (cursor.moveToNext()){
             return new Enquiry(cursor);
         }else{

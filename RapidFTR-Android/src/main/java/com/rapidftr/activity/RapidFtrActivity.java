@@ -206,7 +206,6 @@ public void viewAllEnquiryTabListener(View view) {
         else{
             SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {});
             executeTask(syncChildTask);
-
             SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {});
             executeTask(syncEnquiryTask);
         }
