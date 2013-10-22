@@ -67,4 +67,13 @@ public class EnquiryHttpDao {
         }
         return urls;
     }
+
+    public void create(Enquiry enquiry) throws IOException, HttpException {
+        http()
+                .context(RapidFtrApplication.getApplicationInstance())
+                .host(apiRoot + "/api/enquiries")
+                .param("enquiry", enquiry.getJsonString())
+                .post()
+                .ensureSuccess();
+    }
 }
