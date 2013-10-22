@@ -33,7 +33,7 @@ public class EnquiryHttpDao {
         this.apiRoot = apiRoot;
     }
 
-    public Enquiry getEnquiry(String url) throws JSONException, IOException, HttpException {
+    public Enquiry get(String url) throws JSONException, IOException, HttpException {
         final FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
                 .host(url)
@@ -43,7 +43,7 @@ public class EnquiryHttpDao {
         return new Enquiry(enquiryJSON);
     }
 
-    public void updateEnquiry(Enquiry enquiry) throws JSONException, IOException, HttpException {
+    public void update(Enquiry enquiry) throws JSONException, IOException, HttpException {
         http()
                 .context(RapidFtrApplication.getApplicationInstance())
                 .host(apiRoot + "/api/enquiries/" + enquiry.get("id"))

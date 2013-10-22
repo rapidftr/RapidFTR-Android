@@ -30,7 +30,7 @@ public class EnquiryHttpDaoTest {
 
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, "{\"id\":\"123\"}");
 
-        Enquiry enquiry = enquiryHttpDao.getEnquiry(url);
+        Enquiry enquiry = enquiryHttpDao.get(url);
 
         assertThat(enquiry.getString("id"), is("123"));
         final RequestLine requestLine = Robolectric.getSentHttpRequest(0).getRequestLine();
@@ -50,7 +50,7 @@ public class EnquiryHttpDaoTest {
 
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, "");
 
-        enquiryHttpDao.updateEnquiry(enquiry);
+        enquiryHttpDao.update(enquiry);
 
         final HttpRequest sentHttpRequest = Robolectric.getSentHttpRequest(0);
         final RequestLine requestLine = sentHttpRequest.getRequestLine();
@@ -74,5 +74,10 @@ public class EnquiryHttpDaoTest {
 
         assertThat(idsOfUpdated.get(0), is("blah.com/1"));
         assertThat(idsOfUpdated.get(1), is("blah.com/2"));
+    }
+
+    @Test
+    public void createEnquiryShouldCreateRecordOnAPI() throws Exception {
+
     }
 }

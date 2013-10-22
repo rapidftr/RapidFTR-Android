@@ -7,19 +7,19 @@ import com.google.inject.Inject;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.service.ChildSyncService;
 
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
 public class SyncChildTask extends AsyncTaskWithDialog<Child, Void, Boolean> {
 
-    protected final ChildService service;
+    protected final ChildSyncService service;
     protected final ChildRepository repository;
     protected final User currentUser;
     private Activity activity;
 
     @Inject
-    public SyncChildTask(ChildService service, ChildRepository repository, User currentUser) {
+    public SyncChildTask(ChildSyncService service, ChildRepository repository, User currentUser) {
         this.service = service;
         this.repository = repository;
         this.currentUser = currentUser;

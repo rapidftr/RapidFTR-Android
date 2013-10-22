@@ -5,12 +5,15 @@ import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
+import com.rapidftr.utils.http.FluentRequest;
 import org.apache.http.HttpException;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
+
+import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 
 public class EnquirySyncService implements SyncService<Enquiry> {
 
@@ -24,14 +27,16 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     }
 
     @Override
-    public Enquiry sync(Enquiry record, User currentUser) throws IOException, JSONException {
-        throw new UnsupportedOperationException();
+    public Enquiry sync(Enquiry record, User currentUser) throws IOException, JSONException, HttpException {
+        enquiryHttpDao.update(record);
+        return record;
     }
 
     @Override
     public Enquiry getRecord(String url) throws IOException, JSONException, HttpException {
-        return enquiryHttpDao.getEnquiry(url);
+        return enquiryHttpDao.get(url);
     }
+
 
     @Override
     public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {

@@ -20,9 +20,9 @@ public class Enquiry extends BaseModel {
         this.setUniqueId(createUniqueId());
     }
 
-    public Enquiry(String createdBy, String reporterName, JSONObject criteria) throws JSONException {
+    public Enquiry(String createdBy, String enquirerName, JSONObject criteria) throws JSONException {
         this.setCreatedBy(createdBy);
-        this.setEnquirerName(reporterName);
+        this.setEnquirerName(enquirerName);
         this.setCriteria(criteria);
         this.setUniqueId(createUniqueId());
         this.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());

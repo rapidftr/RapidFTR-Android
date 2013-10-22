@@ -17,7 +17,7 @@ import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.Repository;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.EnquirySyncService;
 import com.rapidftr.service.FormService;
@@ -46,7 +46,7 @@ public class ApplicationInjector extends AbstractModule {
         bind(RegisterUserService.class);
         bind(RegisterUnverifiedUserAsyncTask.class);
         bind(FluentRequest.class);
-        bind(new TypeLiteral<SyncService<Child>>(){}).to(ChildService.class);
+        bind(new TypeLiteral<SyncService<Child>>(){}).to(ChildSyncService.class);
         bind(new TypeLiteral<SyncService<Enquiry>>(){}).to(EnquirySyncService.class);
 
         bind(LogOutService.class);

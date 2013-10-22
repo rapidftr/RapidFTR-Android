@@ -48,7 +48,7 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
         }
     }
 
-    private int uploadChildrenToSyncWithServer(List<String> idsToDownload) throws JSONException, IOException {
+    private int uploadChildrenToSyncWithServer(List<String> idsToDownload) throws JSONException, IOException, HttpException {
         List<T> childrenToSyncWithServer = repository.toBeSynced();
         setProgressBarParameters(idsToDownload, childrenToSyncWithServer);
         setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
