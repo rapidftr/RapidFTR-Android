@@ -78,6 +78,21 @@ public class EnquiryHttpDaoTest {
 
     @Test
     public void createEnquiryShouldCreateRecordOnAPI() throws Exception {
+        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao(apiRoot);
 
+        final String json = "{\"some\":\"json\"}";
+
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, "");
+
+        Enquiry enquiry = mock(Enquiry.class);
+        when(enquiry.getJsonString()).thenReturn(json);
+
+        enquiryHttpDao.create(enquiry);
+
+        final HttpRequest sentHttpRequest = Robolectric.getSentHttpRequest(0);
+        final RequestLine requestLine = sentHttpRequest.getRequestLine();
+        assertThat(requestLine.getUri(), is(apiRoot + "/api/enquiries/"));
+        assertThat(requestLine.getMethod(), is("POST"));
+        // TODO not sure how to test the body (currently encoded as a form param)
     }
 }
