@@ -64,7 +64,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
             return true;
         } catch (HttpException e) {
 	        notificationManager.cancel(NOTIFICATION_ID);
-	        Log.e("SyncAllDataTask", "Error in sync", e);
+	        Log.e("SyncAllDataTask", "HTTPError in sync", e);
 	        publishProgress(context.getString(R.string.session_timeout));
 	        return false;
         } catch (Exception e) {

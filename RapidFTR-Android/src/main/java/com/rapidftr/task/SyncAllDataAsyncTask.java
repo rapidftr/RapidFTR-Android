@@ -33,19 +33,19 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
     protected void sync() throws JSONException, IOException, HttpException {
 
         List<String> idsToDownload = new ArrayList<String>();
-        Boolean blacklisted = deviceService.isBlacklisted();
+//        Boolean blacklisted = deviceService.isBlacklisted();
 
-        if(blacklisted){
+//        if(blacklisted){
+//            if (repository.toBeSynced().isEmpty())
+//            {
+//                deviceService.wipeData();
+//            }
+//        } else {
             uploadChildrenToSyncWithServer(idsToDownload);
-            if (repository.toBeSynced().isEmpty())
-            {
-                deviceService.wipeData();
-            }
-        } else {
             idsToDownload = recordService.getIdsToDownload();
             int startProgressForDownloadingChildren = uploadChildrenToSyncWithServer(idsToDownload);
             downloadChildrenFromServerToSync(idsToDownload, startProgressForDownloadingChildren);
-        }
+//        }
     }
 
     private int uploadChildrenToSyncWithServer(List<String> idsToDownload) throws JSONException, IOException {

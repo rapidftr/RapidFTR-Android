@@ -27,6 +27,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SynchronisationAsyncTask;
@@ -208,12 +209,12 @@ public void viewAllEnquiryTabListener(View view) {
         }
         else{
             // sync children
-            SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {});
-            executeTask(syncChildTask);
+//            SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {});
+//            executeTask(syncChildTask);
 
             // sync enquiry
-//            SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {});
-//            executeTask(syncEnquiryTask);
+            SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {});
+            executeTask(syncEnquiryTask);
         }
     }
 
