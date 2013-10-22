@@ -48,14 +48,15 @@ public class EnquiryHttpDaoTest {
         when(enquiry.get("id")).thenReturn(id);
         when(enquiry.getJsonString()).thenReturn(json);
 
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, "");
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, json);
 
-        enquiryHttpDao.update(enquiry);
+        Enquiry updatedEnquiry = enquiryHttpDao.update(enquiry);
 
         final HttpRequest sentHttpRequest = Robolectric.getSentHttpRequest(0);
         final RequestLine requestLine = sentHttpRequest.getRequestLine();
         assertThat(requestLine.getUri(), is(apiRoot + "/api/enquiries/" + id + "/"));
         assertThat(requestLine.getMethod(), is("PUT"));
+        assertThat((String)updatedEnquiry.get("some"), is("json"));
         // TODO test that the body is being sent
     }
 
@@ -81,18 +82,20 @@ public class EnquiryHttpDaoTest {
         EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao(apiRoot);
 
         final String json = "{\"some\":\"json\"}";
+        final String responseJson = "{\"some\":\"json\", \"_id\":\"123abc\"}";
 
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, "");
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, responseJson);
 
         Enquiry enquiry = mock(Enquiry.class);
         when(enquiry.getJsonString()).thenReturn(json);
 
-        enquiryHttpDao.create(enquiry);
+        Enquiry updatedEnquiry = enquiryHttpDao.create(enquiry);
 
         final HttpRequest sentHttpRequest = Robolectric.getSentHttpRequest(0);
         final RequestLine requestLine = sentHttpRequest.getRequestLine();
         assertThat(requestLine.getUri(), is(apiRoot + "/api/enquiries/"));
         assertThat(requestLine.getMethod(), is("POST"));
+        assertThat((String)updatedEnquiry.get("_id"), is("123abc"));
         // TODO not sure how to test the body (currently encoded as a form param)
     }
 }

@@ -43,13 +43,15 @@ public class EnquiryHttpDao {
         return new Enquiry(enquiryJSON);
     }
 
-    public void update(Enquiry enquiry) throws JSONException, IOException, HttpException {
-        http()
+    public Enquiry update(Enquiry enquiry) throws JSONException, IOException, HttpException {
+        FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
                 .host(apiRoot + "/api/enquiries/" + enquiry.get("id"))
                 .param("enquiry", enquiry.getJsonString())
                 .put()
                 .ensureSuccess();
+        String json = CharStreams.toString(new InputStreamReader(fluentResponse.getEntity().getContent()));
+        return new Enquiry(json);
     }
 
     public List<String> getIdsOfUpdated(DateTime lastUpdate) throws IOException, JSONException, HttpException {
@@ -68,12 +70,14 @@ public class EnquiryHttpDao {
         return urls;
     }
 
-    public void create(Enquiry enquiry) throws IOException, HttpException {
-        http()
+    public Enquiry create(Enquiry enquiry) throws IOException, HttpException, JSONException {
+        FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
                 .host(apiRoot + "/api/enquiries")
                 .param("enquiry", enquiry.getJsonString())
                 .post()
                 .ensureSuccess();
+        String json = CharStreams.toString(new InputStreamReader(fluentResponse.getEntity().getContent()));
+        return new Enquiry(json);
     }
 }

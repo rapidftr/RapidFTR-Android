@@ -6,7 +6,6 @@ import com.rapidftr.model.User;
 import com.rapidftr.repository.EnquiryRepository;
 import org.joda.time.DateTime;
 import org.json.JSONObject;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -16,9 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.LAST_ENQUIRY_SYNC;
-import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +39,7 @@ public class EnquirySyncServiceTest {
     @Test
     public void getRecordShouldRetrieveARecordOverHttp() throws Exception {
         String enquiryInternalId = "enquiryInternalId";
-        EnquirySyncService enquirySyncService = new EnquirySyncService(sharedPreferences, enquiryHttpDao);
+        EnquirySyncService enquirySyncService = new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository);
         Enquiry expectedEnquiry = new Enquiry("createdBy", "reporterName", new JSONObject("{}"));
         when(enquiryHttpDao.get(enquiryInternalId)).thenReturn(expectedEnquiry);
 
@@ -52,7 +51,7 @@ public class EnquirySyncServiceTest {
     @Test
     public void getIdsToDownloadShouldRetrieveUrlsFromApiSinceLastUpdate() throws Exception {
         final long lastUpdateMillis = System.currentTimeMillis();
-        EnquirySyncService enquirySyncService = new EnquirySyncService(sharedPreferences, enquiryHttpDao);
+        EnquirySyncService enquirySyncService = new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository);
         when(sharedPreferences.getLong(LAST_ENQUIRY_SYNC, 0)).thenReturn(lastUpdateMillis);
         when(enquiryHttpDao.getIdsOfUpdated(new DateTime(lastUpdateMillis))).thenReturn(Arrays.asList("blah.com/123", "blah.com/234"));
 
@@ -63,14 +62,30 @@ public class EnquirySyncServiceTest {
     }
 
     @Test
-    @Ignore
-    public void shouldCreateEnquiryWhenDoesNotExists() throws Exception {
-        Enquiry enquiry = new Enquiry("createdBy", "reporterName", new JSONObject("{}"));
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/enquiries", "{ 'test1' : 'value2', '_id' : 'abcd1234'}");
+    public void shouldUpdateEnquiryWhenItIsNotNew() throws Exception {
+        Enquiry enquiry = mock(Enquiry.class);
+        Enquiry returnedEnquiry = mock(Enquiry.class);
 
-        enquiry = new EnquirySyncService(sharedPreferences, enquiryHttpDao).sync(enquiry, currentUser);
+        when(enquiry.isNew()).thenReturn(false);
+        when(enquiryHttpDao.update(enquiry)).thenReturn(returnedEnquiry);
 
-        verify(enquiryRepository).update(enquiry);
+        new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository).sync(enquiry, currentUser);
+
+        verify(enquiryRepository).update(returnedEnquiry);
     }
+
+    @Test
+    public void shouldCreateEnquiryWhenItIsNew() throws Exception {
+        Enquiry enquiry = mock(Enquiry.class);
+        Enquiry returnedEnquiry = mock(Enquiry.class);
+
+        when(enquiry.isNew()).thenReturn(true);
+        when(enquiryHttpDao.create(enquiry)).thenReturn(returnedEnquiry);
+
+        new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository).sync(enquiry, currentUser);
+
+        verify(enquiryRepository).update(returnedEnquiry);
+    }
+
 
 }
