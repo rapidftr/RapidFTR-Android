@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.io.SyncFailedException;
 import java.util.List;
 
 public class EnquirySyncService implements SyncService<Enquiry> {
@@ -31,16 +32,17 @@ public class EnquirySyncService implements SyncService<Enquiry> {
 
     @Override
     public Enquiry sync(Enquiry record, User currentUser) throws IOException, JSONException, HttpException {
-        Enquiry returnedEnquiry;
-        if(record.isNew()) {
-            returnedEnquiry = enquiryHttpDao.create(record);
-        } else {
-            returnedEnquiry = enquiryHttpDao.update(record);
+        try {
+            record = record.isNew() ? enquiryHttpDao.create(record) : enquiryHttpDao.update(record);
+            record.setSynced(true);
+            record.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
+            enquiryRepository.update(record);
+        } catch (SyncFailedException exception) {
+            record.setSynced(false);
+            record.setLastUpdatedAt(null);
+            throw new SyncFailedException(exception.getMessage());
         }
-        returnedEnquiry.setSynced(true);
-        returnedEnquiry.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
-        enquiryRepository.update(returnedEnquiry);
-        return returnedEnquiry;
+        return record;
     }
 
     @Override

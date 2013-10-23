@@ -5,8 +5,6 @@ import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.EnquiryRepository;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matcher;
-import org.hamcrest.MatcherAssert;
 import org.joda.time.DateTime;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -14,13 +12,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.SyncFailedException;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.LAST_ENQUIRY_SYNC;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -38,8 +36,8 @@ public class EnquirySyncServiceTest {
     @Mock
     private SharedPreferences sharedPreferences;
 
-    @Mock private User currentUser;
-
+    @Mock
+    private User currentUser;
 
     @Test
     public void getRecordShouldRetrieveARecordOverHttp() throws Exception {
@@ -107,5 +105,16 @@ public class EnquirySyncServiceTest {
 
         assertNotNull(returnedEnquiry.getLastUpdatedAt());
         assertThat(returnedEnquiry.isSynced(), CoreMatchers.is(true));
+    }
+
+    @Test(expected = SyncFailedException.class)
+    public void shouldHandleSyncFailuresAndReturnEnquiry() throws Exception {
+        Enquiry enquiry = new Enquiry();
+
+        when(enquiryHttpDao.create(enquiry)).thenThrow(SyncFailedException.class);
+        new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository).sync(enquiry, currentUser);
+
+        assertFalse(enquiry.isSynced());
+        assertNull(enquiry.getLastUpdatedAt());
     }
 }
