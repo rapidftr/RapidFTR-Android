@@ -17,19 +17,8 @@ import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.Repository;
-import com.rapidftr.service.ChildService;
-import com.rapidftr.service.DeviceService;
-import com.rapidftr.service.EnquirySyncService;
-import com.rapidftr.service.FormService;
-import com.rapidftr.service.LogOutService;
-import com.rapidftr.service.LoginService;
-import com.rapidftr.service.RegisterUserService;
-import com.rapidftr.service.SyncService;
-import com.rapidftr.task.RegisterUnverifiedUserAsyncTask;
-import com.rapidftr.task.SyncAllDataAsyncTask;
-import com.rapidftr.task.SyncChildTask;
-import com.rapidftr.task.SyncUnverifiedDataAsyncTask;
-import com.rapidftr.task.SynchronisationAsyncTask;
+import com.rapidftr.service.*;
+import com.rapidftr.task.*;
 import com.rapidftr.utils.http.FluentRequest;
 import com.sun.jersey.api.client.Client;
 import org.json.JSONException;
@@ -51,7 +40,6 @@ public class ApplicationInjector extends AbstractModule {
 
         bind(LogOutService.class);
         bind(LoginService.class);
-        bind(SyncChildTask.class);
         bind(DeviceService.class);
     }
 

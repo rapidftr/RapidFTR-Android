@@ -13,17 +13,14 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static com.rapidftr.database.Database.*;
-import static com.rapidftr.database.Database.EnquiryTableColumn.*;
+import static com.rapidftr.database.Database.EnquiryTableColumn;
+import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
+import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
 public class EnquiryTest {

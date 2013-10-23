@@ -6,22 +6,20 @@ import android.util.Log;
 import com.google.inject.Inject;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
-import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.Repository;
-import com.rapidftr.service.ChildService;
 import com.rapidftr.service.SyncService;
 
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
 public class SyncRecordTask extends AsyncTaskWithDialog<BaseModel, Void, Boolean> {
 
-    protected final SyncService service;
-    protected final Repository repository;
-    protected final User currentUser;
+    protected  SyncService service;
+    protected  Repository repository;
+    protected  User currentUser;
     private Activity activity;
 
     @Inject
-    public SyncRecordTask(ChildService service, ChildRepository repository, User currentUser) {
+    public SyncRecordTask(SyncService service, Repository repository, User currentUser) {
         this.service = service;
         this.repository = repository;
         this.currentUser = currentUser;

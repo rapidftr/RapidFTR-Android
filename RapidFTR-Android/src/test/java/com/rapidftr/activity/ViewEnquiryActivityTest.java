@@ -7,6 +7,7 @@ import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.task.SyncRecordTask;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +44,17 @@ public class ViewEnquiryActivityTest {
     @Test(expected = Exception.class)
     public void shouldThrowErrorIfChildIsNotFound() throws Exception{
         activity.initializeData(null);
+    }
+
+    @Test
+    public void shouldInvokeSyncTask() {
+        doReturn(enquiryRepository).when(activity).inject(EnquiryRepository.class);
+        SyncRecordTask task = mock(SyncRecordTask.class);
+        doReturn(task).when(activity).createSyncTaskForEnquiry();
+        activity.enquiry = enquiry;
+        activity.sync();
+        verify(task).setActivity(activity);
+        verify(task).doInBackground(enquiry);
     }
 
 }

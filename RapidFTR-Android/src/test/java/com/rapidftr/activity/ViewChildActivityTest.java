@@ -6,7 +6,7 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
-import com.rapidftr.task.SyncChildTask;
+import com.rapidftr.task.SyncRecordTask;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONException;
@@ -54,15 +54,13 @@ public class ViewChildActivityTest {
     @Test
     public void shouldSyncAndShowChildRecord() throws IOException, JSONException {
         Child child = mock(Child.class);
-        SyncChildTask task = mock(SyncChildTask.class);
-
-        doReturn(task).when(activity).inject(SyncChildTask.class);
+        SyncRecordTask syncRecordTask = mock(SyncRecordTask.class);
+        doReturn(syncRecordTask).when(activity).createChildSyncTask();
 
         activity.child = child;
         activity.sync();
-
-        verify(task).setActivity(activity);
-        verify(task).doInBackground(child);
+        verify(syncRecordTask).setActivity(activity);
+        verify(syncRecordTask).doInBackground(child);
     }
 
     @Test
