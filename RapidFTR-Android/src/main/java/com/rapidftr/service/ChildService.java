@@ -1,4 +1,4 @@
-package com.rapidftr.service;
+    package com.rapidftr.service;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -80,7 +80,7 @@ public class ChildService implements SyncService<Child> {
         return child;
     }
 
-    protected String getSyncPath(Child child, User currentUser) throws JSONException {
+    public String getSyncPath(Child child, User currentUser) throws JSONException {
         if (currentUser.isVerified()) {
             return child.isNew() ? "/api/children" : String.format("/api/children/%s", child.get(internal_id.getColumnName()));
         } else {

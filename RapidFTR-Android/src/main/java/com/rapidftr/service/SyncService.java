@@ -23,6 +23,5 @@ public interface SyncService<T extends BaseModel> {
     public List<String> getIdsToDownload() throws IOException, JSONException, HttpException;
 
     public void setMedia(T t) throws IOException, JSONException;
-
-
+    public String getSyncPath(T record, User currentUser) throws JSONException;
 }
