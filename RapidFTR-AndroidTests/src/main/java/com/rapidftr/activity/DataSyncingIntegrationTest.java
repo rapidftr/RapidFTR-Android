@@ -10,6 +10,7 @@ import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.test.utils.RapidFTRDatabase;
 import org.apache.http.params.HttpConnectionParams;
 import org.json.JSONException;
+import org.junit.Ignore;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,10 +43,11 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         }
     }
 
+    @Ignore
     public void testRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
         String timeStamp = now().defaultFormat();
-//        final Child childToStore = new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'one' : '1', 'name' : 'derek' }", timeStamp));
-//        seedChildOnServer(childToStore);
+        final Child childToStore = new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'one' : '1', 'name' : 'derek' }", timeStamp));
+        seedChildOnServer(childToStore);
 
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         solo.sleep(20000);
@@ -57,10 +59,10 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         assertEquals("123456", child.optString("_id"));
         assertEquals(enquiryId, enquiry.optString("_id"));
 
-//        searchPage.navigateToSearchTab();
-//        searchPage.searchChild("derek");
-//        searchPage.clickSearch();
-//        assertTrue(searchPage.isChildPresent(child.getShortId(), "derek"));
+        searchPage.navigateToSearchTab();
+        searchPage.searchChild("derek");
+        searchPage.clickSearch();
+        assertTrue(searchPage.isChildPresent(child.getShortId(), "derek"));
     }
 
     public void testRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {

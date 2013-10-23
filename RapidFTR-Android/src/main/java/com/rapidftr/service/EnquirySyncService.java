@@ -37,7 +37,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
             record.setSynced(true);
             record.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
             enquiryRepository.update(record);
-        } catch (SyncFailedException exception) {
+        } catch (Exception exception) {
             record.setSynced(false);
             record.setLastUpdatedAt(null);
             throw new SyncFailedException(exception.getMessage());
