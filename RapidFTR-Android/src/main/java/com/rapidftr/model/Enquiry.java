@@ -1,6 +1,9 @@
 package com.rapidftr.model;
 
 import android.database.Cursor;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.rapidftr.database.Database;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -95,6 +98,17 @@ public class Enquiry extends BaseModel {
             return false;
         }
         return null != enquirerName && !"".equals(enquirerName);
+    }
+
+    public JSONObject values() throws JSONException {
+        Iterable<Object> systemFields = Iterables.transform(Database.EnquiryTableColumn.fields(), new Function<Database.EnquiryTableColumn, Object>() {
+            @Override
+            public Object apply(Database.EnquiryTableColumn enquiryTableColumn) {
+                return enquiryTableColumn.getColumnName();
+            }
+        });
+        List<Object> fields = Lists.newArrayList(systemFields);
+        return new JSONObject(this, fields.toArray(new String[fields.size()]));
     }
 
     public String matchingChildIds() throws JSONException {

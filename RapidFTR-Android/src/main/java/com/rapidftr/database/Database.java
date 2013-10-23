@@ -114,12 +114,15 @@ public enum Database {
         created_organisation("created_organisation"),
         internal_id("_id"),
         internal_rev("_rev");
-
         private @Getter final String columnName;
         private @Getter final Class<?> primitiveType;
 
         EnquiryTableColumn(String columnName) {
             this(columnName, String.class);
+        }
+        public static Iterable<EnquiryTableColumn> fields() {
+            List<EnquiryTableColumn> allColumns = Arrays.asList(EnquiryTableColumn.values());
+           return allColumns;
         }
     }
 }
