@@ -4,6 +4,9 @@ import android.content.SharedPreferences;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.EnquiryRepository;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.joda.time.DateTime;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -15,11 +18,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.LAST_ENQUIRY_SYNC;
+import static junit.framework.Assert.assertNull;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EnquirySyncServiceTest {
@@ -87,5 +92,20 @@ public class EnquirySyncServiceTest {
         verify(enquiryRepository).update(returnedEnquiry);
     }
 
+    @Test
+    public void shouldUpdateEnquiryAttributesAfterSync() throws Exception {
+        Enquiry enquiry = mock(Enquiry.class);
+        Enquiry returnedEnquiry = new Enquiry();
 
+        when(enquiry.isNew()).thenReturn(false);
+        when(enquiryHttpDao.update(enquiry)).thenReturn(returnedEnquiry);
+
+        assertThat(returnedEnquiry.isSynced(), CoreMatchers.is(false));
+        assertNull(returnedEnquiry.getLastUpdatedAt());
+
+        new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository).sync(enquiry, currentUser);
+
+        assertNotNull(returnedEnquiry.getLastUpdatedAt());
+        assertThat(returnedEnquiry.isSynced(), CoreMatchers.is(true));
+    }
 }

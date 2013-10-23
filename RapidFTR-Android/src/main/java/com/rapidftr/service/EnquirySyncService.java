@@ -6,6 +6,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.utils.RapidFtrDateTime;
 import org.apache.http.HttpException;
 import org.joda.time.DateTime;
 import org.json.JSONException;
@@ -36,6 +37,8 @@ public class EnquirySyncService implements SyncService<Enquiry> {
         } else {
             returnedEnquiry = enquiryHttpDao.update(record);
         }
+        returnedEnquiry.setSynced(true);
+        returnedEnquiry.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
         enquiryRepository.update(returnedEnquiry);
         return returnedEnquiry;
     }
