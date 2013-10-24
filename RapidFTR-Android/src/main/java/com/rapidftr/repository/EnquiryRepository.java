@@ -47,12 +47,13 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
         enquiryValues.put(created_by.getColumnName(), enquiry.getCreatedBy());
         enquiryValues.put(enquirer_name.getColumnName(), enquiry.getEnquirerName());
-        enquiryValues.put(criteria.getColumnName(), enquiry.toString());
+        enquiryValues.put(criteria.getColumnName(), enquiry.getCriteria().toString());
         enquiryValues.put(created_at.getColumnName(), enquiry.getCreatedAt());
         enquiryValues.put(unique_identifier.getColumnName(), enquiry.getUniqueId());
         enquiryValues.put(synced.getColumnName(), enquiry.isSynced());
         enquiryValues.put(internal_id.getColumnName(), enquiry.optString(internal_id.getColumnName()));
         enquiryValues.put(internal_rev.getColumnName(), enquiry.optString(internal_rev.getColumnName()));
+
         long errorCode =  session.replace(Database.enquiry.getTableName(), null, enquiryValues);
         if(errorCode <= 0) throw new IllegalArgumentException(errorCode + "");
         //TODO : Better error handling

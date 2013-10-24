@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matche
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -27,16 +29,16 @@ public class EnquiryTest {
 
 
     private String createdBy;
-    private String reporterName;
-    private JSONObject search_criteria;
+    private String enquirerName;
+    private JSONObject criteria;
     private DatabaseSession session;
     private ChildRepository childRepository;
 
     @Before
     public void setUp() throws JSONException {
         createdBy = "Rajni";
-        reporterName = "Batman";
-        search_criteria = new JSONObject("{\"name\":\"NAME\"}");
+        enquirerName = "Batman";
+        criteria = new JSONObject("{\"name\":\"NAME\"}");
         session = new ShadowSQLiteHelper("test_database").getSession();
         childRepository = new ChildRepository("user1", session);
     }
@@ -46,7 +48,7 @@ public class EnquiryTest {
         Enquiry enquiry = new Enquiry();
         assertNotNull(enquiry.getUniqueId());
 
-        enquiry = new Enquiry("createdBy", "reporterName", new JSONObject("{}"));
+        enquiry = new Enquiry("createdBy", "enquirerName", new JSONObject("{}"));
         assertNotNull(enquiry.getUniqueId());
     }
 
@@ -54,11 +56,11 @@ public class EnquiryTest {
     @Test
     public void createEnquiryWithAllFields() throws JSONException{
 
-      Enquiry enquiry = new Enquiry(createdBy, reporterName, search_criteria);
+      Enquiry enquiry = new Enquiry(createdBy, enquirerName, criteria);
 
-      assertEquals(reporterName, enquiry.getEnquirerName());
+      assertEquals(enquirerName, enquiry.getEnquirerName());
       assertEquals(enquiry.getCriteria().getClass(), JSONObject.class);
-      assertEquals(search_criteria.toString(), enquiry.getCriteria().toString());
+      JSONAssert.assertEquals(criteria, enquiry.getCriteria(), true);
       assertEquals(createdBy, enquiry.getCreatedBy());
       assertNotNull(enquiry.getCreatedAt());
       assertNotNull(enquiry.getLastUpdatedAt());
@@ -73,6 +75,28 @@ public class EnquiryTest {
         assertThat(enquiry.getUniqueId(), is("unique_identifier_value"));
         assertThat(enquiry.getEnquirerName(), is("enquirer_name_value"));
         assertThat(enquiry.getCreatedBy(), is("created_by_value"));
+    }
+
+    @Test
+    public void shouldPopulateCriteria() throws Exception {
+        String enquiryJSON = "{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\", \"sex\": \"Male\"}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        JSONObject expectedJSON = new JSONObject(enquiryJSON);
+
+        JSONObject criteriaJSON = enquiry.getCriteria();
+
+        JSONAssert.assertEquals(expectedJSON, criteriaJSON, true);
+    }
+
+    @Test
+    public void shouldKnowHowToRemoveEnquirerName() throws Exception {
+        String enquiryJSON = "{\"enquirer_name\": \"godwin\", \"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        JSONObject expectedJSON = new JSONObject("{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}");
+
+        JSONObject criteriaJSON = enquiry.getCriteria();
+
+        JSONAssert.assertEquals(expectedJSON, criteriaJSON, true);
     }
 
     @Test
@@ -104,7 +128,7 @@ public class EnquiryTest {
 
     @Test(expected=JSONException.class)
     public void newEnquiryShouldNotHaveMatchingIds() throws JSONException {
-        Enquiry enquiry = new Enquiry(createdBy, reporterName, search_criteria);
+        Enquiry enquiry = new Enquiry(createdBy, enquirerName, criteria);
         enquiry.matchingChildIds();
     }
 

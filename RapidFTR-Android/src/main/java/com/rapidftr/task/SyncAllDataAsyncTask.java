@@ -40,7 +40,7 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
                 deviceService.wipeData();
             }
         } else {
-            idsToDownload = recordService.getIdsToDownload();
+            idsToDownload = recordSyncService.getIdsToDownload();
             int startProgressForDownloadingChildren = uploadRecordsToServer(idsToDownload);
             downloadRecordsFromServer(idsToDownload, startProgressForDownloadingChildren);
         }

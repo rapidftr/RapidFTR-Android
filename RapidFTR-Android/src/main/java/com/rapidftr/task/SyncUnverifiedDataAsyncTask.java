@@ -62,7 +62,7 @@ public class SyncUnverifiedDataAsyncTask<T extends BaseModel> extends Synchronis
         }
         getFormSections();
         sendRecordsToServer(repository.currentUsersUnsyncedRecords());
-        List<String> idsToDownload = recordService.getIdsToDownload();
+        List<String> idsToDownload = recordSyncService.getIdsToDownload();
         List<T> recordsToSyncWithServer = repository.toBeSynced();
 
         if(!application.getCurrentUser().isVerified()) {

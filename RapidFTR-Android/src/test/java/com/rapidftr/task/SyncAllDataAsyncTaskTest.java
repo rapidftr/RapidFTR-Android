@@ -211,7 +211,7 @@ public class SyncAllDataAsyncTaskTest {
 	public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
 		Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
 		given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
-		syncTask.recordService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
+		syncTask.recordSyncService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
 		syncTask.setContext(rapidFtrActivity);
 		syncTask.execute();
 

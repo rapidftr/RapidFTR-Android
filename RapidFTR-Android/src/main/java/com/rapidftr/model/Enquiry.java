@@ -11,12 +11,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 
 public class Enquiry extends BaseModel {
+
+    private ArrayList<String> NONE_CRITERIA_FIELDS = new ArrayList<String>();
 
     public Enquiry() throws JSONException {
         super();
@@ -32,12 +33,12 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(Cursor cursor) throws JSONException {
-        for(Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
+        for (Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
             final int columnIndex = cursor.getColumnIndex(column.getColumnName());
-            if(columnIndex < 0) {
+            if (columnIndex < 0) {
                 throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
             }
-            if(column.getPrimitiveType().equals(Boolean.class)) {
+            if (column.getPrimitiveType().equals(Boolean.class)) {
                 this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
             } else {
                 this.put(column.getColumnName(), cursor.getString(columnIndex));
@@ -55,7 +56,7 @@ public class Enquiry extends BaseModel {
             List<String> matchingChildList = getListOfMatchingChildrenFrom(matchingChildId);
 
             return childRepository.getChildrenByIds(new ArrayList<String>(matchingChildList));
-        }catch (JSONException exception){
+        } catch (JSONException exception) {
             return new ArrayList<Child>();
         }
     }
@@ -64,7 +65,7 @@ public class Enquiry extends BaseModel {
     private List<String> getListOfMatchingChildrenFrom(JSONArray matchingChildId) throws JSONException {
         List<String> matchingChildList = new ArrayList<String>();
 
-        for(int i=0; i<matchingChildId.length(); i++){
+        for (int i = 0; i < matchingChildId.length(); i++) {
             matchingChildList.add((String) matchingChildId.get(i));
         }
         return matchingChildList;
@@ -83,7 +84,42 @@ public class Enquiry extends BaseModel {
     }
 
     public JSONObject getCriteria() throws JSONException {
-        return new JSONObject(getString(criteria.getColumnName()));
+
+        JSONObject enquiry_criteria = null;
+
+        try {
+            enquiry_criteria =  new JSONObject(this.get(criteria.getColumnName()).toString());
+        } catch (JSONException e) {
+            ArrayList<String> keys = getKeys();
+            enquiry_criteria = new JSONObject();
+            noneCriteriaFields();
+            for (String key : keys) {
+                if (NONE_CRITERIA_FIELDS.contains(key)) {
+                    /* do nothing*/
+                } else {
+                    enquiry_criteria.put(key, this.getString(key));
+                }
+            }
+        }
+
+        return enquiry_criteria;
+    }
+
+    private ArrayList<String> getKeys() {
+        Iterator keys = this.keys();
+        ArrayList<String> enquiryKeys = new ArrayList<String>();
+        while (keys.hasNext()) {
+            enquiryKeys.add(keys.next().toString());
+        }
+        return enquiryKeys;
+    }
+
+    private void noneCriteriaFields(){
+        NONE_CRITERIA_FIELDS.add("enquirer_name");
+        NONE_CRITERIA_FIELDS.add("created_at");
+        NONE_CRITERIA_FIELDS.add("created_by");
+        NONE_CRITERIA_FIELDS.add("synced");
+        NONE_CRITERIA_FIELDS.add("unique_identifier");
     }
 
     public void setCriteria(JSONObject criteria) throws JSONException {
@@ -113,7 +149,7 @@ public class Enquiry extends BaseModel {
 
     public String matchingChildIds() throws JSONException {
         String ids = getString(potential_matches.getColumnName());
-        if(ids == null) throw new JSONException("No key " + potential_matches.getColumnName());
+        if (ids == null) throw new JSONException("No key " + potential_matches.getColumnName());
         return ids;
     }
 }

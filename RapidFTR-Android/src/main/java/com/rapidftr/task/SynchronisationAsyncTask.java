@@ -32,7 +32,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
     private static final String CANCEL_SYNC_ALL = "CANCEL_SYNC_ALL";
 
     protected FormService formService;
-    protected SyncService<T> recordService;
+    protected SyncService<T> recordSyncService;
     protected Repository<T> repository;
     protected User currentUser;
     protected RapidFtrActivity context;
@@ -42,9 +42,9 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
     protected int formSectionProgress;
     protected int maxProgress;
 
-    public SynchronisationAsyncTask(FormService formService, SyncService<T> recordService, Repository<T> repository, User user) {
+    public SynchronisationAsyncTask(FormService formService, SyncService<T> recordSyncService, Repository<T> repository, User user) {
         this.formService = formService;
-        this.recordService = recordService;
+        this.recordSyncService = recordSyncService;
         this.repository = repository;
         currentUser = user;
     }
@@ -143,7 +143,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
             if (isCancelled()) {
                 break;
             }
-            recordService.sync(baseModel, currentUser);
+            recordSyncService.sync(baseModel, currentUser);
             setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
             startProgress += 1;
         }
@@ -155,7 +155,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
         setProgressAndNotify(context.getString(R.string.synchronize_step_3), startProgress);
 
         for (String idToDownload : idsToDownload) {
-            T incomingRecord = recordService.getRecord(idToDownload);
+            T incomingRecord = recordSyncService.getRecord(idToDownload);
             if (isCancelled()) {
                 break;
             }
@@ -165,7 +165,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
                 } else {
                     repository.createOrUpdate(incomingRecord);
                 }
-                recordService.setMedia(incomingRecord);
+                recordSyncService.setMedia(incomingRecord);
                 setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
                 startProgress += 1 ;
             } catch (Exception e) {
