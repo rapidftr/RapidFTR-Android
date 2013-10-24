@@ -51,8 +51,8 @@ public class Enquiry extends BaseModel {
 
     public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
         try{
-            JSONArray matchingChildIdArray = new JSONArray(matchingChildIds());
-            List<String> matchingChildList = getListOfMatchingChildsFrom(matchingChildIdArray);
+            JSONArray matchingChildId = new JSONArray(matchingChildIds());
+            List<String> matchingChildList = getListOfMatchingChildrenFrom(matchingChildId);
 
             return childRepository.getChildrenByIds(new ArrayList<String>(matchingChildList));
         }catch (JSONException exception){
@@ -61,11 +61,11 @@ public class Enquiry extends BaseModel {
     }
 
 
-    private List<String> getListOfMatchingChildsFrom(JSONArray matchingChildIdArray) throws JSONException {
+    private List<String> getListOfMatchingChildrenFrom(JSONArray matchingChildId) throws JSONException {
         List<String> matchingChildList = new ArrayList<String>();
 
-        for(int i=0; i<matchingChildIdArray.length(); i++){
-            matchingChildList.add((String) matchingChildIdArray.get(i));
+        for(int i=0; i<matchingChildId.length(); i++){
+            matchingChildList.add((String) matchingChildId.get(i));
         }
         return matchingChildList;
     }

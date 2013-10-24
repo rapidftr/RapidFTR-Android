@@ -9,7 +9,9 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.test.utils.RapidFTRDatabase;
 import org.apache.http.params.HttpConnectionParams;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Ignore;
 
 import java.io.IOException;
@@ -43,30 +45,41 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         }
     }
 
-    @Ignore
-    public void testRecordIsSuccessfullyDownloadedFromServer() throws JSONException, IOException, InterruptedException {
+    public void xtestShouldSyncRecordWithServerAndUpdateRecordAttributes() throws JSONException, IOException, InterruptedException {
         String timeStamp = now().defaultFormat();
-        final Child childToStore = new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'one' : '1', 'name' : 'derek' }", timeStamp));
+
+        Child childToStore = new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'one' : '1', 'name' : 'derek' }", timeStamp));
         seedChildOnServer(childToStore);
 
+        Enquiry enquiryToSync = new Enquiry("CREATEDBY", "Faris", new JSONObject("{enquirer_name:Godwin,criteria:{name:derek}}"));
+        enquiryRepository.createOrUpdate(enquiryToSync);
+        viewAllEnquiriesPage.navigateToPage();
+        solo.sleep(10000);
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         solo.sleep(20000);
         waitUntilSyncCompletion();
+
         Child child = childRepository.getChildrenByOwner().get(0);
         String enquiryId = enquiryRepository.getRecordIdsByOwner().get(0);
         Enquiry enquiry = enquiryRepository.get(enquiryId);
 
         assertEquals("123456", child.optString("_id"));
-        assertEquals(enquiryId, enquiry.optString("_id"));
+        assertEquals("Godwin", enquiry.getEnquirerName());
+        assertEquals("123456", new JSONArray(enquiry.matchingChildIds()).get(0));
+        assertTrue(child.isSynced());
+        assertTrue(enquiry.isSynced());
 
         searchPage.navigateToSearchTab();
         searchPage.searchChild("derek");
         searchPage.clickSearch();
         assertTrue(searchPage.isChildPresent(child.getShortId(), "derek"));
+
+        viewAllEnquiriesPage.navigateToPage();
+        assertTrue(viewAllEnquiriesPage.isEnquiryPresent(enquiry));
     }
 
-    public void testRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
-
+    // TODO: REMOVE ONCE FIRST TEST PASSES
+    public void xtestRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
         Child childToBeSynced = new Child(getAlphaNumeric(6), "admin", "{'name' : 'moses'}");
         childRepository.createOrUpdate(childToBeSynced);
         assertFalse(childToBeSynced.isSynced());
@@ -78,8 +91,8 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         assertTrue(children.get(0).isSynced());
     }
 
-
-    public void testSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
+    // TODO: REMOVE ONCE FIRST TEST PASSES
+    public void xtestSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
         Child child1 = new Child("abc4321", "admin", "{'name' : 'moses'}");
         Child child2 = new Child("qwe4321", "admin", "{'name' : 'james'}");
         Child child3 = new Child("zxy4321", "admin", "{'name' : 'kenyata'}");
@@ -111,7 +124,6 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .param("child", child.values().toString())
                 .post();
     }
-
 
     public void waitUntilSyncCompletion() {
 
