@@ -30,7 +30,7 @@ public class EnquiryHttpDaoTest {
 
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, "{\"id\":\"123\"}");
 
-        Enquiry enquiry = enquiryHttpDao.getEnquiry(url);
+        Enquiry enquiry = enquiryHttpDao.get(url);
 
         assertThat(enquiry.getString("id"), is("123"));
         final RequestLine requestLine = Robolectric.getSentHttpRequest(0).getRequestLine();
@@ -48,14 +48,15 @@ public class EnquiryHttpDaoTest {
         when(enquiry.get("id")).thenReturn(id);
         when(enquiry.getJsonString()).thenReturn(json);
 
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, "");
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, json);
 
-        enquiryHttpDao.updateEnquiry(enquiry);
+        Enquiry updatedEnquiry = enquiryHttpDao.update(enquiry);
 
         final HttpRequest sentHttpRequest = Robolectric.getSentHttpRequest(0);
         final RequestLine requestLine = sentHttpRequest.getRequestLine();
         assertThat(requestLine.getUri(), is(apiRoot + "/api/enquiries/" + id + "/"));
         assertThat(requestLine.getMethod(), is("PUT"));
+        assertThat((String)updatedEnquiry.get("some"), is("json"));
         // TODO test that the body is being sent
     }
 
@@ -74,5 +75,27 @@ public class EnquiryHttpDaoTest {
 
         assertThat(idsOfUpdated.get(0), is("blah.com/1"));
         assertThat(idsOfUpdated.get(1), is("blah.com/2"));
+    }
+
+    @Test
+    public void createEnquiryShouldCreateRecordOnAPI() throws Exception {
+        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao(apiRoot);
+
+        final String json = "{\"some\":\"json\"}";
+        final String responseJson = "{\"some\":\"json\", \"_id\":\"123abc\"}";
+
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, responseJson);
+
+        Enquiry enquiry = mock(Enquiry.class);
+        when(enquiry.getJsonString()).thenReturn(json);
+
+        Enquiry updatedEnquiry = enquiryHttpDao.create(enquiry);
+
+        final HttpRequest sentHttpRequest = Robolectric.getSentHttpRequest(0);
+        final RequestLine requestLine = sentHttpRequest.getRequestLine();
+        assertThat(requestLine.getUri(), is(apiRoot + "/api/enquiries/"));
+        assertThat(requestLine.getMethod(), is("POST"));
+        assertThat((String)updatedEnquiry.get("_id"), is("123abc"));
+        // TODO not sure how to test the body (currently encoded as a form param)
     }
 }

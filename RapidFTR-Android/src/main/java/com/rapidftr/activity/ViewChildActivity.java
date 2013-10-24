@@ -9,7 +9,7 @@ import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncRecordTask;
@@ -59,7 +59,7 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     protected SyncRecordTask createChildSyncTask(){
-       return  new SyncRecordTask(new ChildService(this.getContext(), inject(ChildRepository.class), new FluentRequest()), inject(ChildRepository.class), getCurrentUser());
+       return  new SyncRecordTask(new ChildSyncService(this.getContext(), inject(ChildRepository.class), new FluentRequest()), inject(ChildRepository.class), getCurrentUser());
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

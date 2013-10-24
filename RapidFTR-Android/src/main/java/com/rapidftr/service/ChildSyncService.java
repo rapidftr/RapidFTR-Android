@@ -34,7 +34,7 @@ import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static com.rapidftr.view.fields.PhotoUploadBox.PHOTO_KEYS;
 import static java.util.Arrays.asList;
 
-public class ChildService implements SyncService<Child> {
+public class ChildSyncService implements SyncService<Child> {
     private RapidFtrApplication context;
     private ChildRepository repository;
     private FluentRequest fluentRequest;
@@ -42,7 +42,7 @@ public class ChildService implements SyncService<Child> {
     private Object audioAttachments;
 
     @Inject
-    public ChildService(RapidFtrApplication context, ChildRepository repository, FluentRequest fluentRequest) {
+    public ChildSyncService(RapidFtrApplication context, ChildRepository repository, FluentRequest fluentRequest) {
         this.context = context;
         this.repository = repository;
         this.fluentRequest = fluentRequest;
@@ -233,19 +233,6 @@ public class ChildService implements SyncService<Child> {
         return repoIdsAndRevs.get(serverIdRev.getKey()) != null;
     }
 
-    private void getPhotoFromServerIfNeeded(BaseModel model, PhotoCaptureHelper photoCaptureHelper, JSONArray photoKeys) throws JSONException, IOException {
-        for (int i = 0; i < photoKeys.length(); i++) {
-            String photoKey = photoKeys.get(i).toString();
-            try {
-                if (!photoKey.equals("")) {
-                    photoCaptureHelper.getFile(photoKey, ".jpg");
-                }
-            } catch (FileNotFoundException e) {
-                getPhotoFromServer(model, photoCaptureHelper, photoKey);
-            }
-        }
-    }
-
     protected JSONArray updatedPhotoKeys(BaseModel model) throws JSONException {
         JSONArray photoKeys = model.optJSONArray(PHOTO_KEYS);
         JSONArray photoKeysToAdd = new JSONArray();
@@ -270,9 +257,4 @@ public class ChildService implements SyncService<Child> {
         }
     }
 
-    public void getPhotoFromServer(BaseModel model, PhotoCaptureHelper photoCaptureHelper, String fileName) throws IOException {
-        HttpResponse httpResponse = issueGetPhotoRequest(model, fileName);
-        Bitmap bitmap = BitmapFactory.decodeStream(httpResponse.getEntity().getContent());
-        savePhoto(bitmap, photoCaptureHelper, fileName);
-    }
 }

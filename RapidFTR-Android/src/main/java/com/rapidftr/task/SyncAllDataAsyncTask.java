@@ -3,7 +3,6 @@ package com.rapidftr.task;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.model.BaseModel;
-import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.Repository;
 import com.rapidftr.service.DeviceService;
@@ -34,34 +33,32 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
 
         List<String> idsToDownload = new ArrayList<String>();
         Boolean blacklisted = deviceService.isBlacklisted();
-
         if(blacklisted){
-            uploadChildrenToSyncWithServer(idsToDownload);
+            uploadRecordsToServer(idsToDownload);
             if (repository.toBeSynced().isEmpty())
             {
                 deviceService.wipeData();
             }
         } else {
             idsToDownload = recordService.getIdsToDownload();
-            int startProgressForDownloadingChildren = uploadChildrenToSyncWithServer(idsToDownload);
-            downloadChildrenFromServerToSync(idsToDownload, startProgressForDownloadingChildren);
+            int startProgressForDownloadingChildren = uploadRecordsToServer(idsToDownload);
+            downloadRecordsFromServer(idsToDownload, startProgressForDownloadingChildren);
         }
     }
 
-    private int uploadChildrenToSyncWithServer(List<String> idsToDownload) throws JSONException, IOException {
-        List<T> childrenToSyncWithServer = repository.toBeSynced();
-        setProgressBarParameters(idsToDownload, childrenToSyncWithServer);
+    private int uploadRecordsToServer(List<String> idsToDownload) throws JSONException, IOException, HttpException {
+        List<T> recordsToSyncWithServer = repository.toBeSynced();
+        setProgressBarParameters(idsToDownload, recordsToSyncWithServer);
         setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
         getFormSections();
-        sendRecordsToServer(childrenToSyncWithServer);
+        sendRecordsToServer(recordsToSyncWithServer);
 
-        return formSectionProgress + childrenToSyncWithServer.size();
+        return formSectionProgress + recordsToSyncWithServer.size();
     }
 
-    private void downloadChildrenFromServerToSync(List<String> idsToDownload,
-                                                  int startProgressForDownloadingChildren)
+    private void downloadRecordsFromServer(List<String> idsToDownload, int startProgressForDownloadingRecords)
             throws IOException, JSONException, HttpException {
-        saveIncomingRecords(idsToDownload, startProgressForDownloadingChildren);
+        saveIncomingRecords(idsToDownload, startProgressForDownloadingRecords);
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
     }
 

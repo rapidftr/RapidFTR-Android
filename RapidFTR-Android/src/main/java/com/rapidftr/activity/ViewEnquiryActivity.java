@@ -13,7 +13,6 @@ import com.rapidftr.service.EnquirySyncService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncRecordTask;
-import com.rapidftr.utils.http.FluentRequest;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -78,6 +77,6 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
 
     protected SyncRecordTask createSyncTaskForEnquiry() {
         enquiryRepository = inject(EnquiryRepository.class);
-        return new SyncRecordTask(new EnquirySyncService(this.getContext() , new EnquiryHttpDao(""), new FluentRequest(),enquiryRepository), enquiryRepository, getCurrentUser());
+        return new SyncRecordTask(new EnquirySyncService(this.getContext().getSharedPreferences() , new EnquiryHttpDao(),enquiryRepository), enquiryRepository, getCurrentUser());
     }
 }

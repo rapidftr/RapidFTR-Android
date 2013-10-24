@@ -11,7 +11,7 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.FormService;
 import com.rapidftr.utils.http.FluentRequest;
@@ -41,7 +41,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @RunWith(CustomTestRunner.class)
 public class SyncAllDataAsyncTaskTest {
 
-    @Mock private ChildService childService;
+    @Mock private ChildSyncService childSyncService;
     @Mock private ChildRepository childRepository;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS) private RapidFtrActivity rapidFtrActivity;
     @Mock private NotificationManager notificationManager;
@@ -67,7 +67,7 @@ public class SyncAllDataAsyncTaskTest {
 
         application = spy(RapidFtrApplication.getApplicationInstance());
 
-        syncTask = new SyncAllDataAsyncTask(formService, childService, deviceService, childRepository, currentUser);
+        syncTask = new SyncAllDataAsyncTask(formService, childSyncService, deviceService, childRepository, currentUser);
     }
 
     @Test
@@ -79,8 +79,8 @@ public class SyncAllDataAsyncTaskTest {
 
         syncTask.execute();
         verify(formService).getPublishedFormSections();
-        verify(childService).sync(child1, currentUser);
-        verify(childService).sync(child2, currentUser);
+        verify(childSyncService).sync(child1, currentUser);
+        verify(childSyncService).sync(child2, currentUser);
     }
 
     @Test
@@ -106,8 +106,8 @@ public class SyncAllDataAsyncTaskTest {
 
         syncTask.onPreExecute();
         syncTask.doInBackground();
-        verify(childService, never()).sync(child1, currentUser);
-        verify(childService, never()).sync(child2, currentUser);
+        verify(childSyncService, never()).sync(child1, currentUser);
+        verify(childSyncService, never()).sync(child2, currentUser);
     }
 
     @Test
@@ -115,7 +115,7 @@ public class SyncAllDataAsyncTaskTest {
         syncTask.setContext(rapidFtrActivity);
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
 
-        given(childService.getIdsToDownload()).willReturn(Arrays.asList("asd97"));
+        given(childSyncService.getIdsToDownload()).willReturn(Arrays.asList("asd97"));
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
 
         syncTask = spy(syncTask);
@@ -124,9 +124,9 @@ public class SyncAllDataAsyncTaskTest {
         syncTask.onPreExecute();
         syncTask.doInBackground();
 
-        verify(childService).getRecord(any(String.class));
+        verify(childSyncService).getRecord(any(String.class));
         verify(childRepository, never()).createOrUpdate((Child) any());
-        verify(childService, never()).setMedia((Child) any());
+        verify(childSyncService, never()).setMedia((Child) any());
     }
 
     @Test
@@ -141,9 +141,9 @@ public class SyncAllDataAsyncTaskTest {
 
         syncTask.execute();
 
-        verify(childService).sync(child1, currentUser);
-        verify(childService, never()).getRecord(any(String.class));
-        verify(childService, never()).getIdsToDownload();
+        verify(childSyncService).sync(child1, currentUser);
+        verify(childSyncService, never()).getRecord(any(String.class));
+        verify(childSyncService, never()).getIdsToDownload();
     }
 
     @Test
@@ -152,13 +152,13 @@ public class SyncAllDataAsyncTaskTest {
         Child child2 = mock(Child.class);
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
 
-        given(childService.getIdsToDownload()).willReturn(Arrays.asList("qwerty0987","abcd1234"));
+        given(childSyncService.getIdsToDownload()).willReturn(Arrays.asList("qwerty0987","abcd1234"));
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
         given(child1.getUniqueId()).willReturn("1234");
         given(child2.getUniqueId()).willReturn("5678");
 
-        given(childService.getRecord("qwerty0987")).willReturn(child1);
-        given(childService.getRecord("abcd1234")).willReturn(child2);
+        given(childSyncService.getRecord("qwerty0987")).willReturn(child1);
+        given(childSyncService.getRecord("abcd1234")).willReturn(child2);
 
         given(childRepository.exists("1234")).willReturn(true);
         given(childRepository.exists("5678")).willReturn(false);
@@ -166,7 +166,7 @@ public class SyncAllDataAsyncTaskTest {
         syncTask.setContext(rapidFtrActivity);
         syncTask.execute();
 
-        verify(childService).getRecord("qwerty0987");
+        verify(childSyncService).getRecord("qwerty0987");
         verify(childRepository).update(child1);
         verify(childRepository).createOrUpdate(child2);
     }
@@ -211,7 +211,7 @@ public class SyncAllDataAsyncTaskTest {
 	public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
 		Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
 		given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
-		syncTask.recordService = new ChildService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
+		syncTask.recordService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
 		syncTask.setContext(rapidFtrActivity);
 		syncTask.execute();
 
@@ -223,19 +223,19 @@ public class SyncAllDataAsyncTaskTest {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-        given(childService.getIdsToDownload()).willReturn(Arrays.asList("qwerty0987", "abcd1234"));
-        given(childService.getRecord("qwerty0987")).willReturn(mock(Child.class));
-        given(childService.getRecord("abcd1234")).willReturn(mock(Child.class));
+        given(childSyncService.getIdsToDownload()).willReturn(Arrays.asList("qwerty0987", "abcd1234"));
+        given(childSyncService.getRecord("qwerty0987")).willReturn(mock(Child.class));
+        given(childSyncService.getRecord("abcd1234")).willReturn(mock(Child.class));
 
         syncTask.setContext(rapidFtrActivity);
         syncTask.execute();
 
         verify(formService).getPublishedFormSections();
-        verify(childService).sync(child1, currentUser);
-        verify(childService).sync(child2, currentUser);
-        verify(childService).getIdsToDownload();
-        verify(childService).getRecord("qwerty0987");
-        verify(childService).getRecord("abcd1234");
+        verify(childSyncService).sync(child1, currentUser);
+        verify(childSyncService).sync(child2, currentUser);
+        verify(childSyncService).getIdsToDownload();
+        verify(childSyncService).getRecord("qwerty0987");
+        verify(childSyncService).getRecord("abcd1234");
     }
 
     @Test

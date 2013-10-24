@@ -134,7 +134,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
         }
     }
 
-    void sendRecordsToServer(List<T> recordsToSyncWithServer) throws IOException, JSONException {
+    void sendRecordsToServer(List<T> recordsToSyncWithServer) throws IOException, JSONException, HttpException {
         setProgressAndNotify(context.getString(R.string.synchronize_step_2), formSectionProgress);
         String subStatusFormat = "Uploading Record %s of " + recordsToSyncWithServer.size();
         int counter = 0;
