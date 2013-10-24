@@ -20,6 +20,7 @@ import java.io.IOException;
 
 public class ViewEnquiryActivity extends BaseEnquiryActivity {
 
+    protected EnquiryRepository enquiryRepository;
     @Override
     protected void initializeView() {
         setContentView(R.layout.activity_view_enquiry);
@@ -76,7 +77,7 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     }
 
     protected SyncRecordTask createSyncTaskForEnquiry() {
-        EnquiryRepository enquiryRepository = inject(EnquiryRepository.class);
-        return new SyncRecordTask(new EnquirySyncService(this.getContext() , new EnquiryHttpDao(""), new FluentRequest()), enquiryRepository, getCurrentUser());
+        enquiryRepository = inject(EnquiryRepository.class);
+        return new SyncRecordTask(new EnquirySyncService(this.getContext() , new EnquiryHttpDao(""), new FluentRequest(),enquiryRepository), enquiryRepository, getCurrentUser());
     }
 }

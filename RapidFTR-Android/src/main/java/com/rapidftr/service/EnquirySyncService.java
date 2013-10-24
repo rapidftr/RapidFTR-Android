@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
+import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
 import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
@@ -24,14 +25,15 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     private final RapidFtrApplication context;
     private final EnquiryHttpDao enquiryHttpDao;
     private final FluentRequest fluentRequest;
+    private final EnquiryRepository enquiryRepository;
 
     @Inject
-    public EnquirySyncService(RapidFtrApplication context, EnquiryHttpDao enquiryHttpDao, FluentRequest fluentRequest) {
+    public EnquirySyncService(RapidFtrApplication context, EnquiryHttpDao enquiryHttpDao, FluentRequest fluentRequest, EnquiryRepository enquiryRepository) {
         this.context = context;
         this.enquiryHttpDao = enquiryHttpDao;
         this.fluentRequest = fluentRequest;
+        this.enquiryRepository = enquiryRepository;
     }
-
     @Override
     public Enquiry sync(Enquiry enquiry, User currentUser) throws IOException, JSONException {
         fluentRequest.path(getSyncPath(enquiry, currentUser)).context(context).param("enquiry", enquiry.values().toString());
@@ -48,6 +50,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
                 enquiry = new Enquiry(source);
                 enquiry.setSynced(true);
                 enquiry.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
+                enquiryRepository.createOrUpdate(enquiry);
                 return enquiry;
             }
         } catch (Exception e) {

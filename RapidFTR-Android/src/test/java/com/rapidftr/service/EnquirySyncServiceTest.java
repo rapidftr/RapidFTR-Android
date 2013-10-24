@@ -42,7 +42,7 @@ public class EnquirySyncServiceTest {
     public void getRecord_shouldRetrieveARecordOverHttp() throws Exception {
         String enquiryInternalId = "enquiryInternalId";
 
-        EnquirySyncService enquirySyncService = new EnquirySyncService(application, enquiryHttpDao, fluentRequest);
+        EnquirySyncService enquirySyncService = new EnquirySyncService(application, enquiryHttpDao, fluentRequest, enquiryRepository);
         Enquiry expectedEnquiry = new Enquiry("createdBy", "reporterName", new JSONObject("{}"));
         when(enquiryHttpDao.getEnquiry(enquiryInternalId)).thenReturn(expectedEnquiry);
 
@@ -55,7 +55,7 @@ public class EnquirySyncServiceTest {
     public void getIdsToDownload_shouldRetrieveUrlsFromApiSinceLastUpdate() throws Exception {
         final long lastUpdateMillis = System.currentTimeMillis();
 
-        EnquirySyncService enquirySyncService = new EnquirySyncService(application, enquiryHttpDao, fluentRequest);
+        EnquirySyncService enquirySyncService = new EnquirySyncService(application, enquiryHttpDao, fluentRequest, enquiryRepository);
         SharedPreferences sharedPreferences = mock(SharedPreferences.class);
         when(application.getSharedPreferences()).thenReturn(sharedPreferences);
         when(sharedPreferences.getLong("LAST_ENQUIRY_SYNC",0)).thenReturn(lastUpdateMillis);
