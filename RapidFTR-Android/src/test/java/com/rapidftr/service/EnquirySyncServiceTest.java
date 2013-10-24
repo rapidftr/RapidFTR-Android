@@ -72,7 +72,7 @@ public class EnquirySyncServiceTest {
 
         new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository).sync(enquiry, user);
 
-        verify(enquiryRepository).update(returnedEnquiry);
+        verify(enquiryRepository).createOrUpdate(returnedEnquiry);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class EnquirySyncServiceTest {
 
         new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository).sync(enquiry, user);
 
-        verify(enquiryRepository).update(returnedEnquiry);
+        verify(enquiryRepository).createOrUpdate(returnedEnquiry);
     }
 
     @Test
