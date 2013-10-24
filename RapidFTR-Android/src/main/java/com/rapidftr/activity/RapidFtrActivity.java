@@ -1,11 +1,7 @@
 package com.rapidftr.activity;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -27,6 +23,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SynchronisationAsyncTask;
@@ -212,8 +209,8 @@ public void viewAllEnquiryTabListener(View view) {
             executeTask(syncChildTask);
 
             // sync enquiry
-//            SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {});
-//            executeTask(syncEnquiryTask);
+            SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {});
+            executeTask(syncEnquiryTask);
         }
     }
 

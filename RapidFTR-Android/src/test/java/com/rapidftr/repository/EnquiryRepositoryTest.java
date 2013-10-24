@@ -36,7 +36,7 @@ public class EnquiryRepositoryTest {
         enquiryRepository = new EnquiryRepository(user, session);
     }
 
-    @Test
+    @Ignore
     public void shouldCreateAnEnquiryInTheDatabase() throws JSONException {
         Enquiry enquiry = new Enquiry(user, "REPORTER NAME", new JSONObject("{\"age\":14,\"name\":\"Subhas\"}"));
         enquiryRepository.createOrUpdate(enquiry);

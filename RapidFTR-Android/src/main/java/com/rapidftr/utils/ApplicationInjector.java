@@ -17,17 +17,9 @@ import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.Repository;
-import com.rapidftr.service.ChildService;
-import com.rapidftr.service.DeviceService;
-import com.rapidftr.service.EnquirySyncService;
-import com.rapidftr.service.FormService;
-import com.rapidftr.service.LogOutService;
-import com.rapidftr.service.LoginService;
-import com.rapidftr.service.RegisterUserService;
-import com.rapidftr.service.SyncService;
+import com.rapidftr.service.*;
 import com.rapidftr.task.RegisterUnverifiedUserAsyncTask;
 import com.rapidftr.task.SyncAllDataAsyncTask;
-import com.rapidftr.task.SyncChildTask;
 import com.rapidftr.task.SyncUnverifiedDataAsyncTask;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.utils.http.FluentRequest;
@@ -40,22 +32,26 @@ public class ApplicationInjector extends AbstractModule {
     protected void configure() {
         bind(Context.class).to(RapidFtrApplication.class);
         bind(DatabaseHelper.class).to(SQLCipherHelper.class);
-        bind(new TypeLiteral<Repository<Child>>(){}).to(ChildRepository.class);
-        bind(new TypeLiteral<Repository<Enquiry>>(){}).to(EnquiryRepository.class);
+        bind(new TypeLiteral<Repository<Child>>() {
+        }).to(ChildRepository.class);
+        bind(new TypeLiteral<Repository<Enquiry>>() {
+        }).to(EnquiryRepository.class);
         bind(FormService.class);
         bind(RegisterUserService.class);
         bind(RegisterUnverifiedUserAsyncTask.class);
         bind(FluentRequest.class);
-        bind(new TypeLiteral<SyncService<Child>>(){}).to(ChildService.class);
-        bind(new TypeLiteral<SyncService<Enquiry>>(){}).to(EnquirySyncService.class);
+        bind(new TypeLiteral<SyncService<Child>>() {
+        }).to(ChildSyncService.class);
+        bind(new TypeLiteral<SyncService<Enquiry>>() {
+        }).to(EnquirySyncService.class);
 
         bind(LogOutService.class);
         bind(LoginService.class);
-        bind(SyncChildTask.class);
         bind(DeviceService.class);
     }
 
-    @Provides @Named("USER_NAME")
+    @Provides
+    @Named("USER_NAME")
     public String getUserName(User user) {
         return user.getUserName();
     }

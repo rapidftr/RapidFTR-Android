@@ -8,9 +8,12 @@ import android.view.View;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
-import com.rapidftr.task.SyncChildTask;
+import com.rapidftr.task.SyncRecordTask;
+import com.rapidftr.utils.http.FluentRequest;
 import org.json.JSONException;
 
 
@@ -50,11 +53,14 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     protected void sync() {
-        SyncChildTask task = inject(SyncChildTask.class);
+        SyncRecordTask task = createChildSyncTask();
         task.setActivity(this);
          RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
     }
 
+    protected SyncRecordTask createChildSyncTask(){
+       return  new SyncRecordTask(new ChildSyncService(this.getContext(), inject(ChildRepository.class), new FluentRequest()), inject(ChildRepository.class), getCurrentUser());
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.sync_single_menu, menu);

@@ -33,7 +33,7 @@ public class EnquiryHttpDao {
         this.apiRoot = apiRoot;
     }
 
-    public Enquiry getEnquiry(String url) throws JSONException, IOException, HttpException {
+    public Enquiry get(String url) throws JSONException, IOException, HttpException {
         final FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
                 .host(url)
@@ -43,13 +43,15 @@ public class EnquiryHttpDao {
         return new Enquiry(enquiryJSON);
     }
 
-    public void updateEnquiry(Enquiry enquiry) throws JSONException, IOException, HttpException {
-        http()
+    public Enquiry update(Enquiry enquiry) throws JSONException, IOException, HttpException {
+        FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
                 .host(apiRoot + "/api/enquiries/" + enquiry.get("id"))
                 .param("enquiry", enquiry.getJsonString())
                 .put()
                 .ensureSuccess();
+        String json = CharStreams.toString(new InputStreamReader(fluentResponse.getEntity().getContent()));
+        return new Enquiry(json);
     }
 
     public List<String> getIdsOfUpdated(DateTime lastUpdate) throws IOException, JSONException, HttpException {
@@ -66,5 +68,16 @@ public class EnquiryHttpDao {
             urls.add(jsonArray.getJSONObject(i).getString("location"));
         }
         return urls;
+    }
+
+    public Enquiry create(Enquiry enquiry) throws IOException, HttpException, JSONException {
+        FluentResponse fluentResponse = http()
+                .context(RapidFtrApplication.getApplicationInstance())
+                .host(apiRoot + "/api/enquiries")
+                .param("enquiry", enquiry.getJsonString())
+                .post()
+                .ensureSuccess();
+        String json = CharStreams.toString(new InputStreamReader(fluentResponse.getEntity().getContent()));
+        return new Enquiry(json);
     }
 }
