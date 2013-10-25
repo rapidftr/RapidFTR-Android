@@ -30,7 +30,7 @@ public class EnquiryTest {
 
     private String createdBy;
     private String enquirerName;
-    private JSONObject criteria;
+    private String criteria;
     private DatabaseSession session;
     private ChildRepository childRepository;
 
@@ -38,7 +38,7 @@ public class EnquiryTest {
     public void setUp() throws JSONException {
         createdBy = "Rajni";
         enquirerName = "Batman";
-        criteria = new JSONObject("{\"name\":\"NAME\"}");
+        criteria = "{\"name\":\"NAME\"}";
         session = new ShadowSQLiteHelper("test_database").getSession();
         childRepository = new ChildRepository("user1", session);
     }
@@ -56,10 +56,10 @@ public class EnquiryTest {
     @Test
     public void createEnquiryWithAllFields() throws JSONException{
 
-      Enquiry enquiry = new Enquiry(createdBy, enquirerName, criteria);
+      Enquiry enquiry = new Enquiry(createdBy, enquirerName, new JSONObject(criteria));
 
       assertEquals(enquirerName, enquiry.getEnquirerName());
-      assertEquals(enquiry.getCriteria().getClass(), JSONObject.class);
+      assertEquals(enquiry.getCriteria().getClass(), String.class);
       JSONAssert.assertEquals(criteria, enquiry.getCriteria(), true);
       assertEquals(createdBy, enquiry.getCreatedBy());
       assertNotNull(enquiry.getCreatedAt());
@@ -81,20 +81,20 @@ public class EnquiryTest {
     public void shouldPopulateCriteria() throws Exception {
         String enquiryJSON = "{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\", \"sex\": \"Male\"}";
         Enquiry enquiry = new Enquiry(enquiryJSON);
-        JSONObject expectedJSON = new JSONObject(enquiryJSON);
 
-        JSONObject criteriaJSON = enquiry.getCriteria();
+        String criteriaJSON = enquiry.getCriteria();
 
-        JSONAssert.assertEquals(expectedJSON, criteriaJSON, true);
+        JSONAssert.assertEquals(enquiryJSON, criteriaJSON, true);
     }
 
     @Test
     public void shouldKnowHowToRemoveEnquirerName() throws Exception {
         String enquiryJSON = "{\"enquirer_name\": \"godwin\", \"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}";
         Enquiry enquiry = new Enquiry(enquiryJSON);
-        JSONObject expectedJSON = new JSONObject("{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}");
+        String expectedJSON = "{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}";
 
-        JSONObject criteriaJSON = enquiry.getCriteria();
+        String criteriaJSON = enquiry.getCriteria();
+
 
         JSONAssert.assertEquals(expectedJSON, criteriaJSON, true);
     }
@@ -128,7 +128,7 @@ public class EnquiryTest {
 
     @Test(expected=JSONException.class)
     public void newEnquiryShouldNotHaveMatchingIds() throws JSONException {
-        Enquiry enquiry = new Enquiry(createdBy, enquirerName, criteria);
+        Enquiry enquiry = new Enquiry(createdBy, enquirerName, new JSONObject(criteria));
         enquiry.matchingChildIds();
     }
 

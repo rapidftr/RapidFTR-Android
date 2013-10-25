@@ -83,9 +83,9 @@ public class Enquiry extends BaseModel {
         this.setColumn(enquirer_name, reporterName);
     }
 
-    public JSONObject getCriteria() throws JSONException {
+    public String getCriteria() throws JSONException {
 
-        JSONObject enquiry_criteria = null;
+        JSONObject enquiry_criteria;
 
         try {
             enquiry_criteria =  new JSONObject(this.get(criteria.getColumnName()).toString());
@@ -102,7 +102,7 @@ public class Enquiry extends BaseModel {
             }
         }
 
-        return enquiry_criteria;
+        return enquiry_criteria.toString();
     }
 
     private ArrayList<String> getKeys() {
@@ -128,7 +128,7 @@ public class Enquiry extends BaseModel {
     }
 
     public boolean isValid() {
-        String enquirerName = null;
+        String enquirerName;
         try {
             enquirerName = getEnquirerName();
         } catch (JSONException e) {
