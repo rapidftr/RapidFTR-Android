@@ -118,6 +118,7 @@ public class Enquiry extends BaseModel {
         NONE_CRITERIA_FIELDS.add("enquirer_name");
         NONE_CRITERIA_FIELDS.add("created_at");
         NONE_CRITERIA_FIELDS.add("created_by");
+        NONE_CRITERIA_FIELDS.add("created_organisation");
         NONE_CRITERIA_FIELDS.add("synced");
         NONE_CRITERIA_FIELDS.add("unique_identifier");
     }
