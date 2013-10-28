@@ -76,7 +76,7 @@ public abstract class BaseChildActivity extends CollectionActivity {
         return child;
     }
 
-    public Child save() throws JSONException {
+    public Child  save() throws JSONException {
         if (!child.isValid()) {
             makeToast(R.string.save_child_invalid);
             return null;

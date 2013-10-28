@@ -40,7 +40,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
     @Override
     public Child get(String id) throws JSONException {
         @Cleanup  Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ?", new String[]{id});
-        close();
+
         if (cursor.moveToNext()) {
             return childFrom(cursor);
         } else {
@@ -51,20 +51,18 @@ public class ChildRepository implements Closeable, Repository<Child> {
     @Override
     public boolean exists(String childId) {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE id = ?", new String[]{childId == null ? "" : childId});
-        close();
+
         return cursor.moveToNext() && cursor.getCount() > 0;
     }
 
     @Override
     public int size() {
         @Cleanup Cursor cursor = session.rawQuery("SELECT COUNT(1) FROM children WHERE child_owner = ?", new String[]{userName});
-        close();
         return cursor.moveToNext() ? cursor.getInt(0) : 0;
     }
 
     public List<Child> getChildrenByOwner() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE child_owner = ? ORDER BY name", new String[]{userName});
-        close();
         return toChildren(cursor);
     }
 
@@ -72,7 +70,6 @@ public class ChildRepository implements Closeable, Repository<Child> {
     public ArrayList<String> getRecordIdsByOwner() throws JSONException {
         ArrayList<String> ids = new ArrayList<String>();
         @Cleanup Cursor cursor = session.rawQuery("SELECT _id FROM children WHERE child_owner = ? ", new String[]{userName});
-        close();
         while (cursor.moveToNext()){
             ids.add(cursor.getString(0));
         }
@@ -81,7 +78,6 @@ public class ChildRepository implements Closeable, Repository<Child> {
 
     public void deleteChildrenByOwner() throws JSONException {
         session.execSQL("DELETE FROM children WHERE child_owner = '"+ userName +"';");
-        close();
     }
 
     public List<Child> getMatchingChildren(String subString) throws JSONException {
@@ -89,7 +85,6 @@ public class ChildRepository implements Closeable, Repository<Child> {
         RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();
 	    String query = "SELECT child_json, synced FROM children WHERE "+ fetchByOwner(context) +" (name LIKE ? or id LIKE ?)";
         @Cleanup Cursor cursor = session.rawQuery(query, new String[]{searchString, searchString});
-        close();
         return toChildren(cursor);
     }
 
@@ -116,7 +111,6 @@ public class ChildRepository implements Closeable, Repository<Child> {
         values.put(created_at.getColumnName(), child.getCreatedAt());
         populateInternalColumns(child, values);
         long id = session.replace(Database.child.getTableName(), null, values);
-        close();
         if (id <= 0) throw new IllegalArgumentException(id + "");
     }
 
@@ -140,20 +134,17 @@ public class ChildRepository implements Closeable, Repository<Child> {
         values.put(synced.getColumnName(), child.isSynced());
         populateInternalColumns(child, values);
         session.update(Database.child.getTableName(), values, format("%s=?", id.getColumnName()), new String[]{child.getUniqueId()});
-        close();
     }
 
     @Override
     public List<Child> toBeSynced() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE synced = ?", new String[]{falseValue.getColumnValue()});
-        close();
         return toChildren(cursor);
     }
 
     @Override
     public List<Child> currentUsersUnsyncedRecords() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE synced = ? AND child_owner = ?", new String[]{falseValue.getColumnValue(), userName});
-        close();
         return toChildren(cursor);
     }
 
@@ -164,7 +155,6 @@ public class ChildRepository implements Closeable, Repository<Child> {
                 + Database.ChildTableColumn.internal_id.getColumnName() + ", "
                 + Database.ChildTableColumn.internal_rev.getColumnName()
                 + " FROM "+ Database.child.getTableName(), null);
-        close();
         while(cursor.moveToNext()){
             idRevs.put(cursor.getString(0), cursor.getString(1));
         }
