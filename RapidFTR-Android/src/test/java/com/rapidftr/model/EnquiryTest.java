@@ -30,7 +30,6 @@ import static org.mockito.Mockito.*;
 @RunWith(CustomTestRunner.class)
 public class EnquiryTest {
 
-
     private String createdBy;
     private String enquirerName;
     private String enquiryCriteria;
@@ -74,17 +73,6 @@ public class EnquiryTest {
     }
 
     @Test
-    public void createEnquiryFromCursorShouldPopulateEnquiryUsingAllColumns() throws Exception {
-        Cursor cursor = mockedCursor();
-
-        Enquiry enquiry = new Enquiry(cursor);
-
-        assertThat(enquiry.getUniqueId(), is("unique_identifier_value"));
-        assertThat(enquiry.getEnquirerName(), is("enquirer_name_value"));
-        assertThat(enquiry.getCreatedBy(), is("created_by_value"));
-    }
-
-    @Test
     public void shouldPopulateCriteria() throws Exception {
         String enquiryJSON = "{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\", \"sex\": \"Male\"}";
         Enquiry enquiry = new Enquiry(enquiryJSON);
@@ -93,23 +81,24 @@ public class EnquiryTest {
 
         JSONAssert.assertEquals(enquiryJSON, expectedCriteria, true);
     }
-//
-//    @Test
-//    public void shouldKnowHowToRemoveEnquirerName() throws Exception {
-//        String enquiryJSON = "{\"enquirer_name\": \"godwin\", \"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}";
-//        Enquiry enquiry = new Enquiry(enquiryJSON);
-//        String expectedJSON = "{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}";
-//
-//        String criteriaJSON = enquiry.getCriteria();
-//
-//
-//        JSONAssert.assertEquals(expectedJSON, criteriaJSON, true);
-//    }
+
+    @Test
+    public void shouldKnowHowToRemoveEnquirerName() throws Exception {
+        String enquiryJSON = "{\"enquirer_name\": \"godwin\", \"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        String expectedJSON = "{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}";
+
+        JSONObject criteriaJSON = enquiry.getCriteria();
+
+        JSONAssert.assertEquals(expectedJSON, criteriaJSON, true);
+    }
 
     @Test
     public void enquiryShouldGetPotentialMatches() throws JSONException {
         Cursor cursor = mock(Cursor.class);
         doReturn(potential_matches.ordinal()).when(cursor).getColumnIndex(potential_matches.getColumnName());
+        doReturn(criteria.ordinal()).when(cursor).getColumnIndex(criteria.getColumnName());
+        doReturn("{}").when(cursor).getString(criteria.ordinal());
         doReturn("[\"id1\", \"id2\"]").when(cursor).getString(potential_matches.ordinal());
 
         Child child1 = new Child("id1", "owner1", "{ 'test1' : 'value1' }");
@@ -177,8 +166,14 @@ public class EnquiryTest {
 
     @Test
     public void enquiryShouldGetMatchingIds() throws JSONException {
-        Cursor cursor = mockedCursor();
+        Cursor cursor = mock(Cursor.class);
+        doReturn(potential_matches.ordinal()).when(cursor).getColumnIndex(potential_matches.getColumnName());
+        doReturn(criteria.ordinal()).when(cursor).getColumnIndex(criteria.getColumnName());
+        doReturn("{}").when(cursor).getString(criteria.ordinal());
+        doReturn("potential_matches_value").when(cursor).getString(potential_matches.ordinal());
+
         Enquiry enquiry = new Enquiry(cursor);
+
         assertEquals("potential_matches_value", enquiry.matchingChildIds());
     }
 
