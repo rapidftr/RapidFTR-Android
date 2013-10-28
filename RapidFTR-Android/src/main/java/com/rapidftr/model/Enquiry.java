@@ -126,7 +126,7 @@ public class Enquiry extends BaseModel {
     }
 
     public void setCriteria(JSONObject criteria) throws JSONException {
-        this.setColumn(Database.EnquiryTableColumn.criteria, criteria.toString());
+        this.put(Database.EnquiryTableColumn.criteria.getColumnName(), criteria);
     }
 
     public boolean isValid() {

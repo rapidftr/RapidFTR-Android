@@ -63,11 +63,11 @@ public class EnquiryTest {
     @Test
     public void createEnquiryWithAllFields() throws JSONException {
 
-        Enquiry enquiry = new Enquiry(createdBy, enquirerName, new JSONObject(enquiryCriteria));
+        JSONObject criteria = new JSONObject(enquiryCriteria);
+        Enquiry enquiry = new Enquiry(createdBy, enquirerName, criteria);
 
         assertEquals(enquirerName, enquiry.getEnquirerName());
-        assertEquals(enquiry.getCriteria().getClass(), String.class);
-        JSONAssert.assertEquals(enquiryCriteria, enquiry.getCriteria(), true);
+        JSONAssert.assertEquals(criteria, enquiry.getCriteria(), true);
         assertEquals(createdBy, enquiry.getCreatedBy());
         assertNotNull(enquiry.getCreatedAt());
         assertNotNull(enquiry.getLastUpdatedAt());
@@ -84,15 +84,15 @@ public class EnquiryTest {
         assertThat(enquiry.getCreatedBy(), is("created_by_value"));
     }
 
-//    @Test
-//    public void shouldPopulateCriteria() throws Exception {
-//        String enquiryJSON = "{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\", \"sex\": \"Male\"}";
-//        Enquiry enquiry = new Enquiry(enquiryJSON);
-//
-//        String criteriaJSON = enquiry.getCriteria();
-//
-//        JSONAssert.assertEquals(enquiryJSON, criteriaJSON, true);
-//    }
+    @Test
+    public void shouldPopulateCriteria() throws Exception {
+        String enquiryJSON = "{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\", \"sex\": \"Male\"}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+
+        JSONObject expectedCriteria = enquiry.getCriteria();
+
+        JSONAssert.assertEquals(enquiryJSON, expectedCriteria, true);
+    }
 //
 //    @Test
 //    public void shouldKnowHowToRemoveEnquirerName() throws Exception {
