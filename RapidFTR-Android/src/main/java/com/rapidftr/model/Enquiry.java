@@ -33,6 +33,7 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(Cursor cursor) throws JSONException {
+
         for (Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
             final int columnIndex = cursor.getColumnIndex(column.getColumnName());
             if (columnIndex < 0) {

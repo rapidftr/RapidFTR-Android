@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +81,21 @@ public class EnquiryRepositoryTest {
         enquiryRepository.createOrUpdate(enquiry1);
 
         assertEquals(enquiryRepository.get(enquiryId).toString(), enquiry1.toString());
+    }
+
+    @Test
+    public void shouldMaintainWellFormedCriteriaWhenEnquiryIsSaved() throws JSONException {
+        String enquiryJSON = "{ \"enquirer_name\":\"sam fisher\", \"name\":\"foo bar\"," +
+                "\"nationality\":\"ugandan\",\"created_by\" : \"Tom Reed\",\"synced\" : \"false\"}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        String expectedEnquirerName = "sam fisher";
+        String expectedCriteria = "{\"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
+
+        enquiryRepository.createOrUpdate(enquiry);
+
+        Enquiry retrievedEnquiry = enquiryRepository.get(enquiry.getUniqueId());
+        assertEquals(expectedEnquirerName, retrievedEnquiry.getEnquirerName());
+        JSONAssert.assertEquals(expectedCriteria, retrievedEnquiry.getCriteria(),true);
     }
 
     @Test
