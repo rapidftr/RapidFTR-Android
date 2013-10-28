@@ -39,7 +39,9 @@ public class Enquiry extends BaseModel {
             if (columnIndex < 0) {
                 throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
             }
-            if (column.getPrimitiveType().equals(Boolean.class)) {
+            if (column.equals(criteria)){
+                this.put(criteria.getColumnName(), new JSONObject(cursor.getString(cursor.getColumnIndex(criteria.getColumnName()))));
+            }else if(column.getPrimitiveType().equals(Boolean.class)) {
                 this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
             } else {
                 this.put(column.getColumnName(), cursor.getString(columnIndex));
@@ -84,15 +86,14 @@ public class Enquiry extends BaseModel {
         this.setColumn(enquirer_name, reporterName);
     }
 
-    public String getCriteria() throws JSONException {
-
+    public JSONObject getCriteria() throws JSONException {
         JSONObject enquiry_criteria;
 
         try {
-            enquiry_criteria =  new JSONObject(this.get(criteria.getColumnName()).toString());
+            return (JSONObject) this.get(criteria.getColumnName());
         } catch (JSONException e) {
-            ArrayList<String> keys = getKeys();
             enquiry_criteria = new JSONObject();
+            ArrayList<String> keys = getKeys();
             noneCriteriaFields();
             for (String key : keys) {
                 if (NONE_CRITERIA_FIELDS.contains(key)) {
@@ -103,7 +104,7 @@ public class Enquiry extends BaseModel {
             }
         }
 
-        return enquiry_criteria.toString();
+        return enquiry_criteria;
     }
 
     private ArrayList<String> getKeys() {
