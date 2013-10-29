@@ -87,24 +87,24 @@ public class Enquiry extends BaseModel {
     }
 
     public JSONObject getCriteria() throws JSONException {
-        JSONObject enquiry_criteria;
+        JSONObject enquiryCriteria;
 
         try {
             return (JSONObject) this.get(criteria.getColumnName());
         } catch (JSONException e) {
-            enquiry_criteria = new JSONObject();
+            enquiryCriteria = new JSONObject();
             ArrayList<String> keys = getKeys();
             noneCriteriaFields();
             for (String key : keys) {
                 if (NONE_CRITERIA_FIELDS.contains(key)) {
                     /* do nothing*/
                 } else {
-                    enquiry_criteria.put(key, this.getString(key));
+                    enquiryCriteria.put(key, this.getString(key));
                 }
             }
         }
 
-        return enquiry_criteria;
+        return enquiryCriteria;
     }
 
     private ArrayList<String> getKeys() {
