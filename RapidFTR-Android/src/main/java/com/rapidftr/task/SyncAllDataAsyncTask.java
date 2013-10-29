@@ -31,33 +31,32 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
 
     protected void sync() throws JSONException, IOException, HttpException {
 
-        List<String> idsToDownload = new ArrayList<String>();
-        Boolean blacklisted = deviceService.isBlacklisted();
-        if(blacklisted){
-            uploadRecordsToServer(idsToDownload);
+        List<T> recordsToUpload = repository.toBeSynced();
+        List<String> idsToDownload;
+        Boolean isBlacklisted = deviceService.isBlacklisted();
+        if(isBlacklisted){
+            sendRecordsToServer(recordsToUpload);
             if (repository.toBeSynced().isEmpty())
             {
                 deviceService.wipeData();
             }
         } else {
             idsToDownload = recordSyncService.getIdsToDownload();
-            int startProgressForDownloadingChildren = uploadRecordsToServer(idsToDownload);
-            downloadRecordsFromServer(idsToDownload, startProgressForDownloadingChildren);
+            setProgressBarParameters(idsToDownload, recordsToUpload);
+            setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
+
+            sendRecordsToServer(recordsToUpload);
+            downloadRecordsFromServer(idsToDownload, numberOfUploadedRecords(recordsToUpload));
         }
     }
 
-    private int uploadRecordsToServer(List<String> idsToDownload) throws JSONException, IOException, HttpException {
-        List<T> recordsToSyncWithServer = repository.toBeSynced();
-        setProgressBarParameters(idsToDownload, recordsToSyncWithServer);
-        setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
-        getFormSections();
-        sendRecordsToServer(recordsToSyncWithServer);
-
-        return formSectionProgress + recordsToSyncWithServer.size();
+    private int numberOfUploadedRecords(List<T> recordsToUpload) throws JSONException {
+        return formSectionProgress + recordsToUpload.size();
     }
 
     private void downloadRecordsFromServer(List<String> idsToDownload, int startProgressForDownloadingRecords)
             throws IOException, JSONException, HttpException {
+        getFormSections();
         saveIncomingRecords(idsToDownload, startProgressForDownloadingRecords);
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
     }
