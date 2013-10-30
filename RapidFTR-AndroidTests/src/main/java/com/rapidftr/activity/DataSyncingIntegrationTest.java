@@ -16,6 +16,7 @@ import org.junit.Ignore;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import static com.rapidftr.utils.RapidFtrDateTime.now;
 import static com.rapidftr.utils.http.FluentRequest.http;
@@ -32,7 +33,6 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         solo.waitForText("Login Successful");
         enquiryRepository = application.getInjector().getInstance(EnquiryRepository.class);
         childRepository = application.getInjector().getInstance(ChildRepository.class);
-        RapidFTRDatabase.deleteChildren();
     }
 
     @Override
@@ -47,30 +47,34 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     public void xtestShouldSyncRecordWithServerAndUpdateRecordAttributes() throws JSONException, IOException, InterruptedException {
         String timeStamp = now().defaultFormat();
-
-        Child childToStore = new Child(String.format("{ '_id' : '123456', 'timeStamp' : '%s', 'test2' : 'value2', 'one' : '1', 'name' : 'derek' }", timeStamp));
+        String childId = UUID.randomUUID().toString();
+        String childName = UUID.randomUUID().toString().substring(0, 6);
+        Child childToStore = new Child(String.format("{ '_id' : '%s', 'timeStamp' : '%s', 'test2' : 'value2', 'one' : '1', 'name' : '%s' }", childId, timeStamp, childName));
         seedChildOnServer(childToStore);
 
-        Enquiry enquiryToSync = new Enquiry("CREATEDBY", "Faris", new JSONObject("{enquirer_name:Godwin,criteria:{name:derek}}"));
+        String enquiryJSON = String.format("{ \"enquirer_name\":\"Tom Cruise\", \"name\":\"%s\"," +
+                "\"nationality\":\"ugandan\",\"synced\" : \"false\"}", childName);
+
+        Enquiry enquiryToSync = new Enquiry(enquiryJSON);
+        enquiryToSync.setCreatedBy(application.getCurrentUser().getUserName());
         enquiryRepository.createOrUpdate(enquiryToSync);
         viewAllEnquiriesPage.navigateToPage();
         solo.sleep(10000);
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        solo.sleep(20000);
+        solo.sleep(50000);
         waitUntilSyncCompletion();
 
-        Child child = childRepository.getChildrenByOwner().get(0);
-        String enquiryId = enquiryRepository.getRecordIdsByOwner().get(0);
-        Enquiry enquiry = enquiryRepository.get(enquiryId);
+        Child child = childRepository.get(childId);
+        Enquiry enquiry = enquiryRepository.get(enquiryToSync.getUniqueId());
 
-        assertEquals("123456", child.optString("_id"));
-        assertEquals("Godwin", enquiry.getEnquirerName());
-        assertEquals("123456", new JSONArray(enquiry.matchingChildIds()).get(0));
+        assertNotNull(child);
+        assertEquals("Tom Cruise", enquiry.getEnquirerName());
+        assertEquals(childId, new JSONArray(enquiry.matchingChildIds()).get(0));
         assertTrue(child.isSynced());
         assertTrue(enquiry.isSynced());
 
         searchPage.navigateToSearchTab();
-        searchPage.searchChild("derek");
+        searchPage.searchChild(childName);
         searchPage.clickSearch();
         assertTrue(searchPage.isChildPresent(child.getShortId(), "derek"));
 

@@ -36,15 +36,15 @@ import static java.util.Arrays.asList;
 
 public class ChildSyncService implements SyncService<Child> {
     private RapidFtrApplication context;
-    private ChildRepository repository;
+    private ChildRepository childRepository;
     private FluentRequest fluentRequest;
     private JSONArray photoKeys;
     private Object audioAttachments;
 
     @Inject
-    public ChildSyncService(RapidFtrApplication context, ChildRepository repository, FluentRequest fluentRequest) {
+    public ChildSyncService(RapidFtrApplication context, ChildRepository childRepository, FluentRequest fluentRequest) {
         this.context = context;
-        this.repository = repository;
+        this.childRepository = childRepository;
         this.fluentRequest = fluentRequest;
     }
 
@@ -61,7 +61,8 @@ public class ChildSyncService implements SyncService<Child> {
             child.setSyncLog(e.getMessage());
             child.put("photo_keys", photoKeys);
             child.put("audio_attachments", audioAttachments);
-            repository.update(child);
+            childRepository.update(child);
+            childRepository.close();
             throw new SyncFailedException(e.getMessage());
         }
         try {
@@ -69,7 +70,7 @@ public class ChildSyncService implements SyncService<Child> {
                 String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
                 child = new Child(source);
                 setChildAttributes(child);
-                repository.update(child);
+                childRepository.update(child);
                 setMedia(child);
                 return child;
             }
@@ -77,6 +78,7 @@ public class ChildSyncService implements SyncService<Child> {
             child.setSynced(false);
             child.setSyncLog(e.getMessage());
         }
+        childRepository.close();
         return child;
     }
 
@@ -215,7 +217,7 @@ public class ChildSyncService implements SyncService<Child> {
 
     public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {
         HashMap<String,String> serverIdsRevs = getAllIdsAndRevs();
-        HashMap<String, String> repoIdsAndRevs = repository.getAllIdsAndRevs();
+        HashMap<String, String> repoIdsAndRevs = childRepository.getAllIdsAndRevs();
         ArrayList<String> idsToDownload = new ArrayList<String>();
         for(Map.Entry<String,String> serverIdRev : serverIdsRevs.entrySet()){
             if(!isServerIdExistingInRepository(repoIdsAndRevs, serverIdRev) || (repoIdsAndRevs.get(serverIdRev.getKey()) != null && isRevisionMismatch(repoIdsAndRevs, serverIdRev))){
