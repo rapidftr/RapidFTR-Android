@@ -59,7 +59,8 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     protected SyncRecordTask createChildSyncTask(){
-       return  new SyncRecordTask(new ChildSyncService(this.getContext(), inject(ChildRepository.class), new FluentRequest()), inject(ChildRepository.class), getCurrentUser());
+        ChildRepository childRepository = inject(ChildRepository.class);
+        return new SyncRecordTask(new ChildSyncService(this.getContext(), childRepository, new FluentRequest()), childRepository, getCurrentUser());
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

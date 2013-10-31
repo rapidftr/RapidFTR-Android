@@ -72,6 +72,7 @@ public class ChildSyncService implements SyncService<Child> {
                 setChildAttributes(child);
                 childRepository.update(child);
                 setMedia(child);
+                childRepository.close();
                 return child;
             }
         } catch (Exception e) {

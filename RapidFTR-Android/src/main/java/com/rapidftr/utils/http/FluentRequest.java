@@ -26,6 +26,7 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -248,7 +249,7 @@ public class FluentRequest {
             registry.register(new Scheme("https", new SelfSignedSSLSocketFactory(trusted), 443));
 
             HttpParams params = new BasicHttpParams();
-            ClientConnectionManager connectionManager = new SingleClientConnManager(params, registry);
+            ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(params, registry);
 
             return new DefaultHttpClient(connectionManager, params);
         } catch (Exception e) {

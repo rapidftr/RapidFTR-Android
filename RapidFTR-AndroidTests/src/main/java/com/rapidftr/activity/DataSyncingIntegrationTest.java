@@ -66,9 +66,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
         Child child = childRepository.get(childId);
         Enquiry enquiry = enquiryRepository.get(enquiryToSync.getUniqueId());
-
         assertNotNull(child);
-        assertEquals("Tom Cruise", enquiry.getEnquirerName());
         assertEquals(childId, new JSONArray(enquiry.matchingChildIds()).get(0));
         assertTrue(child.isSynced());
         assertTrue(enquiry.isSynced());
