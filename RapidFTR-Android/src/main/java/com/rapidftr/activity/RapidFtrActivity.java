@@ -204,11 +204,9 @@ public void viewAllEnquiryTabListener(View view) {
             makeToast(R.string.connection_off);
         }
         else{
-            // sync children
             SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {});
             executeTask(syncChildTask);
 
-            // sync enquiry
             SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {});
             executeTask(syncEnquiryTask);
         }

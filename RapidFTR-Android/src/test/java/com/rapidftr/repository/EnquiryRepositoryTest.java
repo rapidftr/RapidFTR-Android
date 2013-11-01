@@ -1,5 +1,6 @@
 package com.rapidftr.repository;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.Database;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
 public class EnquiryRepositoryTest {
@@ -52,9 +54,13 @@ public class EnquiryRepositoryTest {
 
     @Test
     public void shouldReturnAllEnquiries() throws Exception{
-        Enquiry enquiry1 = new Enquiry(user, "REPORTER NAME", new JSONObject("{age:14,name:Subhas}"));
+        String enquiryJSON1 = "{\"enquirer_name\":\"sam fisher\",\"name\":\"foo bar\",\"nationality\":\"ugandan\"," +
+                "\"created_by\":\"Tom Reed\",\"synced\":\"false\", \"created_organisation\":\"TW\"}";
+        String enquiryJSON2 = "{\"enquirer_name\":\"fisher sam\",\"name\":\"bar foo\",\"nationality\":\"ugandan\"," +
+                "\"created_by\":\"Tom Reed\",\"synced\":\"false\", \"created_organisation\":\"TW\"}";
+        Enquiry enquiry1 = new Enquiry(enquiryJSON1);
         enquiryRepository.createOrUpdate(enquiry1);
-        Enquiry enquiry2 = new Enquiry("field worker 2", "REPORTER NAME 1", new JSONObject("{age:14,name:Subhas}"));
+        Enquiry enquiry2 = new Enquiry(enquiryJSON2);
         enquiryRepository.createOrUpdate(enquiry2);
 
         List<Enquiry> enquiries = enquiryRepository.all();
@@ -158,7 +164,7 @@ public class EnquiryRepositoryTest {
         enquiryRepository.createOrUpdate(enquiry);
 
         assertThat(enquiryRepository.all().size(), is(1));
-        assertNull(enquiry.getPotentialMatchingIds());
+        assertTrue(enquiry.getPotentialMatchingIds().isEmpty());
 
         enquiry.setEnquirerName("New Reporter Name");
         enquiry.setCriteria(new JSONObject("{}"));
@@ -181,14 +187,23 @@ public class EnquiryRepositoryTest {
     }
 
     @Test(expected = FailedToSaveException.class)
-    public void shouldReturnFailedToSaveEnquiryException() throws FailedToSaveException, JSONException {
+    public void shouldReturnFailedToSaveEnquiryExceptionWhenSavingEnquiryWithData() throws
+            FailedToSaveException, JSONException {
+
         String enquiryJSON = "{\n" +
-                "\"createdBy\":\"user\",\n" +
+                "\"created_by\":\"user\",\n" +
                 "\"synced\":\"true\",\n" +
-                "\"created_by\":\"some guy\"" +
                 "}";
 
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put("created_by", "some user");
+
         Enquiry enquiry = new Enquiry(enquiryJSON);
-        enquiryRepository.createOrUpdate(enquiry);
+        EnquiryRepository enquiryRepository1 = spy(enquiryRepository);
+
+        when(enquiryRepository1.getContentValuesFrom(enquiry)).thenReturn(contentValues);
+
+        enquiryRepository1.createOrUpdate(enquiry);
     }
 }

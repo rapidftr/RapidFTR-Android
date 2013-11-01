@@ -25,10 +25,14 @@ public class ViewEnquiryActivityTest extends BaseActivityIntegrationTest {
     }
 
     public void testShowEnquiry() throws Exception {
-        Enquiry enquiry = new Enquiry("CREATEDBY", "Enq1Reportername", new JSONObject("{enquirer_name:Enq1Reportername}"));
-        enquiry.put("f9e9ad8c", "01/01/01"); // Hardcoded key till enquiry form sections can be synced
+        String enquiryJSON = "{ " +
+                "\"enquirer_name\":\"Tom Cruise\", " +
+                "\"name\":\"Matthew\"," +
+                String.format("\"created_by\":\"%s\",", application.getCurrentUser().getUserName()) +
+                "\"synced\" : \"false\"}";
+
+        Enquiry enquiry = new Enquiry(enquiryJSON);
         repository.createOrUpdate(enquiry);
-        enquiry = repository.get(enquiry.getUniqueId());
         viewEnquiryPage.navigateToPage(enquiry.getEnquirerName());
         viewEnquiryPage.validateData(enquiry);
     }

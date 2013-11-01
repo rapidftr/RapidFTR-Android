@@ -11,6 +11,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.utils.AudioCaptureHelper;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +44,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
-    public void shouldCallCorrespondingMethodsWhenButtonsAreClickedAndSetEnabledIsTrue(){
+    public void shouldCallCorrespondingMethodsWhenButtonsAreClickedAndSetEnabledIsTrue() throws JSONException {
         view.initialize(field, child);
         view.setEnabled(true);
         view.findViewById(R.id.start_record).performClick();
@@ -55,7 +56,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
-    public void shouldNotCallCorrespondingMethodsButtonAreClickedAndSetEnabledIsFalse(){
+    public void shouldNotCallCorrespondingMethodsButtonAreClickedAndSetEnabledIsFalse() throws JSONException {
         view.initialize(field, child);
         view.setEnabled(false);
         view.findViewById(R.id.start_record).performClick();
@@ -89,7 +90,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
-    public void shouldStopRecordingWhenStopRecordMethodHasBeenCalled(){
+    public void shouldStopRecordingWhenStopRecordMethodHasBeenCalled() throws JSONException {
         view.initialize(field, child);
         doReturn(mediaRecorder).when(view).getMediaRecorder();
         View play = mock(Button.class);
@@ -114,7 +115,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     public void shouldAddAudioToAttachmentsWhenStopRecordMethodHasBeenCalled() {}
 
     @Test
-    public void shouldPlayRecordWhenPlayMethodHasBeenCalled() throws IOException {
+    public void shouldPlayRecordWhenPlayMethodHasBeenCalled() throws IOException, JSONException {
         view.initialize(field, child);
         doReturn("audio_file_name").when(view).getFileName();
         doReturn(mediaPlayer).when(view).getMediaPlayer();
@@ -132,7 +133,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
-    public void shouldNotIntialiseMediaPlayerWhenItIsInPausedState(){
+    public void shouldNotIntialiseMediaPlayerWhenItIsInPausedState() throws JSONException {
         view.initialize(field, child);
         doReturn(mediaPlayer).when(view).getMediaPlayer();
         doReturn(false).when(mediaPlayer).isPlaying();

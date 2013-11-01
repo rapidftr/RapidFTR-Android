@@ -8,7 +8,9 @@ import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import org.apache.http.params.HttpConnectionParams;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -42,7 +44,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         }
     }
 
-    public void xtestShouldSyncRecordWithServerAndUpdateRecordAttributes() throws Exception {
+    public void testShouldSyncRecordWithServerAndUpdateRecordAttributes() throws Exception {
         String timeStamp = now().defaultFormat();
         String childId = UUID.randomUUID().toString();
         String childName = UUID.randomUUID().toString().substring(0, 6);
@@ -57,14 +59,13 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         enquiryRepository.createOrUpdate(enquiryToSync);
         solo.sleep(10000);
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        solo.sleep(100000);
+        solo.sleep(10000);
         waitUntilSyncCompletion();
 
         Child child = childRepository.get(childToStore.getUniqueId());
         Enquiry enquiry = enquiryRepository.get(enquiryToSync.getUniqueId());
-        List<String> matchingChildIds = Arrays.asList(enquiry.getPotentialMatchingIds());
 
-        assertTrue(matchingChildIds.contains(child.getUniqueId()));
+        assertTrue(enquiry.getPotentialMatchingIds().contains(child.getId()));
         assertTrue(child.isSynced());
         assertTrue(enquiry.isSynced());
 

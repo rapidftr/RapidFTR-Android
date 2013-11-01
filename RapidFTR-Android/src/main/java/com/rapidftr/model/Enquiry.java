@@ -39,9 +39,9 @@ public class Enquiry extends BaseModel {
             if (columnIndex < 0) {
                 throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
             }
-            if (column.equals(criteria)){
+            if (column.equals(criteria)) {
                 this.put(criteria.getColumnName(), new JSONObject(cursor.getString(cursor.getColumnIndex(criteria.getColumnName()))));
-            }else if(column.getPrimitiveType().equals(Boolean.class)) {
+            } else if (column.getPrimitiveType().equals(Boolean.class)) {
                 this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
             } else {
                 this.put(column.getColumnName(), cursor.getString(columnIndex));
@@ -54,7 +54,7 @@ public class Enquiry extends BaseModel {
     }
 
     public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
-        try{
+        try {
             JSONArray matchingChildId = new JSONArray(getPotentialMatchingIds());
             List<String> matchingChildList = getListOfMatchingChildrenFrom(matchingChildId);
 
@@ -116,7 +116,7 @@ public class Enquiry extends BaseModel {
         return enquiryKeys;
     }
 
-    private void noneCriteriaFields(){
+    private void noneCriteriaFields() {
         NONE_CRITERIA_FIELDS.add("enquirer_name");
         NONE_CRITERIA_FIELDS.add("created_at");
         NONE_CRITERIA_FIELDS.add("created_by");
@@ -150,7 +150,11 @@ public class Enquiry extends BaseModel {
         return new JSONObject(this, fields.toArray(new String[fields.size()]));
     }
 
-    public String getPotentialMatchingIds() throws JSONException {
-        return getString(potential_matches.getColumnName());
+    public String getPotentialMatchingIds() {
+       String ids = getString(potential_matches.getColumnName());
+       if(ids == null)
+           return "";
+        else
+           return ids;
     }
 }

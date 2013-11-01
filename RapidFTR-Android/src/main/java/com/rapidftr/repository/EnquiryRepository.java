@@ -40,7 +40,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
             throw new FailedToSaveException("Failed to save enquiry.", errorCode);
     }
 
-    private ContentValues getContentValuesFrom(Enquiry enquiry) throws JSONException {
+    protected ContentValues getContentValuesFrom(Enquiry enquiry) throws JSONException {
         ContentValues enquiryValues = new ContentValues();
 
         enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
