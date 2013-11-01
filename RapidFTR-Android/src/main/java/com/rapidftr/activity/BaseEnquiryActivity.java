@@ -88,7 +88,7 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         startActivity(intent);
     }
 
-    private Enquiry saveEnquiry() throws JSONException {
+    private Enquiry saveEnquiry() throws Exception {
         @Cleanup EnquiryRepository repository = inject(EnquiryRepository.class);
         if (enquiry.isNew()) {
             enquiry.setCreatedBy(getCurrentUser().getUserName());

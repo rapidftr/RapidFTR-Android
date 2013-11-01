@@ -14,6 +14,7 @@ import static java.util.Arrays.asList;
 public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
 
     private HashMap<String, List<String>> formSectionMap = new HashMap<String, List<String>>();
+    private EnquiryRepository enquiryRepository;
 
     @Override
     public void setUp() throws Exception {
@@ -29,6 +30,7 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         addFormSection("Separation History", "Date of separation", "Place of separation", "Circumstances of separation");
         addFormSection("Tracing Information", "Latest news received");
         addFormSection("Photo");
+        enquiryRepository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(EnquiryRepository.class);
     }
 
     private void addFormSection(String formSectionName, String... formSectionFields) {
@@ -74,13 +76,19 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         enquiryPage.verifyNewEnquiryFormPresence();
     }
 
-    public void testShouldEditAnEnquiry() throws JSONException {
-        Enquiry enquiry = new Enquiry("CREATEDBY", "Enq2Reportername", new JSONObject("{enquirer_name:Enq2Enquirername}"));
-        EnquiryRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(EnquiryRepository.class);
+    public void testShouldEditAnEnquiry() throws Exception {
+        String enquiryJSON = "{" +
+                "\"enquirer_name\":\"godwin\"," +
+                "\"name\":\"robin\"," +
+                String.format("\"created_by\":\"%s\",", application.getCurrentUser().getUserName()) +
+                "\"location\":\"Kampala\"," +
+                "\"potential_matches\":\"matching ids\"}";
+
+        Enquiry enquiry = new Enquiry(enquiryJSON);
         List<String> updatedEnquirerDetails = asList("Nile");
 
-        repository.createOrUpdate(enquiry);
-        enquiry = repository.get(enquiry.getUniqueId());
+        enquiryRepository.createOrUpdate(enquiry);
+        enquiry = enquiryRepository.get(enquiry.getUniqueId());
 
         enquiryPage.navigateToEditPageOf(enquiry.getEnquirerName());
         Assert.assertTrue(solo.waitForText(enquiry.getEnquirerName()));
@@ -88,7 +96,7 @@ public class CreateEnquiryActivityTest extends BaseActivityIntegrationTest {
         enquiryPage.save();
 
         Assert.assertTrue(solo.waitForText("Enquiry Saved"));
-        enquiry = repository.get(enquiry.getUniqueId());
+        enquiry = enquiryRepository.get(enquiry.getUniqueId());
         Assert.assertEquals(enquiry.getEnquirerName(), updatedEnquirerDetails.get(0));
     }
 }

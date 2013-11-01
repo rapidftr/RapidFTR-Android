@@ -55,7 +55,7 @@ public class Enquiry extends BaseModel {
 
     public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
         try{
-            JSONArray matchingChildId = new JSONArray(matchingChildIds());
+            JSONArray matchingChildId = new JSONArray(getPotentialMatchingIds());
             List<String> matchingChildList = getListOfMatchingChildrenFrom(matchingChildId);
 
             return childRepository.getChildrenByIds(new ArrayList<String>(matchingChildList));
@@ -150,9 +150,7 @@ public class Enquiry extends BaseModel {
         return new JSONObject(this, fields.toArray(new String[fields.size()]));
     }
 
-    public String matchingChildIds() throws JSONException {
-        String ids = getString(potential_matches.getColumnName());
-        if (ids == null) throw new JSONException("No key " + potential_matches.getColumnName());
-        return ids;
+    public String getPotentialMatchingIds() throws JSONException {
+        return getString(potential_matches.getColumnName());
     }
 }

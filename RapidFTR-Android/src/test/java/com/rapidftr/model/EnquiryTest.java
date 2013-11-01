@@ -6,6 +6,7 @@ import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.repository.FailedToSaveException;
 import lombok.Cleanup;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,9 +19,12 @@ import java.util.List;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn;
 import static com.rapidftr.database.Database.EnquiryTableColumn.criteria;
+import static com.rapidftr.database.Database.EnquiryTableColumn.enquirer_name;
 import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
+import static com.rapidftr.database.Database.enquiry;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
@@ -30,9 +34,6 @@ import static org.mockito.Mockito.*;
 @RunWith(CustomTestRunner.class)
 public class EnquiryTest {
 
-    private String createdBy;
-    private String enquirerName;
-    private String enquiryCriteria;
     private DatabaseSession session;
     private ChildRepository childRepository;
     private EnquiryRepository enquiryRepo;
@@ -41,9 +42,6 @@ public class EnquiryTest {
     @Before
     public void setUp() throws JSONException {
         user = "Foo";
-        createdBy = "Rajni";
-        enquirerName = "Batman";
-        enquiryCriteria = "{\"name\":\"NAME\"}";
         session = new ShadowSQLiteHelper("test_database").getSession();
         childRepository = new ChildRepository("user1", session);
         enquiryRepo = new EnquiryRepository(user, session);
@@ -56,20 +54,6 @@ public class EnquiryTest {
 
         enquiry = new Enquiry("createdBy", "enquirerName", new JSONObject("{}"));
         assertNotNull(enquiry.getUniqueId());
-    }
-
-
-    @Test
-    public void createEnquiryWithAllFields() throws JSONException {
-
-        JSONObject criteria = new JSONObject(enquiryCriteria);
-        Enquiry enquiry = new Enquiry(createdBy, enquirerName, criteria);
-
-        assertEquals(enquirerName, enquiry.getEnquirerName());
-        JSONAssert.assertEquals(criteria, enquiry.getCriteria(), true);
-        assertEquals(createdBy, enquiry.getCreatedBy());
-        assertNotNull(enquiry.getCreatedAt());
-        assertNotNull(enquiry.getLastUpdatedAt());
     }
 
     @Test
@@ -115,36 +99,15 @@ public class EnquiryTest {
     }
 
     @Test
-    public void shouldSaveCriteriaWithoutModifyingIt() throws JSONException {
-        String enquiryJSON = "{ \"enquirer_name\":\"sam fisher\", \"name\":\"foo bar\"," +
-                "\"nationality\":\"ugandan\",\"created_by\" : \"Tom Reed\",\"synced\" : \"false\"}";
-
-        Enquiry enquiry = new Enquiry(enquiryJSON);
-        enquiryRepo.createOrUpdate(enquiry);
-
-        String expectedCriteria = "{\"name\":\"foo bar\",\"nationality\":\"ugandan\"}";
-
-        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM enquiry WHERE enquirer_name = ?", new String[]{"sam fisher"});
-        cursor.moveToFirst();
-
-        String actualCriteria = cursor.getString(cursor.getColumnIndex(criteria.getColumnName()));
-        JSONAssert.assertEquals(expectedCriteria, actualCriteria, true);
-    }
-
-    @Test
-    public void criteriaShouldBeAJSONObjectWhenCreatingEnquiryFromCursor() throws JSONException {
+    public void criteriaShouldBeAJSONObjectWhenCreatingEnquiryFromCursor() throws JSONException, FailedToSaveException {
         String enquiryJSON = "{\"enquirer_name\":\"sam fisher\",\"name\":\"foo bar\",\"nationality\":\"ugandan\"," +
                 "\"created_by\":\"Tom Reed\",\"synced\":\"false\", \"created_organisation\":\"TW\"}";
 
         Enquiry enquiry = new Enquiry(enquiryJSON);
         enquiryRepo.createOrUpdate(enquiry);
-
         JSONObject expectedCriteria = new JSONObject("{\"name\":\"foo bar\",\"nationality\":\"ugandan\"}");
 
-        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM enquiry WHERE enquirer_name = ?", new String[]{"sam fisher"});
-        cursor.moveToFirst();
-
-        Enquiry enquiryFromCursor = new Enquiry(cursor);
+        Enquiry enquiryFromCursor = enquiryRepo.all().get(0);
 
         assertEquals(JSONObject.class, enquiryFromCursor.getCriteria().getClass());
         assertEquals(enquiryFromCursor.getCriteria().getString("name"), "foo bar");
@@ -174,21 +137,14 @@ public class EnquiryTest {
 
         Enquiry enquiry = new Enquiry(cursor);
 
-        assertEquals("potential_matches_value", enquiry.matchingChildIds());
+        assertEquals("potential_matches_value", enquiry.getPotentialMatchingIds());
     }
 
-    @Test(expected = JSONException.class)
+    @Test
     public void newEnquiryShouldNotHaveMatchingIds() throws JSONException {
-        Enquiry enquiry = new Enquiry(createdBy, enquirerName, new JSONObject(enquiryCriteria));
-        enquiry.matchingChildIds();
+        String enquiryJSON = "{\"enquirer_name\":\"sam fisher\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        assertNull(enquiry.getPotentialMatchingIds());
     }
 
-    private Cursor mockedCursor() {
-        Cursor cursor = mock(Cursor.class);
-        for (EnquiryTableColumn column : EnquiryTableColumn.values()) {
-            when(cursor.getColumnIndex(column.getColumnName())).thenReturn(column.ordinal());
-            when(cursor.getString(column.ordinal())).thenReturn(column.getColumnName() + "_value");
-        }
-        return cursor;
-    }
 }

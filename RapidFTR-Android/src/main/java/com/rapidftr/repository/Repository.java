@@ -3,6 +3,7 @@ package com.rapidftr.repository;
 import com.rapidftr.model.BaseModel;
 import org.json.JSONException;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface Repository<T extends BaseModel> {
 
     public int size();
 
-    public void createOrUpdate(T t) throws JSONException;
+    public void createOrUpdate(T t) throws JSONException, SQLException;
 
     public HashMap<String, String> getAllIdsAndRevs() throws JSONException;
 

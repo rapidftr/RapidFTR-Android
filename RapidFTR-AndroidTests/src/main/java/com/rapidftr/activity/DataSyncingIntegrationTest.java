@@ -7,14 +7,11 @@ import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
-import com.rapidftr.test.utils.RapidFTRDatabase;
 import org.apache.http.params.HttpConnectionParams;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.junit.Ignore;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,7 +42,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         }
     }
 
-    public void xtestShouldSyncRecordWithServerAndUpdateRecordAttributes() throws JSONException, IOException, InterruptedException {
+    public void xtestShouldSyncRecordWithServerAndUpdateRecordAttributes() throws Exception {
         String timeStamp = now().defaultFormat();
         String childId = UUID.randomUUID().toString();
         String childName = UUID.randomUUID().toString().substring(0, 6);
@@ -58,23 +55,23 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         Enquiry enquiryToSync = new Enquiry(enquiryJSON);
         enquiryToSync.setCreatedBy(application.getCurrentUser().getUserName());
         enquiryRepository.createOrUpdate(enquiryToSync);
-        viewAllEnquiriesPage.navigateToPage();
         solo.sleep(10000);
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        solo.sleep(50000);
+        solo.sleep(100000);
         waitUntilSyncCompletion();
 
-        Child child = childRepository.get(childId);
+        Child child = childRepository.get(childToStore.getUniqueId());
         Enquiry enquiry = enquiryRepository.get(enquiryToSync.getUniqueId());
-        assertNotNull(child);
-        assertEquals(childId, new JSONArray(enquiry.matchingChildIds()).get(0));
+        List<String> matchingChildIds = Arrays.asList(enquiry.getPotentialMatchingIds());
+
+        assertTrue(matchingChildIds.contains(child.getUniqueId()));
         assertTrue(child.isSynced());
         assertTrue(enquiry.isSynced());
 
         searchPage.navigateToSearchTab();
         searchPage.searchChild(childName);
         searchPage.clickSearch();
-        assertTrue(searchPage.isChildPresent(child.getShortId(), "derek"));
+        assertTrue(searchPage.isChildPresent(child.getName(), childToStore.getName()));
 
         viewAllEnquiriesPage.navigateToPage();
         assertTrue(viewAllEnquiriesPage.isEnquiryPresent(enquiry));

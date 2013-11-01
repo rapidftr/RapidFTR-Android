@@ -12,20 +12,13 @@ import org.json.JSONException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
-import static com.rapidftr.database.Database.EnquiryTableColumn.created_at;
-import static com.rapidftr.database.Database.EnquiryTableColumn.criteria;
-import static com.rapidftr.database.Database.EnquiryTableColumn.enquirer_name;
-import static com.rapidftr.database.Database.EnquiryTableColumn.id;
-import static com.rapidftr.database.Database.EnquiryTableColumn.internal_id;
-import static com.rapidftr.database.Database.EnquiryTableColumn.internal_rev;
-import static com.rapidftr.database.Database.EnquiryTableColumn.created_by;
-import static com.rapidftr.database.Database.EnquiryTableColumn.synced;
-import static com.rapidftr.database.Database.EnquiryTableColumn.unique_identifier;
+import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 import static com.rapidftr.database.Database.enquiry;
 import static java.lang.String.format;
 
@@ -41,7 +34,13 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     }
 
     @Override
-    public void createOrUpdate(Enquiry enquiry) throws JSONException {
+    public void createOrUpdate(Enquiry enquiry) throws JSONException, FailedToSaveException {
+        long errorCode = session.replace(Database.enquiry.getTableName(), null, getContentValuesFrom(enquiry));
+        if(errorCode < 0)
+            throw new FailedToSaveException("Failed to save enquiry.", errorCode);
+    }
+
+    private ContentValues getContentValuesFrom(Enquiry enquiry) throws JSONException {
         ContentValues enquiryValues = new ContentValues();
 
         enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
@@ -49,14 +48,12 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         enquiryValues.put(enquirer_name.getColumnName(), enquiry.getEnquirerName());
         enquiryValues.put(criteria.getColumnName(), enquiry.getCriteria().toString());
         enquiryValues.put(created_at.getColumnName(), enquiry.getCreatedAt());
+        enquiryValues.put(potential_matches.getColumnName(), enquiry.getPotentialMatchingIds());
         enquiryValues.put(unique_identifier.getColumnName(), enquiry.getUniqueId());
         enquiryValues.put(synced.getColumnName(), enquiry.isSynced());
         enquiryValues.put(internal_id.getColumnName(), enquiry.optString(internal_id.getColumnName()));
         enquiryValues.put(internal_rev.getColumnName(), enquiry.optString(internal_rev.getColumnName()));
-
-        long errorCode =  session.replace(Database.enquiry.getTableName(), null, enquiryValues);
-        if(errorCode <= 0) throw new IllegalArgumentException(errorCode + "");
-        //TODO : Better error handling
+        return enquiryValues;
     }
 
     @Override
@@ -74,13 +71,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
     @Override
     public void update(Enquiry enquiry) throws JSONException {
-        ContentValues values = new ContentValues();
-        values.put(enquirer_name.getColumnName(), enquiry.getEnquirerName());
-        values.put(criteria.getColumnName(), enquiry.getCriteria().toString());
-        values.put(created_by.getColumnName(), enquiry.getCreatedBy());
-        values.put(synced.getColumnName(), enquiry.isSynced() ? 1 : 0);
-        values.put(internal_id.getColumnName(), enquiry.getString(internal_id.getColumnName()));
-        values.put(internal_rev.getColumnName(), enquiry.getString(internal_rev.getColumnName()));
+        ContentValues values = getContentValuesFrom(enquiry);
         session.update(
                 Database.enquiry.getTableName(),
                 values,
@@ -146,7 +137,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     public Enquiry get(String enquiryId) throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT * from enquiry where id = ?", new String[]{enquiryId});
         if (cursor.moveToNext()){
-            return buildEnquiry(cursor);
+            return new Enquiry(cursor);
         }else{
             throw new NullPointerException(enquiryId);  //  I don't think it's cool to throw NullPointerExceptions - love John
         }

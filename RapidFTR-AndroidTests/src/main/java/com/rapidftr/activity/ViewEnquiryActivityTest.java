@@ -24,7 +24,7 @@ public class ViewEnquiryActivityTest extends BaseActivityIntegrationTest {
         super.tearDown();
     }
 
-    public void testShowEnquiry() throws JSONException {
+    public void testShowEnquiry() throws Exception {
         Enquiry enquiry = new Enquiry("CREATEDBY", "Enq1Reportername", new JSONObject("{enquirer_name:Enq1Reportername}"));
         enquiry.put("f9e9ad8c", "01/01/01"); // Hardcoded key till enquiry form sections can be synced
         repository.createOrUpdate(enquiry);
