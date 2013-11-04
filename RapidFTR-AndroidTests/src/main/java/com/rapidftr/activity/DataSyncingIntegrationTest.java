@@ -38,6 +38,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
     public void tearDown() throws Exception {
         try {
             childRepository.close();
+            enquiryRepository.close();
         } catch (Exception e) {
         } finally {
             super.tearDown();
@@ -48,7 +49,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         String timeStamp = now().defaultFormat();
         String childId = UUID.randomUUID().toString();
         String childName = UUID.randomUUID().toString().substring(0, 6);
-        Child childToStore = new Child(String.format("{ '_id' : '%s', 'timeStamp' : '%s', 'test2' : 'value2', 'one' : '1', 'name' : '%s' }", childId, timeStamp, childName));
+        Child childToStore = new Child(String.format("{ 'unique_identifier' : '%s', 'timeStamp' : '%s', 'test2' : 'value2', 'one' : '1', 'name' : '%s' }", childId, timeStamp, childName));
         seedChildOnServer(childToStore);
 
         String enquiryJSON = String.format("{ \"enquirer_name\":\"Tom Cruise\", \"name\":\"%s\"," +
@@ -62,8 +63,8 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         solo.sleep(10000);
         waitUntilSyncCompletion();
 
-        Child child = childRepository.get(childToStore.getUniqueId());
         Enquiry enquiry = enquiryRepository.get(enquiryToSync.getUniqueId());
+        Child child = childRepository.get(childId);
 
         assertTrue(enquiry.getPotentialMatchingIds().contains(child.getId()));
         assertTrue(child.isSynced());
@@ -72,7 +73,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         searchPage.navigateToSearchTab();
         searchPage.searchChild(childName);
         searchPage.clickSearch();
-        assertTrue(searchPage.isChildPresent(child.getName(), childToStore.getName()));
+        assertTrue(searchPage.isChildPresent(child.getName(), childName));
 
         viewAllEnquiriesPage.navigateToPage();
         assertTrue(viewAllEnquiriesPage.isEnquiryPresent(enquiry));
@@ -91,7 +92,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
     public void waitUntilSyncCompletion() {
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             solo.sendKey(KeyEvent.KEYCODE_MENU);
             if (solo.searchText("Synchronize All", false)) {
                 solo.sleep(10);
