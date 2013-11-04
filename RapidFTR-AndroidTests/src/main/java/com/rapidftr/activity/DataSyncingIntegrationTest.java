@@ -78,42 +78,6 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         assertTrue(viewAllEnquiriesPage.isEnquiryPresent(enquiry));
     }
 
-    // TODO: REMOVE ONCE FIRST TEST PASSES
-    public void xtestRecordShouldBeUploadedToServer() throws JSONException, InterruptedException {
-        Child childToBeSynced = new Child(getAlphaNumeric(6), "admin", "{'name' : 'moses'}");
-        childRepository.createOrUpdate(childToBeSynced);
-        assertFalse(childToBeSynced.isSynced());
-        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        solo.sleep(30000); //Sleep for synchronization to happen.
-        assertTrue(childRepository.exists(childToBeSynced.getUniqueId()));
-        List<Child> children = childRepository.getMatchingChildren(childToBeSynced.getUniqueId());
-        assertEquals(1, children.size());
-        assertTrue(children.get(0).isSynced());
-    }
-
-    // TODO: REMOVE ONCE FIRST TEST PASSES
-    public void xtestSynchronizationShouldCancelIfTheUserIsLoggingOutFromTheApplication() throws JSONException, InterruptedException {
-        Child child1 = new Child("abc4321", "admin", "{'name' : 'moses'}");
-        Child child2 = new Child("qwe4321", "admin", "{'name' : 'james'}");
-        Child child3 = new Child("zxy4321", "admin", "{'name' : 'kenyata'}");
-        Child child4 = new Child("uye4321", "admin", "{'name' : 'keburingi'}");
-        seedDataToRepository(child1, child2, child3, child4);
-        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        solo.sleep(1000);
-        solo.clickOnMenuItem(solo.getString(R.string.log_out));
-        assertTrue("Could not find the dialog!", solo.searchText(solo.getString(R.string.confirm_logout_message)));
-        //Robotium doesn't support asserting on notification bar by default. Below is the hack to get around it.
-        solo.clickOnButton(solo.getString(R.string.log_out)); //As the synchronization is still happening we'll get an dialog box for the user action.
-        solo.waitForText(solo.getString(R.string.logout_successful));
-    }
-
-
-    public void seedDataToRepository(Child... children) throws JSONException {
-        for (Child child : children) {
-            childRepository = application.getInjector().getInstance(ChildRepository.class);
-            childRepository.createOrUpdate(child);
-        }
-    }
 
     private void seedChildOnServer(Child child) throws JSONException, IOException {
         http()
