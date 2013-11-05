@@ -1,6 +1,5 @@
 package com.rapidftr.activity;
 
-import android.view.KeyEvent;
 import com.rapidftr.R;
 import com.rapidftr.activity.pages.LoginPage;
 import com.rapidftr.model.Child;
@@ -58,12 +57,14 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         Enquiry enquiryToSync = new Enquiry(enquiryJSON);
         enquiryToSync.setCreatedBy(application.getCurrentUser().getUserName());
         enquiryRepository.createOrUpdate(enquiryToSync);
-        solo.sleep(10000);
+
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        solo.sleep(10000);
-        waitUntilSyncCompletion();
+
+        solo.waitForText("Records Successfully Synchronized");
+        waitUntilSeededRecordIsSynced(childId);
 
         Enquiry enquiry = enquiryRepository.get(enquiryToSync.getUniqueId());
+
         Child child = childRepository.get(childId);
 
         assertTrue(enquiry.getPotentialMatchingIds().contains(child.getId()));
@@ -90,17 +91,18 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .post();
     }
 
-    public void waitUntilSyncCompletion() {
-
-        for (int i = 0; i < 20; i++) {
-            solo.sendKey(KeyEvent.KEYCODE_MENU);
-            if (solo.searchText("Synchronize All", false)) {
-                solo.sleep(10);
-            } else {
-                break;
+    private void waitUntilSeededRecordIsSynced(String id) throws JSONException {
+        boolean childFound = false;
+        while (!childFound) {
+            try {
+                childRepository.get(id);
+                childFound = true;
+            } catch (NullPointerException e) {
+                continue;
             }
         }
     }
 
 
 }
+
