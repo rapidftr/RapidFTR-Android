@@ -2,19 +2,14 @@ package com.rapidftr.activity;
 
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.activity.pages.ViewAllEnquiriesPage;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
-import com.rapidftr.task.SyncAllDataAsyncTask;
-import com.rapidftr.task.SynchronisationAsyncTask;
+import com.rapidftr.repository.FailedToSaveException;
 import junit.framework.Assert;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class ViewEnquiryActivityTest extends BaseActivityIntegrationTest {
     EnquiryRepository repository;
@@ -48,7 +43,7 @@ public class ViewEnquiryActivityTest extends BaseActivityIntegrationTest {
         viewEnquiryPage.validateData(enquiry);
     }
 
-    public void testShowMatchingChildRecords() throws JSONException {
+    public void testShowMatchingChildRecords() throws JSONException, FailedToSaveException {
         //given i have 2 children
 //        Child child1 = new Child("id1", "user1", "{\"name\":\"child1\", \"sex\":\"female\"}");
 //        childRepository.createOrUpdate(child1);
