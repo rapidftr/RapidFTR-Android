@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Enquiry;
@@ -53,6 +55,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         enquiryValues.put(synced.getColumnName(), enquiry.isSynced());
         enquiryValues.put(internal_id.getColumnName(), enquiry.optString(internal_id.getColumnName()));
         enquiryValues.put(internal_rev.getColumnName(), enquiry.optString(internal_rev.getColumnName()));
+
         return enquiryValues;
     }
 

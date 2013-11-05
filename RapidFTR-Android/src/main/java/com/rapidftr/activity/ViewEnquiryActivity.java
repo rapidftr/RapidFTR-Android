@@ -78,7 +78,7 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     protected SyncRecordTask createSyncTaskForEnquiry() {
         enquiryRepository = inject(EnquiryRepository.class);
         SyncRecordTask syncRecordTask = new SyncRecordTask(new EnquirySyncService(this.getContext().getSharedPreferences(), new EnquiryHttpDao(), enquiryRepository), enquiryRepository, getCurrentUser());
-        enquiryRepository.close();
+
         return syncRecordTask;
     }
 }

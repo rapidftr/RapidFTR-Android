@@ -51,8 +51,10 @@ public class EnquirySyncServiceTest {
 
     @Test
     public void getIdsToDownloadShouldRetrieveUrlsFromApiSinceLastUpdate() throws Exception {
+        final long lastUpdateMillis = System.currentTimeMillis();
         EnquirySyncService enquirySyncService = new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository);
-        when(enquiryHttpDao.getIdsOfUpdated()).thenReturn(Arrays.asList("blah.com/123", "blah.com/234"));
+        when(sharedPreferences.getLong(LAST_ENQUIRY_SYNC, 0)).thenReturn(lastUpdateMillis);
+        when(enquiryHttpDao.getIdsOfUpdated(new DateTime(lastUpdateMillis))).thenReturn(Arrays.asList("blah.com/123", "blah.com/234"));
 
         List<String> enquiryIds = enquirySyncService.getIdsToDownload();
 

@@ -114,6 +114,7 @@ public class EnquiryTest {
         assertEquals(enquiryFromCursor.getCriteria().getString("name"), "foo bar");
         assertEquals(enquiryFromCursor.getCriteria().getString("nationality"), "ugandan");
         JSONAssert.assertEquals(enquiryFromCursor.getCriteria(), expectedCriteria, true);
+
     }
 
     @Test
