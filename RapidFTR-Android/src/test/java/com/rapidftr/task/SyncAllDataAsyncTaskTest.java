@@ -54,7 +54,7 @@ public class SyncAllDataAsyncTaskTest {
 
     private RapidFtrApplication application;
 
-    private SyncAllDataAsyncTask syncTask;
+    private SyncAllDataAsyncTask syncAllDataAsyncTask;
 
     @Before
     public void setUp() throws Exception {
@@ -67,7 +67,7 @@ public class SyncAllDataAsyncTaskTest {
 
         application = spy(RapidFtrApplication.getApplicationInstance());
 
-        syncTask = new SyncAllDataAsyncTask(formService, childSyncService, deviceService, childRepository, currentUser);
+        syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childSyncService, deviceService, childRepository, currentUser);
     }
 
     @Test
@@ -75,9 +75,9 @@ public class SyncAllDataAsyncTaskTest {
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
-        syncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
 
-        syncTask.execute();
+        syncAllDataAsyncTask.execute();
         verify(formService).getPublishedFormSections();
         verify(childSyncService).sync(child1, currentUser);
         verify(childSyncService).sync(child2, currentUser);
@@ -85,11 +85,11 @@ public class SyncAllDataAsyncTaskTest {
 
     @Test
     public void shouldNotSyncFormsIfTaskIsCancelled() throws Exception {
-        syncTask.setContext(rapidFtrActivity);
-        syncTask = spy(syncTask);
-        doReturn(true).when(syncTask).isCancelled();
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask = spy(syncAllDataAsyncTask);
+        doReturn(true).when(syncAllDataAsyncTask).isCancelled();
 
-        syncTask.doInBackground();
+        syncAllDataAsyncTask.doInBackground();
 
         verify(formService, never()).getPublishedFormSections();
     }
@@ -100,29 +100,29 @@ public class SyncAllDataAsyncTaskTest {
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
 
-        syncTask.setContext(rapidFtrActivity);
-        syncTask = spy(syncTask);
-        doReturn(true).when(syncTask).isCancelled();
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask = spy(syncAllDataAsyncTask);
+        doReturn(true).when(syncAllDataAsyncTask).isCancelled();
 
-        syncTask.onPreExecute();
-        syncTask.doInBackground();
+        syncAllDataAsyncTask.onPreExecute();
+        syncAllDataAsyncTask.doInBackground();
         verify(childSyncService, never()).sync(child1, currentUser);
         verify(childSyncService, never()).sync(child2, currentUser);
     }
 
     @Test
     public void shouldNotGetIncomingChildrenFromServerIfCancelled() throws Exception {
-        syncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
 
         given(childSyncService.getIdsToDownload()).willReturn(Arrays.asList("asd97"));
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
 
-        syncTask = spy(syncTask);
-        doReturn(true).when(syncTask).isCancelled();
+        syncAllDataAsyncTask = spy(syncAllDataAsyncTask);
+        doReturn(true).when(syncAllDataAsyncTask).isCancelled();
 
-        syncTask.onPreExecute();
-        syncTask.doInBackground();
+        syncAllDataAsyncTask.onPreExecute();
+        syncAllDataAsyncTask.doInBackground();
 
         verify(childSyncService).getRecord(any(String.class));
         verify(childRepository, never()).createOrUpdate((Child) any());
@@ -131,7 +131,7 @@ public class SyncAllDataAsyncTaskTest {
 
     @Test
     public void shouldNotGetIncomingChildrenFromServerIfBlacklisted() throws Exception {
-        syncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
         Child child1 = mock(Child.class);
         ArrayList<Child> childList = new ArrayList<Child>();
         childList.add(child1);
@@ -139,7 +139,7 @@ public class SyncAllDataAsyncTaskTest {
         given(childRepository.toBeSynced()).willReturn(childList);
         given(deviceService.isBlacklisted()).willReturn(true);
 
-        syncTask.execute();
+        syncAllDataAsyncTask.execute();
 
         verify(childSyncService).sync(child1, currentUser);
         verify(childSyncService, never()).getRecord(any(String.class));
@@ -163,8 +163,8 @@ public class SyncAllDataAsyncTaskTest {
         given(childRepository.exists("1234")).willReturn(true);
         given(childRepository.exists("5678")).willReturn(false);
 
-        syncTask.setContext(rapidFtrActivity);
-        syncTask.execute();
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask.execute();
 
         verify(childSyncService).getRecord("qwerty0987");
         verify(childRepository).update(child1);
@@ -173,9 +173,9 @@ public class SyncAllDataAsyncTaskTest {
 
     @Test
     public void shouldToggleMenuOnPreExecute(){
-        syncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
 
-        syncTask.onPreExecute();
+        syncAllDataAsyncTask.onPreExecute();
 
         verify(syncAll).setVisible(false);
         verify(cancelSyncAll).setVisible(true);
@@ -183,27 +183,27 @@ public class SyncAllDataAsyncTaskTest {
 
     @Test
     public void shouldToggleMenuOnCancelAndOnPostExecute(){
-        syncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
 
-        syncTask.onPreExecute();
+        syncAllDataAsyncTask.onPreExecute();
 
-        syncTask.onCancelled();
+        syncAllDataAsyncTask.onCancelled();
         verify(syncAll).setVisible(true);
         verify(cancelSyncAll).setVisible(false);
 
-        syncTask.onPreExecute();
+        syncAllDataAsyncTask.onPreExecute();
         verify(syncAll).setVisible(true);
         verify(cancelSyncAll).setVisible(false);
     }
 
     @Test
     public void shouldNotCallSetProgressAndNotifyIfCancelled(){
-        syncTask.setContext(rapidFtrActivity);
-        syncTask = spy(syncTask);
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask = spy(syncAllDataAsyncTask);
 
-        doReturn(true).when(syncTask).isCancelled();
+        doReturn(true).when(syncAllDataAsyncTask).isCancelled();
 
-        syncTask.onPreExecute();
+        syncAllDataAsyncTask.onPreExecute();
         verify(notificationManager, never()).notify(anyInt(), (Notification) anyObject());
     }
 
@@ -211,9 +211,9 @@ public class SyncAllDataAsyncTaskTest {
 	public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
 		Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
 		given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
-		syncTask.recordSyncService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
-		syncTask.setContext(rapidFtrActivity);
-		syncTask.execute();
+		syncAllDataAsyncTask.recordSyncService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
+		syncAllDataAsyncTask.setContext(rapidFtrActivity);
+		syncAllDataAsyncTask.execute();
 
 		assertThat(ShadowToast.getTextOfLatestToast(), equalTo("Records Successfully Synchronized"));
 	}
@@ -227,8 +227,8 @@ public class SyncAllDataAsyncTaskTest {
         given(childSyncService.getRecord("qwerty0987")).willReturn(mock(Child.class));
         given(childSyncService.getRecord("abcd1234")).willReturn(mock(Child.class));
 
-        syncTask.setContext(rapidFtrActivity);
-        syncTask.execute();
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask.execute();
 
         verify(formService).getPublishedFormSections();
         verify(childSyncService).sync(child1, currentUser);
@@ -240,27 +240,27 @@ public class SyncAllDataAsyncTaskTest {
 
     @Test
     public void shouldWipeDeviceIfItIsBlacklisted() throws IOException, JSONException {
-        syncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
         ArrayList<Child> childList = new ArrayList<Child>();
 
         given(childRepository.toBeSynced()).willReturn(childList);
         given(deviceService.isBlacklisted()).willReturn(true);
         doNothing().when(deviceService).wipeData();
 
-        syncTask.execute();
+        syncAllDataAsyncTask.execute();
         verify(deviceService).wipeData();
     }
 
     @Test
     public void shouldNotWipeDeviceIfChildRecordsArePending() throws JSONException, IOException {
-        syncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
         ArrayList<Child> childList = new ArrayList<Child>();
         Child child = mock(Child.class);
         childList.add(child);
         given(childRepository.toBeSynced()).willReturn(childList);
         given(deviceService.isBlacklisted()).willReturn(true);
 
-        syncTask.execute();
+        syncAllDataAsyncTask.execute();
         verify(childRepository, times(2)).toBeSynced();
         verify(deviceService, never()).wipeData();
     }
