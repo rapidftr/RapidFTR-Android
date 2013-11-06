@@ -45,7 +45,7 @@ public class EnquiryHttpDaoTest {
         EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao( apiRoot);
 
         Enquiry enquiry = mock(Enquiry.class);
-        when(enquiry.get("id")).thenReturn(id);
+        when(enquiry.get("_id")).thenReturn(id);
         when(enquiry.getJsonString()).thenReturn(json);
 
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, json);
