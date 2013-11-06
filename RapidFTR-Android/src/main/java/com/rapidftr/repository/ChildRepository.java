@@ -40,7 +40,11 @@ public class ChildRepository implements Closeable, Repository<Child> {
     @Override
     public Child get(String id) throws JSONException {
         @Cleanup  Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ?", new String[]{id});
+<<<<<<< HEAD
         close();
+=======
+
+>>>>>>> 4ce1b393f393e9e6c6058e8af02c9514bcf15436
         if (cursor.moveToNext()) {
             return childFrom(cursor);
         } else {
@@ -51,7 +55,11 @@ public class ChildRepository implements Closeable, Repository<Child> {
     @Override
     public boolean exists(String childId) {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE id = ?", new String[]{childId == null ? "" : childId});
+<<<<<<< HEAD
         close();
+=======
+
+>>>>>>> 4ce1b393f393e9e6c6058e8af02c9514bcf15436
         return cursor.moveToNext() && cursor.getCount() > 0;
     }
 

@@ -46,7 +46,7 @@ public class EnquiryHttpDao {
     public Enquiry update(Enquiry enquiry) throws JSONException, IOException, HttpException {
         FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
-                .host(apiRoot + "/api/enquiries/" + enquiry.get("id"))
+                .host(apiRoot + "/api/enquiries/" + enquiry.get("_id"))
                 .param("enquiry", enquiry.getJsonString())
                 .put()
                 .ensureSuccess();

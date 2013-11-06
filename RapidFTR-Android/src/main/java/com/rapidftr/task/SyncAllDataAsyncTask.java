@@ -47,6 +47,7 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
             sendRecordsToServer(recordsToUpload);
             downloadRecordsFromServer(idsToDownload, numberOfUploadedRecords(recordsToUpload));
         }
+
     }
 
     private int numberOfUploadedRecords(List<T> recordsToUpload) throws JSONException {

@@ -107,6 +107,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
         toggleMenu(SYNC_ALL);
         notificationManager.cancel(NOTIFICATION_ID);
         RapidFtrApplication.getApplicationInstance().setSyncTask(null);
+        Toast.makeText(RapidFtrApplication.getApplicationInstance().getApplicationContext(), "Records Successfully Synchronized", Toast.LENGTH_LONG).show();
     }
 
     @Override

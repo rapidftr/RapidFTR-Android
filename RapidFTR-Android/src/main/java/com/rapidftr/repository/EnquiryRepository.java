@@ -55,6 +55,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         enquiryValues.put(synced.getColumnName(), enquiry.isSynced());
         enquiryValues.put(internal_id.getColumnName(), enquiry.optString(internal_id.getColumnName()));
         enquiryValues.put(internal_rev.getColumnName(), enquiry.optString(internal_rev.getColumnName()));
+
         return enquiryValues;
     }
 

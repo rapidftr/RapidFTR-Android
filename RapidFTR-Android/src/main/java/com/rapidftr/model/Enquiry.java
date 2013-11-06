@@ -55,7 +55,9 @@ public class Enquiry extends BaseModel {
 
     public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
         try {
+
             JSONArray matchingChildId = new JSONArray(getPotentialMatchingIds());
+
             List<String> matchingChildList = getListOfMatchingChildrenFrom(matchingChildId);
 
             return childRepository.getChildrenByIds(new ArrayList<String>(matchingChildList));

@@ -2,19 +2,14 @@ package com.rapidftr.activity;
 
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.activity.pages.ViewAllEnquiriesPage;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
-import com.rapidftr.task.SyncAllDataAsyncTask;
-import com.rapidftr.task.SynchronisationAsyncTask;
+import com.rapidftr.repository.FailedToSaveException;
 import junit.framework.Assert;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class ViewEnquiryActivityTest extends BaseActivityIntegrationTest {
     EnquiryRepository repository;
@@ -48,18 +43,12 @@ public class ViewEnquiryActivityTest extends BaseActivityIntegrationTest {
         viewEnquiryPage.validateData(enquiry);
     }
 
-    public void testShowMatchingChildRecords() throws JSONException {
-        //given i have 2 children
-//        Child child1 = new Child("id1", "user1", "{\"name\":\"child1\", \"sex\":\"female\"}");
-//        childRepository.createOrUpdate(child1);
-//        Child child2 = new Child("id2", "user1", "{\"name\":\"child2\", \"sex\":\"female\"}");
-//        childRepository.createOrUpdate(child2);
 
-        //childPage.navigateToRegisterPage();
-        //childPage.enterChildName("child1");
-        //childPage.save();
-        childRepository.createOrUpdate(new Child("id1", "admin","{\"name\":\"Test1\", \"nationality\":\"Ugandan\"}"));
-        childRepository.createOrUpdate(new Child("id2", "admin", "{\"name\":\"Test2\", \"nationality\":\"Ugandan\"}"));
+    public void testShowMatchingChildRecords() throws JSONException, FailedToSaveException {
+        Child child1 = new Child("id1", "admin", "{\"name\":\"Test1\", \"nationality\":\"Ugandan\"}");
+        childRepository.createOrUpdate(child1);
+        Child child2 = new Child("id2", "admin", "{\"name\":\"Test2\", \"nationality\":\"Ugandan\"}");
+        childRepository.createOrUpdate(child2);
         viewAllChildrenPage.navigateToViewAllTab();
 
         //when  i create an enquiry matching both
@@ -69,7 +58,6 @@ public class ViewEnquiryActivityTest extends BaseActivityIntegrationTest {
         //and sync all enquiries and children
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
         solo.sleep(90000); //Sleep for synchronization to happen.
-//        new SyncAllDataAsyncTask<Enquiry>();
 
         //and i view that particular enquiry
         viewAllEnquiriesPage.navigateToPage();
@@ -77,8 +65,8 @@ public class ViewEnquiryActivityTest extends BaseActivityIntegrationTest {
         solo.sleep(3000);
 
         //then  i should see both children as potential matches
-//        viewAllEnquiriesPage.isChildPresent(child1);
-//        viewAllEnquiriesPage.isChildPresent(child2);
+        viewAllEnquiriesPage.isChildPresent(child1);
+        viewAllEnquiriesPage.isChildPresent(child2);
 
     }
 }
