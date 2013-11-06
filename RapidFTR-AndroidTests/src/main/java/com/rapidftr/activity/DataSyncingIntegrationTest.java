@@ -7,19 +7,17 @@ import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import org.apache.http.params.HttpConnectionParams;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import static com.rapidftr.utils.RapidFtrDateTime.now;
 import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
+
+    private static final long SYNC_TIMEOUT = 5000; // 2 mins
 
     ChildRepository childRepository;
     EnquiryRepository enquiryRepository;
@@ -92,8 +90,13 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
     }
 
     private void waitUntilSeededRecordIsSynced(String id) throws JSONException {
+        long now = System.currentTimeMillis();
+
         boolean childFound = false;
         while (!childFound) {
+            if (System.currentTimeMillis() > now + SYNC_TIMEOUT) {
+                throw new RuntimeException("Waiting for record to be synced has timed out.");
+            }
             try {
                 childRepository.get(id);
                 childFound = true;
