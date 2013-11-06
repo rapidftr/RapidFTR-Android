@@ -195,11 +195,12 @@ public class ChildRepository implements Closeable, Repository<Child> {
         return children;
     }
 
-    public List<Child> getAllWithInternalIds(String[] internalIds) throws JSONException {
+    public List<Child> getAllWithInternalIds(List<String> internalIds) throws JSONException {
         List<Child> children = new ArrayList<Child>();
-        for (int i = 0; i < internalIds.length; i++) {
-            Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE _id = ? ", new String[]{internalIds[i]});
-            children.add(childFrom(cursor));
+        for (String internalId : internalIds) {
+            Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE _id = ?", new String[]{internalId});
+            if (cursor.moveToNext())
+                children.add(childFrom(cursor));
         }
         return children;
     }

@@ -362,18 +362,60 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldReturnChildrenWithTheGivenInternalIds() throws JSONException {
-        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'internal_id' : 'ae0fc' }");
-        Child child2 = new Child("id2", "user1", "{ 'name' : 'child2', 'test2' : 0, 'internal_id' : 'b32fa' }");
+        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, '_id' : 'ae0fc' }");
+        Child child2 = new Child("id2", "user1", "{ 'name' : 'child2', 'test2' : 0, '_id' : 'b32fa' }");
 
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
-        String[] internalIds = {"ae0fc", "b32fa"};
+        List<String> internalIds = new ArrayList<String>();
+        internalIds.add("ae0fc");
+        internalIds.add("b32fa");
+
         List<Child> children = repository.getAllWithInternalIds(internalIds);
 
         assertEquals(2, children.size());
         assertTrue(children.contains(child1));
         assertTrue(children.contains(child2));
+    }
+
+    @Test
+    public void shouldNotReturnAnyChildGivenInternalIdsDontMatch() throws JSONException {
+        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, '_id' : 'ae0fc' }");
+        Child child2 = new Child("id2", "user1", "{ 'name' : 'child2', 'test2' : 0, '_id' : 'b32fa' }");
+
+        repository.createOrUpdate(child1);
+        repository.createOrUpdate(child2);
+
+        List<String> internalIds = new ArrayList<String>();
+        internalIds.add("000fc");
+        internalIds.add("1243fa");
+
+        List<Child> children = repository.getAllWithInternalIds(internalIds);
+
+        assertEquals(0, children.size());
+    }
+
+    @Test
+    public void shouldOnlyReturnChildrenWithMatchingInternalIds() throws JSONException {
+        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, '_id' : 'ae0fc' }");
+        Child child2 = new Child("id2", "user1", "{ 'name' : 'child2', 'test2' : 0, '_id' : 'b32fa' }");
+        Child child3 = new Child("id3", "user1", "{ 'name' : 'child3', 'test2' : 0, '_id' : 'c42fa' }");
+
+        repository.createOrUpdate(child1);
+        repository.createOrUpdate(child2);
+        repository.createOrUpdate(child3);
+
+        List<String> internalIds = new ArrayList<String>();
+        internalIds.add("ae0fc");
+        internalIds.add("1443fa");
+        internalIds.add("c42fa");
+
+        List<Child> children = repository.getAllWithInternalIds(internalIds);
+
+        assertEquals(2, children.size());
+        assertTrue(children.contains(child1));
+        assertTrue(children.contains(child3));
     }
 
     @Test

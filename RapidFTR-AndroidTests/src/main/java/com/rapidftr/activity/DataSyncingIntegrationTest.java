@@ -75,11 +75,9 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         viewAllEnquiriesPage.navigateToPage();
         assertTrue(viewAllEnquiriesPage.isEnquiryPresent(enquiry));
 
-        //when i click the enquiry
         viewAllEnquiriesPage.clickElementWithText(enquiry.getEnquirerName());
         solo.sleep(3000);
 
-        //then i should see the seeded child
         viewAllEnquiriesPage.isChildPresent(childToStore);
     }
 
