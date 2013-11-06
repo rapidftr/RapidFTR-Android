@@ -363,16 +363,14 @@ public class ChildRepositoryTest {
     @Test
     public void shouldReturnChildrenWithTheGivenInternalIds() throws JSONException {
         Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'internal_id' : 'ae0fc' }");
-        Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'internal_id' : 'b32fa' }");
+        Child child2 = new Child("id2", "user1", "{ 'name' : 'child2', 'test2' : 0, 'internal_id' : 'b32fa' }");
 
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
-        List<String> internalIds = new ArrayList<String>();
-        internalIds.add("ae0fc");
-        internalIds.add("b32fa");
-
+        String[] internalIds = {"ae0fc", "b32fa"};
         List<Child> children = repository.getAllWithInternalIds(internalIds);
+
         assertEquals(2, children.size());
         assertTrue(children.contains(child1));
         assertTrue(children.contains(child2));
