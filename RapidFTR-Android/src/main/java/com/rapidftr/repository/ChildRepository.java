@@ -177,8 +177,10 @@ public class ChildRepository implements Closeable, Repository<Child> {
     }
 
     private Child childFrom(Cursor cursor) throws JSONException {
-//        return new Child(cursor.getString(0), BooleanColumn.from(cursor.getString(1)).toBoolean());
-        return new Child(cursor.getString(cursor.getColumnIndex(content.getColumnName())), BooleanColumn.from(cursor.getString(cursor.getColumnIndex(synced.getColumnName()))).toBoolean());
+        int contentColumnIndex = cursor.getColumnIndex(content.getColumnName());
+        int syncedColumnIndex = cursor.getColumnIndex(synced.getColumnName());
+
+        return new Child(cursor.getString(contentColumnIndex), BooleanColumn.from(cursor.getString(syncedColumnIndex)).toBoolean());
     }
 
     protected String getTimeStamp() {
