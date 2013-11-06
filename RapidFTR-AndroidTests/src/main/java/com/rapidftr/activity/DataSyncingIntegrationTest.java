@@ -40,11 +40,11 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         }
     }
 
-    public void testShouldSyncRecordWithServerAndUpdateRecordAttributes() throws Exception {
+    public void testSyncRecordsShouldUpdateRecordAttributesAndAttachMatchingChildRecordsToEnquiries() throws Exception {
         String timeStamp = now().defaultFormat();
         String childId = UUID.randomUUID().toString();
         String childName = UUID.randomUUID().toString().substring(0, 6);
-        Child childToStore = new Child(String.format("{ 'unique_identifier' : '%s', 'timeStamp' : '%s', 'test2' : 'value2', 'one' : '1', 'name' : '%s' }", childId, timeStamp, childName));
+        Child childToStore = new Child(String.format("{'unique_identifier':'%s', 'timeStamp':'%s', 'nationality':'ugandan', 'one':'1', 'name':'%s' }", childId, timeStamp, childName));
         seedChildOnServer(childToStore);
 
         String enquiryJSON = String.format("{ \"enquirer_name\":\"Tom Cruise\", \"name\":\"%s\"," +
@@ -74,6 +74,13 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
         viewAllEnquiriesPage.navigateToPage();
         assertTrue(viewAllEnquiriesPage.isEnquiryPresent(enquiry));
+
+        //when i click the enquiry
+        viewAllEnquiriesPage.clickElementWithText(enquiry.getEnquirerName());
+        solo.sleep(3000);
+
+        //then i should see the seeded child
+        viewAllEnquiriesPage.isChildPresent(childToStore);
     }
 
 

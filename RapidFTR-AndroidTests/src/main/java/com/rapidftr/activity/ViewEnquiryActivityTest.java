@@ -43,30 +43,4 @@ public class ViewEnquiryActivityTest extends BaseActivityIntegrationTest {
         viewEnquiryPage.validateData(enquiry);
     }
 
-
-    public void testShowMatchingChildRecords() throws JSONException, FailedToSaveException {
-        Child child1 = new Child("id1", "admin", "{\"name\":\"Test1\", \"nationality\":\"Ugandan\"}");
-        childRepository.createOrUpdate(child1);
-        Child child2 = new Child("id2", "admin", "{\"name\":\"Test2\", \"nationality\":\"Ugandan\"}");
-        childRepository.createOrUpdate(child2);
-        viewAllChildrenPage.navigateToViewAllTab();
-
-        //when  i create an enquiry matching both
-        Enquiry enquiry=new Enquiry("sam fisher", "some guy",  new JSONObject("{\"nationality\":\"Ugandan\"}"));
-        repository.createOrUpdate(enquiry);
-
-        //and sync all enquiries and children
-        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        solo.sleep(90000); //Sleep for synchronization to happen.
-
-        //and i view that particular enquiry
-        viewAllEnquiriesPage.navigateToPage();
-        viewAllEnquiriesPage.clickElementWithText(enquiry.getEnquirerName());
-        solo.sleep(3000);
-
-        //then  i should see both children as potential matches
-        viewAllEnquiriesPage.isChildPresent(child1);
-        viewAllEnquiriesPage.isChildPresent(child2);
-
-    }
 }
