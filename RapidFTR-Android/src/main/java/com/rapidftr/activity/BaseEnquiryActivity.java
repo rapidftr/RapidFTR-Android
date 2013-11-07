@@ -46,6 +46,7 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
     protected Enquiry load(Bundle bundle, EnquiryRepository enquiryRepository) throws JSONException {
         String enquiryId = bundle.getString("id");
         Enquiry enquiry1 = enquiryRepository.get(enquiryId);
+        enquiryRepository.close();
         JSONObject criteria = (JSONObject) enquiry1.remove("criteria");
         for(String key: JSONObject.getNames(criteria)){
             enquiry1.put(key, criteria.getString(key));
