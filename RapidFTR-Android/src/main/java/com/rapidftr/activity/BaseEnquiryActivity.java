@@ -13,6 +13,7 @@ import com.rapidftr.task.AsyncTaskWithDialog;
 import lombok.Cleanup;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,19 +36,21 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         return enquiry;
     }
 
-
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         enquiry = new Enquiry();
         @Cleanup InputStream in = getResources().openRawResource(R.raw.enquiry_form_sections);
-        String x = CharStreams.toString(new InputStreamReader(in));
-        formSections = new ArrayList<FormSection>(Arrays.asList(JSON_MAPPER.readValue(x, FormSection[].class)));
+        String formSectionJSON = CharStreams.toString(new InputStreamReader(in));
+        formSections = new ArrayList<FormSection>(Arrays.asList(JSON_MAPPER.readValue(formSectionJSON, FormSection[].class)));
     }
 
-    protected Enquiry load() throws JSONException {
-        @Cleanup EnquiryRepository repository = inject(EnquiryRepository.class);
-        String enquiryId = getIntent().getExtras().getString("id");
-        enquiry = repository.get(enquiryId);
-        return enquiry;
+    protected Enquiry load(Bundle bundle, EnquiryRepository enquiryRepository) throws JSONException {
+        String enquiryId = bundle.getString("id");
+        Enquiry enquiry1 = enquiryRepository.get(enquiryId);
+        JSONObject criteria = (JSONObject) enquiry1.remove("criteria");
+        for(String key: JSONObject.getNames(criteria)){
+            enquiry1.put(key, criteria.getString(key));
+        }
+        return enquiry1;
     }
 
     public Enquiry save(View view){

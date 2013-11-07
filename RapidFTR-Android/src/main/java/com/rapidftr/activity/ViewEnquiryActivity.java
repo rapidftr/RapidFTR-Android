@@ -29,7 +29,8 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         super.initializeData(savedInstanceState);
         this.editable = false;
-        load();
+        enquiryRepository = inject(EnquiryRepository.class);
+        this.enquiry = load(getIntent().getExtras(), enquiryRepository);
     }
 
     @Override
