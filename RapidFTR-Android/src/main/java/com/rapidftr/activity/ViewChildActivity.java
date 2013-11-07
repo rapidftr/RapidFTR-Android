@@ -8,9 +8,12 @@ import android.view.View;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
-import com.rapidftr.task.SyncChildTask;
+import com.rapidftr.task.SyncRecordTask;
+import com.rapidftr.utils.http.FluentRequest;
 import org.json.JSONException;
 
 
@@ -50,20 +53,24 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     protected void sync() {
-        SyncChildTask task = inject(SyncChildTask.class);
+        SyncRecordTask task = createChildSyncTask();
         task.setActivity(this);
          RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
     }
 
+    protected SyncRecordTask createChildSyncTask(){
+        ChildRepository childRepository = inject(ChildRepository.class);
+        return new SyncRecordTask(new ChildSyncService(this.getContext(), childRepository, new FluentRequest()), childRepository, getCurrentUser());
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.child_menu, menu);
+        getMenuInflater().inflate(R.menu.sync_single_menu, menu);
         try {
             if (!child.isSynced() && child.getSyncLog() != null) {
                 menu.findItem(R.id.synchronize_log).setVisible(true);
             }
             if (!getCurrentUser().isVerified()) {
-                menu.findItem(R.id.synchronize_child).setVisible(false);
+                menu.findItem(R.id.sync_single).setVisible(false);
                 menu.getItem(4).setVisible(false);
             }
         } catch (JSONException e) {
@@ -78,7 +85,7 @@ public class ViewChildActivity extends BaseChildActivity {
             case R.id.change_password:
                 startActivity(new Intent(this, ChangePasswordActivity.class));
                 return true;
-            case R.id.synchronize_child:
+            case R.id.sync_single:
                 sync();
                 return true;
             case R.id.synchronize_log:

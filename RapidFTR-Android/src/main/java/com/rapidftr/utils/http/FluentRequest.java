@@ -6,7 +6,9 @@ import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormSection;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.Enquiry;
 import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.IOUtils;
 import com.rapidftr.utils.PhotoCaptureHelper;
@@ -24,6 +26,7 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -128,11 +131,13 @@ public class FluentRequest {
     protected FluentResponse executeMultiPart(HttpEntityEnclosingRequestBase request) throws IOException{
         MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
         List<FormSection> formSections =  RapidFtrApplication.getApplicationInstance().getFormSections();
+        String param_model = "";
+        BaseModel baseModel;
         if (params.size() > 0) {
             for (Map.Entry<String, String> param : params.entrySet()){
                 if(param.getKey().equals("photo_keys")){
                         try {
-                            addPhotoToMultipart(multipartEntity, param.getValue());
+                            addPhotoToMultipart(multipartEntity, param.getValue(), param_model);
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -145,13 +150,14 @@ public class FluentRequest {
                         throw new RuntimeException(e);
                     }
                 }else{
+                    param_model = param.getKey();
                     try {
-                        Child child = new Child(param.getValue());
-                        Iterator keys = child.keys();
+                        baseModel = (param_model == "child") ? new Child(param.getValue()) : new Enquiry(param.getValue());
+                        Iterator keys = baseModel.keys();
                         while(keys.hasNext())
                         {
                             String currentKey = keys.next().toString();
-                            multipartEntity.addPart("child["+currentKey+"]", new StringBody(child.get(currentKey).toString()));
+                            multipartEntity.addPart(param_model+"["+currentKey+"]", new StringBody(baseModel.get(currentKey).toString()));
                         }
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
@@ -163,10 +169,10 @@ public class FluentRequest {
         return execute(request);
     }
 
-    public void addPhotoToMultipart(MultipartEntity multipartEntity, String param) throws IOException, GeneralSecurityException, JSONException {
+    public void addPhotoToMultipart(MultipartEntity multipartEntity, String param, String model) throws IOException, GeneralSecurityException, JSONException {
         JSONArray photoKeys = new JSONArray(param);
         for(int i = 0; i < photoKeys.length(); i++){
-            multipartEntity.addPart("child[photo]["+i+"]", attachPhoto(photoKeys.get(i).toString()));
+            multipartEntity.addPart(model+"[photo]["+i+"]", attachPhoto(photoKeys.get(i).toString()));
         }
     }
 
@@ -243,7 +249,7 @@ public class FluentRequest {
             registry.register(new Scheme("https", new SelfSignedSSLSocketFactory(trusted), 443));
 
             HttpParams params = new BasicHttpParams();
-            ClientConnectionManager connectionManager = new SingleClientConnManager(params, registry);
+            ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(params, registry);
 
             return new DefaultHttpClient(connectionManager, params);
         } catch (Exception e) {

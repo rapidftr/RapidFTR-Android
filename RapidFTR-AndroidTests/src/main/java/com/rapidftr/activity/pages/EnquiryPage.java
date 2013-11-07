@@ -38,18 +38,6 @@ public class EnquiryPage {
         solo.assertCurrentActivity("In edit mode", "EditEnquiryActivity");
     }
 
-    public List<String> getAllFormFields() {
-        List<String> texts = new ArrayList<String>();
-        ArrayList<View> views = rutils.removeInvisibleViews(solo.getViews());
-        for (View v : views) {
-            if (v instanceof TextView) {
-                String text = ((TextView)v).getText().toString();
-                texts.add(text);
-            }
-        }
-        return texts;
-    }
-
     public List<String> getAllFormSections() {
         solo.clickOnText("Enquirer Details",0);
         solo.waitForText("Tracing Information");
@@ -117,12 +105,6 @@ public class EnquiryPage {
         solo.clickOnButton("Save");
     }
 
-    public void verifyEnquirerDetails(List<String> enquirerDetails) {
-        solo.searchButton("Edit", true);
-        selectFormSection("Enquirer Details");
-        Assert.assertTrue(solo.searchEditText(enquirerDetails.get(0).toString()));
-    }
-
     public void verifyNewEnquiryFormPresence() {
         solo.waitForCondition(new Condition() {
             @Override
@@ -141,17 +123,4 @@ public class EnquiryPage {
         Assert.assertTrue(solo.waitForText("Enquirer name is required"));
     }
 
-    public List<String> getAllEnquiryData() {
-        List<String> allVisibleTexts = new ArrayList<String>();
-        List<String> formSections = getAllFormSections();
-        solo.clickOnText("Enquirer Details",0);
-        for (String formSection : formSections){
-            selectFormSection(formSection);
-            List<String> visibleTexts = getVisibleText();
-            for (String text: visibleTexts){
-                allVisibleTexts.add(text);
-            }
-        }
-        return allVisibleTexts;
-    }
 }

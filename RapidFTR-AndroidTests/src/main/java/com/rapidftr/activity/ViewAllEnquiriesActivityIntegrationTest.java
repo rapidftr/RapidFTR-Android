@@ -17,7 +17,7 @@ public class ViewAllEnquiriesActivityIntegrationTest extends BaseActivityIntegra
         waitUntilTextDisappears("Login Successful");
     }
 
-    public void testDisplayAllEnquiries() throws JSONException {
+    public void testDisplayAllEnquiries() throws Exception {
         EnquiryRepository repository = RapidFtrApplication.getApplicationInstance().getInjector().getInstance(EnquiryRepository.class);
         Enquiry enquiry1 = new Enquiry("CREATEDBY", "Enq1Reportername", new JSONObject("{name:NAME}"));
         Enquiry enquiry2 = new Enquiry("CREATEDBY", "Enq2Reportername", new JSONObject("{name:NAME}"));

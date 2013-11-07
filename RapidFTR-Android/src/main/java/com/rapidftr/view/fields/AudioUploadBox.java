@@ -105,7 +105,7 @@ public class AudioUploadBox extends BaseView {
         model.put(formField.getId(), fileName);
     }
 
-    protected void playRecording(View view) {
+    protected void playRecording(View view) throws JSONException {
         try {
             final View play = findViewById(R.id.play_record);
             final View record = findViewById(R.id.start_record);
@@ -177,7 +177,11 @@ public class AudioUploadBox extends BaseView {
         findViewById(R.id.play_record).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                playRecording(view);
+                try {
+                    playRecording(view);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

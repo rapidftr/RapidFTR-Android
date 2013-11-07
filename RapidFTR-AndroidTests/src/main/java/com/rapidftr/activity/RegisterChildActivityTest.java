@@ -18,7 +18,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         childPage.navigateToRegisterPage();
     }
 
-    public void testFormSectionsDisplayed() {
+    public void xtestFormSectionsDisplayed() {
         List<String> actualSections = childPage.getDropDownFormSections();
         List<String> expectedSections = new ArrayList<String>(asList(new String[]{"Basic Identity", "Family details", "Care Arrangements", "Separation History", "Protection Concerns",
                 "Childs Wishes", "Other Interviews", "Other Tracing Info", "Interview Details", "Photos and Audio","Automation Form", "Feedback"}));
@@ -26,7 +26,7 @@ public class RegisterChildActivityTest extends BaseActivityIntegrationTest {
         solo.goBack();
     }
 
-    public void testFieldsDisplayed() {
+    public void xtestFieldsDisplayed() {
         childPage.selectFormSection("Automation Form");
         List expectedFields = asList("Automation TextField", "Automation TextArea", "Automation CheckBoxes", "Automation Select",
                 "Automation Radio", "Automation Number", "Automation Date");

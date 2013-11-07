@@ -2,36 +2,59 @@ package com.rapidftr.activity;
 
 import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.database.DatabaseSession;
+import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Enquiry;
+import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.rapidftr.task.SyncRecordTask;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
-import static junit.framework.Assert.assertFalse;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class ViewEnquiryActivityTest {
     protected ViewEnquiryActivity activity;
-    private EnquiryRepository repository;
-
+    
+    public DatabaseSession session;
+    
+    @Mock
+    private EnquiryRepository enquiryRepository;
+    @Mock
+    private ChildRepository childRepository;
+    @Mock
+    private Enquiry enquiry;
     @Before
-    public void setUp(){
+    public void setUp()throws Exception{
         initMocks(this);
         activity = spy(new ViewEnquiryActivity());
+        
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
-        doReturn(repository).when(mockInjector).getInstance(EnquiryRepository.class);
+        doReturn(enquiry).when(mockInjector).getInstance(Enquiry.class);
+        doReturn(enquiryRepository).when(mockInjector).getInstance(EnquiryRepository.class);
+        doReturn(childRepository).when(mockInjector).getInstance(ChildRepository.class);
+        session = new ShadowSQLiteHelper("test_database").getSession();
     }
 
     @Test(expected = Exception.class)
     public void shouldThrowErrorIfChildIsNotFound() throws Exception{
         activity.initializeData(null);
+    }
+
+    @Test
+    public void shouldInvokeSyncTask() {
+        doReturn(enquiryRepository).when(activity).inject(EnquiryRepository.class);
+        SyncRecordTask task = mock(SyncRecordTask.class);
+        doReturn(task).when(activity).createSyncTaskForEnquiry();
+        activity.enquiry = enquiry;
+        activity.sync();
+        verify(task).setActivity(activity);
+        verify(task).doInBackground(enquiry);
     }
 
 }

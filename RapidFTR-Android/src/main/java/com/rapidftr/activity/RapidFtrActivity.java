@@ -18,8 +18,12 @@ import android.widget.Toast;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.BaseModel;
+import com.rapidftr.model.Child;
+import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SynchronisationAsyncTask;
@@ -200,11 +204,22 @@ public void viewAllEnquiryTabListener(View view) {
             makeToast(R.string.connection_off);
         }
         else{
-            SynchronisationAsyncTask task = inject(SynchronisationAsyncTask.class);
-            this.getContext().setSyncTask(task);
-            task.setContext(this);
-            task.execute();
+            SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {});
+            executeTask(syncChildTask);
+
+            SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {});
+            executeTask(syncEnquiryTask);
         }
+    }
+
+    private void executeTask(SynchronisationAsyncTask<? extends BaseModel> syncTask) {
+        this.getContext().setSyncTask(syncTask);
+        syncTask.setContext(this);
+        syncTask.execute();
+    }
+
+    private <T> T getSynchronisationTask(Key<T> key) {
+        return getInjector().getInstance(key);
     }
 
     protected User getCurrentUser() {

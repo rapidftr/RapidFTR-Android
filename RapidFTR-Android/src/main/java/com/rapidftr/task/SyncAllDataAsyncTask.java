@@ -2,14 +2,12 @@ package com.rapidftr.task;
 
 import com.google.inject.Inject;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.model.Child;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.repository.Repository;
 import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.FormService;
-import com.rapidftr.utils.DeviceAdmin;
+import com.rapidftr.service.SyncService;
 import org.apache.http.HttpException;
 import org.json.JSONException;
 
@@ -19,49 +17,48 @@ import java.util.List;
 
 
 
-public class SyncAllDataAsyncTask extends SynchronisationAsyncTask {
+public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAsyncTask<T> {
+
     private DeviceService deviceService;
 
     @Inject
-    public SyncAllDataAsyncTask(FormService formService, ChildService childService,
-                                DeviceService deviceService, ChildRepository childRepository,
+    public SyncAllDataAsyncTask(FormService formService, SyncService<T> recordService,
+                                DeviceService deviceService, Repository<T> recordRepository,
                                 User user) {
-        super(formService, childService, childRepository, user);
+        super(formService, recordService, recordRepository, user);
         this.deviceService = deviceService;
     }
 
     protected void sync() throws JSONException, IOException, HttpException {
 
-        ArrayList<String> idsToDownload = new ArrayList<String>();
-        Boolean blacklisted = deviceService.isBlacklisted();
-
-        if(blacklisted){
-            uploadChildrenToSyncWithServer(idsToDownload);
-            if (childRepository.toBeSynced().isEmpty())
+        List<T> recordsToUpload = repository.toBeSynced();
+        List<String> idsToDownload;
+        Boolean isBlacklisted = deviceService.isBlacklisted();
+        if(isBlacklisted){
+            sendRecordsToServer(recordsToUpload);
+            if (repository.toBeSynced().isEmpty())
             {
                 deviceService.wipeData();
             }
         } else {
-            idsToDownload = getAllIdsForDownload();
-            int startProgressForDownloadingChildren = uploadChildrenToSyncWithServer(idsToDownload);
-            downloadChildrenFromServerToSync(idsToDownload, startProgressForDownloadingChildren);
+            idsToDownload = recordSyncService.getIdsToDownload();
+            setProgressBarParameters(idsToDownload, recordsToUpload);
+            setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
+
+            sendRecordsToServer(recordsToUpload);
+            downloadRecordsFromServer(idsToDownload, numberOfUploadedRecords(recordsToUpload));
         }
+
     }
 
-    private int uploadChildrenToSyncWithServer( ArrayList<String> idsToDownload) throws JSONException, IOException {
-        List<Child> childrenToSyncWithServer = childRepository.toBeSynced();
-        setProgressBarParameters(idsToDownload, childrenToSyncWithServer);
-        setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
+    private int numberOfUploadedRecords(List<T> recordsToUpload) throws JSONException {
+        return formSectionProgress + recordsToUpload.size();
+    }
+
+    private void downloadRecordsFromServer(List<String> idsToDownload, int startProgressForDownloadingRecords)
+            throws IOException, JSONException, HttpException {
         getFormSections();
-        sendChildrenToServer(childrenToSyncWithServer);
-
-        return formSectionProgress + childrenToSyncWithServer.size();
-    }
-
-    private void downloadChildrenFromServerToSync(ArrayList<String> idsToDownload,
-                                                  int startProgressForDownloadingChildren)
-            throws IOException, JSONException {
-        saveIncomingChildren(idsToDownload, startProgressForDownloadingChildren);
+        saveIncomingRecords(idsToDownload, startProgressForDownloadingRecords);
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
     }
 

@@ -25,23 +25,14 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     public UnverifiedUserPage unverifiedUserPage;
     public ViewEnquiryPage viewEnquiryPage;
 
-
-//    RapidFtrApplication context = RapidFtrApplication.getApplicationInstance() ;
-//    ChildRepository repository=context.getInjector().getInstance(ChildRepository.class);
-
     final String ALPHA_NUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     public BaseActivityIntegrationTest() {
         super(LoginActivity.class);
-
-
     }
 
     @Override
     public void setUp() throws Exception {
-//        SharedPreferences defaultPreferences = PreferenceManager.getDefaultSharedPreferences(getInstrumentation().getTargetContext());
-//        defaultPreferences.edit().clear().commit();
-//        deleteDir(new File(getInstrumentation().getTargetContext().getApplicationInfo().dataDir));
 
         solo = new Solo(getInstrumentation(), getActivity());
         loginPage = new LoginPage(solo);
@@ -102,7 +93,7 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     }
 
    public void waitUntilTextDisappears(String text) throws Exception{
-       assertTrue(solo.searchText(text,true));
+      assertTrue(solo.searchText(text,true));
       for(int i=0;i<10;i++){
           if(solo.searchText(text,true)){
               solo.sleep(50);
@@ -154,8 +145,6 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
             break;
         }
         }
-//        solo.waitForText("Synchronize All");
-
     }
 
 }

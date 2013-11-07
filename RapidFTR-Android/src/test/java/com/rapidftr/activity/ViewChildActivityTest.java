@@ -6,9 +6,7 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
-import com.rapidftr.task.SyncChildTask;
+import com.rapidftr.task.SyncRecordTask;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.json.JSONException;
@@ -18,7 +16,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import java.io.IOException;
-import java.io.SyncFailedException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -57,22 +54,20 @@ public class ViewChildActivityTest {
     @Test
     public void shouldSyncAndShowChildRecord() throws IOException, JSONException {
         Child child = mock(Child.class);
-        SyncChildTask task = mock(SyncChildTask.class);
-
-        doReturn(task).when(activity).inject(SyncChildTask.class);
+        SyncRecordTask syncRecordTask = mock(SyncRecordTask.class);
+        doReturn(syncRecordTask).when(activity).createChildSyncTask();
 
         activity.child = child;
         activity.sync();
-
-        verify(task).setActivity(activity);
-        verify(task).doInBackground(child);
+        verify(syncRecordTask).setActivity(activity);
+        verify(syncRecordTask).doInBackground(child);
     }
 
     @Test
     public void shouldCallSyncWhenMenuSelected() {
         doNothing().when(activity).sync();
         MenuItem item = mock(MenuItem.class);
-        given(item.getItemId()).willReturn(R.id.synchronize_child);
+        given(item.getItemId()).willReturn(R.id.sync_single);
         activity.onOptionsItemSelected(item);
         verify(activity).sync();
     }

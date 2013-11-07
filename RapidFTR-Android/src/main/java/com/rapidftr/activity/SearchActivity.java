@@ -9,6 +9,7 @@ import com.rapidftr.R;
 import com.rapidftr.adapter.ChildViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class SearchActivity extends RapidFtrActivity {
     }
 
     private List<Child> search(String subString) throws JSONException {
-        ChildRepository childRepository = inject(ChildRepository.class);
+        @Cleanup ChildRepository childRepository = inject(ChildRepository.class);
         subString = subString.trim();
         if ("".equals(subString)) {
             return new ArrayList<Child>();

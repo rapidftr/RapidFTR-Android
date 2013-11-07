@@ -43,7 +43,7 @@ public class ChildTest {
     @Test
     public void shouldDecodeOwnerFromJSON() throws JSONException {
         Child child = new Child("{ 'created_by' : 'test1' }");
-        assertThat(child.getOwner(), is("test1"));
+        assertThat(child.getCreatedBy(), is("test1"));
     }
 
     @Test
@@ -68,7 +68,7 @@ public class ChildTest {
     public void shouldGenerateWithIdAndOwnerAndContent() throws JSONException {
         Child child = new Child("id1", "owner1", "{ 'test1' : 'value1' }");
         assertThat(child.getUniqueId(), is("id1"));
-        assertThat(child.getOwner(), is("owner1"));
+        assertThat(child.getCreatedBy(), is("owner1"));
         assertThat(child.getString("test1"), is("value1"));
     }
 
@@ -126,7 +126,7 @@ public class ChildTest {
     @Test
     public void shouldReturnNamesWithLengthOneInsteadOfNull() throws JSONException {
         Child child = new Child();
-        assertThat(child.names().length(), equalTo(1));
+        assertThat(child.names().length(), equalTo(2)); // synced and created_at
     }
 
     @Test
@@ -172,7 +172,7 @@ public class ChildTest {
         HashMap fromTo = (HashMap) changesMap.get("name");
 
         assertThat(histories.size() ,is(1));
-        assertThat(histories.get(0).get(USER_NAME).toString(), is(updatedChild.getOwner()));
+        assertThat(histories.get(0).get(USER_NAME).toString(), is(updatedChild.getCreatedBy()));
         assertThat(changesMap.names().get(0).toString(), is("name"));
         assertThat(fromTo.get(FROM).toString(), is("old-name"));
         assertThat(fromTo.get(TO).toString(), is("updated-name"));

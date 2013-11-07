@@ -6,6 +6,7 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.service.DeviceService;
 import com.rapidftr.task.SyncAllDataAsyncTask;
@@ -22,7 +23,6 @@ import static com.rapidftr.CustomTestRunner.createUser;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
 
 @RunWith(CustomTestRunner.class)
 public class ApplicationInjectorTest {
@@ -49,7 +49,7 @@ public class ApplicationInjectorTest {
 	    User user = createUser();
 	    user.setVerified(true);
 	    application.setCurrentUser(user);
-        assertThat(application.getInjector().getInstance(SynchronisationAsyncTask.class), instanceOf(SyncAllDataAsyncTask.class));
+        assertThat(application.getInjector().getInstance(new Key<SynchronisationAsyncTask<Child>>(){}), instanceOf(SyncAllDataAsyncTask.class));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class ApplicationInjectorTest {
 	    User user = createUser();
 	    user.setVerified(false);
 	    application.setCurrentUser(user);
-        assertThat(application.getInjector().getInstance(SynchronisationAsyncTask.class), instanceOf(SyncUnverifiedDataAsyncTask.class));
+        assertThat(application.getInjector().getInstance(new Key<SynchronisationAsyncTask<Child>>(){}), instanceOf(SyncUnverifiedDataAsyncTask.class));
     }
 
     @Test

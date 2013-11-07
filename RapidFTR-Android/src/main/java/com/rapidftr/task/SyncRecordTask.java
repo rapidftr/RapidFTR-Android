@@ -4,31 +4,31 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import com.google.inject.Inject;
-import com.rapidftr.model.Child;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.service.ChildService;
+import com.rapidftr.repository.Repository;
+import com.rapidftr.service.SyncService;
 
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
-public class SyncChildTask extends AsyncTaskWithDialog<Child, Void, Boolean> {
+public class SyncRecordTask extends AsyncTaskWithDialog<BaseModel, Void, Boolean> {
 
-    protected final ChildService service;
-    protected final ChildRepository repository;
-    protected final User currentUser;
+    protected  SyncService service;
+    protected  Repository repository;
+    protected  User currentUser;
     private Activity activity;
 
     @Inject
-    public SyncChildTask(ChildService service, ChildRepository repository, User currentUser) {
+    public SyncRecordTask(SyncService service, Repository repository, User currentUser) {
         this.service = service;
         this.repository = repository;
         this.currentUser = currentUser;
     }
 
     @Override
-    public Boolean doInBackground(Child... children) {
+    public Boolean doInBackground(BaseModel... params) {
         try {
-            service.sync(children[0], currentUser);
+            service.sync(params[0], currentUser);
             return true;
         } catch (Exception e) {
             Log.e(APP_IDENTIFIER, "Error syncing one child record", e);
