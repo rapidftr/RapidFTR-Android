@@ -7,13 +7,9 @@ import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import org.apache.http.params.HttpConnectionParams;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import static com.rapidftr.utils.RapidFtrDateTime.now;
@@ -31,6 +27,8 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         solo.waitForText("Login Successful");
         enquiryRepository = application.getInjector().getInstance(EnquiryRepository.class);
         childRepository = application.getInjector().getInstance(ChildRepository.class);
+        deleteRecordsOnServer("children");
+        deleteRecordsOnServer("enquiries");
     }
 
     @Override
@@ -89,6 +87,15 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .path("/api/children")
                 .param("child", child.values().toString())
                 .post();
+    }
+
+    private void deleteRecordsOnServer(String records) throws JSONException, IOException {
+        http()
+                .context(application)
+                .host(LoginPage.LOGIN_URL)
+                .config(HttpConnectionParams.CONNECTION_TIMEOUT, 15000)
+                .path(String.format("/api/%s/destroy_all", records))
+                .delete();
     }
 
     private void waitUntilSeededRecordIsSynced(String id) throws JSONException {
