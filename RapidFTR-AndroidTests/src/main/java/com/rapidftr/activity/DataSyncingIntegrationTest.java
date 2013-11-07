@@ -17,6 +17,8 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
+    private static final long SYNC_TIMEOUT = 5000; // 2 mins
+
     ChildRepository childRepository;
     EnquiryRepository enquiryRepository;
 
@@ -27,6 +29,8 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         solo.waitForText("Login Successful");
         enquiryRepository = application.getInjector().getInstance(EnquiryRepository.class);
         childRepository = application.getInjector().getInstance(ChildRepository.class);
+        deleteRecordsOnServer("children");
+        deleteRecordsOnServer("enquiries");
     }
 
     @Override
@@ -92,9 +96,23 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .post();
     }
 
+    private void deleteRecordsOnServer(String records) throws JSONException, IOException {
+        http()
+                .context(application)
+                .host(LoginPage.LOGIN_URL)
+                .config(HttpConnectionParams.CONNECTION_TIMEOUT, 15000)
+                .path(String.format("/api/%s/destroy_all", records))
+                .delete();
+    }
+
     private void waitUntilSeededRecordIsSynced(String id) throws JSONException {
+        long now = System.currentTimeMillis();
+
         boolean childFound = false;
         while (!childFound) {
+            if (System.currentTimeMillis() > now + SYNC_TIMEOUT) {
+                throw new RuntimeException("Waiting for record to be synced has timed out.");
+            }
             try {
                 childRepository.get(id);
                 childFound = true;
