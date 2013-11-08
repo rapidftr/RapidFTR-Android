@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.util.*;
 
+import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 
 public class Enquiry extends BaseModel {
@@ -158,5 +159,9 @@ public class Enquiry extends BaseModel {
            return "";
         else
            return ids;
+    }
+
+    public String getInternalId() throws JSONException {
+        return getString(internal_id.getColumnName());
     }
 }
