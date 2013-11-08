@@ -67,7 +67,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
         Child child = childRepository.get(childId);
 
-        assertTrue(enquiry.getPotentialMatchingIds().contains(child.getId()));
+        assertTrue(enquiry.getPotentialMatchingIds().contains(child.getInternalId()));
         assertTrue(child.isSynced());
         assertTrue(enquiry.isSynced());
 

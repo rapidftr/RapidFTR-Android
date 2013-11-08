@@ -135,16 +135,4 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 
     }
 
-    public void waitUntilSyncCompletion() {
-
-        for(int i=0;i<10;i++){
-            solo.sendKey(KeyEvent.KEYCODE_MENU);
-            if(solo.searchText("Synchronize All",false)){
-                solo.sleep(10);
-            }else{
-            break;
-        }
-        }
-    }
-
 }
