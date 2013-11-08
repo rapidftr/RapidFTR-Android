@@ -40,8 +40,8 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
         enquiryRepository = inject(EnquiryRepository.class);
+        super.onCreate(savedInstanceState);
     }
 
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
