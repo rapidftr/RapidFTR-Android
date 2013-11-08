@@ -17,10 +17,11 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
-    private static final long SYNC_TIMEOUT = 5000; // 2 mins
+    private static final long SYNC_TIMEOUT = 120000; // 2 min
 
     ChildRepository childRepository;
     EnquiryRepository enquiryRepository;
+    String userName;
 
     @Override
     public void setUp() throws Exception {
@@ -29,6 +30,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         solo.waitForText("Login Successful");
         enquiryRepository = application.getInjector().getInstance(EnquiryRepository.class);
         childRepository = application.getInjector().getInstance(ChildRepository.class);
+        userName = application.getCurrentUser().getUserName();
         deleteRecordsOnServer("children");
         deleteRecordsOnServer("enquiries");
     }
@@ -61,7 +63,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
 
         solo.waitForText("Records Successfully Synchronized");
-        waitUntilSeededRecordIsSynced(childId);
+        waitUntilRecordsAreSynced();
 
         Enquiry enquiry = enquiryRepository.get(enquiryToSync.getUniqueId());
 
@@ -100,20 +102,11 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .delete();
     }
 
-    private void waitUntilSeededRecordIsSynced(String id) throws JSONException {
-        long now = System.currentTimeMillis();
+    private void waitUntilRecordsAreSynced() throws JSONException {
+        long endSyncTime = System.currentTimeMillis() + SYNC_TIMEOUT;
 
-        boolean childFound = false;
-        while (!childFound) {
-            if (System.currentTimeMillis() > now + SYNC_TIMEOUT) {
-                throw new RuntimeException("Waiting for record to be synced has timed out.");
-            }
-            try {
-                childRepository.get(id);
-                childFound = true;
-            } catch (NullPointerException e) {
-                continue;
-            }
+        while (System.currentTimeMillis() < endSyncTime) {
+            continue;
         }
     }
 
