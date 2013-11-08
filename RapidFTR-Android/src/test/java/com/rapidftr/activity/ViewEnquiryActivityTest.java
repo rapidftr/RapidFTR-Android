@@ -78,9 +78,9 @@ public class ViewEnquiryActivityTest {
         Bundle bundle = mock(android.os.Bundle.class);
         when(bundle.getString("id")).thenReturn(enquiry.getUniqueId());
 
-        BaseEnquiryActivity viewEnquiryActivity = new ViewEnquiryActivity();
-        Enquiry retrievedEnquiry = viewEnquiryActivity.load(bundle, enquiryRepository);
-        retrievedEnquiry.remove("id"); //because it is added while saving to the database
+        ViewEnquiryActivity viewEnquiryActivity = new ViewEnquiryActivity();
+        Enquiry retrievedEnquiry = viewEnquiryActivity.loadEnquiry(bundle, enquiryRepository);
+        retrievedEnquiry.remove("id"); //because id attribute is added to the enquiry while saving to the database
 
         JSONAssert.assertEquals(retrievedEnquiry, enquiry, true);
     }

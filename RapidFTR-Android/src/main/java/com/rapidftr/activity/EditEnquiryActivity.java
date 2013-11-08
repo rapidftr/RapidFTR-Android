@@ -2,14 +2,11 @@ package com.rapidftr.activity;
 
 import android.os.Bundle;
 import com.rapidftr.R;
-import com.rapidftr.repository.EnquiryRepository;
 import org.json.JSONException;
 
 import java.io.IOException;
 
 public class EditEnquiryActivity extends BaseEnquiryActivity{
-
-    private EnquiryRepository enquiryRepository;
 
     @Override
     protected void initializeView() {
@@ -22,7 +19,6 @@ public class EditEnquiryActivity extends BaseEnquiryActivity{
         if(formSections.get(0).getName().containsValue("Potential matches"))
             formSections.remove(0);
         this.editable = true;
-        enquiryRepository =inject(EnquiryRepository.class);
-        this.enquiry = load(getIntent().getExtras(), enquiryRepository);
+        this.enquiry = loadEnquiry(getIntent().getExtras(), this.enquiryRepository);
     }
 }

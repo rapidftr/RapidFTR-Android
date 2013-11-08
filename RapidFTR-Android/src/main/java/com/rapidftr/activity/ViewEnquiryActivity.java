@@ -19,7 +19,6 @@ import java.io.IOException;
 
 public class ViewEnquiryActivity extends BaseEnquiryActivity {
 
-    protected EnquiryRepository enquiryRepository;
     @Override
     protected void initializeView() {
         setContentView(R.layout.activity_view_enquiry);
@@ -29,8 +28,7 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         super.initializeData(savedInstanceState);
         this.editable = false;
-        enquiryRepository = inject(EnquiryRepository.class);
-        this.enquiry = load(getIntent().getExtras(), enquiryRepository);
+        this.enquiry = loadEnquiry(getIntent().getExtras(), enquiryRepository);
     }
 
     @Override
@@ -77,9 +75,8 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     }
 
     protected SyncRecordTask createSyncTaskForEnquiry() {
-        enquiryRepository = inject(EnquiryRepository.class);
-        SyncRecordTask syncRecordTask = new SyncRecordTask(new EnquirySyncService(this.getContext().getSharedPreferences(), new EnquiryHttpDao(), enquiryRepository), enquiryRepository, getCurrentUser());
-
+        SyncRecordTask syncRecordTask = new SyncRecordTask(
+                new EnquirySyncService(this.getContext().getSharedPreferences(), new EnquiryHttpDao(), enquiryRepository), enquiryRepository, getCurrentUser());
         return syncRecordTask;
     }
 }
