@@ -38,17 +38,20 @@ import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
 public abstract class RapidFtrActivity extends FragmentActivity {
 
-	public static final String LOGOUT_INTENT_FILTER = "com.rapidftr.LOGOUT_INTENT";
+    public static final String LOGOUT_INTENT_FILTER = "com.rapidftr.LOGOUT_INTENT";
 
-    protected @Getter @Setter Menu menu;
+    protected
+    @Getter
+    @Setter
+    Menu menu;
 
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if(!((NetworkInfo) intent.getParcelableExtra(EXTRA_NETWORK_INFO)).isConnected() && getContext().cleanSyncTask()){
-                    makeToast(R.string.network_down);
-                }
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!((NetworkInfo) intent.getParcelableExtra(EXTRA_NETWORK_INFO)).isConnected() && getContext().cleanSyncTask()) {
+                makeToast(R.string.network_down);
             }
+        }
     };
 
     private BroadcastReceiver logoutReceiver = new BroadcastReceiver() {
@@ -85,7 +88,7 @@ public abstract class RapidFtrActivity extends FragmentActivity {
         saveAlertListener(CreateEnquiryActivity.class);
     }
 
-public void viewAllEnquiryTabListener(View view) {
+    public void viewAllEnquiryTabListener(View view) {
         saveAlertListener(ViewAllEnquiryActivity.class);
     }
 
@@ -200,14 +203,15 @@ public void viewAllEnquiryTabListener(View view) {
     }
 
     protected void synchronise() {
-        if(!this.getContext().isOnline()){
+        if (!this.getContext().isOnline()) {
             makeToast(R.string.connection_off);
-        }
-        else{
-            SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {});
+        } else {
+            SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {
+            });
             executeTask(syncChildTask);
 
-            SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {});
+            SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {
+            });
             executeTask(syncEnquiryTask);
         }
     }
@@ -231,7 +235,7 @@ public void viewAllEnquiryTabListener(View view) {
         super.onCreate(savedInstanceState);
         registerReceiver(networkChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         initializeExceptionHandler();
-	    initializeLogoutHandler();
+        initializeLogoutHandler();
     }
 
     @Override
@@ -241,18 +245,26 @@ public void viewAllEnquiryTabListener(View view) {
     }
 
     private void unregisterReceivers() {
-        try{ unregisterReceiver(logoutReceiver); }catch (IllegalArgumentException e){ logError(e.getMessage()); }
-        try{ unregisterReceiver(networkChangeReceiver); }catch (IllegalArgumentException e){ logError(e.getMessage()); }
+        try {
+            unregisterReceiver(logoutReceiver);
+        } catch (IllegalArgumentException e) {
+            logError(e.getMessage());
+        }
+        try {
+            unregisterReceiver(networkChangeReceiver);
+        } catch (IllegalArgumentException e) {
+            logError(e.getMessage());
+        }
     }
 
     protected void initializeLogoutHandler() {
-		if (shouldEnsureLoggedIn()) {
-			IntentFilter intentFilter = new IntentFilter(LOGOUT_INTENT_FILTER);
-			registerReceiver(logoutReceiver, intentFilter);
-		}
-	}
+        if (shouldEnsureLoggedIn()) {
+            IntentFilter intentFilter = new IntentFilter(LOGOUT_INTENT_FILTER);
+            registerReceiver(logoutReceiver, intentFilter);
+        }
+    }
 
-	protected boolean shouldEnsureLoggedIn() {
+    protected boolean shouldEnsureLoggedIn() {
         return true;
     }
 
@@ -265,7 +277,7 @@ public void viewAllEnquiryTabListener(View view) {
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onStop();
         unregisterReceivers();
     }
@@ -305,10 +317,10 @@ public void viewAllEnquiryTabListener(View view) {
         View view = findViewById(id);
         EditText editText;
         String value;
-        if (view instanceof EditText){
+        if (view instanceof EditText) {
             editText = (EditText) findViewById(id);
             value = getEditText(id);
-        }else{
+        } else {
             TextField textField = (TextField) view;
             editText = (EditText) textField.findViewById(R.id.value);
             value = getText(editText);
@@ -326,7 +338,7 @@ public void viewAllEnquiryTabListener(View view) {
         return getText((EditText) findViewById(resId));
     }
 
-    protected String getText(EditText editText){
+    protected String getText(EditText editText) {
         CharSequence value = editText.getText();
         return value == null ? null : value.toString().trim();
     }
@@ -407,7 +419,7 @@ public void viewAllEnquiryTabListener(View view) {
         alert.create().show();
     }
 
-    protected BroadcastReceiver getBroadcastReceiver(){
+    protected BroadcastReceiver getBroadcastReceiver() {
         return networkChangeReceiver;
     }
 }
