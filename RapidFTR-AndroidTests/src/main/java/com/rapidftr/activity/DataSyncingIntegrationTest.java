@@ -82,6 +82,50 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         assertTrue(viewAllEnquiriesPage.isEnquiryPresent(enquiry));
     }
 
+    public void testShouldUpdateRecordsAfterSync() throws Exception {
+        String timeStamp = now().defaultFormat();
+        String childName = UUID.randomUUID().toString().substring(0, 6);
+        String childJSON = String.format("{'created_by' : '%s', 'timeStamp' : '%s', 'nationality' : 'uganda', 'name' : '%s' }", userName, timeStamp, childName);
+        Child child = new Child(childJSON);
+        String enquiryJSON = String.format("{'created_by' : '%s', 'enquirer_name' : 'Wire', 'name' : 'Alex', 'synced' : 'false'}", userName);
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        childRepository.createOrUpdate(child);
+        enquiryRepository.createOrUpdate(enquiry);
+
+        assertNull(child.getInternalId());
+        assertNull(enquiry.getInternalId());
+
+        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
+        solo.waitForText("Records Successfully Synchronized");
+        waitUntilRecordsAreSynced();
+
+        String childUniqueId = child.getUniqueId();
+        Child childAfterSync = childRepository.get(childUniqueId);
+        Enquiry enquiryAfterSync = enquiryRepository.get(enquiry.getUniqueId());
+
+        assertNotNull(childAfterSync.getInternalId());
+        assertNotNull(enquiryAfterSync.getInternalId());
+        assertTrue(childAfterSync.isSynced());
+        assertTrue(enquiryAfterSync.isSynced());
+
+        String updatedChildJSON = String.format("{'_id' : '%s' ,'created_by' : '%s', 'nationality' : 'uganda', 'name' : 'Albert', 'gender' : 'male' }", childAfterSync.getInternalId(), userName);
+        updateRecordOnServer(new Child(updatedChildJSON));
+
+        String enquiryUniqueId = enquiryAfterSync.getUniqueId();
+        String updatedEnquiryJSON = String.format("{'created_by' : '%s', 'enquirer_name' : 'James Wire', 'nationality' : 'uganda', 'unique_identifier' : '%s'}", userName, enquiryUniqueId);
+        enquiryRepository.createOrUpdate(new Enquiry(updatedEnquiryJSON));
+        Enquiry enquiryAfterUpdate = enquiryRepository.get(enquiryUniqueId);
+
+        assertEquals("James Wire", enquiryAfterUpdate.getEnquirerName());
+        assertEquals("", enquiryAfterUpdate.getPotentialMatchingIds());
+
+        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
+        solo.waitForText("Records Successfully Synchronized");
+        waitUntilRecordsAreSynced();
+
+        viewEnquiryPage.navigateToPage(enquiryAfterUpdate.getEnquirerName());
+        viewEnquiryPage.isChildPresent(childUniqueId);
+    }
 
     private void seedChildOnServer(Child child) throws JSONException, IOException {
         http()
@@ -91,6 +135,16 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .path("/api/children")
                 .param("child", child.values().toString())
                 .post();
+    }
+
+    private void updateRecordOnServer(Child child) throws JSONException, IOException {
+        http()
+                .context(application)
+                .host(LoginPage.LOGIN_URL)
+                .config(HttpConnectionParams.CONNECTION_TIMEOUT, 15000)
+                .path(String.format("/api/children/%s", child.getInternalId()))
+                .param("child", child.values().toString())
+                .put();
     }
 
     private void deleteRecordsOnServer(String records) throws JSONException, IOException {
