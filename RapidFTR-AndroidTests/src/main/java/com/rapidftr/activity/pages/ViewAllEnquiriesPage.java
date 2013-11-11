@@ -24,8 +24,4 @@ public class ViewAllEnquiriesPage {
     public void clickElementWithText(String text){
          solo.clickOnText(text);
     }
-
-    public boolean isChildPresent(Child child) throws JSONException {
-        return  solo.searchText(child.getUniqueId());
-    }
 }

@@ -2,6 +2,7 @@ package com.rapidftr.activity;
 
 import com.jayway.android.robotium.solo.Solo;
 import com.rapidftr.activity.pages.EnquiryPage;
+import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import org.json.JSONException;
 
@@ -13,10 +14,10 @@ public class ViewEnquiryPage extends EnquiryPage {
         super(solo);
     }
 
-    public void navigateToPage(String enquiryName) throws JSONException {
+    public void navigateToPage(String enquirerName) throws JSONException {
         solo.clickOnText("Enquiry");
         solo.clickOnText("View All");
-        solo.clickOnText(enquiryName);
+        solo.clickOnText(enquirerName);
     }
 
     public void validateData(Enquiry enquiry) throws JSONException {
@@ -25,4 +26,7 @@ public class ViewEnquiryPage extends EnquiryPage {
         assertTrue(solo.searchText("Edit"));
     }
 
+    public boolean isChildPresent(String childUniqueId) throws JSONException {
+        return  solo.searchText(childUniqueId);
+    }
 }
