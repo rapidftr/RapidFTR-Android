@@ -16,8 +16,11 @@ public class ViewEnquiryPage extends EnquiryPage {
 
     public void navigateToPage(String enquirerName) throws JSONException {
         solo.clickOnText("Enquiry");
+        solo.sleep(1000);
         solo.clickOnText("View All");
+        solo.sleep(1000);
         solo.clickOnText(enquirerName);
+        solo.sleep(1000);
     }
 
     public void validateData(Enquiry enquiry) throws JSONException {

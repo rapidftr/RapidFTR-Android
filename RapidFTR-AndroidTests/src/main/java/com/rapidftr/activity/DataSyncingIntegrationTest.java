@@ -17,7 +17,7 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
-    private static final long SYNC_TIMEOUT = 120000; // 2 min
+    private static final long SYNC_TIMEOUT = 90000; // 1.5 min
 
     ChildRepository childRepository;
     EnquiryRepository enquiryRepository;
@@ -46,7 +46,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         }
     }
 
-    public void testSyncRecordsShouldUpdateRecordAttributesAndAttachMatchingChildRecordsToEnquiries() throws Exception {
+    public void testSyncShouldUpdateRecordsAndAttachMatchingChildRecordsToEnquiry() throws Exception {
         String timeStamp = now().defaultFormat();
         String childId = UUID.randomUUID().toString();
         String childName = UUID.randomUUID().toString().substring(0, 6);
@@ -60,63 +60,48 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         enquiryToSync.setCreatedBy(application.getCurrentUser().getUserName());
         enquiryRepository.createOrUpdate(enquiryToSync);
 
-        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-
-        solo.waitForText("Records Successfully Synchronized");
-        waitUntilRecordsAreSynced();
+        synchronizeAllRecords();
 
         Enquiry enquiry = enquiryRepository.get(enquiryToSync.getUniqueId());
 
         Child child = childRepository.get(childId);
 
         assertTrue(enquiry.getPotentialMatchingIds().contains(child.getInternalId()));
-        assertTrue(child.isSynced());
-        assertTrue(enquiry.isSynced());
+        recordsShouldBeSynced(child, enquiry);
 
         searchPage.navigateToSearchTab();
         searchPage.searchChild(childName);
         searchPage.clickSearch();
         assertTrue(searchPage.isChildPresent(child.getName(), childName));
-
-        viewAllEnquiriesPage.navigateToPage();
-        assertTrue(viewAllEnquiriesPage.isEnquiryPresent(enquiry));
-
-        viewAllEnquiriesPage.clickElementWithText(enquiry.getEnquirerName());
-        solo.sleep(3000);
-
-        viewAllEnquiriesPage.isChildPresent(childToStore);
     }
 
-    public void testShouldUpdateRecordsAfterSync() throws Exception {
+    public void testShouldGetRecordsUpdatedOnTheServerAfterSync() throws Exception {
         String timeStamp = now().defaultFormat();
         String childName = UUID.randomUUID().toString().substring(0, 6);
         String childJSON = String.format("{'created_by' : '%s', 'timeStamp' : '%s', 'nationality' : 'uganda', 'name' : '%s' }", userName, timeStamp, childName);
+
         Child child = new Child(childJSON);
         String enquiryJSON = String.format("{'created_by' : '%s', 'enquirer_name' : 'Wire', 'name' : 'Alex', 'synced' : 'false'}", userName);
         Enquiry enquiry = new Enquiry(enquiryJSON);
+
         childRepository.createOrUpdate(child);
         enquiryRepository.createOrUpdate(enquiry);
 
-        assertNull(child.getInternalId());
-        assertNull(enquiry.getInternalId());
+        recordsShouldNotHaveInternalIds(child, enquiry);
 
-        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        solo.waitForText("Records Successfully Synchronized");
-        waitUntilRecordsAreSynced();
+        synchronizeAllRecords();
 
         String childUniqueId = child.getUniqueId();
         Child childAfterSync = childRepository.get(childUniqueId);
         Enquiry enquiryAfterSync = enquiryRepository.get(enquiry.getUniqueId());
 
-        assertNotNull(childAfterSync.getInternalId());
-        assertNotNull(enquiryAfterSync.getInternalId());
-        assertTrue(childAfterSync.isSynced());
-        assertTrue(enquiryAfterSync.isSynced());
+        recordsShouldHaveInternalIds(childAfterSync, enquiryAfterSync);
+        recordsShouldBeSynced(childAfterSync, enquiryAfterSync);
 
         String updatedChildJSON = String.format("{'_id' : '%s' ,'created_by' : '%s', 'nationality' : 'uganda', 'name' : 'Albert', 'gender' : 'male' }", childAfterSync.getInternalId(), userName);
         updateRecordOnServer(new Child(updatedChildJSON));
 
-        String enquiryUniqueId = enquiryAfterSync.getUniqueId();
+        String enquiryUniqueId = enquiry.getUniqueId();
         String updatedEnquiryJSON = String.format("{'created_by' : '%s', 'enquirer_name' : 'James Wire', 'nationality' : 'uganda', 'unique_identifier' : '%s'}", userName, enquiryUniqueId);
         enquiryRepository.createOrUpdate(new Enquiry(updatedEnquiryJSON));
         Enquiry enquiryAfterUpdate = enquiryRepository.get(enquiryUniqueId);
@@ -124,12 +109,31 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
         assertEquals("James Wire", enquiryAfterUpdate.getEnquirerName());
         assertEquals("", enquiryAfterUpdate.getPotentialMatchingIds());
 
-        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
-        solo.waitForText("Records Successfully Synchronized");
-        waitUntilRecordsAreSynced();
+        synchronizeAllRecords();
 
         viewEnquiryPage.navigateToPage(enquiryAfterUpdate.getEnquirerName());
         viewEnquiryPage.isChildPresent(childUniqueId);
+    }
+
+    private void recordsShouldBeSynced(Child childAfterSync, Enquiry enquiryAfterSync) {
+        assertTrue(childAfterSync.isSynced());
+        assertTrue(enquiryAfterSync.isSynced());
+    }
+
+    private void recordsShouldHaveInternalIds(Child childAfterSync, Enquiry enquiryAfterSync) throws JSONException {
+        assertNotNull(childAfterSync.getInternalId());
+        assertNotNull(enquiryAfterSync.getInternalId());
+    }
+
+    private void synchronizeAllRecords() throws JSONException {
+        solo.clickOnMenuItem(solo.getString(R.string.synchronize_all));
+        solo.waitForText("Records Successfully Synchronized");
+        waitUntilRecordsAreSynced();
+    }
+
+    private void recordsShouldNotHaveInternalIds(Child child, Enquiry enquiry) throws JSONException {
+        assertNull(child.getInternalId());
+        assertNull(enquiry.getInternalId());
     }
 
     private void seedChildOnServer(Child child) throws JSONException, IOException {

@@ -32,9 +32,13 @@ public class EnquiryPage {
 
     public void navigateToEditPageOf(String enquirerName) {
         solo.clickOnText("Enquiry");
+        solo.sleep(1000);
         solo.clickOnText("View All");
+        solo.sleep(1000);
         solo.clickOnText(enquirerName);
+        solo.sleep(1000);
         solo.clickOnText("Edit");
+        solo.sleep(1000);
         solo.assertCurrentActivity("In edit mode", "EditEnquiryActivity");
     }
 
