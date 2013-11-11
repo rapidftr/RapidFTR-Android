@@ -39,8 +39,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
 
     @Override
     public Child get(String id) throws JSONException {
-        @Cleanup  Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ?", new String[]{id});
-
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE id = ?", new String[]{id});
         if (cursor.moveToNext()) {
             return childFrom(cursor);
         } else {
@@ -51,7 +50,6 @@ public class ChildRepository implements Closeable, Repository<Child> {
     @Override
     public boolean exists(String childId) {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json FROM children WHERE id = ?", new String[]{childId == null ? "" : childId});
-
         return cursor.moveToNext() && cursor.getCount() > 0;
     }
 
@@ -70,30 +68,30 @@ public class ChildRepository implements Closeable, Repository<Child> {
     public ArrayList<String> getRecordIdsByOwner() throws JSONException {
         ArrayList<String> ids = new ArrayList<String>();
         @Cleanup Cursor cursor = session.rawQuery("SELECT _id FROM children WHERE child_owner = ? ", new String[]{userName});
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             ids.add(cursor.getString(0));
         }
         return ids;
     }
 
     public void deleteChildrenByOwner() throws JSONException {
-        session.execSQL("DELETE FROM children WHERE child_owner = '"+ userName +"';");
+        session.execSQL("DELETE FROM children WHERE child_owner = '" + userName + "';");
     }
 
     public List<Child> getMatchingChildren(String subString) throws JSONException {
         String searchString = String.format("%%%s%%", subString);
         RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();
-	    String query = "SELECT child_json, synced FROM children WHERE "+ fetchByOwner(context) +" (name LIKE ? or id LIKE ?)";
+        String query = "SELECT child_json, synced FROM children WHERE " + fetchByOwner(context) + " (name LIKE ? or id LIKE ?)";
         @Cleanup Cursor cursor = session.rawQuery(query, new String[]{searchString, searchString});
         return toChildren(cursor);
     }
 
     private String fetchByOwner(RapidFtrApplication context) throws JSONException {
-	    if (!context.getCurrentUser().isVerified()) {
-            return  " child_owner = '" + userName + "' AND ";
+        if (!context.getCurrentUser().isVerified()) {
+            return " child_owner = '" + userName + "' AND ";
         } else {
-		    return "";
-	    }
+            return "";
+        }
     }
 
     @Override
@@ -123,7 +121,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
         Child existingChild = get(child.getUniqueId());
         JSONArray existingHistories = (JSONArray) existingChild.opt(HISTORIES);
         List<Child.History> histories = child.changeLogs(existingChild, existingHistories);
-        if(histories.size() > 0)
+        if (histories.size() > 0)
             child.put(HISTORIES, JSONArrays.asJSONObjectArray(histories));
     }
 
@@ -154,8 +152,8 @@ public class ChildRepository implements Closeable, Repository<Child> {
         @Cleanup Cursor cursor = session.rawQuery("SELECT "
                 + Database.ChildTableColumn.internal_id.getColumnName() + ", "
                 + Database.ChildTableColumn.internal_rev.getColumnName()
-                + " FROM "+ Database.child.getTableName(), null);
-        while(cursor.moveToNext()){
+                + " FROM " + Database.child.getTableName(), null);
+        while (cursor.moveToNext()) {
             idRevs.put(cursor.getString(0), cursor.getString(1));
         }
         return idRevs;
@@ -179,17 +177,30 @@ public class ChildRepository implements Closeable, Repository<Child> {
     }
 
     private Child childFrom(Cursor cursor) throws JSONException {
-        return new Child(cursor.getString(0), BooleanColumn.from(cursor.getString(1)).toBoolean());
+        int contentColumnIndex = cursor.getColumnIndex(content.getColumnName());
+        int syncedColumnIndex = cursor.getColumnIndex(synced.getColumnName());
+
+        return new Child(cursor.getString(contentColumnIndex), BooleanColumn.from(cursor.getString(syncedColumnIndex)).toBoolean());
     }
 
-    protected String getTimeStamp(){
+    protected String getTimeStamp() {
         return RapidFtrDateTime.now().defaultFormat();
     }
 
     public List<Child> getChildrenByIds(ArrayList<String> listOfIds) throws JSONException {
         ArrayList<Child> children = new ArrayList<Child>();
-        for (String childId : listOfIds){
+        for (String childId : listOfIds) {
             children.add(get(childId));
+        }
+        return children;
+    }
+
+    public List<Child> getAllWithInternalIds(List<String> internalIds) throws JSONException {
+        List<Child> children = new ArrayList<Child>();
+        for (String internalId : internalIds) {
+            Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE _id = ?", new String[]{internalId});
+            if (cursor.moveToNext())
+                children.add(childFrom(cursor));
         }
         return children;
     }

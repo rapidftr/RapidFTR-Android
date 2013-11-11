@@ -64,12 +64,10 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     }
 
 
-//    Checks the text value entered in the text box and is editable
     public boolean isEditTextPresent(String editText){
         return  solo.searchEditText(editText);
     }
 
-//   check whether edit text present
     public boolean isEditedTextPresent(String editedText){
         boolean result=false;
         int count = solo.getCurrentViews(EditText.class).size();

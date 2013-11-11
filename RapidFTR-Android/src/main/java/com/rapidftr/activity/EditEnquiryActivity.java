@@ -19,6 +19,6 @@ public class EditEnquiryActivity extends BaseEnquiryActivity{
         if(formSections.get(0).getName().containsValue("Potential matches"))
             formSections.remove(0);
         this.editable = true;
-        load();
+        this.enquiry = loadEnquiry(getIntent().getExtras(), this.enquiryRepository);
     }
 }

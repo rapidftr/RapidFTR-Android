@@ -84,11 +84,11 @@ public class EnquiryTest {
         doReturn(potential_matches.ordinal()).when(cursor).getColumnIndex(potential_matches.getColumnName());
         doReturn(criteria.ordinal()).when(cursor).getColumnIndex(criteria.getColumnName());
         doReturn("{}").when(cursor).getString(criteria.ordinal());
-        doReturn("[\"id1\", \"id2\"]").when(cursor).getString(potential_matches.ordinal());
+        doReturn("[\"internal_id1\", \"internal_id2\"]").when(cursor).getString(potential_matches.ordinal());
 
-        Child child1 = new Child("id1", "owner1", "{ 'test1' : 'value1' }");
+        Child child1 = new Child("id1", "owner1", "{'test1':'value1', '_id':'internal_id1' }");
         childRepository.createOrUpdate(child1);
-        Child child2 = new Child("id2", "owner1", "{ 'test1' : 'value1' }");
+        Child child2 = new Child("id2", "owner1", "{'test1':'value1', '_id':'internal_id2' }");
         childRepository.createOrUpdate(child2);
 
         Enquiry enquiry = new Enquiry(cursor);
@@ -135,11 +135,11 @@ public class EnquiryTest {
         doReturn(potential_matches.ordinal()).when(cursor).getColumnIndex(potential_matches.getColumnName());
         doReturn(criteria.ordinal()).when(cursor).getColumnIndex(criteria.getColumnName());
         doReturn("{}").when(cursor).getString(criteria.ordinal());
-        doReturn("potential_matches_value").when(cursor).getString(potential_matches.ordinal());
+        doReturn("[\"id1\", \"id2\"]").when(cursor).getString(potential_matches.ordinal());
 
         Enquiry enquiry = new Enquiry(cursor);
 
-        assertEquals("potential_matches_value", enquiry.getPotentialMatchingIds());
+        assertEquals("[\"id1\", \"id2\"]", enquiry.getPotentialMatchingIds());
     }
 
     @Test

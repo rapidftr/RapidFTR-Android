@@ -61,7 +61,7 @@ public class Enquiry extends BaseModel {
 
             List<String> matchingChildList = getListOfMatchingChildrenFrom(matchingChildId);
 
-            return childRepository.getChildrenByIds(new ArrayList<String>(matchingChildList));
+            return childRepository.getAllWithInternalIds(new ArrayList<String>(matchingChildList));
         } catch (JSONException exception) {
             return new ArrayList<Child>();
         }
