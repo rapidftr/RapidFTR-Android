@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.util.*;
 
+import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 
 public class Enquiry extends BaseModel {
@@ -60,7 +61,7 @@ public class Enquiry extends BaseModel {
 
             List<String> matchingChildList = getListOfMatchingChildrenFrom(matchingChildId);
 
-            return childRepository.getChildrenByIds(new ArrayList<String>(matchingChildList));
+            return childRepository.getAllWithInternalIds(new ArrayList<String>(matchingChildList));
         } catch (JSONException exception) {
             return new ArrayList<Child>();
         }
@@ -158,5 +159,9 @@ public class Enquiry extends BaseModel {
            return "";
         else
            return ids;
+    }
+
+    public String getInternalId() throws JSONException {
+        return getString(internal_id.getColumnName());
     }
 }

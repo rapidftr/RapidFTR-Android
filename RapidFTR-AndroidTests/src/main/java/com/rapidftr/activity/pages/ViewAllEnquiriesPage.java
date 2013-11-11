@@ -14,18 +14,12 @@ public class ViewAllEnquiriesPage {
 
     public void navigateToPage() {
         solo.clickOnText("Enquiry");
+        solo.sleep(1000);
         solo.clickOnText("View All");
+        solo.sleep(1000);
     }
 
     public boolean isEnquiryPresent(Enquiry enquiry) throws JSONException {
         return solo.searchText(enquiry.getEnquirerName());
-    }
-
-    public void clickElementWithText(String text){
-         solo.clickOnText(text);
-    }
-
-    public boolean isChildPresent(Child child) throws JSONException {
-        return  solo.searchText(child.getUniqueId());
     }
 }

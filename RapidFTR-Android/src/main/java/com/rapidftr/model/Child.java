@@ -69,7 +69,7 @@ public class Child extends BaseModel {
     }
 
 
-    public String getId() throws JSONException {
+    public String getInternalId() throws JSONException {
         return getString(internal_id.getColumnName());
     }
 

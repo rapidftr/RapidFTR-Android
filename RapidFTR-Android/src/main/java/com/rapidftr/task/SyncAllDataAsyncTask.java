@@ -30,7 +30,6 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
     }
 
     protected void sync() throws JSONException, IOException, HttpException {
-
         List<T> recordsToUpload = repository.toBeSynced();
         List<String> idsToDownload;
         Boolean isBlacklisted = deviceService.isBlacklisted();

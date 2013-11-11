@@ -64,12 +64,10 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
     }
 
 
-//    Checks the text value entered in the text box and is editable
     public boolean isEditTextPresent(String editText){
         return  solo.searchEditText(editText);
     }
 
-//   check whether edit text present
     public boolean isEditedTextPresent(String editedText){
         boolean result=false;
         int count = solo.getCurrentViews(EditText.class).size();
@@ -133,18 +131,6 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
         }
         return dir.delete();
 
-    }
-
-    public void waitUntilSyncCompletion() {
-
-        for(int i=0;i<10;i++){
-            solo.sendKey(KeyEvent.KEYCODE_MENU);
-            if(solo.searchText("Synchronize All",false)){
-                solo.sleep(10);
-            }else{
-            break;
-        }
-        }
     }
 
 }
