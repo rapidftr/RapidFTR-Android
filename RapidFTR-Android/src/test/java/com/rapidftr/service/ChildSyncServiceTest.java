@@ -109,7 +109,7 @@ public class ChildSyncServiceTest {
         String childDetails = String.format("{ '_id' : 'abcdef', 'name' : 'child1', 'test2' : 0, 'current_photo_key' : '1234ABC', 'photo_keys' : %s}", photoKeys);
         Child child = new Child("id1", "user1", childDetails);
 
-        doNothing().when(mockFluentRequest).addPhotoToMultipart(Matchers.any(MultipartEntity.class), Matchers.any(String.class), Matchers.any(String.class));
+        doNothing().when(mockFluentRequest).addPhotoToMultiPart(Matchers.any(MultipartEntity.class), Matchers.any(String.class), Matchers.any(String.class));
         doNothing().when(childSyncService).savePhoto(Matchers.any(Bitmap.class), Matchers.any(PhotoCaptureHelper.class), Matchers.anyString());
         childSyncService.sync(child, currentUser);
         verify(mockFluentRequest).param("photo_keys", new JSONArray(Arrays.asList("abcd123", "1234ABC")).toString());
@@ -125,7 +125,7 @@ public class ChildSyncServiceTest {
 
         Child child = new Child("id1", "user1", childDetails);
         RapidFtrApplication context = mockContext();
-        doReturn(null).when(mockFluentRequest).postWithMultipart();
+        doReturn(null).when(mockFluentRequest).postWithMultiPart();
 
         new ChildSyncService(context, repository, mockFluentRequest).sync(child, currentUser);
         verify(mockFluentRequest, times(0)).param("current_photo_key", "1234ABC");
@@ -136,7 +136,7 @@ public class ChildSyncServiceTest {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         RapidFtrApplication context = mockContext();
 
-        doReturn(null).when(mockFluentRequest).postWithMultipart();
+        doReturn(null).when(mockFluentRequest).postWithMultiPart();
 
         Child child = new Child("id","user","{'name' : 'child1', 'recorded_audio' : '123455'}");
         new ChildSyncService(context, repository, mockFluentRequest).sync(child, currentUser);
@@ -148,7 +148,7 @@ public class ChildSyncServiceTest {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         RapidFtrApplication context = mockContext();
 
-        doReturn(null).when(mockFluentRequest).postWithMultipart();
+        doReturn(null).when(mockFluentRequest).postWithMultiPart();
 
         Child child = new Child("id","user","{'name' : 'child1', 'recorded_audio' : '123455', 'audio_attachments' : {'original' : '123455', 'amr':'123455'}}");
         new ChildSyncService(context, repository, mockFluentRequest).sync(child, currentUser);
@@ -162,7 +162,7 @@ public class ChildSyncServiceTest {
 
         String photoKeys = new JSONArray(Arrays.asList("photo-998877", "photo-998547", "1234ABC")).toString();
         String childDetails = String.format("{ 'name' : 'child1', 'test2' : 0, 'current_photo_key' : '1234ABC', 'recorded_audio' : '123455', 'audio_attachments' : {'original' : '123455', 'amr':'123455'}, 'photo_keys' : %s}", photoKeys);
-        doReturn(null).when(mockFluentRequest).postWithMultipart();
+        doReturn(null).when(mockFluentRequest).postWithMultiPart();
 
         Child child = new Child("id","user",childDetails);
         new ChildSyncService(context, repository, mockFluentRequest).sync(child, currentUser);

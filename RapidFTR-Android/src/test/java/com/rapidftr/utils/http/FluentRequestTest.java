@@ -54,7 +54,7 @@ public class FluentRequestTest {
     @Test
     public void testSimplePut() throws IOException {
         Robolectric.getFakeHttpLayer().addHttpResponseRule("PUT", "http://example.com/", response);
-        assertThat(http().host("example.com").put(), equalTo(response));
+        assertThat(http().host("example.com").putWithMultiPart(), equalTo(response));
     }
 
     @Test
@@ -142,7 +142,7 @@ public class FluentRequestTest {
     public void testPostMultiPartShouldCallExecute() throws IOException {
         FluentRequest http = spy(http().host("test"));
         doReturn(null).when(http).execute(any(HttpRequestBase.class));
-        http.postWithMultipart();
+        http.postWithMultiPart();
         verify(http).execute(any(HttpRequestBase.class));
     }
 
@@ -150,7 +150,7 @@ public class FluentRequestTest {
     public void testPutShouldCallExecute() throws IOException {
         FluentRequest http = spy(http().host("test"));
         doReturn(null).when(http).execute(any(HttpRequestBase.class));
-        http.put();
+        http.putWithMultiPart();
         verify(http).execute(any(HttpRequestBase.class));
     }
 
@@ -176,7 +176,7 @@ public class FluentRequestTest {
         MultipartEntity multipartEntity = spy(new MultipartEntity());
         doReturn(new ByteArrayBody("content body".getBytes(), "abcd")).when(fluentRequest).attachPhoto("abcd");
         doReturn(new ByteArrayBody("content body".getBytes(), "1234")).when(fluentRequest).attachPhoto("1234");
-        fluentRequest.addPhotoToMultipart(multipartEntity, photoKeys, "child");
+        fluentRequest.addPhotoToMultiPart(multipartEntity, photoKeys, "child");
         verify(multipartEntity).addPart(eq("child[photo][0]"), Matchers.any(ContentBody.class));
         verify(multipartEntity).addPart(eq("child[photo][1]"), Matchers.any(ContentBody.class));
     }
