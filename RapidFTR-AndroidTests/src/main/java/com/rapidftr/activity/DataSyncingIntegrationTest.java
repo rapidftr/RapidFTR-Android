@@ -17,7 +17,7 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
 
-    private static final long SYNC_TIMEOUT = 90000; // 1.5 min
+    private static final long SYNC_TIMEOUT = 120000; // 2 min
 
     ChildRepository childRepository;
     EnquiryRepository enquiryRepository;
