@@ -128,16 +128,16 @@ public class FluentRequest {
 
     protected FluentResponse executeMultiPart(HttpEntityEnclosingRequestBase request) throws IOException{
         MultipartEntity multipartEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-        String paramModel = "";
+        String modelType = "";
         if (modelParams.size() > 0) {
             for (Map.Entry<String, String> modelParam : modelParams.entrySet()){
                 if(modelParam.getKey().equals("photo_keys")){
-                    addPhoto(multipartEntity, paramModel, modelParam);
+                    addPhoto(multipartEntity, modelType, modelParam);
                 }else if(modelParam.getKey().equals("recorded_audio")){
                     addAudio(multipartEntity, modelParam);
                 }else{
-                    paramModel = modelParam.getKey();
-                    addTextFields(multipartEntity, paramModel, modelParam);
+                    modelType = modelParam.getKey();
+                    addTextFields(multipartEntity, modelType, modelParam);
                 }
             }
         }
@@ -145,15 +145,15 @@ public class FluentRequest {
         return execute(request);
     }
 
-    private void addTextFields(MultipartEntity multipartEntity, String paramModel, Map.Entry<String, String> modelParam) throws UnsupportedEncodingException {
+    private void addTextFields(MultipartEntity multipartEntity, String modelType, Map.Entry<String, String> modelParam) throws UnsupportedEncodingException {
         BaseModel baseModel;
         try {
-            baseModel = (paramModel == "child") ? new Child(modelParam.getValue()) : new Enquiry(modelParam.getValue());
+            baseModel = (modelType == "child") ? new Child(modelParam.getValue()) : new Enquiry(modelParam.getValue());
             Iterator keys = baseModel.keys();
             while(keys.hasNext())
             {
                 String currentKey = keys.next().toString();
-                multipartEntity.addPart(paramModel+"["+currentKey+"]", new StringBody(baseModel.get(currentKey).toString()));
+                multipartEntity.addPart(modelType+"["+currentKey+"]", new StringBody(baseModel.get(currentKey).toString()));
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
