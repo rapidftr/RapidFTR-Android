@@ -153,7 +153,7 @@ public class DataSyncingIntegrationTest extends BaseActivityIntegrationTest {
                 .config(HttpConnectionParams.CONNECTION_TIMEOUT, 15000)
                 .path(String.format("/api/children/%s", child.getInternalId()))
                 .param("child", child.values().toString())
-                .put();
+                .putWithMultiPart();
     }
 
     private void deleteRecordsOnServer(String records) throws JSONException, IOException {

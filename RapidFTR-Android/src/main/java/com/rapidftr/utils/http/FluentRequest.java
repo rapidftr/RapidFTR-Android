@@ -113,11 +113,11 @@ public class FluentRequest {
         return executeEnclosed(new HttpPost(uri.build().toString()));
     }
 
-    public FluentResponse postWithMultipart() throws IOException {
+    public FluentResponse postWithMultiPart() throws IOException {
         return executeMultiPart(new HttpPost(uri.build().toString()));
     }
 
-    public FluentResponse put() throws IOException {
+    public FluentResponse putWithMultiPart() throws IOException {
         return executeMultiPart(new HttpPut(uri.build().toString()));
     }
 
@@ -172,13 +172,13 @@ public class FluentRequest {
 
     private void addPhoto(MultipartEntity multipartEntity, String param_model, Map.Entry<String, String> param) {
         try {
-            addPhotoToMultipart(multipartEntity, param.getValue(), param_model);
+            addPhotoToMultiPart(multipartEntity, param.getValue(), param_model);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void addPhotoToMultipart(MultipartEntity multipartEntity, String param, String model) throws IOException, GeneralSecurityException, JSONException {
+    public void addPhotoToMultiPart(MultipartEntity multipartEntity, String param, String model) throws IOException, GeneralSecurityException, JSONException {
         JSONArray photoKeys = new JSONArray(param);
         for(int i = 0; i < photoKeys.length(); i++){
             multipartEntity.addPart(model+"[photo]["+i+"]", attachPhoto(photoKeys.get(i).toString()));

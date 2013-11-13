@@ -1,4 +1,4 @@
-    package com.rapidftr.service;
+package com.rapidftr.service;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -52,10 +52,28 @@ public class ChildSyncService implements SyncService<Child> {
     public Child sync(Child child, User currentUser) throws IOException, JSONException {
         addMultiMediaFilesToTheRequest(child);
         removeUnusedParametersBeforeSync(child);
+        FluentResponse response = sendToServer(child, currentUser);
+        try {
+            String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
+            child = new Child(source);
+            setChildAttributes(child);
+            childRepository.update(child);
+            setMedia(child);
+            childRepository.close();
+            return child;
+
+        } catch (Exception e) {
+            child.setSynced(false);
+            child.setSyncLog(e.getMessage());
+        }
+        return child;
+    }
+
+    private FluentResponse sendToServer(Child child, User currentUser) throws JSONException, SyncFailedException {
         fluentRequest.path(getSyncPath(child, currentUser)).context(context).param("child", child.values().toString());
         FluentResponse response;
         try {
-            response = child.isNew() ? fluentRequest.postWithMultipart() : fluentRequest.put();
+            response = child.isNew() ? fluentRequest.postWithMultiPart() : fluentRequest.putWithMultiPart();
         } catch (IOException e) {
             child.setSynced(false);
             child.setSyncLog(e.getMessage());
@@ -65,22 +83,7 @@ public class ChildSyncService implements SyncService<Child> {
             childRepository.close();
             throw new SyncFailedException(e.getMessage());
         }
-        try {
-            if (response != null && response.isSuccess()) {
-                String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
-                child = new Child(source);
-                setChildAttributes(child);
-                childRepository.update(child);
-                setMedia(child);
-                childRepository.close();
-                return child;
-            }
-        } catch (Exception e) {
-            child.setSynced(false);
-            child.setSyncLog(e.getMessage());
-        }
-        childRepository.close();
-        return child;
+        return response;
     }
 
     public String getSyncPath(Child child, User currentUser) throws JSONException {
@@ -139,21 +142,20 @@ public class ChildSyncService implements SyncService<Child> {
         PhotoCaptureHelper photoCaptureHelper = new PhotoCaptureHelper(context);
 
         JSONArray photoKeys = child.optJSONArray("photo_keys");
-        if(photoKeys != null){
+        if (photoKeys != null) {
             getPhotoFromServerIfNeeded(child, photoCaptureHelper, photoKeys);
         }
 
     }
 
     private void getPhotoFromServerIfNeeded(Child child, PhotoCaptureHelper photoCaptureHelper, JSONArray photoKeys) throws JSONException, IOException {
-        for(int i = 0; i < photoKeys.length(); i++){
+        for (int i = 0; i < photoKeys.length(); i++) {
             String photoKey = photoKeys.get(i).toString();
             try {
                 if (!photoKey.equals("")) {
                     photoCaptureHelper.getFile(photoKey, ".jpg");
                 }
-            }
-            catch (FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 getPhotoFromServer(child, photoCaptureHelper, photoKey);
             }
         }
@@ -217,11 +219,11 @@ public class ChildSyncService implements SyncService<Child> {
     }
 
     public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {
-        HashMap<String,String> serverIdsRevs = getAllIdsAndRevs();
+        HashMap<String, String> serverIdsRevs = getAllIdsAndRevs();
         HashMap<String, String> repoIdsAndRevs = childRepository.getAllIdsAndRevs();
         ArrayList<String> idsToDownload = new ArrayList<String>();
-        for(Map.Entry<String,String> serverIdRev : serverIdsRevs.entrySet()){
-            if(!isServerIdExistingInRepository(repoIdsAndRevs, serverIdRev) || (repoIdsAndRevs.get(serverIdRev.getKey()) != null && isRevisionMismatch(repoIdsAndRevs, serverIdRev))){
+        for (Map.Entry<String, String> serverIdRev : serverIdsRevs.entrySet()) {
+            if (!isServerIdExistingInRepository(repoIdsAndRevs, serverIdRev) || (repoIdsAndRevs.get(serverIdRev.getKey()) != null && isRevisionMismatch(repoIdsAndRevs, serverIdRev))) {
                 idsToDownload.add(serverIdRev.getKey());
             }
         }
