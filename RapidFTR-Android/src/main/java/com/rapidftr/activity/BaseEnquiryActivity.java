@@ -56,12 +56,16 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         Enquiry retrievedEnquiry = enquiryRepository.get(enquiryId);
         enquiryRepository.close();
         
-        JSONObject criteria = (JSONObject) retrievedEnquiry.remove("criteria");
+        JSONObject criteria = removeCriteria(retrievedEnquiry);
 
         return addCriteriaKeysAndValuesToEnquiry(retrievedEnquiry, criteria);
     }
 
-    private Enquiry addCriteriaKeysAndValuesToEnquiry(Enquiry enquiry, JSONObject criteria) throws JSONException {
+    protected JSONObject removeCriteria(Enquiry enquiry){
+        return (JSONObject) enquiry.remove("criteria");
+    }
+
+    protected Enquiry addCriteriaKeysAndValuesToEnquiry(Enquiry enquiry, JSONObject criteria) throws JSONException {
         JSONArray criteriaKeys = criteria.names();
         for (int i = 0; i < criteriaKeys.length(); i++) {
             String key = criteriaKeys.get(i).toString();
