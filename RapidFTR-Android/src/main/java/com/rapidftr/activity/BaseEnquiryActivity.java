@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public abstract class BaseEnquiryActivity extends CollectionActivity {
+    public static final String PHOTO_KEYS = "photo_keys";
     protected Enquiry enquiry;
     protected EnquiryRepository enquiryRepository;
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
@@ -56,16 +57,23 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         Enquiry retrievedEnquiry = enquiryRepository.get(enquiryId);
         enquiryRepository.close();
         
-        JSONObject criteria = (JSONObject) retrievedEnquiry.remove("criteria");
+        JSONObject criteria = removeCriteria(retrievedEnquiry);
 
         return addCriteriaKeysAndValuesToEnquiry(retrievedEnquiry, criteria);
     }
 
-    private Enquiry addCriteriaKeysAndValuesToEnquiry(Enquiry enquiry, JSONObject criteria) throws JSONException {
+    protected JSONObject removeCriteria(Enquiry enquiry){
+        return (JSONObject) enquiry.remove("criteria");
+    }
+
+    protected Enquiry addCriteriaKeysAndValuesToEnquiry(Enquiry enquiry, JSONObject criteria) throws JSONException {
         JSONArray criteriaKeys = criteria.names();
         for (int i = 0; i < criteriaKeys.length(); i++) {
             String key = criteriaKeys.get(i).toString();
-            enquiry.put(key, criteria.get(key).toString());
+            if(key.equals(PHOTO_KEYS))
+                enquiry.put(key,new JSONArray(criteria.getString(key)));
+            else
+                enquiry.put(key, criteria.get(key).toString());
         }
         return enquiry;
     }
