@@ -33,7 +33,7 @@
         <device.wipe.flag>0</device.wipe.flag>
         <android.version>2.2</android.version>
         <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
-        <platform.version>2.2.1</platform.version>
+        <platform.version>8</platform.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>MM/dd/yy hh:mm a z</maven.build.timestamp.format>
 
@@ -215,7 +215,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <sdk>
-                        <platform>${android.version}</platform>
+                        <platform>${platform.version}</platform>
                     </sdk>
                     <dex>
                         <jvmArguments>
@@ -273,7 +273,7 @@
                 <plugin>
                     <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                     <artifactId>android-maven-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.8.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -375,7 +375,7 @@
                         <extensions>true</extensions>
                         <configuration>
                             <sdk>
-                                <platform>${android.version}</platform>
+                                <platform>${platform.version}</platform>
                             </sdk>
                             <dex>
                                 <jvmArguments>
