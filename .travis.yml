@@ -1,0 +1,10 @@
+language: android
+android:
+  components:
+    - build-tools-19.0.2
+    - android-8
+  licenses:
+    - 'android-sdk-.*'
+    - '.*intel.+'
+script:
+  - cd RapidFTR-Android && mvn test
