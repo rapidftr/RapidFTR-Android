@@ -6,14 +6,14 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.User;
 import com.rapidftr.service.FormService;
-import com.xtremelabs.robolectric.shadows.ShadowToast;
-import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.apache.http.HttpResponse;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.shadows.ShadowToast;
+import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

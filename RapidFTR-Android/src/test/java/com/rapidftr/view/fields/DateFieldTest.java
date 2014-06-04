@@ -1,12 +1,15 @@
 package com.rapidftr.view.fields;
 
 import android.app.Activity;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.activity.RegisterChildActivity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -19,12 +22,13 @@ public class DateFieldTest extends BaseViewSpec<DateField> {
 
     @Before
     public void setUp() {
-        view = (DateField) LayoutInflater.from(new Activity()).inflate(R.layout.form_date_field, null);
+        Activity activity = Robolectric.buildActivity(RegisterChildActivity.class).create().get();
+        view = (DateField) activity.getLayoutInflater().inflate(R.layout.form_date_field, null);
     }
 
     @Test
     public void testNotEditable() {
-        assertThat(view.getEditTextView().getInputType(), equalTo(0));
+        assertThat(view.getEditTextView().getInputType(), equalTo(InputType.TYPE_CLASS_DATETIME | InputType.TYPE_DATETIME_VARIATION_DATE));
     }
 
     @Test

@@ -8,3 +8,5 @@ android:
     - '.*intel.+'
 script:
   - cd RapidFTR-Android && mvn test
+notifications:
+  - email: false

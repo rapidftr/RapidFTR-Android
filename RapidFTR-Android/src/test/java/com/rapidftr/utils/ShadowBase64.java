@@ -1,9 +1,9 @@
 package com.rapidftr.utils;
 
 import android.util.Base64;
-import com.xtremelabs.robolectric.internal.Implementation;
-import com.xtremelabs.robolectric.internal.Implements;
-import com.xtremelabs.robolectric.internal.RealObject;
+import org.robolectric.annotation.Implementation;
+import org.robolectric.annotation.Implements;
+import org.robolectric.annotation.RealObject;
 
 @Implements(Base64.class)
 public class ShadowBase64 {

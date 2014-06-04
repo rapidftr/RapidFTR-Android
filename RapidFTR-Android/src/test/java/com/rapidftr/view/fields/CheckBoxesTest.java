@@ -1,7 +1,6 @@
 package com.rapidftr.view.fields;
 
 import android.app.Activity;
-import android.view.LayoutInflater;
 import android.widget.CheckBox;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
@@ -10,6 +9,7 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,13 +17,15 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.spy;
 
 @RunWith(CustomTestRunner.class)
 public class CheckBoxesTest extends BaseViewSpec<CheckBoxes> {
 
     @Before
     public void setUp() {
-        view = (CheckBoxes) LayoutInflater.from(new Activity()).inflate(R.layout.form_check_boxes, null);
+        Activity activity = Robolectric.buildActivity(Activity.class).create().get();
+        view = spy((CheckBoxes) activity.getLayoutInflater().inflate(R.layout.form_check_boxes, null));
     }
 
     @Test

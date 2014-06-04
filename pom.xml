@@ -31,9 +31,8 @@
 
     <properties>
         <device.wipe.flag>0</device.wipe.flag>
-        <android.version>2.2</android.version>
         <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
-        <platform.version>8</platform.version>
+        <platform.version>10</platform.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>MM/dd/yy hh:mm a z</maven.build.timestamp.format>
 
@@ -45,6 +44,11 @@
     </properties>
 
     <repositories>
+        <repository>
+            <id>android-repo</id>
+            <name>Android Repository</name>
+            <url>file://${ANDROID_HOME}/extras/android/m2repository</url>
+        </repository>
         <repository>
             <id>MavenCentral</id>
             <name>Maven repository</name>
@@ -124,15 +128,22 @@
             </dependency>
 
             <dependency>
-                <groupId>com.pivotallabs</groupId>
+                <groupId>org.robolectric</groupId>
                 <artifactId>robolectric</artifactId>
-                <version>1.1</version>
+                <version>2.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>com.github.kedzie.supportanimator</groupId>
+                <artifactId>support-v4-animator</artifactId>
+                <version>19.0.0</version>
+                <scope>test</scope>
+                <type>apklib</type>
+            </dependency>
+            <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>1.9.0</version>
+                <artifactId>mockito-all</artifactId>
+                <version>1.9.5</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

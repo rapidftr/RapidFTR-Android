@@ -1,5 +1,6 @@
 package com.rapidftr.view;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
@@ -12,6 +13,7 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +36,8 @@ public class FormSectionViewTest {
 
     @Before
     public void setUp() throws JSONException {
-        view = (FormSectionView) LayoutInflater.from(new RegisterChildActivity()).inflate(R.layout.form_section, null);
+        Activity activity = Robolectric.buildActivity(RegisterChildActivity.class).create().get();
+        view = (FormSectionView) activity.getLayoutInflater().inflate(R.layout.form_section, null);
         child = new Child();
 
         section = new FormSection();

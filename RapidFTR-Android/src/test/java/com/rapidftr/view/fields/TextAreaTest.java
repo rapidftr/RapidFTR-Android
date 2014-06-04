@@ -7,6 +7,7 @@ import com.rapidftr.R;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
@@ -16,7 +17,8 @@ public class TextAreaTest extends BaseViewSpec<TextArea> {
 
     @Before
     public void setUp() {
-        view = (TextArea) LayoutInflater.from(new Activity()).inflate(R.layout.form_textarea, null);
+        Activity activity = Robolectric.buildActivity(Activity.class).create().get();
+        view = (TextArea) activity.getLayoutInflater().inflate(R.layout.form_textarea, null);
     }
 
     @Test

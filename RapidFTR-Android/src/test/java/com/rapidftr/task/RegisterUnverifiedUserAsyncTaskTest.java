@@ -6,11 +6,11 @@ import com.rapidftr.model.User;
 import com.rapidftr.service.LoginService;
 import com.rapidftr.service.RegisterUserService;
 import com.rapidftr.utils.http.FluentResponse;
-import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
 import java.io.IOException;
 

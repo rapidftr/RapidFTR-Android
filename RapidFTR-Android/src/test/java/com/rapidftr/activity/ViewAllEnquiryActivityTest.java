@@ -6,12 +6,14 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class ViewAllEnquiryActivityTest {
+    private ActivityController<ViewAllEnquiryActivity> activityController;
     protected ViewAllEnquiryActivity activity;
 
     @Mock
@@ -32,7 +35,8 @@ public class ViewAllEnquiryActivityTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        activity = spy(new ViewAllEnquiryActivity());
+        activityController = SpyActivityController.of(ViewAllEnquiryActivity.class);
+        activity = activityController.attach().get();
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
         doReturn(repository).when(mockInjector).getInstance(EnquiryRepository.class);
@@ -45,7 +49,7 @@ public class ViewAllEnquiryActivityTest {
         enquiries.add(new Enquiry("CREATEDBY", "REPORTERNAME", new JSONObject("{name:NAME}")));
         when(repository.all()).thenReturn(enquiries);
 
-        activity.onCreate(null);
+        activityController.create();
         ListView listView = (ListView) activity.findViewById(R.id.enquiry_list);
         assertNull(listView.getEmptyView());
         assertNotNull(listView.getItemAtPosition(0));
@@ -56,7 +60,7 @@ public class ViewAllEnquiryActivityTest {
     public void shoudShowNoEnquiriesMessageWhenNoEnquiriesPresent() throws JSONException {
         List<Enquiry> enquiries = new ArrayList<Enquiry>();
         when(repository.all()).thenReturn(enquiries);
-        activity.onCreate(null);
+        activityController.create();
         ListView listView = (ListView) activity.findViewById(R.id.enquiry_list);
         assertNotNull(listView.getEmptyView());
         assertEquals(listView.getCount(), 0);

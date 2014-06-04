@@ -18,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.robolectric.Robolectric;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -40,7 +41,9 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
         bitmap = mock(Bitmap.class);
         imageView = mock(ImageView.class);
 
-        view = spy((PhotoUploadBox) LayoutInflater.from(new RegisterChildActivity()).inflate(R.layout.form_photo_upload_box, null));
+        Activity activity = Robolectric.buildActivity(RegisterChildActivity.class).create().get();
+        view = spy((PhotoUploadBox) activity.getLayoutInflater().inflate(R.layout.form_photo_upload_box, null));
+
         doReturn(imageView).when(view).getImageView();
         when(photoCaptureHelper.getCapture()).thenReturn(bitmap);
 

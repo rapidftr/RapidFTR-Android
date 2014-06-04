@@ -10,25 +10,28 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.LoginAsyncTask;
-import com.xtremelabs.robolectric.Robolectric;
-import com.xtremelabs.robolectric.shadows.ShadowActivity;
-import com.xtremelabs.robolectric.shadows.ShadowHandler;
-import com.xtremelabs.robolectric.shadows.ShadowIntent;
-import com.xtremelabs.robolectric.shadows.ShadowToast;
+import com.rapidftr.utils.SpyActivityController;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.shadows.ShadowActivity;
+import org.robolectric.shadows.ShadowHandler;
+import org.robolectric.shadows.ShadowIntent;
+import org.robolectric.shadows.ShadowToast;
+import org.robolectric.util.ActivityController;
 
 import java.io.IOException;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.rapidftr.RapidFtrApplication.FORM_SECTIONS_PREF;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
-import static com.xtremelabs.robolectric.Robolectric.shadowOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
+import static org.robolectric.Robolectric.shadowOf;
+import static org.robolectric.Robolectric.shadowOf_;
 
 @RunWith(CustomTestRunner.class)
 public class LoginActivityTest {
@@ -39,14 +42,16 @@ public class LoginActivityTest {
     private EditText password;
     private TextView signUp;
 
+    private ActivityController<LoginActivity> activityController;
     private LoginActivity loginActivity;
 
     @Before
     public void setUp() throws Exception {
-        loginActivity = new LoginActivity();
+        activityController = SpyActivityController.of(LoginActivity.class);
+        loginActivity = activityController.attach().get();
 	    loginActivity.getContext().setCurrentUser(null);
         loginActivity.getContext().setFormSections((String) null);
-        loginActivity.onCreate(null);
+        activityController.create();
 
         loginButton = (Button) loginActivity.findViewById(R.id.login_button);
         signUp = (TextView) loginActivity.findViewById(R.id.new_user_signup_link);
@@ -82,7 +87,7 @@ public class LoginActivityTest {
         SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", MODE_PRIVATE);
         sharedPreferences.edit().putString("SERVER_URL", "http://dev.rapidftr.com:3000").commit();
 
-        loginActivity.onCreate(null);
+        activityController.create();
         assertThat(serverUrl.getText().toString(), equalTo(url));
     }
 
@@ -92,7 +97,6 @@ public class LoginActivityTest {
         password  = mock(EditText.class);
         serverUrl = mock(EditText.class);
 
-        loginActivity = spy(loginActivity);
         doReturn(userName).when(loginActivity).findViewById(R.id.username);
         doReturn(password).when(loginActivity).findViewById(R.id.password);
 
@@ -110,9 +114,9 @@ public class LoginActivityTest {
     @Test
     public void shouldStartSignUpActivityWhenClickedOnSignUpLink(){
         signUp.performClick();
-        ShadowActivity shadowActivity = shadowOf(new LoginActivity());
+        ShadowActivity shadowActivity = shadowOf_(new LoginActivity());
         Intent startedIntent = shadowActivity.getNextStartedActivity();
-        ShadowIntent shadowIntent = shadowOf(startedIntent);
+        ShadowIntent shadowIntent = shadowOf_(startedIntent);
         assertThat(shadowIntent.getComponent().getClassName(), equalTo("com.rapidftr.activity.SignupActivity"));
     }
 

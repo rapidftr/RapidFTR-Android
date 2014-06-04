@@ -1,5 +1,6 @@
 package com.rapidftr.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
 import android.net.ConnectivityManager;
@@ -36,7 +37,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
-public abstract class RapidFtrActivity extends FragmentActivity {
+public abstract class RapidFtrActivity extends Activity {
 
     public static final String LOGOUT_INTENT_FILTER = "com.rapidftr.LOGOUT_INTENT";
 

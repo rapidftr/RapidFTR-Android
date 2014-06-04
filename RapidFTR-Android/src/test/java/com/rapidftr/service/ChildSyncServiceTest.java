@@ -9,7 +9,6 @@ import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.http.FluentRequest;
-import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
-import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -42,6 +41,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.robolectric.Robolectric.getFakeHttpLayer;
 
 @RunWith(CustomTestRunner.class)
 public class ChildSyncServiceTest {

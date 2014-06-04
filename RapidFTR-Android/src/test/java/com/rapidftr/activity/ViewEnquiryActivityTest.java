@@ -10,6 +10,7 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.FailedToSaveException;
 import com.rapidftr.task.SyncRecordTask;
+import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class ViewEnquiryActivityTest {
     @Before
     public void setUp()throws Exception{
         initMocks(this);
-        activity = spy(new ViewEnquiryActivity());
+        activity = SpyActivityController.of(ViewEnquiryActivity.class).attach().get();
         
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();

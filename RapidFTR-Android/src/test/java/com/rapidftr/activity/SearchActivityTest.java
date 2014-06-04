@@ -7,11 +7,13 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class SearchActivityTest {
+    private ActivityController<SearchActivity> activityController;
     protected SearchActivity activity;
 
     @Mock
@@ -31,7 +34,9 @@ public class SearchActivityTest {
     @Before
     public void setUp() {
         initMocks(this);
-        activity = spy(new SearchActivity());
+        activityController = SpyActivityController.of(SearchActivity.class);
+        activity = activityController.attach().get();
+
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
         doReturn(childRepository).when(mockInjector).getInstance(ChildRepository.class);
@@ -44,7 +49,7 @@ public class SearchActivityTest {
         String searchString = "Hild";
         when(childRepository.getMatchingChildren(searchString)).thenReturn(searchResults);
 
-        activity.onCreate(null);
+        activityController.create();
         TextView textView = (TextView) activity.findViewById(R.id.search_text);
         textView.setText(searchString);
         activity.findViewById(R.id.search_btn).performClick();
@@ -59,7 +64,7 @@ public class SearchActivityTest {
         String searchString = "Hild";
         when(childRepository.getMatchingChildren(searchString)).thenReturn(searchResults);
 
-        activity.onCreate(null);
+        activityController.create();
         TextView textView = (TextView) activity.findViewById(R.id.search_text);
         textView.setText(searchString);
         activity.findViewById(R.id.search_btn).performClick();
@@ -70,7 +75,7 @@ public class SearchActivityTest {
     @Test
     public void shouldReturnEmptyListForNoSearchString() throws JSONException {
         String searchString = " ";
-        activity.onCreate(null);
+        activityController.create();
         TextView textView = (TextView) activity.findViewById(R.id.search_text);
         textView.setText(searchString);
         activity.findViewById(R.id.search_btn).performClick();

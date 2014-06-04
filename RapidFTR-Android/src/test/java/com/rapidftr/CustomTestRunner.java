@@ -1,6 +1,5 @@
 package com.rapidftr;
 
-import android.app.Application;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -12,19 +11,15 @@ import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.User;
 import com.rapidftr.utils.ApplicationInjector;
-import com.rapidftr.utils.ShadowBase64;
-import com.xtremelabs.robolectric.Robolectric;
-import com.xtremelabs.robolectric.RobolectricTestRunner;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.runners.model.InitializationError;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RobolectricTestRunner;
 
 import java.security.Security;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
 public class CustomTestRunner extends RobolectricTestRunner {
 
@@ -58,23 +53,6 @@ public class CustomTestRunner extends RobolectricTestRunner {
         super(testClass);
         MockitoAnnotations.initMocks(testClass);
         Security.addProvider(new BouncyCastleProvider());
-    }
-
-    @Override
-    protected Application createApplication() {
-        RapidFtrApplication application = new RapidFtrApplication(INJECTOR);
-	    try {
-		    application.getSharedPreferences().edit().putString(SERVER_URL_PREF, "http://1.2.3.4:5");
-		    application.setFormSections(formSectionSeed);
-		    application.setCurrentUser(createUser());
-	    } catch (Exception e) {
-		    throw new RuntimeException(e);
-	    }
-        return application;
-    }
-
-    @Override protected void bindShadowClasses() {
-        Robolectric.bindShadowClass(ShadowBase64.class);
     }
 
 	private static long userId = 0;
