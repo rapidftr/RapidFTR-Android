@@ -4,7 +4,8 @@ import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.User;
-import com.xtremelabs.robolectric.shadows.ShadowToast;
+import com.rapidftr.utils.SpyActivityController;
+import org.robolectric.shadows.ShadowToast;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,9 +26,7 @@ public class SignupActivityTest {
 
     @Before
     public void setup(){
-        signupActivity = new SignupActivity();
-        signupActivity.onCreate(null);
-        signupActivity = spy(signupActivity);
+        signupActivity = SpyActivityController.of(SignupActivity.class).create().get();
         userName = (EditText)signupActivity.findViewById(R.id.username);
         password = (EditText)signupActivity.findViewById(R.id.password);
         confirmPassword = (EditText)signupActivity.findViewById(R.id.confirm_password);

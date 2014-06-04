@@ -15,8 +15,6 @@ import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.FormService;
 import com.rapidftr.utils.http.FluentRequest;
-import com.xtremelabs.robolectric.Robolectric;
-import com.xtremelabs.robolectric.shadows.ShadowToast;
 import org.apache.http.HttpException;
 import org.json.JSONException;
 import org.junit.Before;
@@ -25,6 +23,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.robolectric.Robolectric;
+import org.robolectric.shadows.ShadowToast;
 
 import java.io.IOException;
 import java.util.Arrays;

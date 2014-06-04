@@ -2,13 +2,13 @@ package com.rapidftr.service;
 
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.model.Enquiry;
-import com.xtremelabs.robolectric.Robolectric;
 import org.apache.http.HttpRequest;
 import org.apache.http.RequestLine;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.util.List;
 

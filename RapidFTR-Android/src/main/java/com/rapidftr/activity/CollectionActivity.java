@@ -67,7 +67,6 @@ public abstract class CollectionActivity extends RapidFtrActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     protected void initializeLabels() throws JSONException{};

@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -17,7 +18,8 @@ public class TextFieldTest extends BaseViewSpec<TextField> {
 
     @Before
     public void setUp() {
-        view = (TextField) LayoutInflater.from(new Activity()).inflate(R.layout.form_text_field, null);
+        Activity activity = Robolectric.buildActivity(Activity.class).create().get();
+        view = (TextField) activity.getLayoutInflater().inflate(R.layout.form_text_field, null);
     }
 
     @Test

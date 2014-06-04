@@ -5,15 +5,14 @@ import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Child;
-import com.rapidftr.model.User;
 import com.rapidftr.task.SyncRecordTask;
-import com.xtremelabs.robolectric.Robolectric;
-import com.xtremelabs.robolectric.shadows.ShadowToast;
+import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.robolectric.Robolectric;
+import org.robolectric.shadows.ShadowToast;
 
 import java.io.IOException;
 
@@ -25,15 +24,13 @@ import static org.mockito.Mockito.*;
 @RunWith(CustomTestRunner.class)
 public class ViewChildActivityTest {
 
-    @Mock
-    User currentUser;
-
+    private SpyActivityController<ViewChildActivity> activityController;
     protected ViewChildActivity activity;
 
     @Before
-    public void setUp() {
-        activity = spy(new ViewChildActivity());
-        Robolectric.shadowOf(activity).setIntent(new Intent().putExtra("id", "id1"));
+    public void setUp() throws JSONException {
+        activityController = SpyActivityController.of(ViewChildActivity.class);
+        activity = activityController.attach().get();
     }
 
     @Test(expected = Exception.class)

@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,7 +23,8 @@ public class RadioButtonsTest extends BaseViewSpec<RadioButtons> {
 
     @Before
     public void setUp() {
-        view = (RadioButtons) LayoutInflater.from(new Activity()).inflate(R.layout.form_radio_button, null);
+        Activity activity = Robolectric.buildActivity(Activity.class).create().get();
+        view = (RadioButtons) activity.getLayoutInflater().inflate(R.layout.form_radio_button, null);
     }
 
     @Test

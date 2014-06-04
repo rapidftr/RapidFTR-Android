@@ -6,28 +6,24 @@ import android.os.Environment;
 import android.telephony.TelephonyManager;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
-import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.json.JSONException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
 import java.io.File;
 import java.io.IOException;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
-import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.robolectric.Robolectric.getFakeHttpLayer;
 
 @RunWith(CustomTestRunner.class)
 public class DeviceServiceTest {

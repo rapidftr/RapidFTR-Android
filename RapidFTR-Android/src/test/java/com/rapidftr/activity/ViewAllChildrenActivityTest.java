@@ -6,11 +6,13 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.util.ActivityController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
 public class ViewAllChildrenActivityTest {
+    private ActivityController<ViewAllChildrenActivity> activityController;
     protected ViewAllChildrenActivity activity;
 
     @Mock
@@ -30,7 +33,8 @@ public class ViewAllChildrenActivityTest {
     @Before
     public void setUp() {
         initMocks(this);
-        activity = spy(new ViewAllChildrenActivity());
+        activityController = SpyActivityController.of(ViewAllChildrenActivity.class);
+        activity = activityController.attach().get();
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
         doReturn(childRepository).when(mockInjector).getInstance(ChildRepository.class);
@@ -42,7 +46,7 @@ public class ViewAllChildrenActivityTest {
         children.add(new Child("id1", "user1", "{ \"name\" : \"child1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }"));
         when(childRepository.getChildrenByOwner()).thenReturn(children);
 
-        activity.onCreate(null);
+        activityController.create();
         ListView listView = (ListView) activity.findViewById(R.id.child_list);
         assertNull(listView.getEmptyView());
         assertNotNull(listView.getItemAtPosition(0));
@@ -53,7 +57,7 @@ public class ViewAllChildrenActivityTest {
         List<Child> children = new ArrayList<Child>();
         when(childRepository.getChildrenByOwner()).thenReturn(children);
 
-        activity.onCreate(null);
+        activityController.create();
         ListView listView = (ListView) activity.findViewById(R.id.child_list);
         assertNotNull(listView.getEmptyView());
     }

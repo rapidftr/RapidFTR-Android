@@ -14,12 +14,12 @@ import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import com.rapidftr.service.RegisterUserService;
 import com.rapidftr.utils.http.FluentResponse;
-import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.mockito.BDDMockito.given;

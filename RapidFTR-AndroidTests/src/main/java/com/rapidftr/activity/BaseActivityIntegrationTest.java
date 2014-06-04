@@ -33,7 +33,6 @@ public abstract class BaseActivityIntegrationTest extends ActivityInstrumentatio
 
     @Override
     public void setUp() throws Exception {
-
         solo = new Solo(getInstrumentation(), getActivity());
         loginPage = new LoginPage(solo);
         viewAllChildrenPage = new ViewAllChildrenPage(solo);

@@ -6,13 +6,13 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.ChangePasswordActivity;
 import com.rapidftr.service.ChangePasswordService;
 import com.rapidftr.utils.http.FluentResponse;
-import com.xtremelabs.robolectric.shadows.ShadowHandler;
-import com.xtremelabs.robolectric.shadows.ShadowToast;
-import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.shadows.ShadowHandler;
+import org.robolectric.shadows.ShadowToast;
+import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
 import java.io.IOException;
 

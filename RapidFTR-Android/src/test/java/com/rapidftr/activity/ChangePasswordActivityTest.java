@@ -6,6 +6,7 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.SyncAllDataAsyncTask;
+import com.rapidftr.utils.SpyActivityController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,9 +25,7 @@ public class ChangePasswordActivityTest {
 
     @Before
     public void setUp() throws Exception {
-        changePasswordActivity = new ChangePasswordActivity();
-        changePasswordActivity.onCreate(null);
-        changePasswordActivity = spy(changePasswordActivity);
+        changePasswordActivity = SpyActivityController.of(ChangePasswordActivity.class).create().get();
 
         newPassword  =  (EditText)changePasswordActivity.findViewById(R.id.new_password);
         newPasswordConfirm  =  (EditText)changePasswordActivity.findViewById(R.id.new_password_confirm);

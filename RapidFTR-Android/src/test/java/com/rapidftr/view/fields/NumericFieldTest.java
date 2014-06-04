@@ -1,12 +1,12 @@
 package com.rapidftr.view.fields;
 
 import android.app.Activity;
-import android.view.LayoutInflater;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -17,7 +17,8 @@ public class NumericFieldTest extends BaseViewSpec<NumericField> {
 
     @Before
     public void setUp() {
-        view = (NumericField) LayoutInflater.from(new Activity()).inflate(R.layout.form_numeric_field, null);
+        Activity activity = Robolectric.buildActivity(Activity.class).create().get();
+        view = (NumericField) activity.getLayoutInflater().inflate(R.layout.form_numeric_field, null);
     }
 
     @Test

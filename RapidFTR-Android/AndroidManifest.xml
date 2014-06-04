@@ -58,6 +58,6 @@
 
         <uses-library android:name="android.test.runner"/>
     </application>
-    <uses-sdk android:minSdkVersion="8"/>
+    <uses-sdk android:minSdkVersion="10"/>
 
 </manifest>

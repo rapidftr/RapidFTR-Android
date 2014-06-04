@@ -26,12 +26,11 @@ public class AudioUploadBox extends BaseView {
     private BaseChildActivity context;
 
     private AudioCaptureHelper audioCaptureHelper;
-    Resources resources = RapidFtrApplication.getApplicationInstance().getResources();
 
     public AudioUploadBox(Context context) {
         super(context);
         this.context = (BaseChildActivity) context;
-        audioCaptureHelper = getHelper(context);
+        this.audioCaptureHelper = getHelper(context);
     }
 
     public AudioUploadBox(Context context, AttributeSet attrs) {
@@ -73,12 +72,12 @@ public class AudioUploadBox extends BaseView {
 
     protected void disableButton(View button, int drawable) {
         button.setEnabled(false);
-        button.setBackgroundDrawable(resources.getDrawable(drawable));
+        button.setBackgroundDrawable(getContext().getResources().getDrawable(drawable));
     }
 
     protected void enableButton(View button, int drawable) {
         button.setEnabled(true);
-        button.setBackgroundDrawable(resources.getDrawable(drawable));
+        button.setBackgroundDrawable(getContext().getResources().getDrawable(drawable));
     }
 
     protected String getFileName() {
@@ -112,18 +111,18 @@ public class AudioUploadBox extends BaseView {
 
 	        try {
 	            if(mPlayer != null && mPlayer.isPlaying()){
-	                play.setBackgroundDrawable(resources.getDrawable(R.drawable.play_active));
+	                play.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.play_active));
 	                mPlayer.pause();
 	                return;
 	            } else if(mPlayer != null){
-	                play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
+	                play.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.pause_active));
 	                mPlayer.start();
 	                return;
 	            }
 	        } catch (Exception e) { }
 
             disableButton(record, R.drawable.record);
-            play.setBackgroundDrawable(resources.getDrawable(R.drawable.pause_active));
+            play.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.pause_active));
 
 	        mPlayer = null;
             mPlayer = getMediaPlayer();

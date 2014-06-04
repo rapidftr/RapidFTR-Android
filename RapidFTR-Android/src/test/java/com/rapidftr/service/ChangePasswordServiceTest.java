@@ -3,13 +3,13 @@ package com.rapidftr.service;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.http.FluentRequest;
-import com.xtremelabs.robolectric.tester.org.apache.http.TestHttpResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
-import static com.xtremelabs.robolectric.Robolectric.getFakeHttpLayer;
 import static org.mockito.Mockito.spy;
+import static org.robolectric.Robolectric.getFakeHttpLayer;
 
 @RunWith(CustomTestRunner.class)
 public class ChangePasswordServiceTest {
