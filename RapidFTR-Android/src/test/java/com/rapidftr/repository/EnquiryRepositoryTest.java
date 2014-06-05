@@ -164,7 +164,7 @@ public class EnquiryRepositoryTest {
         enquiryRepository.createOrUpdate(enquiry);
 
         assertThat(enquiryRepository.all().size(), is(1));
-        assertTrue(enquiry.getPotentialMatchingIds().isEmpty());
+        assertTrue(enquiry.getPotentialMatchingIds().length() == 0);
 
         enquiry.setEnquirerName("New Reporter Name");
         enquiry.setCriteria(new JSONObject("{}"));
