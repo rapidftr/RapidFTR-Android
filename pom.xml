@@ -47,6 +47,7 @@
         <checkstyle.skip>${check.code.skip}</checkstyle.skip>
         <pmd.skip>${check.code.skip}</pmd.skip>
         <findbug.skip>${check.code.skip}</findbug.skip>
+        <cobertura.skip>${check.code.skip}</cobertura.skip>
         <modules.root.dir>${basedir}</modules.root.dir>
     </properties>
 
@@ -497,6 +498,46 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>2.6</version>
+                        <configuration>
+                            <instrumentation>
+                                <ignores>
+                                    <ignore>com.rapidftr.model.*</ignore>
+                                </ignores>
+                                <excludes>
+                                    <exclude>com/rapidftr/model/*.class</exclude>
+                                    <exclude>com/rapidftr/R$*.class</exclude>
+                                </excludes>
+                            </instrumentation>
+                            <check>
+                                <branchRate>85</branchRate>
+                                <lineRate>85</lineRate>
+                                <haltOnFailure>true</haltOnFailure>
+                                <totalBranchRate>85</totalBranchRate>
+                                <totalLineRate>85</totalLineRate>
+                                <packageLineRate>85</packageLineRate>
+                                <packageBranchRate>85</packageBranchRate>
+                            </check>
+                            <formats>
+                                <format>html</format>
+                                <format>xml</format>
+                            </formats>
+                            <skip>${cobertura.skip}</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                 </plugins>
             </build>
         </profile>
