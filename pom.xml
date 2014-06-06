@@ -46,6 +46,7 @@
         <check.code.skip>false</check.code.skip>
         <checkstyle.skip>${check.code.skip}</checkstyle.skip>
         <pmd.skip>${check.code.skip}</pmd.skip>
+        <findbug.skip>${check.code.skip}</findbug.skip>
         <modules.root.dir>${basedir}</modules.root.dir>
     </properties>
 
@@ -472,6 +473,26 @@
                                 <goals>
                                     <goal>check</goal>
                                     <goal>cpd-check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>2.5.4</version>
+                        <configuration>
+                            <failOnError>true</failOnError>
+                            <effort>Max</effort>
+                            <threshold>Low</threshold>
+                            <includeTests>false</includeTests>
+                            <skip>${findbug.skip}</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
                                 </goals>
                             </execution>
                         </executions>
