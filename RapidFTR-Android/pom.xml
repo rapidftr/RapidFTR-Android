@@ -19,6 +19,7 @@
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
         <key.password />
         <keystore.password />
+        <modules.root.dir>${basedir}/..</modules.root.dir>
     </properties>
 
     <dependencies>

@@ -15,6 +15,7 @@
 
     <properties>
         <local.repo.dir>${project.basedir}/../repo</local.repo.dir>
+        <modules.root.dir>${basedir}/../..</modules.root.dir>
     </properties>
 
     <dependencies>
