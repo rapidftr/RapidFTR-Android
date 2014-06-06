@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <version>2.0.1-SNAPSHOT</version>
@@ -19,9 +20,9 @@
     </issueManagement>
 
     <scm>
-      <url>https://github.com/rapidftr/RapidFTR---Android</url>
-      <connection>scm:git:git://github.com/rapidftr/RapidFTR---Android</connection>
-      <developerConnection>scm:git:git@github.com:rapidftr/RapidFTR---Android</developerConnection>
+        <url>https://github.com/rapidftr/RapidFTR---Android</url>
+        <connection>scm:git:git://github.com/rapidftr/RapidFTR---Android</connection>
+        <developerConnection>scm:git:git@github.com:rapidftr/RapidFTR---Android</developerConnection>
     </scm>
 
     <modules>
@@ -41,6 +42,9 @@
 
         <environment>dev</environment>
         <local.repo.dir>${project.basedir}/repo</local.repo.dir>
+
+        <check.code.skip>false</check.code.skip>
+        <checkstyle.skip>${check.code.skip}</checkstyle.skip>
     </properties>
 
     <repositories>
@@ -70,10 +74,10 @@
 
     <dependencies>
         <!--<dependency>-->
-            <!--<groupId>org.projectlombok</groupId>-->
-            <!--<artifactId>lombok</artifactId>-->
-            <!--<version>0.11.4</version>-->
-            <!--<scope>provided</scope>-->
+        <!--<groupId>org.projectlombok</groupId>-->
+        <!--<artifactId>lombok</artifactId>-->
+        <!--<version>0.11.4</version>-->
+        <!--<scope>provided</scope>-->
         <!--</dependency>-->
 
         <dependency>
@@ -207,7 +211,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
 
-                <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -235,8 +239,11 @@
                         </jvmArguments>
                     </dex>
                     <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                    <zipalign><skip>false</skip></zipalign>
-                    <androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml</androidManifestFile>
+                    <zipalign>
+                        <skip>false</skip>
+                    </zipalign>
+                    <androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml
+                    </androidManifestFile>
                 </configuration>
             </plugin>
         </plugins>
@@ -315,7 +322,7 @@
                                 <phase>package</phase>
                                 <inherited>true</inherited>
                                 <configuration>
-                                    <archiveDirectory />
+                                    <archiveDirectory/>
                                     <includes>
                                         <include>target/*.apk</include>
                                     </includes>
@@ -324,8 +331,10 @@
                                     <keypass>${key.password}</keypass>
                                     <alias>rapidftr</alias>
                                     <arguments>
-                                        <argument>-sigalg</argument><argument>MD5withRSA</argument>
-                                        <argument>-digestalg</argument><argument>SHA1</argument>
+                                        <argument>-sigalg</argument>
+                                        <argument>MD5withRSA</argument>
+                                        <argument>-digestalg</argument>
+                                        <argument>SHA1</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -336,9 +345,12 @@
                         <artifactId>android-maven-plugin</artifactId>
                         <inherited>true</inherited>
                         <configuration>
-                            <sign><debug>false</debug></sign>
+                            <sign>
+                                <debug>false</debug>
+                            </sign>
                             <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                            <androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml</androidManifestFile>
+                            <androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml
+                            </androidManifestFile>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -395,9 +407,41 @@
                                 </jvmArguments>
                             </dex>
                             <undeployBeforeDeploy>true</undeployBeforeDeploy>
-                            <zipalign><skip>false</skip></zipalign>
-                            <androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml</androidManifestFile>
+                            <zipalign>
+                                <skip>false</skip>
+                            </zipalign>
+                            <androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml
+                            </androidManifestFile>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>codequality</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>2.12.1</version>
+                        <configuration>
+                            <configLocation>checkstyle.xml</configLocation>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                            <failsOnError>true</failsOnError>
+                            <enableFilesSummary>true</enableFilesSummary>
+                            <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                            <skip>${checkstyle.skip}</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
