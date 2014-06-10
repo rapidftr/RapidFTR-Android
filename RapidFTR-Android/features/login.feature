@@ -24,3 +24,53 @@ Feature: Login feature
     When I select "Log Out" from the menu
     And I press "Change URL"
     Then I should see "https://test.rapidftr.com"
+
+  @reinstall
+  Scenario: Password Reset
+    When I enter text "rapidftr" into field with id "username"
+    And I enter text "rapidftr" into field with id "password"
+    And I enter text "https://test.rapidftr.com" into field with id "url"
+    And I press "Log In"
+    And I wait for dialog to close
+    When I select "Change Password" from the menu
+    And I enter text "rapidftr" into field with id "current_password"
+    And I enter text "rapidftrnew" into field with id "new_password"
+    And I enter text "rapidftrnew" into field with id "new_password_confirm"
+    And I press "Change Password"
+    Then I should see "Password Changed Successfully"
+    When I select "Log Out" from the menu
+    And I enter text "rapidftr" into field with id "username"
+    And I enter text "rapidftr" into field with id "password"
+    And I press "Log In"
+    Then I should see "Incorrect username or password"
+    When I enter text "" into field with id "username"
+    And I enter text "rapidftr" into field with id "username"
+    And I enter text "" into field with id "password"
+    And I enter text "rapidftrnew" into field with id "password"
+    And I press "Log In"
+    Then I should see "Login Successful"
+    When I select "Change Password" from the menu
+    And I enter text "rapidftrnew" into field with id "current_password"
+    And I enter text "rapidftr" into field with id "new_password"
+    And I enter text "rapidftr" into field with id "new_password_confirm"
+    And I press "Change Password"
+    Then I should see "Password Changed Successfully"
+
+  @reinstall
+  Scenario: Password Reset Errors (and wrong current password)
+    When I enter text "rapidftr" into field with id "username"
+    And I enter text "rapidftr" into field with id "password"
+    And I enter text "https://test.rapidftr.com" into field with id "url"
+    And I press "Log In"
+    And I wait for dialog to close
+    When I select "Change Password" from the menu
+    And I enter text "" into field with id "current_password"
+    And I enter text "" into field with id "new_password"
+    And I enter text "" into field with id "new_password_confirm"
+    And I press "Change Password"
+    Then I should see "All fields are mandatory"
+    And I enter text "rapidftr1" into field with id "current_password"
+    And I enter text "rapidftr2" into field with id "new_password"
+    And I enter text "rapidftr3" into field with id "new_password_confirm"
+    And I press "Change Password"
+    Then I should see "Password mismatch"
