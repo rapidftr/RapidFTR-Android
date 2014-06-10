@@ -10,13 +10,12 @@ Feature: Login feature
     Then I should see "Incorrect username or password"
 
   Scenario: Correct Login Details
-    When I enter text "rapidftr" into field with id "username"
-    And I enter text "rapidftr" into field with id "password"
+    When I enter text "field_worker" into field with id "username"
+    And I enter text "field_worker" into field with id "password"
     And I enter text "https://test.rapidftr.com" into field with id "url"
     And I press "Log In"
-    Then I should see "Login Successful"
-    And I should see "Basic Identity"
-    And I should see "Name"
+    And I wait up to 10 seconds for "Basic Identity" to appear
+    Then I should see "Name"
     And I should see "Protection Status"
     And I should see "New Registration"
 
@@ -27,42 +26,42 @@ Feature: Login feature
 
   @reinstall
   Scenario: Password Reset
-    When I enter text "rapidftr" into field with id "username"
-    And I enter text "rapidftr" into field with id "password"
+    When I enter text "field_worker" into field with id "username"
+    And I enter text "field_worker" into field with id "password"
     And I enter text "https://test.rapidftr.com" into field with id "url"
     And I press "Log In"
-    And I wait for dialog to close
+    And I wait up to 10 seconds for "Basic Identity" to appear
     When I select "Change Password" from the menu
-    And I enter text "rapidftr" into field with id "current_password"
+    And I enter text "field_worker" into field with id "current_password"
     And I enter text "rapidftrnew" into field with id "new_password"
     And I enter text "rapidftrnew" into field with id "new_password_confirm"
     And I press "Change Password"
     Then I should see "Password Changed Successfully"
     When I select "Log Out" from the menu
-    And I enter text "rapidftr" into field with id "username"
-    And I enter text "rapidftr" into field with id "password"
+    And I enter text "field_worker" into field with id "username"
+    And I enter text "field_worker" into field with id "password"
     And I press "Log In"
     Then I should see "Incorrect username or password"
     When I enter text "" into field with id "username"
-    And I enter text "rapidftr" into field with id "username"
+    And I enter text "field_worker" into field with id "username"
     And I enter text "" into field with id "password"
     And I enter text "rapidftrnew" into field with id "password"
     And I press "Log In"
-    Then I should see "Login Successful"
-    When I select "Change Password" from the menu
+    And I wait up to 10 seconds for "Basic Identity" to appear
+    And I select "Change Password" from the menu
     And I enter text "rapidftrnew" into field with id "current_password"
-    And I enter text "rapidftr" into field with id "new_password"
-    And I enter text "rapidftr" into field with id "new_password_confirm"
+    And I enter text "field_worker" into field with id "new_password"
+    And I enter text "field_worker" into field with id "new_password_confirm"
     And I press "Change Password"
     Then I should see "Password Changed Successfully"
 
   @reinstall
   Scenario: Password Reset Errors (and wrong current password)
-    When I enter text "rapidftr" into field with id "username"
-    And I enter text "rapidftr" into field with id "password"
+    When I enter text "field_worker" into field with id "username"
+    And I enter text "field_worker" into field with id "password"
     And I enter text "https://test.rapidftr.com" into field with id "url"
     And I press "Log In"
-    And I wait for dialog to close
+    And I wait up to 10 seconds for "Basic Identity" to appear
     When I select "Change Password" from the menu
     And I enter text "" into field with id "current_password"
     And I enter text "" into field with id "new_password"
