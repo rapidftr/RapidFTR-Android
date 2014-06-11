@@ -2,15 +2,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <version>2.0.1-SNAPSHOT</version>
+    <groupId>com.rapidftr</groupId>
     <artifactId>rapidftr-android</artifactId>
     <packaging>apk</packaging>
     <name>RapidFTR Android Client</name>
+    <description>
+        RapidFTR is a mobile app and database system that lets aid workers collect and share information about
+        children in emergency situations, so they can be reunited with their families.
+    </description>
 
-    <parent>
-        <version>2.0.1-SNAPSHOT</version>
-        <groupId>com.rapidftr</groupId>
-        <artifactId>rapidftr-android-parent</artifactId>
-    </parent>
+    <url>https://github.com/rapidftr/RapidFTR---Android</url>
+
+    <issueManagement>
+        <url>https://github.com/rapidftr/RapidFTR---Android/issues</url>
+        <system>RapidFTR Issues</system>
+    </issueManagement>
+
+    <scm>
+        <url>https://github.com/rapidftr/RapidFTR---Android</url>
+        <connection>scm:git:git://github.com/rapidftr/RapidFTR---Android</connection>
+        <developerConnection>scm:git:git@github.com:rapidftr/RapidFTR---Android</developerConnection>
+    </scm>
 
     <properties>
         <local.repo.dir>${project.basedir}/../repo</local.repo.dir>
@@ -19,49 +32,115 @@
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
         <key.password />
         <keystore.password />
-        <modules.root.dir>${basedir}/..</modules.root.dir>
+        <device.wipe.flag>0</device.wipe.flag>
+        <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
+        <platform.version>10</platform.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>MM/dd/yy hh:mm a z</maven.build.timestamp.format>
+
+        <version.code>${project.version}</version.code>
+        <version.name>${version.code} (${environment}) - Built on ${maven.build.timestamp}</version.name>
+
+        <environment>dev</environment>
+        <local.repo.dir>${project.basedir}/../repo</local.repo.dir>
+
+        <check.code.skip>false</check.code.skip>
+        <checkstyle.skip>${check.code.skip}</checkstyle.skip>
+        <pmd.skip>${check.code.skip}</pmd.skip>
+        <findbug.skip>${check.code.skip}</findbug.skip>
+        <cobertura.skip>${check.code.skip}</cobertura.skip>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>android-repo</id>
+            <name>Android Repository</name>
+            <url>file://${ANDROID_HOME}/extras/android/m2repository</url>
+        </repository>
+        <repository>
+            <id>MavenCentral</id>
+            <name>Maven repository</name>
+            <url>http://repo1.maven.org/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>local-repo</id>
+            <name>Local Repository</name>
+            <url>file://${local.repo.dir}</url>
+        </repository>
+    </repositories>
+
 
     <dependencies>
         <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>support-v4</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok-maven-plugin</artifactId>
+            <version>0.12.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>1.17.1</version>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>2.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>support-v4</artifactId>
+            <version>r6</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
+            <version>3.0</version>
             <classifier>no_aop</classifier>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
+            <version>1.9.10</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>robotium</groupId>
+            <artifactId>robotium-solo</artifactId>
+            <version>4.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.robolectric</groupId>
             <artifactId>robolectric</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.kedzie.supportanimator</groupId>
             <artifactId>support-v4-animator</artifactId>
+            <version>19.0.0</version>
+            <scope>test</scope>
             <type>apklib</type>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
+            <version>1.2</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -78,20 +157,25 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk16</artifactId>
+            <version>1.46</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>sqlcipher</artifactId>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>guava</artifactId>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>commons-codec</artifactId>
+            <version>2.1.1</version>
         </dependency>
+
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -100,6 +184,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
+            <version>4.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
@@ -117,16 +202,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>0.12.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
-            <version>1.2.0</version>
         </dependency>
     </dependencies>
 
@@ -148,12 +223,77 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <compilerVersion>1.6</compilerVersion>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <version>3.8.2</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <sdk>
+                        <platform>${platform.version}</platform>
+                    </sdk>
+                    <dex>
+                        <jvmArguments>
+                            <jvmArgument>-Xms512m</jvmArgument>
+                            <jvmArgument>-Xmx1024m</jvmArgument>
+                        </jvmArguments>
+                    </dex>
+                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                    <zipalign>
+                        <skip>false</skip>
+                    </zipalign>
+                    <androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml
+                    </androidManifestFile>
+                </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>keytool-maven-plugin</artifactId>
+                <version>1.2</version>
                 <executions>
                     <execution>
                         <id>default_certs</id>
@@ -253,4 +393,179 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>sign</id>
+            <properties>
+                <device.wipe.flag>1</device.wipe.flag>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jarsigner-plugin</artifactId>
+                        <version>1.2</version>
+                        <executions>
+                            <execution>
+                                <id>signing</id>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <inherited>true</inherited>
+                                <configuration>
+                                    <archiveDirectory/>
+                                    <includes>
+                                        <include>target/*.apk</include>
+                                    </includes>
+                                    <keystore>${project.basedir}/../rapidftr.keystore</keystore>
+                                    <storepass>${keystore.password}</storepass>
+                                    <keypass>${key.password}</keypass>
+                                    <alias>rapidftr</alias>
+                                    <arguments>
+                                        <argument>-sigalg</argument>
+                                        <argument>MD5withRSA</argument>
+                                        <argument>-digestalg</argument>
+                                        <argument>SHA1</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <artifactId>android-maven-plugin</artifactId>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <sign>
+                                <debug>false</debug>
+                            </sign>
+                            <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                            <androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml
+                            </androidManifestFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>codequality</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>2.12.1</version>
+                        <configuration>
+                            <configLocation>checkstyle.xml</configLocation>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                            <failsOnError>true</failsOnError>
+                            <enableFilesSummary>true</enableFilesSummary>
+                            <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                            <skip>${checkstyle.skip}</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <version>3.1</version>
+                        <configuration>
+                            <rulesets>
+                                <ruleset>${modules.root.dir}/pmd.xml</ruleset>
+                            </rulesets>
+                            <linkxref>true</linkxref>
+                            <sourceEncoding>utf-8</sourceEncoding>
+                            <minimumTokens>100</minimumTokens>
+                            <targetJdk>1.6</targetJdk>
+                            <skip>${pmd.skip}</skip>
+                            <excludes>
+                                <exclude>**/*Bean.java</exclude>
+                                <exclude>**/generated/*.java</exclude>
+                            </excludes>
+                            <excludeRoots>
+                                <excludeRoot>target/generated-sources/stub</excludeRoot>
+                            </excludeRoots>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                    <goal>cpd-check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>2.5.4</version>
+                        <configuration>
+                            <failOnError>true</failOnError>
+                            <effort>Max</effort>
+                            <threshold>Low</threshold>
+                            <includeTests>false</includeTests>
+                            <skip>${findbug.skip}</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                        <version>2.6</version>
+                        <configuration>
+                            <instrumentation>
+                                <ignores>
+                                    <ignore>com.rapidftr.model.*</ignore>
+                                </ignores>
+                                <excludes>
+                                    <exclude>com/rapidftr/model/*.class</exclude>
+                                    <exclude>com/rapidftr/R$*.class</exclude>
+                                </excludes>
+                            </instrumentation>
+                            <check>
+                                <branchRate>85</branchRate>
+                                <lineRate>85</lineRate>
+                                <haltOnFailure>true</haltOnFailure>
+                                <totalBranchRate>85</totalBranchRate>
+                                <totalLineRate>85</totalLineRate>
+                                <packageLineRate>85</packageLineRate>
+                                <packageBranchRate>85</packageBranchRate>
+                            </check>
+                            <formats>
+                                <format>html</format>
+                                <format>xml</format>
+                            </formats>
+                            <skip>${cobertura.skip}</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

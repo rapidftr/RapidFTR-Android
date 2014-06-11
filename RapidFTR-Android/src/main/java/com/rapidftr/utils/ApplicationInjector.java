@@ -23,7 +23,6 @@ import com.rapidftr.task.SyncAllDataAsyncTask;
 import com.rapidftr.task.SyncUnverifiedDataAsyncTask;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.utils.http.FluentRequest;
-import com.sun.jersey.api.client.Client;
 import org.json.JSONException;
 
 public class ApplicationInjector extends AbstractModule {
@@ -79,11 +78,6 @@ public class ApplicationInjector extends AbstractModule {
     @Provides
     public SynchronisationAsyncTask<Enquiry> getEnquirySynchronisationAsyncTask(User user, Provider<SyncAllDataAsyncTask<Enquiry>> provider1, Provider<SyncUnverifiedDataAsyncTask<Enquiry>> provider2) {
         return user.isVerified() ? provider1.get() : provider2.get();
-    }
-
-    @Provides
-    public Client getClient() {
-        return Client.create();
     }
 
     @Provides
