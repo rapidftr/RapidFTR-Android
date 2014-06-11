@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import com.google.inject.Guice;
@@ -19,7 +20,6 @@ import com.rapidftr.utils.ApplicationInjector;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
