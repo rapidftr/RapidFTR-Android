@@ -146,7 +146,7 @@ public class EnquiryTest {
     public void newEnquiryShouldNotHaveMatchingIds() throws JSONException {
         String enquiryJSON = "{\"enquirer_name\":\"sam fisher\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
         Enquiry enquiry = new Enquiry(enquiryJSON);
-        assertTrue(enquiry.getPotentialMatchingIds().isEmpty());
+        assertTrue(enquiry.getPotentialMatchingIds().length() == 0);
     }
 
 }

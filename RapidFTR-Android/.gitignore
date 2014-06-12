@@ -6,3 +6,4 @@ res/raw/*.bks
 classes/
 gen/
 .nomedia/
+screenshot_*

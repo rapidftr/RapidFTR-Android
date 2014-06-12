@@ -1,3 +1,8 @@
+env:
+  matrix:
+    - ANDROID_SDKS=android-15,sysimg-15  ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a  CMD=unit_test.sh
+    - ANDROID_SDKS=android-15,sysimg-15  ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a  CMD=emulator_test.sh
+
 language: android
 android:
   components:
@@ -7,6 +12,6 @@ android:
     - 'android-sdk-.*'
     - '.*intel.+'
 script:
-  - cd RapidFTR-Android && mvn test
+  - sh RapidFTR-Android/travis/$CMD
 notifications:
   - email: false
