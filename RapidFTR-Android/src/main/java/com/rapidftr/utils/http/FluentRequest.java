@@ -11,7 +11,6 @@ import com.rapidftr.model.Enquiry;
 import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.IOUtils;
 import com.rapidftr.utils.PhotoCaptureHelper;
-import lombok.Cleanup;
 import lombok.Getter;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
@@ -19,6 +18,7 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
@@ -32,10 +32,18 @@ import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.*;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
@@ -249,13 +257,24 @@ public class FluentRequest {
 
     private static DefaultHttpClient createHttpClient() {
         try {
-            KeyStore trusted = KeyStore.getInstance("BKS");
-            @Cleanup InputStream in = RapidFtrApplication.getApplicationInstance().getResources().openRawResource(R.raw.trusted);
-            trusted.load(in, "rapidftr".toCharArray());
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, new TrustManager[]{new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                }
 
+                @Override
+                public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                }
+
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+            }}, new SecureRandom());
             SchemeRegistry registry = new SchemeRegistry();
             registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-            registry.register(new Scheme("https", new SelfSignedSSLSocketFactory(trusted), 443));
+            registry.register(new Scheme("https", new SSLSocketFactory(sslContext), 443));
 
             HttpParams params = new BasicHttpParams();
             ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(params, registry);

@@ -2,6 +2,7 @@ package com.rapidftr.service;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
@@ -16,7 +17,6 @@ import com.rapidftr.utils.http.FluentRequest;
 import com.rapidftr.utils.http.FluentResponse;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 

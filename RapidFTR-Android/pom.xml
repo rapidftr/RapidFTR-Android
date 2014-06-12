@@ -78,12 +78,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok-maven-plugin</artifactId>
-            <version>0.12.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
             <version>2.2.1</version>
@@ -101,20 +95,19 @@
             <classifier>no_aop</classifier>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>1.9.10</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.4.0</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.10</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.4.0</version>
         </dependency>
-
         <dependency>
-            <groupId>robotium</groupId>
-            <artifactId>robotium-solo</artifactId>
-            <version>4.1.1</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.4.0</version>
         </dependency>
 
         <dependency>
@@ -131,6 +124,13 @@
             <type>apklib</type>
         </dependency>
         <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
@@ -146,12 +146,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
-            <version>1.2.0</version>
         </dependency>
 
         <dependency>
@@ -202,6 +196,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>0.12.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -224,7 +219,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.1</version>
                 <configuration>
                     <compilerVersion>1.6</compilerVersion>
                     <source>1.6</source>
@@ -235,7 +230,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.17</version>
             </plugin>
 
             <plugin>
@@ -288,108 +283,6 @@
                     <androidManifestFile>${project.build.directory}/filtered-manifest/AndroidManifest.xml
                     </androidManifestFile>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>keytool-maven-plugin</artifactId>
-                <version>1.2</version>
-                <executions>
-                    <execution>
-                        <id>default_certs</id>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <workingDirectory>${project.basedir}/res/raw</workingDirectory>
-                            <noprompt />
-                            <trustcacerts>true</trustcacerts>
-                            <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
-                            <storetype>bks</storetype>
-                            <alias>rapid_ftr_default</alias>
-                            <storepass>rapidftr</storepass>
-                            <file>rapid_ftr_ca.der</file>
-                            <arguments>
-                                <argument>-provider</argument>
-                                <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
-                                <argument>-providerpath</argument>
-                                <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
-                            </arguments>
-                        </configuration>
-                        <goals>
-                            <goal>clean</goal>
-                            <goal>import</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jonglei2_cert</id>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <workingDirectory>${project.basedir}/res/raw</workingDirectory>
-                            <noprompt />
-                            <trustcacerts>true</trustcacerts>
-                            <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
-                            <storetype>bks</storetype>
-                            <alias>rapid_ftr_jonglei2</alias>
-                            <storepass>rapidftr</storepass>
-                            <file>jonglei2_rapid_ftr_ca.crt</file>
-                            <arguments>
-                                <argument>-provider</argument>
-                                <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
-                                <argument>-providerpath</argument>
-                                <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
-                            </arguments>
-                        </configuration>
-                        <goals>
-                            <goal>import</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>uw_cert</id>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <workingDirectory>${project.basedir}/res/raw</workingDirectory>
-                            <noprompt />
-                            <trustcacerts>true</trustcacerts>
-                            <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
-                            <storetype>bks</storetype>
-                            <alias>rapid_ftr_uw</alias>
-                            <storepass>rapidftr</storepass>
-                            <file>uw_rapid_ftr_ca.crt</file>
-                            <arguments>
-                                <argument>-provider</argument>
-                                <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
-                                <argument>-providerpath</argument>
-                                <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
-                            </arguments>
-                        </configuration>
-                        <goals>
-                            <goal>import</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>uw2_cert</id>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <workingDirectory>${project.basedir}/res/raw</workingDirectory>
-                            <noprompt />
-                            <trustcacerts>true</trustcacerts>
-                            <keystore>${project.basedir}/res/raw/trusted.bks</keystore>
-                            <storetype>bks</storetype>
-                            <alias>rapid_ftr_uw2</alias>
-                            <storepass>rapidftr</storepass>
-                            <file>uw2_rapid_ftr_ca.crt</file>
-                            <arguments>
-                                <argument>-provider</argument>
-                                <argument>org.bouncycastle.jce.provider.BouncyCastleProvider</argument>
-                                <argument>-providerpath</argument>
-                                <argument>${org.bouncycastle:bcprov-jdk16:jar}</argument>
-                            </arguments>
-                        </configuration>
-                        <goals>
-                            <goal>import</goal>
-                        </goals>
-                    </execution>
-                </executions>
-
             </plugin>
         </plugins>
     </build>
