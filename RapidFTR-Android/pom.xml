@@ -84,9 +84,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.android</groupId>
+            <groupId>com.android.support</groupId>
             <artifactId>support-v4</artifactId>
-            <version>r6</version>
+            <version>19.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -132,7 +132,7 @@
 
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
