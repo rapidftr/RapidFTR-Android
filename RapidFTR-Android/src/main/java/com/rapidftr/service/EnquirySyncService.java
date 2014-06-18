@@ -2,6 +2,7 @@ package com.rapidftr.service;
 
 import android.content.SharedPreferences;
 import com.google.inject.Inject;
+import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
@@ -24,6 +25,8 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     private final EnquiryRepository enquiryRepository;
     private final SharedPreferences sharedPreferences;
 
+    private static final int NOTIFICATION_ID = 1021;
+
     @Inject
     public EnquirySyncService(SharedPreferences sharedPreferences,
                               EnquiryHttpDao enquiryHttpDao,
@@ -32,6 +35,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
         this.enquiryHttpDao = enquiryHttpDao;
         this.enquiryRepository = enquiryRepository;
     }
+
     @Override
     public Enquiry sync(Enquiry record, User currentUser) throws IOException, JSONException, HttpException {
         try {
@@ -67,4 +71,16 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     public void setMedia(Enquiry enquiry) throws IOException, JSONException {
         // do nothing
     }
+
+    @Override
+    public int getNotificationId() {
+        return NOTIFICATION_ID;
+    }
+
+    @Override
+    public String getNotificationTitle() {
+        return RapidFtrApplication.getApplicationInstance().getString(R.string.enquires_sync_title);
+    }
+
+
 }

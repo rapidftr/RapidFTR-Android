@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
+import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
@@ -41,6 +42,8 @@ public class ChildSyncService implements SyncService<Child> {
     private JSONArray photoKeys;
     private Object audioAttachments;
 
+    private static final int NOTIFICATION_ID = 1022;
+
     @Inject
     public ChildSyncService(RapidFtrApplication context, ChildRepository childRepository, FluentRequest fluentRequest) {
         this.context = context;
@@ -55,13 +58,17 @@ public class ChildSyncService implements SyncService<Child> {
         FluentResponse response = sendToServer(child, currentUser);
         try {
             String source = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
-            child = new Child(source);
-            setChildAttributes(child);
-            childRepository.update(child);
-            setMedia(child);
-            childRepository.close();
-            return child;
 
+            if (response.isSuccess()) {
+                child = new Child(source);
+                setChildAttributes(child);
+                childRepository.update(child);
+                setMedia(child);
+                childRepository.close();
+                return child;
+            } else {
+                throw new Exception(source);
+            }
         } catch (Exception e) {
             child.setSynced(false);
             child.setSyncLog(e.getMessage());
@@ -98,6 +105,16 @@ public class ChildSyncService implements SyncService<Child> {
     public void setMedia(Child child) throws IOException, JSONException {
         setPhoto(child);
         setAudio(child);
+    }
+
+    @Override
+    public int getNotificationId() {
+        return NOTIFICATION_ID;
+    }
+
+    @Override
+    public String getNotificationTitle() {
+        return context.getString(R.string.child_sync_title);
     }
 
     private void setChildAttributes(Child child) throws JSONException {

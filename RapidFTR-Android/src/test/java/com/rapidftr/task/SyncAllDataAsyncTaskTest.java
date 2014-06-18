@@ -215,7 +215,8 @@ public class SyncAllDataAsyncTaskTest {
 		syncAllDataAsyncTask.setContext(rapidFtrActivity);
 		syncAllDataAsyncTask.execute();
 
-		assertThat(ShadowToast.getTextOfLatestToast(), equalTo("Your session is timed out"));
+        verify(notificationManager, never()).notify(anyInt(), (Notification) anyObject());
+		//assertThat(ShadowToast.getTextOfLatestToast(), equalTo("Your session is timed out"));
 	}
 
     @Test
