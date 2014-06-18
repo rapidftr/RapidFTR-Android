@@ -87,6 +87,9 @@
     <string name="child_not_found">No Record Found</string>
 
     <string name="this_is_audio_upload_box">This is an audio upload box</string>
+    <string name="child_records_sync_success">Дочерние записи успешно синхронизировано</string>
+    <string name="enquiry_records_sync_success">Дознание Записи успешно синхронизировано</string>
+    <string name="sync_title">Synchronising</string>
 
 </resources>
 

@@ -87,6 +87,9 @@
     <string name="child_not_found">لم يتم العثور على السجل</string>
 
     <string name="this_is_audio_upload_box">هذا صندوق تحميل ملف صوتي</string>
+    <string name="child_records_sync_success">تزامن السجلات الطفل بنجاح</string>
+    <string name="enquiry_records_sync_success">مزامنة سجلات الاستفسار بنجاح</string>
+    <string name="sync_title">Synchronising</string>
 
 </resources>
 

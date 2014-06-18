@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -17,17 +18,20 @@ import com.rapidftr.model.User;
 import com.rapidftr.repository.Repository;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.SyncService;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.http.HttpException;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 import static java.lang.System.currentTimeMillis;
 
 public abstract class SynchronisationAsyncTask<T extends BaseModel> extends AsyncTask<Object, String, Boolean> {
 
-    public static final int NOTIFICATION_ID = 1010;
+    public static int NOTIFICATION_ID = 1010 + new Random().nextInt(10);
     private static final String SYNC_ALL = "SYNC_ALL";
     private static final String CANCEL_SYNC_ALL = "CANCEL_SYNC_ALL";
 
@@ -41,7 +45,8 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
 
     protected int formSectionProgress;
     protected int maxProgress;
-    private String SYNC_SUCCESS_MESSAGE = "Records Successfully Synchronized";
+    @Setter
+    private String successMessage = "Records Successfully Synchronized";
 
     public SynchronisationAsyncTask(FormService formService, SyncService<T> recordSyncService, Repository<T> repository, User user) {
         this.formService = formService;
@@ -54,8 +59,6 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
     protected void onPreExecute() {
         RapidFtrApplication.getApplicationInstance().setSyncTask(this);
         toggleMenu(CANCEL_SYNC_ALL);
-        initNotifiers();
-        configureNotification();
     }
 
     @Override
@@ -64,12 +67,16 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
             sync();
             return true;
         } catch (HttpException e) {
-	        notificationManager.cancel(NOTIFICATION_ID);
-	        Log.e("SyncAllDataTask", "HTTPError in sync", e);
-	        publishProgress(context.getString(R.string.session_timeout));
-	        return false;
+            Log.e("SyncAllDataTask", "HTTPError in sync", e);
+
+            String message = RapidFtrApplication.getApplicationInstance().getString(R.string.session_timeout);
+            if (e.getMessage() != null && e.getMessage().trim().length() > 0) {
+                message = e.getMessage();
+            }
+
+            publishProgress(message);
+            return false;
         } catch (Exception e) {
-            notificationManager.cancel(NOTIFICATION_ID);
             Log.e("SyncAllDataTask", "Error in sync", e);
             publishProgress(context.getString(R.string.sync_error));
             return false;
@@ -77,14 +84,6 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
     }
 
     protected abstract void sync() throws JSONException, IOException, HttpException;
-
-
-    private void configureNotification() {
-        Intent intent = new Intent(context, RapidFtrActivity.class);
-        notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT;
-        notification.contentIntent = PendingIntent.getActivity(context, 0, intent, 0);
-        notification.contentView = new RemoteViews(context.getPackageName(), R.layout.progress_bar);
-    }
 
     protected void getFormSections() throws IOException {
         if (!isCancelled()) {
@@ -94,29 +93,31 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
 
     void setProgressBarParameters(List<String> idsToDownload, List<?> recordsToSyncWithServer) {
         int totalRecordsToSynchronize = idsToDownload.size() + recordsToSyncWithServer.size();
-        formSectionProgress = totalRecordsToSynchronize/4 == 0 ? 20 : totalRecordsToSynchronize/4;
+        formSectionProgress = totalRecordsToSynchronize / 4 == 0 ? 20 : totalRecordsToSynchronize / 4;
         maxProgress = totalRecordsToSynchronize + formSectionProgress;
     }
 
     @Override
     protected void onProgressUpdate(String... values) {
-        Toast.makeText(RapidFtrApplication.getApplicationInstance(), values[0], Toast.LENGTH_LONG).show();
+        RapidFtrApplication.getApplicationInstance().showNotification(recordSyncService.getNotificationId(),
+                recordSyncService.getNotificationTitle(), values[0]);
     }
 
     @Override
     protected void onPostExecute(Boolean result) {
         toggleMenu(SYNC_ALL);
-        notificationManager.cancel(NOTIFICATION_ID);
         RapidFtrApplication.getApplicationInstance().setSyncTask(null);
-        if(result){
-            Toast.makeText(RapidFtrApplication.getApplicationInstance().getApplicationContext(), SYNC_SUCCESS_MESSAGE, Toast.LENGTH_LONG).show();
+        if (result) {
+            RapidFtrApplication.getApplicationInstance().showNotification(recordSyncService.getNotificationId(),
+                    recordSyncService.getNotificationTitle(),
+                            successMessage);
         }
     }
 
     @Override
     protected void onCancelled() {
         toggleMenu(SYNC_ALL);
-        notificationManager.cancel(NOTIFICATION_ID);
+        RapidFtrApplication.getApplicationInstance().cancelNotification(recordSyncService.getNotificationId());
         RapidFtrApplication.getApplicationInstance().setSyncTask(null);
     }
 
@@ -125,16 +126,10 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
         context.getMenu().getItem(1).setVisible(showMenu.equals(CANCEL_SYNC_ALL));
     }
 
-    private void initNotifiers() {
-        notification = new Notification(R.drawable.icon, context.getString(R.string.sync_progress), currentTimeMillis());
-        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-    }
-
     protected void setProgressAndNotify(String statusText, int progress) {
         if (!isCancelled()) {
-            notification.contentView.setTextViewText(R.id.status_text, statusText);
-            notification.contentView.setProgressBar(R.id.status_progress, maxProgress, progress, false);
-            notificationManager.notify(NOTIFICATION_ID, notification);
+            RapidFtrApplication.getApplicationInstance().showProgressNotification(recordSyncService.getNotificationId(),
+                    context.getString(R.string.sync_title), statusText, maxProgress, progress, false);
         }
     }
 
@@ -171,7 +166,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
                 }
                 recordSyncService.setMedia(incomingRecord);
                 setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
-                startProgress += 1 ;
+                startProgress += 1;
             } catch (Exception e) {
                 Log.e("SyncAllDataTask", "Error syncing record", e);
                 throw new RuntimeException(e);

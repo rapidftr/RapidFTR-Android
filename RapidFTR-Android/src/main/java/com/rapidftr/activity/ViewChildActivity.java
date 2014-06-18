@@ -2,12 +2,15 @@ package com.rapidftr.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.BaseModel;
+import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.LogOutService;
@@ -15,6 +18,8 @@ import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncRecordTask;
 import com.rapidftr.utils.http.FluentRequest;
 import org.json.JSONException;
+
+import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
 
 public class ViewChildActivity extends BaseChildActivity {
@@ -55,13 +60,31 @@ public class ViewChildActivity extends BaseChildActivity {
     protected void sync() {
         SyncRecordTask task = createChildSyncTask();
         task.setActivity(this);
-         RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
+        RapidFtrApplication.getApplicationInstance()
+                .setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
     }
 
-    protected SyncRecordTask createChildSyncTask(){
+    protected SyncRecordTask createChildSyncTask() {
         ChildRepository childRepository = inject(ChildRepository.class);
-        return new SyncRecordTask(new ChildSyncService(this.getContext(), childRepository, new FluentRequest()), childRepository, getCurrentUser());
+        return new SyncRecordTask(new ChildSyncService(this.getContext(), childRepository, new FluentRequest()),
+                childRepository, getCurrentUser()) {
+            @Override
+            public Boolean doInBackground(BaseModel... params) {
+                try {
+                    Child childRecord = (Child) service.sync(params[0], currentUser);
+                    if (!childRecord.isSynced()) {
+                        RapidFtrApplication.getApplicationInstance()
+                                .getAsyncTaskWithDialog().setFailureMessage(childRecord.getSyncLog());
+                    }
+                    return childRecord.isSynced();
+                } catch (Exception e) {
+                    Log.e(APP_IDENTIFIER, "Error syncing one child record", e);
+                    return false;
+                }
+            }
+        };
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.sync_single_menu, menu);

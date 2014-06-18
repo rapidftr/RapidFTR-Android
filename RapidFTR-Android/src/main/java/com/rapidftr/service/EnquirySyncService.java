@@ -24,6 +24,9 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     private final EnquiryRepository enquiryRepository;
     private final SharedPreferences sharedPreferences;
 
+    private static final int NOTIFICATION_ID = 1021;
+    private static final String NOTIFICATION_TITLE = "Enquiries";
+
     @Inject
     public EnquirySyncService(SharedPreferences sharedPreferences,
                               EnquiryHttpDao enquiryHttpDao,
@@ -32,6 +35,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
         this.enquiryHttpDao = enquiryHttpDao;
         this.enquiryRepository = enquiryRepository;
     }
+
     @Override
     public Enquiry sync(Enquiry record, User currentUser) throws IOException, JSONException, HttpException {
         try {
@@ -67,4 +71,16 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     public void setMedia(Enquiry enquiry) throws IOException, JSONException {
         // do nothing
     }
+
+    @Override
+    public int getNotificationId() {
+        return NOTIFICATION_ID;
+    }
+
+    @Override
+    public String getNotificationTitle() {
+        return NOTIFICATION_TITLE;
+    }
+
+
 }

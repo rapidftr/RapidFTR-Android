@@ -122,6 +122,11 @@ public class Child extends BaseModel {
         return new JSONObject(this, names.toArray(new String[names.size()]));
     }
 
+    @Override
+    public boolean isSynced() {
+        return super.isSynced();
+    }
+
     public List<History> changeLogs(Child child, JSONArray existingHistories) throws JSONException {
         //fetch all the histories from this child, which are greater than last_synced_at and merge the histories
         JSONArray names = this.names();
