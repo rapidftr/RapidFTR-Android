@@ -83,9 +83,7 @@ public abstract class AsyncTaskWithDialog<Params, Progress, Result> extends Asyn
                     message = RapidFtrApplication.getApplicationInstance().getString(defaultFailureMessage);
                 }
 
-                RapidFtrApplication.getApplicationInstance()
-                        .showNotification(notificationId,
-                                context.getString(R.string.info), message);
+                Toast.makeText(RapidFtrApplication.getApplicationInstance(), message, Toast.LENGTH_LONG).show();
             }
 
             public void cancel() {
