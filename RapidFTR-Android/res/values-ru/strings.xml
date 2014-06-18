@@ -90,6 +90,8 @@
     <string name="child_records_sync_success">Дочерние записи успешно синхронизировано</string>
     <string name="enquiry_records_sync_success">Дознание Записи успешно синхронизировано</string>
     <string name="sync_title">Synchronising</string>
+    <string name="enquires_sync_title">Synchronising Enquiries</string>
+    <string name="child_sync_title">Synchronising Children</string>
 
 </resources>
 

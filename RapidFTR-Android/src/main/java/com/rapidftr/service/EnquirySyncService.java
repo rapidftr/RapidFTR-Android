@@ -2,6 +2,7 @@ package com.rapidftr.service;
 
 import android.content.SharedPreferences;
 import com.google.inject.Inject;
+import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
@@ -25,7 +26,6 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     private final SharedPreferences sharedPreferences;
 
     private static final int NOTIFICATION_ID = 1021;
-    private static final String NOTIFICATION_TITLE = "Enquiries";
 
     @Inject
     public EnquirySyncService(SharedPreferences sharedPreferences,
@@ -79,7 +79,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
 
     @Override
     public String getNotificationTitle() {
-        return NOTIFICATION_TITLE;
+        return RapidFtrApplication.getApplicationInstance().getString(R.string.enquires_sync_title);
     }
 
 

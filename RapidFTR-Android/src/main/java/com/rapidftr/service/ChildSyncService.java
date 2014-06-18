@@ -43,7 +43,6 @@ public class ChildSyncService implements SyncService<Child> {
     private Object audioAttachments;
 
     private static final int NOTIFICATION_ID = 1022;
-    private static final String NOTIFICATION_TITLE = "Children";
 
     @Inject
     public ChildSyncService(RapidFtrApplication context, ChildRepository childRepository, FluentRequest fluentRequest) {
@@ -115,7 +114,7 @@ public class ChildSyncService implements SyncService<Child> {
 
     @Override
     public String getNotificationTitle() {
-        return NOTIFICATION_TITLE;
+        return context.getString(R.string.child_sync_title);
     }
 
     private void setChildAttributes(Child child) throws JSONException {
