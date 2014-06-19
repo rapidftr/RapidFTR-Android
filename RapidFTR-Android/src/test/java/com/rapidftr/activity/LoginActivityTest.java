@@ -1,123 +1,73 @@
 package com.rapidftr.activity;
 
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.rapidftr.CustomTestRunner;
-import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.task.LoginAsyncTask;
-import com.rapidftr.utils.SpyActivityController;
+import com.rapidftr.bean.AndroidMockPolicy;
+import com.rapidftr.bean.LoginTask;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.shadows.ShadowHandler;
-import org.robolectric.shadows.ShadowIntent;
-import org.robolectric.shadows.ShadowToast;
-import org.robolectric.util.ActivityController;
+import org.powermock.core.classloader.annotations.MockPolicy;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.IOException;
-
-import static android.content.Context.MODE_PRIVATE;
-import static com.rapidftr.RapidFtrApplication.FORM_SECTIONS_PREF;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.robolectric.Robolectric.shadowOf;
-import static org.robolectric.Robolectric.shadowOf_;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
-@RunWith(CustomTestRunner.class)
+@RunWith(PowerMockRunner.class)
+@MockPolicy(AndroidMockPolicy.class)
 public class LoginActivityTest {
 
-    private Button loginButton;
-    private EditText serverUrl;
-    private EditText userName;
-    private EditText password;
-    private TextView signUp;
+    EditText userNameView = mock(EditText.class, RETURNS_DEEP_STUBS);
+    EditText passwordView = mock(EditText.class, RETURNS_DEEP_STUBS);
+    EditText urlView = mock(EditText.class, RETURNS_DEEP_STUBS);
+    TextView changeUrlView = mock(TextView.class, RETURNS_DEEP_STUBS);
+    LoginTask loginTask = mock(LoginTask.class, RETURNS_DEEP_STUBS);
 
-    private ActivityController<LoginActivity> activityController;
-    private LoginActivity loginActivity;
+    LoginActivity loginActivity = mock(LoginActivity.class, RETURNS_DEEP_STUBS);
 
     @Before
     public void setUp() throws Exception {
-        activityController = SpyActivityController.of(LoginActivity.class);
-        loginActivity = activityController.attach().get();
-	    loginActivity.getContext().setCurrentUser(null);
-        loginActivity.getContext().setFormSections((String) null);
-        activityController.create();
-
-        loginButton = (Button) loginActivity.findViewById(R.id.login_button);
-        signUp = (TextView) loginActivity.findViewById(R.id.new_user_signup_link);
-        serverUrl = (EditText) loginActivity.findViewById(R.id.url);
-        serverUrl.setText("http://dev.rapidftr.com:3000");
-        userName = (EditText) loginActivity.findViewById(R.id.username);
-        userName.setText("rapidftr");
-        password = (EditText) loginActivity.findViewById(R.id.password);
-        password.setText("rapidftr");
+        loginActivity.userNameView = userNameView;
+        loginActivity.passwordView = passwordView;
+        loginActivity.urlView = urlView;
+        loginActivity.changeUrlView = changeUrlView;
+        loginActivity.loginTask = loginTask;
     }
 
     @Test
-    public void shouldThrowUnauthorizedErrorForInvalidUsernameAndPassword() throws IOException {
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401,"some response body");
-        loginButton.performClick();
-        ShadowHandler.idleMainLooper();
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.unauthorized)));
-    }
-
-    @Ignore
-    @Test
-    public void shouldThrowConnectionRefusedIfServerIsNotAvailable() throws IOException {
-        serverUrl.setText("rapidftr.com:abcd");
-        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(404,"some response body");
-        loginButton.performClick();
-        ShadowHandler.idleMainLooper();
-        assertThat(ShadowToast.getTextOfLatestToast(), equalTo(loginActivity.getString(R.string.server_not_reachable)));
+    public void testGoToHomeScreenIfLoggedIn() {
+        doCallRealMethod().when(loginActivity).afterCreate();
+        loginActivity.afterCreate();
+        verify(loginActivity).goToHomeScreenIfLoggedIn();
     }
 
     @Test
-    public void shouldRestoreServerUrlOnLoad() {
-        String url = "http://dev.rapidftr.com:3000";
-        SharedPreferences sharedPreferences = Robolectric.application.getSharedPreferences("RAPIDFTR_PREFERENCES", MODE_PRIVATE);
-        sharedPreferences.edit().putString("SERVER_URL", "http://dev.rapidftr.com:3000").commit();
-
-        activityController.create();
-        assertThat(serverUrl.getText().toString(), equalTo(url));
+    public void shouldRestoreServerUrlWhenLoading() {
+        doCallRealMethod().when(loginActivity).toggleBaseUrl();
+        when(loginActivity.getContext().getSharedPreferences().getString(SERVER_URL_PREF, null)).thenReturn("rapidftr.com:1234");
+        loginActivity.toggleBaseUrl();
+        verify(loginActivity.urlView).setText("rapidftr.com:1234");
     }
 
     @Test
-    public void shouldRequireUsernamePasswordAndServerURL() {
-        userName  = mock(EditText.class);
-        password  = mock(EditText.class);
-        serverUrl = mock(EditText.class);
-
-        doReturn(userName).when(loginActivity).findViewById(R.id.username);
-        doReturn(password).when(loginActivity).findViewById(R.id.password);
-
-        assertThat(loginActivity.isValid(), equalTo(false));
-        verify(userName).setError(loginActivity.getString(R.string.username_required));
-        verify(password).setError(loginActivity.getString(R.string.password_required));
+    public void shouldInvalidateUserNameAndPassword() {
+        doCallRealMethod().when(loginActivity).isValid();
+        given(loginActivity.userNameView.getText().toString()).willReturn(null);
+        given(loginActivity.passwordView.getText().toString()).willReturn("");
+        assertFalse(loginActivity.isValid());
     }
 
     @Test
-    public void shouldReturnEmptyStringWhenEditTextIsEmpty() {
-        userName.setText("     ");
-        assertThat(loginActivity.getEditText(R.id.username), equalTo(""));
-    }
-
-    @Test
-    public void shouldStartSignUpActivityWhenClickedOnSignUpLink(){
-        signUp.performClick();
-        ShadowActivity shadowActivity = shadowOf_(new LoginActivity());
-        Intent startedIntent = shadowActivity.getNextStartedActivity();
-        ShadowIntent shadowIntent = shadowOf_(startedIntent);
-        assertThat(shadowIntent.getComponent().getClassName(), equalTo("com.rapidftr.activity.SignupActivity"));
+    public void shouldValidateUserNameAndPassword() {
+        doCallRealMethod().when(loginActivity).isValid();
+        given(loginActivity.userNameView.getText().toString()).willReturn("test");
+        given(loginActivity.passwordView.getText().toString()).willReturn("test");
+        assertTrue(loginActivity.isValid());
     }
 
 }

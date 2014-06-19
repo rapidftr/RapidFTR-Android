@@ -2,7 +2,7 @@ package com.rapidftr.service;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
-import org.apache.http.HttpResponse;
+import com.rapidftr.utils.http.FluentResponse;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class LoginService {
 
-    public HttpResponse login(Context context, String username, String password, String url) throws IOException {
+    public FluentResponse login(Context context, String username, String password, String url) throws IOException {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
         return http()

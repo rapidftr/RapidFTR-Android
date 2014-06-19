@@ -26,6 +26,7 @@ import com.rapidftr.utils.ApplicationInjector;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
+import org.androidannotations.annotations.EApplication;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +34,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
+@EApplication
 public class RapidFtrApplication extends Application {
 
 

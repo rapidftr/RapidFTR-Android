@@ -39,10 +39,8 @@ public class DeviceAdminActivity extends FragmentActivity{
     }
 
     protected void displayLoginScreen() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
         finish();
+        LoginActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
     }
 
     @Override

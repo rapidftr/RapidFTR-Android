@@ -20,7 +20,7 @@
     <uses-feature android:name="android.hardware.camera"/>
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
-    <application android:name=".RapidFtrApplication"
+    <application android:name=".RapidFtrApplication_"
                  android:icon="@drawable/icon"
                  android:label="@string/app_name"
                  android:theme="@style/Theme.RapidFTRtheme">
@@ -45,7 +45,7 @@
         <activity android:name=".activity.ViewAllEnquiryActivity"/>
         <activity android:name=".activity.CreateEnquiryActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.ViewEnquiryActivity"/>
-        <activity android:name=".activity.LoginActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
+        <activity android:name=".activity.LoginActivity_" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.EditEnquiryActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.ViewPhotoActivity" android:noHistory="true" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
 

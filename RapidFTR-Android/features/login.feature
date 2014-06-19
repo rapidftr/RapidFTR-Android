@@ -1,4 +1,6 @@
 Feature: Login feature
+
+  @logout
   Scenario: No Login Details
     When I press "Log In"
     Then I should see "Username is required"

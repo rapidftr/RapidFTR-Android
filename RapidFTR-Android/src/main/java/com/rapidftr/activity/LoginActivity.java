@@ -1,53 +1,60 @@
 package com.rapidftr.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+import com.google.common.base.Strings;
 import com.rapidftr.R;
-import com.rapidftr.task.LoginAsyncTask;
-
-import java.io.IOException;
+import com.rapidftr.bean.LoginTask;
+import org.androidannotations.annotations.*;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 
+@EActivity(R.layout.activity_login)
 public class LoginActivity extends RapidFtrActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        goToHomeScreenIfLoggedIn();
+    @Bean @NonConfigurationInstance
+    protected LoginTask loginTask;
 
-        setContentView(R.layout.activity_login);
+    @ViewById(R.id.username)
+    protected EditText userNameView;
+
+    @ViewById(R.id.password)
+    protected EditText passwordView;
+
+    @ViewById(R.id.url)
+    protected EditText urlView;
+
+    @ViewById(R.id.change_url)
+    protected TextView changeUrlView;
+
+    @AfterViews
+    public void afterCreate() {
         toggleBaseUrl();
-        startActivityOn(R.id.new_user_signup_link, SignupActivity.class);
-        findViewById(R.id.change_url).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                toggleView(R.id.url, View.VISIBLE);
-                toggleView(R.id.change_url, View.GONE);
-            }
-        });
-        findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                try {
-                    if (isValid()) {
-                        String username = getEditText(R.id.username);
-                        String password = getEditText(R.id.password);
-                        String baseUrl = getEditText(R.id.url);
-                        login(username, password, baseUrl);
-                    }
-                } catch (IOException e) {
-                    logError(e.getMessage());
-                    makeToast(R.string.internal_error);
-                }
-            }
-        });
+        goToHomeScreenIfLoggedIn();
     }
 
-    public void signUp(View view) {
+    @Click(R.id.change_url)
+    public void onChangeUrlClick() {
+        urlView.setVisibility(View.VISIBLE);
+        changeUrlView.setVisibility(View.GONE);
+    }
+
+    @Click(R.id.login_button)
+    public void onLoginClick() {
+        if (isValid()) {
+            String username = userNameView.getText().toString().trim();
+            String password = passwordView.getText().toString().trim();
+            String url = urlView.getText().toString().trim();
+            login(username, password, url);
+        }
+    }
+
+    @Click(R.id.new_user_signup_link)
+    public void onSignupClick() {
         startActivity(new Intent(this, SignupActivity.class));
     }
-
 
     @Override
     protected void onResume() {
@@ -55,32 +62,29 @@ public class LoginActivity extends RapidFtrActivity {
         goToHomeScreenIfLoggedIn();
     }
 
-    private void toggleBaseUrl() {
+    protected void toggleBaseUrl() {
         String preferencesUrl = getContext().getSharedPreferences().getString(SERVER_URL_PREF, null);
         if (preferencesUrl != null && !preferencesUrl.equals("")) {
-            setEditText(R.id.url, preferencesUrl);
-            toggleView(R.id.url, View.GONE);
-            toggleView(R.id.change_url, View.VISIBLE);
+            urlView.setText(preferencesUrl);
+            urlView.setVisibility(View.GONE);
+            changeUrlView.setVisibility(View.VISIBLE);
         }
     }
 
-    public boolean isValid() {
-        return validateTextFieldNotEmpty(R.id.username, R.string.username_required)
-                & validateTextFieldNotEmpty(R.id.password, R.string.password_required);
+    protected boolean isValid() {
+        return !(
+            Strings.isNullOrEmpty(userNameView.getText().toString()) ||
+            Strings.isNullOrEmpty(passwordView.getText().toString())
+        );
     }
 
-
-    protected void toggleView(int field, int visibility) {
-        View view = findViewById(field);
-        view.setVisibility(visibility);
+    @Background
+    protected void login(String username, String password, String baseUrl) {
+        loginTask.login(username, password, baseUrl);
+        goToHomeScreenIfLoggedIn();
     }
 
-    protected void login(String username, String password, String baseUrl) throws IOException {
-        LoginAsyncTask task = inject(LoginAsyncTask.class);
-        task.setActivity(this);
-        task.execute(username, password, baseUrl);
-    }
-
+    @UiThread
     protected void goToHomeScreenIfLoggedIn() {
         if (getContext().isLoggedIn()){
 	        finish();
@@ -89,10 +93,6 @@ public class LoginActivity extends RapidFtrActivity {
 	        Intent broadcastLogout = new Intent(LOGOUT_INTENT_FILTER);
 	        sendBroadcast(broadcastLogout);
         }
-    }
-
-    protected void setEditText(int resId, String text) {
-        ((EditText) findViewById(resId)).setText(text);
     }
 
     @Override

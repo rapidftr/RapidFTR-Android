@@ -33,7 +33,7 @@ public class RapidFtrActivityTest {
     public void shouldNotRenderMenuWhenUserIsNotLoggedIn() throws IOException {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         instance.setCurrentUser(null);
-        RapidFtrActivity loginActivity = new LoginActivity();
+        RapidFtrActivity loginActivity = new LoginActivity_();
 
         Menu menu = mock(Menu.class);
         doReturn(mock(MenuItem.class)).when(menu).getItem(anyInt());
@@ -46,7 +46,7 @@ public class RapidFtrActivityTest {
     public void shouldRenderMenuWhenUserIsLoggedIn() throws IOException {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         instance.setCurrentUser(createUser());
-        RapidFtrActivity loginActivity = new LoginActivity();
+        RapidFtrActivity loginActivity = new LoginActivity_();
         Menu menu = mock(Menu.class);
         doReturn(mock(MenuItem.class)).when(menu).getItem(anyInt());
         doReturn(mock(MenuItem.class)).when(menu).findItem(anyInt());
@@ -59,7 +59,7 @@ public class RapidFtrActivityTest {
     public void shouldFinishActivityOnLogout() throws IOException {
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         instance.setCurrentUser(createUser());
-        RapidFtrActivity loginActivity = new LoginActivity();
+        RapidFtrActivity loginActivity = new LoginActivity_();
         MenuItem menuItem = mock(MenuItem.class);
         given(menuItem.getItemId()).willReturn(R.id.logout);
 
