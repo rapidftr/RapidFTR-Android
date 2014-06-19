@@ -11,11 +11,7 @@ Feature: Login feature
     Then I should see "Incorrect username or password"
 
   Scenario: Correct Login Details
-    When I enter text "field_worker" into field with id "username"
-    And I enter text "field_worker" into field with id "password"
-    And I enter text "https://test.rapidftr.com" into field with id "url"
-    And I press "Log In"
-    And I wait up to 20 seconds for "Basic Identity" to appear
+    Given that I am logged in as "field_worker" with password "field_worker"
     Then I should see "Name"
     And I should see "Protection Status"
     And I should see "New Registration"
@@ -25,13 +21,15 @@ Feature: Login feature
     And I press "Change URL"
     Then I should see "https://test.rapidftr.com"
 
+  Scenario: Navigation Back to Login Page is Disabled for Logged-in Users
+    Given that I am logged in as "field_worker" with password "field_worker"
+    When I go back
+    Then I should not see "Log In"
+    And I should not see "Sign Up"
+
   @reinstall
   Scenario: Password Reset
-    When I enter text "field_worker" into field with id "username"
-    And I enter text "field_worker" into field with id "password"
-    And I enter text "https://test.rapidftr.com" into field with id "url"
-    And I press "Log In"
-    And I wait up to 20 seconds for "Basic Identity" to appear
+    Given that I am logged in as "field_worker" with password "field_worker"
     When I select "Change Password" from the menu
     And I enter text "field_worker" into field with id "current_password"
     And I enter text "rapidftrnew" into field with id "new_password"
@@ -58,11 +56,7 @@ Feature: Login feature
 
   @reinstall
   Scenario: Password Reset Errors (and wrong current password)
-    When I enter text "field_worker" into field with id "username"
-    And I enter text "field_worker" into field with id "password"
-    And I enter text "https://test.rapidftr.com" into field with id "url"
-    And I press "Log In"
-    And I wait up to 20 seconds for "Basic Identity" to appear
+    Given that I am logged in as "field_worker" with password "field_worker"
     When I select "Change Password" from the menu
     And I enter text "" into field with id "current_password"
     And I enter text "" into field with id "new_password"
