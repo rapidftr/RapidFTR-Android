@@ -12,6 +12,7 @@ Feature: Login feature
 
   Scenario: Correct Login Details
     Given that I am logged in as "field_worker" with password "field_worker"
+    And I wait up to 10 seconds for "Basic Identity" to appear
     Then I should see "Name"
     And I should see "Protection Status"
     And I should see "New Registration"

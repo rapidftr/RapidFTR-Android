@@ -9,10 +9,10 @@ Given(/^that I am logged in as "(.*?)" with password "(.*?)"$/) do |username, pa
   query('android.widget.EditText id:"url"', setText: '')
   query("android.widget.EditText id:'url'", setText: 'https://test.rapidftr.com')
   touch(query("android.widget.Button {text CONTAINS[c] 'Log In'}"))
-  sleep(2)
+  macro 'I wait up to 20 seconds for "Basic Identity" to appear'
 end
 
 When(/^I enter "(.*?)" into the "(.*?)" field of the Child Registration Form$/) do |text, field_name|
   sleep(2)
-  query('EditText index:3', :setText => text)
+  query('EditText', :setText => text)
 end
