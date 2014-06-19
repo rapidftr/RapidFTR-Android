@@ -55,7 +55,7 @@
         <repository>
             <id>android-repo</id>
             <name>Android Repository</name>
-            <url>file://${ANDROID_HOME}/extras/android/m2repository</url>
+            <url>file://${android.sdk.path}/extras/android/m2repository</url>
         </repository>
         <repository>
             <id>MavenCentral</id>
