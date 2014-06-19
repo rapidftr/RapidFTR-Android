@@ -318,17 +318,12 @@ public abstract class RapidFtrActivity extends Activity {
 
     protected boolean validateTextFieldNotEmpty(int id, int messageId) {
         View view = findViewById(id);
-        EditText editText;
-        String value;
-        if (view instanceof EditText) {
-            editText = (EditText) findViewById(id);
-            value = getEditText(id);
-        } else {
-            TextField textField = (TextField) view;
-            editText = (EditText) textField.findViewById(R.id.value);
-            value = getText(editText);
-        }
+        view = (view instanceof TextField) ? view.findViewById(R.id.value) : view;
+        return validateTextFieldNotEmpty((EditText) view, messageId);
+    }
 
+    protected boolean validateTextFieldNotEmpty(EditText editText, int messageId) {
+        String value = getEditText(editText.getId());
         if (value == null || "".equals(value)) {
             editText.setError(getString(messageId));
             return false;

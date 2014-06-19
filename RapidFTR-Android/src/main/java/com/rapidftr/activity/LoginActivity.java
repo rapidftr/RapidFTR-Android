@@ -72,10 +72,8 @@ public class LoginActivity extends RapidFtrActivity {
     }
 
     protected boolean isValid() {
-        return !(
-            Strings.isNullOrEmpty(userNameView.getText().toString()) ||
-            Strings.isNullOrEmpty(passwordView.getText().toString())
-        );
+        return validateTextFieldNotEmpty(userNameView, R.string.username_required) &
+               validateTextFieldNotEmpty(passwordView, R.string.password_required);
     }
 
     @Background

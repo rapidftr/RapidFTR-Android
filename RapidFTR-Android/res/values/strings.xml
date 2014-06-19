@@ -13,7 +13,7 @@
     <string name="login_form_failed">Failed to load latest form sections, you can still keep using older forms</string>
     <string name="login_online_success">Online login successful</string>
     <string name="login_offline_success">Offline login successful</string>
-    <string name="login_invalid">Login failed, Invalid credentials</string>
+    <string name="login_invalid">Login failed, Incorrect username or password</string>
 
     <!-- Others, need to organize/group as we go -->
     <string name="log_out">Log Out</string>

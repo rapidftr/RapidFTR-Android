@@ -1,6 +1,5 @@
 Feature: Login feature
 
-  @logout
   Scenario: No Login Details
     When I press "Log In"
     Then I should see "Username is required"
@@ -16,7 +15,7 @@ Feature: Login feature
     And I enter text "field_worker" into field with id "password"
     And I enter text "https://test.rapidftr.com" into field with id "url"
     And I press "Log In"
-    And I wait up to 10 seconds for "Basic Identity" to appear
+    And I wait up to 20 seconds for "Basic Identity" to appear
     Then I should see "Name"
     And I should see "Protection Status"
     And I should see "New Registration"
@@ -32,7 +31,7 @@ Feature: Login feature
     And I enter text "field_worker" into field with id "password"
     And I enter text "https://test.rapidftr.com" into field with id "url"
     And I press "Log In"
-    And I wait up to 10 seconds for "Basic Identity" to appear
+    And I wait up to 20 seconds for "Basic Identity" to appear
     When I select "Change Password" from the menu
     And I enter text "field_worker" into field with id "current_password"
     And I enter text "rapidftrnew" into field with id "new_password"
@@ -49,7 +48,7 @@ Feature: Login feature
     And I enter text "" into field with id "password"
     And I enter text "rapidftrnew" into field with id "password"
     And I press "Log In"
-    And I wait up to 10 seconds for "Basic Identity" to appear
+    And I wait up to 20 seconds for "Basic Identity" to appear
     And I select "Change Password" from the menu
     And I enter text "rapidftrnew" into field with id "current_password"
     And I enter text "field_worker" into field with id "new_password"
@@ -63,7 +62,7 @@ Feature: Login feature
     And I enter text "field_worker" into field with id "password"
     And I enter text "https://test.rapidftr.com" into field with id "url"
     And I press "Log In"
-    And I wait up to 10 seconds for "Basic Identity" to appear
+    And I wait up to 20 seconds for "Basic Identity" to appear
     When I select "Change Password" from the menu
     And I enter text "" into field with id "current_password"
     And I enter text "" into field with id "new_password"
