@@ -104,7 +104,7 @@ public class DeviceAdminActivityTest {
         ShadowIntent shadowIntent = shadowOf_(shadowActivity.getNextStartedActivity());
 
         assertEquals(shadowIntent.getFlags(), Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        assertThat(shadowIntent.getComponent().getClassName(), equalTo(LoginActivity.class.getName()));
+        assertThat(shadowIntent.getComponent().getClassName(), equalTo(LoginActivity_.class.getName()));
     }
 
 }

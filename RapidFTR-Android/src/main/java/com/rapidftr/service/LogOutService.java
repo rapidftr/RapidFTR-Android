@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.LoginActivity;
+import com.rapidftr.activity.LoginActivity_;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.utils.http.FluentRequest;
 
@@ -26,8 +27,9 @@ public class LogOutService {
         context.setCurrentUser(null);
         FluentRequest.getHttpClient().getCookieStore().clear();
         Toast.makeText(context, R.string.logout_successful, LENGTH_LONG).show();
+
         currentActivity.finish();
-        currentActivity.startActivity(new Intent(currentActivity, LoginActivity.class));
+        LoginActivity_.intent(currentActivity).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
     }
 
     protected void cancelSync(RapidFtrApplication context) {

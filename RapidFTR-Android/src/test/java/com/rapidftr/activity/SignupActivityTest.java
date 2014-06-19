@@ -5,13 +5,15 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.User;
 import com.rapidftr.utils.SpyActivityController;
-import org.robolectric.shadows.ShadowToast;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.shadows.ShadowToast;
 
 import static com.rapidftr.CustomTestRunner.createUser;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -27,30 +29,19 @@ public class SignupActivityTest {
     @Before
     public void setup(){
         signupActivity = SpyActivityController.of(SignupActivity.class).create().get();
-        userName = (EditText)signupActivity.findViewById(R.id.username);
+        userName = (EditText) signupActivity.findViewById(R.id.username);
         password = (EditText)signupActivity.findViewById(R.id.password);
         confirmPassword = (EditText)signupActivity.findViewById(R.id.confirm_password);
         organisation = (EditText)signupActivity.findViewById(R.id.organisation);
     }
 
     @Test
-    public void shouldCheckIfMandatoryFieldsAreFilled()
-    {
-        userName  = mock(EditText.class);
-        password  = mock(EditText.class);
-        organisation = mock(EditText.class);
-        confirmPassword = mock(EditText.class);
-
-        doReturn(userName).when(signupActivity).findViewById(R.id.username);
-        doReturn(password).when(signupActivity).findViewById(R.id.password);
-        doReturn(organisation).when(signupActivity).findViewById(R.id.organisation);
-        doReturn(confirmPassword).when(signupActivity).findViewById(R.id.confirm_password);
-
+    public void shouldCheckIfMandatoryFieldsAreFilled() {
         assertThat(signupActivity.isValid(), equalTo(false));
-        verify(userName).setError(signupActivity.getString(R.string.username_required));
-        verify(password).setError(signupActivity.getString(R.string.password_required));
-        verify(organisation).setError(signupActivity.getString(R.string.organisation_required));
-        verify(confirmPassword).setError(signupActivity.getString(R.string.confirm_password_required));
+        assertEquals(userName.getError(), signupActivity.getString(R.string.username_required));
+        assertEquals(password.getError(), signupActivity.getString(R.string.password_required));
+        assertEquals(organisation.getError(), signupActivity.getString(R.string.organisation_required));
+        assertEquals(confirmPassword.getError(), signupActivity.getString(R.string.confirm_password_required));
     }
 
     @Test
@@ -100,7 +91,7 @@ public class SignupActivityTest {
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(signupActivity.getString(R.string.registered)+" username"));
     }
 
-    @Test
+    @Test @Ignore // WIP
     public void shouldCheckIfUsernameIsAlreadyTakenInMobile() throws Exception {
         signupActivity.getContext().getSharedPreferences().edit().putString("user_username","{}").commit();
         userName  = mock(EditText.class);

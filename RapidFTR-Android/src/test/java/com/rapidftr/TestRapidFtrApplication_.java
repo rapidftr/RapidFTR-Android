@@ -6,9 +6,9 @@ import org.robolectric.TestLifecycleApplication;
 import java.lang.reflect.Method;
 
 @Ignore
-public class TestRapidFtrApplication extends RapidFtrApplication implements TestLifecycleApplication {
+public class TestRapidFtrApplication_ extends RapidFtrApplication implements TestLifecycleApplication {
 
-    public TestRapidFtrApplication() {
+    public TestRapidFtrApplication_() {
         super(CustomTestRunner.INJECTOR);
     }
 
