@@ -1,3 +1,4 @@
 source 'https://rubygems.org'
 
-gem 'calabash-android',      '0.4.21'
+gem 'calabash-android',      '0.4.20'
+gem 'httparty', '~> 0.13.1'

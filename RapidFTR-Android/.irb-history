@@ -1,0 +1,50 @@
+reinstall_apps
+start_test_server_in_background
+query('EditText index:3', :setText => text)
+query('EditText index:3', :setText => text)
+query('EditText index:3', :setText => 'Text')
+query('EditText index:3', :setText => 'New Text')
+query('EditText index:3', :setText => 'Other Text')
+query('EditText index:3', :setText => 'Other Text')
+query('EditText index:3', :setText => 'Other Text A')
+query('EditText index:3', :setText => 'Other Text AB')
+query('EditText index:3', :setText => 'Other Text AB')
+reinstall_apps
+start_test_server_in_background
+flash('EditText index:3', :setText => 'Other Text AB')
+flash(query('EditText index:3', :setText => 'Other Text AB'))
+query
+flash
+reinstall apps
+re
+reinstall_apps
+start_test_server_in_background
+query("android.widget.EditText id:'username'", setText: 'password')
+performAction.enter
+performAction.enter_text()
+performAction.enter_text('username')
+performAction.enter_text('username')
+reinstall_apps
+start_test_server_in_background
+query("android.widget.Button {text CONTAINS[c] 'Change URL'}")
+reinstall_apps
+start_test_server_in_background
+query("android.widget.TextView {text CONTAINS[c] 'Change URL'}"
+query("android.widget.TextView {text CONTAINS[c] 'Change URL'}"
+query("android.widget.TextView {text CONTAINS[c] 'Change URL'}".is_empty
+query("android.widget {text CONTAINS[c] 'Change URL'}"
+query("*")
+query("*")
+reinstall_apps
+start_test_server_in_background
+query("*")
+query("*")
+query("*")
+query("android.widget {text CONTAINS[c] 'Change URL'}"
+query("*")
+"
+'
+"
+query("*")
+query("*")
+query("*")
