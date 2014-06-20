@@ -185,8 +185,12 @@ public class ChildSyncService implements SyncService<Child> {
     }
 
     public HttpResponse getPhoto(Child child, String fileName) throws IOException {
+        String photoUrl =
+                String.format("/children/%s/photo/%s/resized/%sx%s",
+                        child.optString("_id"), fileName, PhotoCaptureHelper.PHOTO_WIDTH, PhotoCaptureHelper.PHOTO_HEIGHT);
+
         return fluentRequest
-                .path(String.format("/api/children/%s/photo/%s", child.optString("_id"), fileName))
+                .path(photoUrl)
                 .context(context)
                 .get();
     }
