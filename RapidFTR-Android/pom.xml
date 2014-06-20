@@ -411,7 +411,7 @@
                         <version>3.1</version>
                         <configuration>
                             <rulesets>
-                                <ruleset>${modules.root.dir}/pmd.xml</ruleset>
+                                <ruleset>${project.basedir}/pmd.xml</ruleset>
                             </rulesets>
                             <linkxref>true</linkxref>
                             <sourceEncoding>utf-8</sourceEncoding>
