@@ -7,3 +7,4 @@ classes/
 gen/
 .nomedia/
 screenshot_*
+.irb-history
