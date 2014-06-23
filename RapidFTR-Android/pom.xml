@@ -29,6 +29,7 @@
         <local.repo.dir>${project.basedir}/../repo</local.repo.dir>
         <key.password />
         <keystore.password />
+        <keystore.file />
         <device.wipe.flag>0</device.wipe.flag>
         <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
         <platform.version>10</platform.version>
@@ -291,6 +292,11 @@
     <profiles>
         <profile>
             <id>sign</id>
+            <activation>
+                <property>
+                    <name>android.release</name>
+                </property>
+            </activation>
             <properties>
                 <device.wipe.flag>1</device.wipe.flag>
             </properties>
@@ -313,7 +319,7 @@
                                     <includes>
                                         <include>target/*.apk</include>
                                     </includes>
-                                    <keystore>${project.basedir}/../rapidftr.keystore</keystore>
+                                    <keystore>${keystore.file}</keystore>
                                     <storepass>${keystore.password}</storepass>
                                     <keypass>${key.password}</keypass>
                                     <alias>rapidftr</alias>
@@ -332,9 +338,7 @@
                         <artifactId>android-maven-plugin</artifactId>
                         <inherited>true</inherited>
                         <configuration>
-                            <sign>
-                                <debug>false</debug>
-                            </sign>
+                            <sign><debug>false</debug></sign>
                         </configuration>
                     </plugin>
                 </plugins>
