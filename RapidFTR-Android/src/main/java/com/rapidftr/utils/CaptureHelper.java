@@ -57,7 +57,7 @@ public class CaptureHelper {
     protected Cipher getCipher(int mode, String fileName, String password) throws GeneralSecurityException {
         int iterationCount = 100, saltLength = 8, keyLength = 256;
 
-        SecureRandom random = new SecureRandom();
+        SecureRandom random = EncryptionUtil.getSecureRandom();
         random.setSeed(fileName.getBytes());
         byte[] salt = new byte[saltLength];
         random.nextBytes(salt);
