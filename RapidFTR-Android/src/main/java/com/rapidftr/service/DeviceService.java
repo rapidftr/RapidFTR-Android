@@ -38,7 +38,7 @@ public class DeviceService {
 
         String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
         JSONObject device = new JSONObject(responseAsString);
-        return device.getBoolean("blacklisted");
+        return device.optBoolean("blacklisted", false);
     }
 
     public void wipeData() {
