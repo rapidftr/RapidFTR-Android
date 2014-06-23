@@ -212,10 +212,14 @@ public abstract class RapidFtrActivity extends Activity {
             syncChildTask.setSuccessMessage(getString(R.string.child_records_sync_success));
             executeTask(syncChildTask);
 
-            SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {
+            /**
+             * This has been temporarily commented out to disable the enquires sync for this version of the application
+             */
+
+            /*SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {
             });
             syncEnquiryTask.setSuccessMessage(getString(R.string.enquiry_records_sync_success));
-            executeTask(syncEnquiryTask);
+            executeTask(syncEnquiryTask);*/
         }
     }
 
