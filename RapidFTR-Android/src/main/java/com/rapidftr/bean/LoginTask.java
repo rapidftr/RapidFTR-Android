@@ -43,8 +43,10 @@ public class LoginTask {
     }
 
     protected User loadOnline(String userName, String password, String url) {
-        if (!connectivityBean.isOnline())
+        if (!connectivityBean.isOnline()) {
+            notifyProgress(login_online_failed);
             return null;
+        }
 
         try {
             FluentResponse response = new LoginService().login(application, userName, password, url);
