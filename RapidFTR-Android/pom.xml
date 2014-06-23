@@ -7,7 +7,7 @@
     <name>RapidFTR Android Client</name>
 
     <parent>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <groupId>com.rapidftr</groupId>
         <artifactId>rapidftr-android-parent</artifactId>
     </parent>

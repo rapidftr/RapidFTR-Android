@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <groupId>com.rapidftr</groupId>
     <artifactId>rapidftr-android-parent</artifactId>
     <name>RapidFTR Android Parent</name>
@@ -30,7 +30,7 @@
     </modules>
 
     <properties>
-        <android.version>2.2</android.version>
+        <android.version>10</android.version>
         <platform.version>2.2.1</platform.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>MM/dd/yy hh:mm a z</maven.build.timestamp.format>
@@ -257,7 +257,7 @@
                 <plugin>
                     <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                     <artifactId>android-maven-plugin</artifactId>
-                    <version>3.5.3</version>
+                    <version>3.8.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
