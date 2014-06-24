@@ -10,7 +10,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             >
-        <Button
+        <!--<Button
                 android:id="@+id/child_tab"
                 android:text="@string/child_tab"
                 android:layout_width="fill_parent"
@@ -19,9 +19,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/tab_active"
                 android:onClick="registerChildTabListener"
-                />
+                />-->
 
-        <Button
+        <!--<Button
                 android:id="@+id/enquiry_tab"
                 android:text="@string/enquiry_tab"
                 android:layout_width="fill_parent"
@@ -30,8 +30,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/tab"
                 android:onClick="createEnquiryTabListener"
-                />
-
+                />-->
     </LinearLayout>
 
     <LinearLayout
