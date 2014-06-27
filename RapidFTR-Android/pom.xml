@@ -49,6 +49,11 @@
 
     <repositories>
         <repository>
+            <id>local-repo</id>
+            <name>Local Repository</name>
+            <url>file://${local.repo.dir}</url>
+        </repository>
+        <repository>
             <id>android-repo</id>
             <name>Android Repository</name>
             <url>file://${android.sdk.path}/extras/android/m2repository</url>
@@ -63,11 +68,6 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
-        <repository>
-            <id>local-repo</id>
-            <name>Local Repository</name>
-            <url>file://${local.repo.dir}</url>
         </repository>
     </repositories>
 
