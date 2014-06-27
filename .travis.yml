@@ -7,7 +7,7 @@ language: android
 android:
   components:
     - build-tools-19.0.2
-    - android-8
+    - android-10
   licenses:
     - 'android-sdk-.*'
     - '.*intel.+'
