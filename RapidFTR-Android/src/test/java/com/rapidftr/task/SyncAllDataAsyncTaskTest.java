@@ -66,6 +66,7 @@ public class SyncAllDataAsyncTaskTest {
         given(rapidFtrActivity.getSystemService(Matchers.<String>any())).willReturn(notificationManager);
 
         application = spy(RapidFtrApplication.getApplicationInstance());
+        doReturn(application).when(rapidFtrActivity).getApplication();
 
         syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childSyncService, deviceService, childRepository, currentUser);
     }
