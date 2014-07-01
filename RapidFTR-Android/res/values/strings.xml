@@ -4,16 +4,22 @@
 
     <!-- Login -->
     <string name="log_in">Log In</string>
-    <string name="login_progress">Logging in</string>
+    <string name="login_online_progress">Trying to login online</string>
+    <string name="login_online_success">Online login successful</string>
     <string name="login_online_failed">Online login failed, will try to login offline</string>
+    <string name="login_online_no_connectivity">No connectivity, will try to login offline</string>
+
     <string name="login_migrate_progress">You are now a verified user, migrating your data</string>
     <string name="login_migrate_failed">Failed to migrate data, logging in offline, please sync data</string>
-    <string name="login_save_failed">Failed to save your details, please contact the system administrator</string>
+    <string name="login_save_failed">Failed to complete the login, please contact your system administrator</string>
+
     <string name="login_form_progress">Loading latest form sections</string>
     <string name="login_form_failed">Failed to load latest form sections, you can still keep using older forms</string>
-    <string name="login_online_success">Online login successful</string>
+
+    <string name="login_offline_progress">Trying to login offline</string>
     <string name="login_offline_success">Offline login successful</string>
-    <string name="login_invalid">Login failed, Incorrect username or password</string>
+    <string name="login_offline_no_user">Login failed, first time users please login online to enable your account for offline mode</string>
+    <string name="login_offline_failed">Login failed, Incorrect username or password</string>
 
     <!-- Others, need to organize/group as we go -->
     <string name="log_out">Log Out</string>
