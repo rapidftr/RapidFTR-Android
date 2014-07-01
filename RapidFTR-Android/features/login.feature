@@ -12,15 +12,15 @@ Feature: Login feature
 
   Scenario: Correct Login Details
     Given that I am logged in as "field_worker" with password "field_worker"
-    And I wait up to 10 seconds for "Basic Identity" to appear
     Then I should see "Name"
     And I should see "Protection Status"
     And I should see "New Registration"
 
   Scenario: User able to see last successful login
-    When I select "Log Out" from the menu
+    When I wait up to 10 seconds for "Basic Identity" to appear
+    And I select "Log Out" from the menu
     And I press "Change URL"
-    Then I should see "https://test.rapidftr.com"
+    Then I should see the url used for the last successful login
 
   Scenario: Navigation Back to Login Page is Disabled for Logged-in Users
     Given that I am logged in as "field_worker" with password "field_worker"
@@ -28,31 +28,33 @@ Feature: Login feature
     Then I should not see "Log In"
     And I should not see "Sign Up"
 
-  @reinstall
+  @reinstall @this
   Scenario: Password Reset
-    Given that I am logged in as "field_worker" with password "field_worker"
+    Given that I am logged in as "field_worker" with password "field_worker"    
     When I select "Change Password" from the menu
     And I enter text "field_worker" into field with id "current_password"
     And I enter text "rapidftrnew" into field with id "new_password"
     And I enter text "rapidftrnew" into field with id "new_password_confirm"
-    And I press "Change Password"
+    And I press Change Password    
     Then I should see "Password Changed Successfully"
     When I select "Log Out" from the menu
     And I enter text "field_worker" into field with id "username"
     And I enter text "field_worker" into field with id "password"
+    And the credentials are "invalid"
     And I press "Log In"
     Then I should see "Incorrect username or password"
     When I enter text "" into field with id "username"
     And I enter text "field_worker" into field with id "username"
     And I enter text "" into field with id "password"
     And I enter text "rapidftrnew" into field with id "password"
+    And the credentials are "valid"
     And I press "Log In"
     And I wait up to 20 seconds for "Basic Identity" to appear
     And I select "Change Password" from the menu
     And I enter text "rapidftrnew" into field with id "current_password"
     And I enter text "field_worker" into field with id "new_password"
     And I enter text "field_worker" into field with id "new_password_confirm"
-    And I press "Change Password"
+    And I press Change Password
     Then I should see "Password Changed Successfully"
 
   @reinstall

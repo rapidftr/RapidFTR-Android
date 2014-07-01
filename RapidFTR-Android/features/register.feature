@@ -12,7 +12,8 @@ Feature: Register Child
     And I should see "Photos and Audio"
   
   Scenario: Enter, Save and Edit Child Details
-    When I enter "Child Name" into the "Name" field of the Child Registration Form
+    When I wait up to 20 seconds for "Basic Identity" to appear
+    And I enter "Child Name" into the "Name" field of the Child Registration Form
   	And I press "Save"
     And I wait up to 20 seconds for "Saved record successfully" to appear
   	Then I should see "Edit"

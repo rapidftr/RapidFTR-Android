@@ -2,6 +2,8 @@ require 'net/https'
 require 'uri'
 require 'httparty'
 
+$WEB_URL = ENV['WEB_URL']
+
 WEB_URL = 'https://test.rapidftr.com'
 WEB_USER = 'rapidftr'
 WEB_PASSWORD = 'rapidftr'
