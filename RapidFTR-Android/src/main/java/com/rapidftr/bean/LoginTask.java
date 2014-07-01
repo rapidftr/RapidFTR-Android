@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
+import com.google.common.base.Throwables;
 import com.google.common.io.CharStreams;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.User;
@@ -11,6 +12,8 @@ import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
 import com.rapidftr.task.MigrateUnverifiedDataToVerified;
 import com.rapidftr.utils.http.FluentResponse;
+import lombok.Getter;
+import lombok.NonNull;
 import org.androidannotations.annotations.*;
 import org.json.JSONObject;
 
@@ -21,6 +24,19 @@ import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
 @EBean
 public class LoginTask {
+
+    protected static class LoginException extends RuntimeException {
+        @Getter protected Integer messageId = null;
+
+        public LoginException(String message, Throwable cause) {
+            super(message, cause);
+        }
+
+        public LoginException(int messageId, Throwable cause) {
+            super(cause);
+            this.messageId = messageId;
+        }
+    }
 
     @Bean
     protected ConnectivityBean connectivityBean;
@@ -33,19 +49,47 @@ public class LoginTask {
 
     protected ProgressDialog progressDialog;
 
-    public User login(String userName, String password, String url) {
+    public void login(String userName, String password, String url) {
         createProgressDialog();
-        User onlineUser  = loadOnline(userName, password, url);
-        User offlineUser = loadOffline(userName, password);
-        User finalUser   = finalizeLogin(onlineUser, offlineUser);
+        if (!loginOnline(userName, password, url)) {
+            loginOffline(userName, password);
+        }
         dismissProgressDialog();
-        return finalUser;
+    }
+
+    protected boolean loginOnline(String userName, String password, String url) {
+        try {
+            notifyProgress(login_online_progress);
+            User user = loadOnline(userName, password, url);
+            migrateIfVerified(user);
+            cacheForOffline(user);
+            loadFormSections();
+            notifyToast(login_online_success);
+            return true;
+        } catch (LoginException e) {
+            Log.e(APP_IDENTIFIER, "Failed to login online", e);
+            notifyToast(e);
+            return false;
+        }
+    }
+
+    protected boolean loginOffline(String userName, String password) {
+        try {
+            notifyProgress(login_offline_progress);
+            User user = loadOffline(userName, password);
+            cacheForOffline(user);
+            notifyToast(login_offline_success);
+            return true;
+        } catch (LoginException e) {
+            Log.e(APP_IDENTIFIER, "Failed to login offline", e);
+            notifyToast(e);
+            return false;
+        }
     }
 
     protected User loadOnline(String userName, String password, String url) {
         if (!connectivityBean.isOnline()) {
-            notifyProgress(login_online_failed);
-            return null;
+            throw new LoginException(login_online_no_connectivity, null);
         }
 
         try {
@@ -53,77 +97,62 @@ public class LoginTask {
             String responseAsString = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
 
             if (!response.isSuccess()) {
-                notifyProgress(login_online_failed);
-                notifyToast(responseAsString);
-                return null;
+                throw new LoginException(responseAsString, null);
             }
 
             return new User(userName, password, true, url).read(responseAsString);
         } catch (Exception e) {
-            Log.d(APP_IDENTIFIER, "Online login failed", e);
-            notifyToast(login_online_failed);
-            return null;
+            Throwables.propagateIfInstanceOf(e, LoginException.class);
+            throw new LoginException(login_online_failed, null);
         }
     }
 
     protected User loadOffline(String userName, String password) {
+        User user = new User(userName, password);
+        if (!user.exists()) {
+            throw new LoginException(login_offline_no_user, null);
+        }
+
         try {
-            return new User(userName, password).load();
-        } catch (Exception e) {
-            return null;
+            return user.load();
+        } catch(Exception e) {
+            throw new LoginException(login_offline_failed, e);
         }
     }
 
-    protected User finalizeLogin(User onlineUser, User offlineUser) {
-        boolean isMigrated    = migrateIfVerified(onlineUser, offlineUser);
-        boolean isOnlineLogin = onlineUser != null && isMigrated;
-        User finalUser        = isOnlineLogin ? onlineUser : offlineUser;
-        boolean isLoggedIn    = cacheForOffline(finalUser);
+    protected void migrateIfVerified(@NonNull User onlineUser) {
+        User offlineUser = null;
+        try {
+            offlineUser = loadOffline(onlineUser.getUserName(), onlineUser.getPassword());
+        } catch (LoginException e) {
+            return;
+        }
 
-        if (isOnlineLogin)
-            loadFormSections();
-
-        notifyToast(isLoggedIn ? (isOnlineLogin ? login_online_success : login_offline_success) : login_invalid);
-        return isLoggedIn ? finalUser : null;
-    }
-
-    protected boolean migrateIfVerified(User onlineUser, User offlineUser) {
-        if (onlineUser != null && offlineUser != null && onlineUser.isVerified() && !offlineUser.isVerified()) {
+        if (offlineUser != null && onlineUser.isVerified() && !offlineUser.isVerified()) {
             try {
                 notifyProgress(login_migrate_progress);
                 new MigrateUnverifiedDataToVerified(new JSONObject(onlineUser.asJSON()), offlineUser).execute();
             } catch (Exception e) {
-                Log.e(APP_IDENTIFIER, "Migrate failed", e);
-                notifyToast(login_migrate_failed);
-                return false;
+                throw new LoginException(login_migrate_failed, null);
             }
         }
-
-        return true;
     }
 
-    protected boolean cacheForOffline(User user) {
-        if (user == null) return false;
+    protected void cacheForOffline(@NonNull User user) {
         try {
             user.save();
             application.setCurrentUser(user);
-            return true;
         } catch (Exception e) {
-            Log.e(APP_IDENTIFIER, "Failed to save user details", e);
-            notifyToast(login_save_failed);
-            return false;
+            throw new LoginException(login_save_failed, e);
         }
     }
 
-    protected boolean loadFormSections() {
+    protected void loadFormSections() {
         try {
             notifyProgress(login_form_progress);
             new FormService(application).getPublishedFormSections();
-            return true;
         } catch (Exception e) {
-            Log.e(APP_IDENTIFIER, "Failed to get form sections", e);
-            notifyToast(login_form_failed);
-            return false;
+            throw new LoginException(login_form_failed, e);
         }
     }
 
@@ -132,7 +161,6 @@ public class LoginTask {
         progressDialog = new ProgressDialog(activity);
         progressDialog.setIndeterminate(true);
         progressDialog.setCancelable(false);
-        progressDialog.setMessage(application.getString(login_progress));
         progressDialog.show();
     }
 
@@ -147,12 +175,16 @@ public class LoginTask {
     }
 
     @UiThread
-    public void notifyToast(Integer resId) {
-        Toast.makeText(application, resId, Toast.LENGTH_SHORT).show();
+    public void notifyToast(LoginException e) {
+        if (e.getMessageId() != null) {
+            notifyToast(e.getMessageId());
+        } else {
+            Toast.makeText(application, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @UiThread
-    public void notifyToast(String message) {
+    public void notifyToast(int message) {
         Toast.makeText(application, message, Toast.LENGTH_SHORT).show();
     }
 
