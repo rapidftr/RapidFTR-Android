@@ -12,6 +12,7 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.RapidFtrApplication_;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
@@ -110,7 +111,11 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
         if (result) {
             RapidFtrApplication.getApplicationInstance().showNotification(recordSyncService.getNotificationId(),
                     recordSyncService.getNotificationTitle(),
-                            successMessage);
+                    successMessage);
+            Toast.makeText(RapidFtrApplication_.getApplicationInstance(), successMessage, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(RapidFtrApplication_.getApplicationInstance(),
+                    RapidFtrApplication_.getApplicationInstance().getString(R.string.sync_error), Toast.LENGTH_LONG).show();
         }
     }
 

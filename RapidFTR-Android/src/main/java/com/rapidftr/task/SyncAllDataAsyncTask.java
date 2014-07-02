@@ -1,7 +1,9 @@
 package com.rapidftr.task;
 
+import android.widget.Toast;
 import com.google.inject.Inject;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication_;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.Repository;
@@ -47,7 +49,6 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
             sendRecordsToServer(recordsToUpload);
             downloadRecordsFromServer(idsToDownload, numberOfUploadedRecords(recordsToUpload));
         }
-
     }
 
     private int numberOfUploadedRecords(List<T> recordsToUpload) throws JSONException {
