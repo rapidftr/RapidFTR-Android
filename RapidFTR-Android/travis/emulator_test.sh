@@ -6,7 +6,7 @@ echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_A
 emulator -avd test -no-skin -no-audio -no-window -no-boot-anim &
 
 cp -f travis/AndroidManifest.xml ./AndroidManifest.xml
-mvn package -DskipTests
+mvn clean package -DskipTests
 bundle install
 
 ./travis/wait_for_emulator.sh
