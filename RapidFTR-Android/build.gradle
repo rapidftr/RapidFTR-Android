@@ -16,11 +16,6 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
-
-        test {
-            java.srcDirs = ['src/test/java']
-            resources.srcDirs = ['src/test/resources']
-        }
     }
 
     lintOptions {
@@ -40,6 +35,8 @@ android {
     }
 }
 
+apply plugin: 'android-unit-test'
+
 repositories {
     mavenCentral()
     maven { url "file://" + System.env.ANDROID_HOME + "/extras/android/m2repository" }
@@ -48,6 +45,8 @@ repositories {
 }
 
 dependencies {
+
+
     compile files('libs/commons-codec-2.1.1.jar', 'libs/sqlcipher-2.1.1.jar', 'libs/guava-2.1.1.jar')
     compile group: 'com.android.support', name: 'support-v4', version: '19.1.0'
     compile group: 'com.google.inject', name: 'guice', version: '3.0', classifier: 'no_aop'
@@ -60,17 +59,17 @@ dependencies {
         exclude(module: 'httpclient')
     }
 
+    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.5.5'
     testCompile group: 'org.robolectric', name: 'robolectric', version: '2.2'
     testCompile group: 'com.github.kedzie.supportanimator', name: 'support-v4-animator', version: '19.0.0'
     testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.2.0'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
     testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: '1.2'
-    testCompile group: 'junit', name: 'junit', version: '4.8.2'
-    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.5.5'
     testCompile group: 'org.powermock', name: 'powermock-module-junit4-rule-agent', version: '1.5.5'
     testCompile group: 'org.powermock', name: 'powermock-classloading-xstream', version: '1.5.5'
     testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.5.5'
-
+    testCompile files("$project.buildDir/classes/debug")
 
     //TODO: The dependencies below were in maven provided scope. Confirm that its ok to keep them in compile scope
     compile group: 'com.google.android', name: 'android', version: '2.3.3'
@@ -80,13 +79,23 @@ dependencies {
     compile group: 'org.androidannotations', name: 'androidannotations', version: '3.0.1'
 }
 
+configurations {
+    testCompile.extendsFrom runtime
+    unitTestRuntime.extendsFrom testCompile
+}
+
 buildscript {
     dependencies{
-        classpath 'com.android.tools.build:gradle:0.11.1'
+        classpath 'com.android.tools.build:gradle:0.11.+'
+        classpath 'com.github.jcandksolutions.gradle:android-unit-test:1.2.+'
     }
 
     repositories {
         mavenCentral()
     }
+}
+
+tasks.withType(JavaForkOptions) {
+    jvmArgs "-XX:MaxPermSize=512m"
 }
 
