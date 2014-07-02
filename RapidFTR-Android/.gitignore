@@ -8,3 +8,7 @@ gen/
 .nomedia/
 screenshot_*
 .irb-history
+
+# Ignore gradle files
+.gradle/
+build/
