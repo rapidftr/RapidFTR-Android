@@ -11,6 +11,7 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.roboelectric.shadows.ShadowTaskStackBuilder;
 import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.FormService;
@@ -24,7 +25,7 @@ import org.mockito.Answers;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.robolectric.Robolectric;
-import org.robolectric.shadows.ShadowToast;
+import org.robolectric.annotation.Config;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,25 +33,35 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
+@Config(shadows = {ShadowTaskStackBuilder.class})
 public class SyncAllDataAsyncTaskTest {
 
-    @Mock private ChildSyncService childSyncService;
-    @Mock private ChildRepository childRepository;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS) private RapidFtrActivity rapidFtrActivity;
-    @Mock private NotificationManager notificationManager;
-    @Mock private Menu menu;
-    @Mock private MenuItem syncAll;
-    @Mock private MenuItem cancelSyncAll;
-    @Mock private User currentUser;
-    @Mock private FormService formService;
-    @Mock private DeviceService deviceService;
+    @Mock
+    private ChildSyncService childSyncService;
+    @Mock
+    private ChildRepository childRepository;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private RapidFtrActivity rapidFtrActivity;
+    @Mock
+    private NotificationManager notificationManager;
+    @Mock
+    private Menu menu;
+    @Mock
+    private MenuItem syncAll;
+    @Mock
+    private MenuItem cancelSyncAll;
+    @Mock
+    private User currentUser;
+    @Mock
+    private FormService formService;
+    @Mock
+    private DeviceService deviceService;
 
     private RapidFtrApplication application;
 
@@ -69,6 +80,10 @@ public class SyncAllDataAsyncTaskTest {
         doReturn(application).when(rapidFtrActivity).getApplication();
 
         syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childSyncService, deviceService, childRepository, currentUser);
+
+        doReturn("Notify").when(rapidFtrActivity).getString(any(Integer.class));
+        doReturn("Notify").when(application).getString(any(Integer.class));
+        doReturn("Child Synchronization").when(childSyncService).getNotificationTitle();
     }
 
     @Test
@@ -153,7 +168,7 @@ public class SyncAllDataAsyncTaskTest {
         Child child2 = mock(Child.class);
         HashMap<String, String> repositoryIDRevs = createRepositoryIdRevMap();
 
-        given(childSyncService.getIdsToDownload()).willReturn(Arrays.asList("qwerty0987","abcd1234"));
+        given(childSyncService.getIdsToDownload()).willReturn(Arrays.asList("qwerty0987", "abcd1234"));
         given(childRepository.getAllIdsAndRevs()).willReturn(repositoryIDRevs);
         given(child1.getUniqueId()).willReturn("1234");
         given(child2.getUniqueId()).willReturn("5678");
@@ -173,7 +188,7 @@ public class SyncAllDataAsyncTaskTest {
     }
 
     @Test
-    public void shouldToggleMenuOnPreExecute(){
+    public void shouldToggleMenuOnPreExecute() {
         syncAllDataAsyncTask.setContext(rapidFtrActivity);
 
         syncAllDataAsyncTask.onPreExecute();
@@ -183,7 +198,7 @@ public class SyncAllDataAsyncTaskTest {
     }
 
     @Test
-    public void shouldToggleMenuOnCancelAndOnPostExecute(){
+    public void shouldToggleMenuOnCancelAndOnPostExecute() {
         syncAllDataAsyncTask.setContext(rapidFtrActivity);
 
         syncAllDataAsyncTask.onPreExecute();
@@ -198,7 +213,7 @@ public class SyncAllDataAsyncTaskTest {
     }
 
     @Test
-    public void shouldNotCallSetProgressAndNotifyIfCancelled(){
+    public void shouldNotCallSetProgressAndNotifyIfCancelled() {
         syncAllDataAsyncTask.setContext(rapidFtrActivity);
         syncAllDataAsyncTask = spy(syncAllDataAsyncTask);
 
@@ -208,17 +223,17 @@ public class SyncAllDataAsyncTaskTest {
         verify(notificationManager, never()).notify(anyInt(), (Notification) anyObject());
     }
 
-	@Test
-	public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
-		Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
-		given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
-		syncAllDataAsyncTask.recordSyncService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
-		syncAllDataAsyncTask.setContext(rapidFtrActivity);
-		syncAllDataAsyncTask.execute();
+    @Test
+    public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
+        Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
+        given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
+        syncAllDataAsyncTask.recordSyncService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), childRepository, new FluentRequest());
+        syncAllDataAsyncTask.setContext(rapidFtrActivity);
+        syncAllDataAsyncTask.execute();
 
         verify(notificationManager, never()).notify(anyInt(), (Notification) anyObject());
-		//assertThat(ShadowToast.getTextOfLatestToast(), equalTo("Your session is timed out"));
-	}
+        //assertThat(ShadowToast.getTextOfLatestToast(), equalTo("Your session is timed out"));
+    }
 
     @Test
     public void shouldCompareAndRetrieveIdsToBeDownloadedFromServer() throws JSONException, IOException, HttpException {

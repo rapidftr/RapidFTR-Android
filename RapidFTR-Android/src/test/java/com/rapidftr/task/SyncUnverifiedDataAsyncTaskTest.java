@@ -9,6 +9,7 @@ import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.roboelectric.shadows.ShadowTaskStackBuilder;
 import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.LoginService;
@@ -19,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.robolectric.annotation.Config;
 import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
+@Config(shadows = {ShadowTaskStackBuilder.class})
 public class SyncUnverifiedDataAsyncTaskTest {
 
     @Mock private FormService formService;
@@ -67,6 +70,9 @@ public class SyncUnverifiedDataAsyncTaskTest {
 
         task = new SyncUnverifiedDataAsyncTask<Child>(formService, childSyncService, childRepository, loginService, registerUserService, currentUser);
         task.setContext(rapidFtrActivity);
+
+        doReturn("Notify").when(rapidFtrActivity).getString(any(Integer.class));
+        doReturn("Child Synchronization").when(childSyncService).getNotificationTitle();
     }
 
     @Test
