@@ -36,6 +36,7 @@ android {
 }
 
 apply plugin: 'android-unit-test'
+apply plugin: 'calabash-test'
 
 repositories {
     mavenCentral()
@@ -88,6 +89,7 @@ buildscript {
     dependencies{
         classpath 'com.android.tools.build:gradle:0.11.+'
         classpath 'com.github.jcandksolutions.gradle:android-unit-test:1.2.+'
+        classpath 'org.notlocalhost.gradle:gradle-calabash-android-plugin:0.1.+'
     }
 
     repositories {
@@ -97,5 +99,31 @@ buildscript {
 
 tasks.withType(JavaForkOptions) {
     jvmArgs "-XX:MaxPermSize=512m"
+}
+
+android.applicationVariants.all { variant ->
+    //Android gradle plugin outputs location has been moved from build/apk to build/outputs/apk
+    //however calabash plugin is hardcoded to look in build/apk.
+    //For backwards compatibility the target variants are copied to the legacy location so that
+    //they are visible to the calabash plugin
+    variant.assemble.doLast {
+        copy_apk_for_calabash_compatibility(variant)
+    }
+}
+
+def copy_apk_for_calabash_compatibility(targetVariant) {
+    if (targetVariant.zipAlign) {
+        def originZipAlignedApkFile = targetVariant.outputFile;
+        copy {
+            from "$originZipAlignedApkFile"
+            into "$rootProject.projectDir/build/apk"
+        }
+    }
+
+    def originApkFile = targetVariant.packageApplication.outputFile;
+    copy {
+        from "$originApkFile"
+        into "$rootProject.projectDir/build/apk"
+    }
 }
 
