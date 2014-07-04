@@ -1,15 +1,9 @@
 Feature: Register Child
+  
   Scenario: Default Form Sections are Displayed
     Given that I am logged in as "field_worker" with password "field_worker"
     And I press "Basic Identity"
-    Then I should see "Family details"
-    And I should see "Care Arrangements"
-    And I should see "Separation History"
-    And I should see "Protection Concerns"
-    And I should see "Other Interviews"
-    And I should see "Other Tracing Info"
-    And I should see "Interview Details"
-    And I should see "Photos and Audio"
+    Then I should see all the default form sections
   
   Scenario: Enter, Save and Edit Child Details
     When I wait up to 20 seconds for "Basic Identity" to appear
