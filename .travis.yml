@@ -1,7 +1,12 @@
 env:
+  global:
+    - "WEB_URL=http://10.0.2.2:2000"
+    - ANDROID_SDKS=android-15,sysimg-15
+    - ANDROID_TARGET=android-15
+    - ANDROID_ABI=armeabi-v7a
   matrix:
-    - ANDROID_SDKS=android-15,sysimg-15  ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a  CMD=unit_test.sh
-    - ANDROID_SDKS=android-15,sysimg-15  ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a  CMD=emulator_test.sh
+    - CMD=unit_test.sh
+    - CMD=emulator_test.sh
 
 language: android
 android:
