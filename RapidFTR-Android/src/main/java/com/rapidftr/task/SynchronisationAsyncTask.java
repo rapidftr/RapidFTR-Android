@@ -1,14 +1,7 @@
 package com.rapidftr.task;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -19,7 +12,6 @@ import com.rapidftr.model.User;
 import com.rapidftr.repository.Repository;
 import com.rapidftr.service.FormService;
 import com.rapidftr.service.SyncService;
-import lombok.Getter;
 import lombok.Setter;
 import org.apache.http.HttpException;
 import org.json.JSONException;
@@ -27,8 +19,6 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-
-import static java.lang.System.currentTimeMillis;
 
 public abstract class SynchronisationAsyncTask<T extends BaseModel> extends AsyncTask<Object, String, Boolean> {
 
@@ -41,8 +31,6 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
     protected Repository<T> repository;
     protected User currentUser;
     protected RapidFtrActivity context;
-    protected Notification notification;
-    protected NotificationManager notificationManager;
 
     protected int formSectionProgress;
     protected int maxProgress;
