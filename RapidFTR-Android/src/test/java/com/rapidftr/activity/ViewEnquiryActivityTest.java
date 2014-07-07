@@ -9,7 +9,7 @@ import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.FailedToSaveException;
-import com.rapidftr.task.SyncRecordTask;
+import com.rapidftr.task.SyncSingleRecordTask;
 import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
 import org.junit.Before;
@@ -57,7 +57,7 @@ public class ViewEnquiryActivityTest {
     @Test
     public void shouldInvokeSyncTask() {
         doReturn(mockEnquiryRepository).when(activity).inject(EnquiryRepository.class);
-        SyncRecordTask task = mock(SyncRecordTask.class);
+        SyncSingleRecordTask task = mock(SyncSingleRecordTask.class);
         doReturn(task).when(activity).createSyncTaskForEnquiry();
         activity.enquiry = enquiry;
         activity.sync();

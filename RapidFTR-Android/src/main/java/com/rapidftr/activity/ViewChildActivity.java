@@ -15,7 +15,7 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
-import com.rapidftr.task.SyncRecordTask;
+import com.rapidftr.task.SyncSingleRecordTask;
 import com.rapidftr.utils.http.FluentRequest;
 import org.json.JSONException;
 
@@ -58,15 +58,15 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     protected void sync() {
-        SyncRecordTask task = createChildSyncTask();
+        SyncSingleRecordTask task = createChildSyncTask();
         task.setActivity(this);
         RapidFtrApplication.getApplicationInstance()
                 .setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, task, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(child));
     }
 
-    protected SyncRecordTask createChildSyncTask() {
+    protected SyncSingleRecordTask createChildSyncTask() {
         ChildRepository childRepository = inject(ChildRepository.class);
-        return new SyncRecordTask(new ChildSyncService(this.getContext(), childRepository, new FluentRequest()),
+        return new SyncSingleRecordTask(new ChildSyncService(this.getContext(), childRepository, new FluentRequest()),
                 childRepository, getCurrentUser()) {
             @Override
             public Boolean doInBackground(BaseModel... params) {

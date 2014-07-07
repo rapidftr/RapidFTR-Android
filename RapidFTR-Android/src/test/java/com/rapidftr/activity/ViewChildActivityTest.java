@@ -5,7 +5,7 @@ import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.model.Child;
-import com.rapidftr.task.SyncRecordTask;
+import com.rapidftr.task.SyncSingleRecordTask;
 import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
 import org.junit.Before;
@@ -51,7 +51,7 @@ public class ViewChildActivityTest {
     @Test
     public void shouldSyncAndShowChildRecord() throws IOException, JSONException {
         Child child = mock(Child.class);
-        SyncRecordTask syncRecordTask = mock(SyncRecordTask.class);
+        SyncSingleRecordTask syncRecordTask = mock(SyncSingleRecordTask.class);
         doReturn(syncRecordTask).when(activity).createChildSyncTask();
 
         activity.child = child;

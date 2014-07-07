@@ -15,7 +15,7 @@ public class SyncChildTaskTest {
 
     @Test
     public void shouldRestartActivityOnSuccess(){
-        SyncRecordTask task = new SyncRecordTask(null, null, null);
+        SyncSingleRecordTask task = new SyncSingleRecordTask(null, null, null);
         Activity activity = mock(Activity.class);
         Intent mockIntent = mock(Intent.class);
         given(activity.getIntent()).willReturn(mockIntent);

@@ -11,7 +11,7 @@ import com.rapidftr.service.SyncService;
 
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
-public class SyncRecordTask extends AsyncTaskWithDialog<BaseModel, Void, Boolean> {
+public class SyncSingleRecordTask extends AsyncTaskWithDialog<BaseModel, Void, Boolean> {
 
     protected  SyncService service;
     protected  Repository repository;
@@ -19,7 +19,7 @@ public class SyncRecordTask extends AsyncTaskWithDialog<BaseModel, Void, Boolean
     private Activity activity;
 
     @Inject
-    public SyncRecordTask(SyncService service, Repository repository, User currentUser) {
+    public SyncSingleRecordTask(SyncService service, Repository repository, User currentUser) {
         this.service = service;
         this.repository = repository;
         this.currentUser = currentUser;
