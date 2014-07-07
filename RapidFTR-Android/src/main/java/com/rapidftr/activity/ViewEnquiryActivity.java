@@ -7,12 +7,11 @@ import android.view.MenuItem;
 import android.view.View;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.service.EnquiryHttpDao;
 import com.rapidftr.service.EnquirySyncService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
-import com.rapidftr.task.SyncRecordTask;
+import com.rapidftr.task.SyncSingleRecordTask;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -69,13 +68,13 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     }
 
     protected void sync() {
-        SyncRecordTask syncRecordTask = createSyncTaskForEnquiry();
+        SyncSingleRecordTask syncRecordTask = createSyncTaskForEnquiry();
         syncRecordTask.setActivity(this);
         RapidFtrApplication.getApplicationInstance().setAsyncTaskWithDialog((AsyncTaskWithDialog) AsyncTaskWithDialog.wrap(this, syncRecordTask, R.string.sync_progress, R.string.sync_success, R.string.sync_failure).execute(enquiry));
     }
 
-    protected SyncRecordTask createSyncTaskForEnquiry() {
-        SyncRecordTask syncRecordTask = new SyncRecordTask(
+    protected SyncSingleRecordTask createSyncTaskForEnquiry() {
+        SyncSingleRecordTask syncRecordTask = new SyncSingleRecordTask(
                 new EnquirySyncService(this.getContext().getSharedPreferences(), new EnquiryHttpDao(), enquiryRepository), enquiryRepository, getCurrentUser());
         return syncRecordTask;
     }
