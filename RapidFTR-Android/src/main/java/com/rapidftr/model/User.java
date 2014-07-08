@@ -83,7 +83,7 @@ public class User {
 		if (this.password == null)
 			throw new GeneralSecurityException("User password not available to encrypt");
 		else
-			return EncryptionUtil.encrypt(this.password, this.asJSON());
+			return EncryptionUtil.encrypt(this.password, this.userName, this.asJSON());
 	}
 
 	public User read(String json) throws IOException {
@@ -93,7 +93,7 @@ public class User {
 
 	public User load() throws GeneralSecurityException, IOException {
 		String encryptedJson = getSharedPreferences().getString(prefKey(userName), null);
-		String json = EncryptionUtil.decrypt(password, encryptedJson);
+		String json = EncryptionUtil.decrypt(password, this.userName, encryptedJson);
 		return read(json);
 	}
 

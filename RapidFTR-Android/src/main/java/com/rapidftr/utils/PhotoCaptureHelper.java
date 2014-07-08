@@ -19,6 +19,8 @@ import java.security.GeneralSecurityException;
 import java.util.Calendar;
 
 import static android.graphics.BitmapFactory.decodeResource;
+import static com.rapidftr.utils.EncryptionUtil.getCipherInputStream;
+import static com.rapidftr.utils.EncryptionUtil.getCipherOutputStream;
 
 public class PhotoCaptureHelper extends CaptureHelper {
 
