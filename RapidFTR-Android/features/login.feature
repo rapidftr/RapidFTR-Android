@@ -17,7 +17,6 @@ Feature: Login feature
   Scenario: Correct Login Details
     Given that I am logged in as "field_worker" with password "field_worker"
     Then I should see "Name"
-    And I should see "Protection Status"
     And I should see "New Registration"
 
   Scenario: User able to see last successful login

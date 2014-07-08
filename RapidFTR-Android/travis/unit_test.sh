@@ -2,4 +2,4 @@
 set -xe
 
 cd RapidFTR-Android
-mvn test
+mvn clean test

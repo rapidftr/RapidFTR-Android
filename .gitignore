@@ -88,7 +88,6 @@ proguard/
 .mtj.tmp/
 
 # Package Files #
-*.jar
 *.war
 *.ear
 
@@ -163,6 +162,3 @@ release.properties
 
 .settings/
 proguard-project.txt
-RapidFTR-Android/libs/server-standalone.jar
-RapidFTR-AndroidTests/bin/
-RapidFTR-Android/bin/

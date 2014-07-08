@@ -4,6 +4,8 @@
           android:versionCode="2"
           android:versionName="2.0.0+server2.0">
 
+    <uses-sdk android:minSdkVersion="15"/>
+
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -16,6 +18,8 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <uses-library android:name="android.test.runner"/>
 
     <uses-feature android:name="android.hardware.camera"/>
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
@@ -48,9 +52,6 @@
         <activity android:name=".activity.LoginActivity_" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.EditEnquiryActivity" android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".activity.ViewPhotoActivity" android:noHistory="true" android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
-
-        <uses-library android:name="android.test.runner"/>
     </application>
-    <uses-sdk android:minSdkVersion="10"/>
 
 </manifest>

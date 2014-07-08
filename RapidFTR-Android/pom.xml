@@ -26,13 +26,12 @@
     </scm>
 
     <properties>
-        <local.repo.dir>${project.basedir}/../repo</local.repo.dir>
         <key.password />
         <keystore.password />
         <keystore.file />
         <device.wipe.flag>0</device.wipe.flag>
         <android.sdk.path>${env.ANDROID_HOME}</android.sdk.path>
-        <platform.version>10</platform.version>
+        <platform.version>15</platform.version>
         <maven.build.timestamp.format>MM/dd/yy hh:mm a z</maven.build.timestamp.format>
 
         <version.code>${project.version}</version.code>
@@ -51,23 +50,17 @@
         <repository>
             <id>local-repo</id>
             <name>Local Repository</name>
-            <url>file://${local.repo.dir}</url>
+            <url>file:${local.repo.dir}</url>
         </repository>
         <repository>
             <id>android-repo</id>
             <name>Android Repository</name>
-            <url>file://${android.sdk.path}/extras/android/m2repository</url>
+            <url>file:${android.sdk.path}/extras/android/m2repository</url>
         </repository>
         <repository>
             <id>MavenCentral</id>
             <name>Maven repository</name>
             <url>http://repo1.maven.org/maven2/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
         </repository>
     </repositories>
 
@@ -75,7 +68,7 @@
         <dependency>
             <groupId>com.google.android</groupId>
             <artifactId>android</artifactId>
-            <version>2.3.3</version>
+            <version>4.0.1.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -177,17 +170,17 @@
         <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>sqlcipher</artifactId>
-            <version>2.1.1</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>guava</artifactId>
-            <version>2.1.1</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>sqlcipher</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>2.1.1</version>
+            <version>3.1.0</version>
         </dependency>
 
         <dependency>
