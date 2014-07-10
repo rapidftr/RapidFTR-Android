@@ -25,12 +25,9 @@ import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.hasItem;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
@@ -213,8 +210,8 @@ public class ChildRepositoryTest {
         Child child2 = new Child("id2", "user2", null);
         anotherUsersRepository.createOrUpdate(child2);
 
-        assertThat(repository.getChildrenByOwner(), not(hasItem(child2)));
-        assertThat(anotherUsersRepository.getChildrenByOwner(), not(hasItem(child1)));
+        assertTrue(!repository.getChildrenByOwner().contains(child2));
+        assertTrue(!anotherUsersRepository.getChildrenByOwner().contains(child1));
     }
 
     @Test
@@ -226,7 +223,7 @@ public class ChildRepositoryTest {
 
         List<Child> children = repository.toBeSynced();
         assertThat(children.size(), equalTo(1));
-        assertThat(children, hasItems(child1));
+        assertTrue(children.contains(child1));
     }
 
     @Test
@@ -238,7 +235,7 @@ public class ChildRepositoryTest {
 
         List<Child> children = repository.currentUsersUnsyncedRecords();
         assertThat(children.size(), equalTo(1));
-        assertThat(children, hasItems(child1));
+        assertTrue(children.contains(child1));
     }
 
     @Test

@@ -1,0 +1,129 @@
+apply plugin: 'maven'
+apply plugin: 'android'
+
+android {
+    compileSdkVersion "android-10"
+    buildToolsVersion "19.1"
+
+    defaultConfig {
+        manifestPlaceholders = [ "device.wipe.flag":"0" ]
+    }
+
+    sourceSets{
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+        exclude 'LICENSE'
+    }
+}
+
+apply plugin: 'android-unit-test'
+apply plugin: 'calabash-test'
+
+repositories {
+    mavenCentral()
+    maven { url "file://" + System.env.ANDROID_HOME + "/extras/android/m2repository" }
+    maven { url "http://repo1.maven.org/maven2/" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+
+
+    compile files('libs/commons-codec-2.1.1.jar', 'libs/sqlcipher-2.1.1.jar', 'libs/guava-2.1.1.jar')
+    compile group: 'com.android.support', name: 'support-v4', version: '19.1.0'
+    compile group: 'com.google.inject', name: 'guice', version: '3.0', classifier: 'no_aop'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.4.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.4.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.4.0'
+    compile group: 'joda-time', name: 'joda-time', version: '2.3'
+    compile group: 'org.androidannotations', name: 'androidannotations-api', version: '3.0.1'
+    compile(group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.2') {
+        exclude(module: 'httpclient')
+    }
+
+    testCompile group: 'junit', name: 'junit', version: '4.8.2'
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.5.5'
+    testCompile group: 'org.robolectric', name: 'robolectric', version: '2.2'
+    testCompile group: 'com.github.kedzie.supportanimator', name: 'support-v4-animator', version: '19.0.0'
+    testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.2.0'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '1.9.5'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: '1.2'
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4-rule-agent', version: '1.5.5'
+    testCompile group: 'org.powermock', name: 'powermock-classloading-xstream', version: '1.5.5'
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.5.5'
+    testCompile files("$project.buildDir/classes/debug")
+
+    //TODO: The dependencies below were in maven provided scope. Confirm that its ok to keep them in compile scope
+    compile group: 'com.google.android', name: 'android', version: '2.3.3'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.46'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.0.3'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.14.2'
+    compile group: 'org.androidannotations', name: 'androidannotations', version: '3.0.1'
+}
+
+configurations {
+    testCompile.extendsFrom runtime
+    unitTestRuntime.extendsFrom testCompile
+}
+
+buildscript {
+    dependencies{
+        classpath 'com.android.tools.build:gradle:0.11.+'
+        classpath 'com.github.jcandksolutions.gradle:android-unit-test:1.2.+'
+        classpath 'org.notlocalhost.gradle:gradle-calabash-android-plugin:0.1.+'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+tasks.withType(JavaForkOptions) {
+    jvmArgs "-XX:MaxPermSize=512m"
+}
+
+android.applicationVariants.all { variant ->
+    //Android gradle plugin outputs location has been moved from build/apk to build/outputs/apk
+    //however calabash plugin is hardcoded to look in build/apk.
+    //For backwards compatibility the target variants are copied to the legacy location so that
+    //they are visible to the calabash plugin
+    variant.assemble.doLast {
+        copy_apk_for_calabash_compatibility(variant)
+    }
+}
+
+def copy_apk_for_calabash_compatibility(targetVariant) {
+    if (targetVariant.zipAlign) {
+        def originZipAlignedApkFile = targetVariant.outputFile;
+        copy {
+            from "$originZipAlignedApkFile"
+            into "$rootProject.projectDir/build/apk"
+        }
+    }
+
+    def originApkFile = targetVariant.packageApplication.outputFile;
+    copy {
+        from "$originApkFile"
+        into "$rootProject.projectDir/build/apk"
+    }
+}
+
