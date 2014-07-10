@@ -7,18 +7,33 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.ViewChildActivity;
+import com.rapidftr.forms.FormField;
+import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
+import com.rapidftr.view.ChildHighlightedFieldViewGroup;
 import org.json.JSONException;
 
-import java.util.List;
+import java.util.*;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class ChildViewAdapter extends BaseModelViewAdapter<Child> {
 
+    protected Map<Integer, FormField> highlightedFields;
+
     public ChildViewAdapter(Context context, int textViewResourceId, List<Child> children) {
         super(context, textViewResourceId, children);
+
+        List<FormField> fields = getHighlightedFields();
+        highlightedFields = new TreeMap<Integer, FormField>();
+
+        int counter = 0;
+        for (FormField formField : fields) {
+            int id = ++counter + (int) System.currentTimeMillis();
+            highlightedFields.put(id, formField);
+        }
     }
 
     @Override
@@ -31,11 +46,13 @@ public class ChildViewAdapter extends BaseModelViewAdapter<Child> {
         final Child child = objects.get(position);
         if (child != null) {
             TextView uniqueIdView = (TextView) view.findViewById(R.id.row_child_unique_id);
-            TextView nameView = (TextView) view.findViewById(R.id.row_child_name);
+
+            ChildHighlightedFieldViewGroup childHighlightedFieldViewGroup = (ChildHighlightedFieldViewGroup) view.findViewById(R.id.child_field_group);
+            childHighlightedFieldViewGroup.prepare(child, highlightedFields);
+
             ImageView imageView = (ImageView) view.findViewById(R.id.thumbnail);
             try {
                 setFields(String.valueOf(child.getShortId()), uniqueIdView);
-                setFields(String.valueOf(child.optString("name")), nameView);
                 assignThumbnail(child, imageView);
 
                 view.setOnClickListener(createClickListener(child, ViewChildActivity.class));
@@ -46,5 +63,15 @@ public class ChildViewAdapter extends BaseModelViewAdapter<Child> {
         return view;
     }
 
+    protected List<FormField> getHighlightedFields() {
+        List<FormSection> formSections = RapidFtrApplication.getApplicationInstance().getFormSections();
+
+        List<FormField> highlightedFields = new ArrayList<FormField>();
+        for (FormSection formSection : formSections) {
+            highlightedFields.addAll(formSection.getOrderedHighLightedFields());
+        }
+
+        return highlightedFields;
+    }
 
 }

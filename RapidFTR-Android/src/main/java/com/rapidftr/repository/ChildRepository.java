@@ -60,7 +60,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
     }
 
     public List<Child> getChildrenByOwner() throws JSONException {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE child_owner = ? ORDER BY name", new String[]{userName});
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE child_owner = ? ORDER BY id", new String[]{userName});
         return toChildren(cursor);
     }
 
@@ -79,10 +79,13 @@ public class ChildRepository implements Closeable, Repository<Child> {
     }
 
     public List<Child> getMatchingChildren(String subString) throws JSONException {
+
         String searchString = String.format("%%%s%%", subString);
         RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();
-        String query = "SELECT child_json, synced FROM children WHERE " + fetchByOwner(context) + " (name LIKE ? or id LIKE ?)";
-        @Cleanup Cursor cursor = session.rawQuery(query, new String[]{searchString, searchString});
+
+        String filterGlob = String.format("*\"*\":\"*%s*\"*", subString);
+        String query ="SELECT child_json, synced FROM children WHERE "+ fetchByOwner(context) + " (child_json GLOB ?)";
+        @Cleanup Cursor cursor = session.rawQuery(query, new String[]{filterGlob});
         return toChildren(cursor);
     }
 
@@ -103,7 +106,6 @@ public class ChildRepository implements Closeable, Repository<Child> {
         child.setLastUpdatedAt(getTimeStamp());
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getCreatedBy());
         values.put(id.getColumnName(), child.getUniqueId());
-        values.put(name.getColumnName(), child.getName());
         values.put(content.getColumnName(), child.getJsonString());
         values.put(synced.getColumnName(), child.isSynced());
         values.put(created_at.getColumnName(), child.getCreatedAt());

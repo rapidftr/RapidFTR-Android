@@ -18,7 +18,7 @@ public class FormField {
     @JsonProperty("name")
     private String id;
 
-    @JsonProperty("highlight_info")
+    @JsonProperty("highlight_information")
     private HighlightInfo highlightInfo;
 
     private boolean editable;
