@@ -9,6 +9,7 @@ Feature: Register Child
     When I wait up to 60 seconds for "Basic Identity" to appear
     And I enter "Child Name" into the "Name" field of the Child Registration Form
   	And I press "Save"
+    And I wait for 2 seconds
     And I wait up to 60 seconds for "Edit" to appear
     Then I should see "Child Name"
   	And I should not see "Save"
@@ -17,12 +18,15 @@ Feature: Register Child
   	Then I should not see "Edit"
   	When I enter "Updated Child Name" into the "Name" field of the Child Registration Form
   	And I press "Save"
+    And I wait for 2 seconds
   	And I wait up to 60 seconds for "Edit" to appear
     Then I should see "Updated Child Name"
   	And I should not see "Save"
 
+  @reinstall
   Scenario: Prompt to Save on Navigating Away
-    When I enter "Child Name" into the "Name" field of the Child Registration Form
+    Given that I am logged in as "field_worker" with password "field_worker"
+    And I enter "Child Name" into the "Name" field of the Child Registration Form
     And I select "Log Out" from the menu
     And I wait up to 60 seconds for "Choose an action" to appear
     Then I should see "Save"
