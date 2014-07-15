@@ -97,7 +97,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
 
     private List<Child> toRegexpFilteredChildren(Cursor cursor, String filterString, List<FormField> highlightedFields) throws JSONException {
         List<Child> children = new ArrayList<Child>();
-        String patternStr = String.format("\\w*(%s)+\\w*", filterString);
+        String patternStr = String.format(".*(%s)+.*", filterString);
         Pattern pattern = Pattern.compile(patternStr, Pattern.CASE_INSENSITIVE);
         while (cursor.moveToNext()) {
             Child child = childFrom(cursor);
