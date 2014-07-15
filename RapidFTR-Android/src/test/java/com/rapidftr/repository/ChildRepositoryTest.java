@@ -152,11 +152,13 @@ public class ChildRepositoryTest {
         Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ], \"x\": \"y\" }");
         Child child4 = new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
+        Child child5 = new Child("child1", "user5", "{ 'name' : 'child4 developer', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
 
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
         repository.createOrUpdate(child3);
         repository.createOrUpdate(child4);
+        repository.createOrUpdate(child5);
 
         List<Child> children = repository.getMatchingChildren("child3", highlightedFormFields);
         assertEquals(1, children.size());
@@ -166,6 +168,9 @@ public class ChildRepositoryTest {
 
         children = repository.getMatchingChildren("hiLd1", highlightedFormFields);
         assertEquals(2, children.size());
+
+        children = repository.getMatchingChildren("developer", highlightedFormFields);
+        assertEquals(1, children.size());
     }
 
     @Test
