@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:orientation="horizontal"
-              android:layout_height="fill_parent"
+              android:layout_height="wrap_content"
               style="@style/childrow"
               android:background="@drawable/list_bg">
     <ImageView
@@ -13,18 +13,15 @@
             android:scaleType="fitCenter"
             style="@style/photoThumbnail"
             android:background="#aaaaaa"/>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.rapidftr.view.ChildHighlightedFieldViewGroup xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="fill_parent"
                   android:layout_toRightOf="@id/thumbnail"
                   android:orientation="vertical"
-                  android:layout_height="fill_parent">
+                  android:layout_height="wrap_content"
+                  android:id="@+id/child_field_group">
         <TextView android:layout_width="fill_parent"
                   android:layout_height="wrap_content"
                   style="@style/childid"
                   android:id="@+id/row_child_unique_id"/>
-        <TextView android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  style="@style/childname"
-                  android:id="@+id/row_child_name"/>
-    </LinearLayout>
+    </com.rapidftr.view.ChildHighlightedFieldViewGroup>
 </LinearLayout>

@@ -7,6 +7,7 @@ import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
+import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
 import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -17,8 +18,10 @@ import org.json.JSONException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
@@ -60,7 +63,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
     }
 
     public List<Child> getChildrenByOwner() throws JSONException {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE child_owner = ? ORDER BY name", new String[]{userName});
+        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE child_owner = ? ORDER BY id", new String[]{userName});
         return toChildren(cursor);
     }
 
@@ -78,12 +81,39 @@ public class ChildRepository implements Closeable, Repository<Child> {
         session.execSQL("DELETE FROM children WHERE child_owner = '" + userName + "';");
     }
 
-    public List<Child> getMatchingChildren(String subString) throws JSONException {
+    public List<Child> getMatchingChildren(String subString, List<FormField> highlightedFields) throws JSONException {
+        if (highlightedFields == null)
+            highlightedFields = Collections.EMPTY_LIST;
+
         String searchString = String.format("%%%s%%", subString);
         RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();
-        String query = "SELECT child_json, synced FROM children WHERE " + fetchByOwner(context) + " (name LIKE ? or id LIKE ?)";
+
+        String query = new StringBuilder("SELECT child_json, synced FROM children WHERE ")
+                .append(fetchByOwner(context))
+                .append("(child_json LIKE ? OR id LIKE ?)").toString();
         @Cleanup Cursor cursor = session.rawQuery(query, new String[]{searchString, searchString});
-        return toChildren(cursor);
+        return toRegexpFilteredChildren(cursor, subString, highlightedFields);
+    }
+
+    private List<Child> toRegexpFilteredChildren(Cursor cursor, String filterString, List<FormField> highlightedFields) throws JSONException {
+        List<Child> children = new ArrayList<Child>();
+        String patternStr = String.format("\\w*(%s)+\\w*", filterString);
+        Pattern pattern = Pattern.compile(patternStr, Pattern.CASE_INSENSITIVE);
+        while (cursor.moveToNext()) {
+            Child child = childFrom(cursor);
+
+            if (pattern.matcher(child.getUniqueId()).matches()) {
+                children.add(child);
+            } else {
+                for (FormField formField : highlightedFields) {
+                    if (pattern.matcher(child.optString(formField.getId())).matches()) {
+                        children.add(child);
+                    }
+                }
+            }
+        }
+
+        return children;
     }
 
     private String fetchByOwner(RapidFtrApplication context) throws JSONException {
@@ -103,7 +133,6 @@ public class ChildRepository implements Closeable, Repository<Child> {
         child.setLastUpdatedAt(getTimeStamp());
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getCreatedBy());
         values.put(id.getColumnName(), child.getUniqueId());
-        values.put(name.getColumnName(), child.getName());
         values.put(content.getColumnName(), child.getJsonString());
         values.put(synced.getColumnName(), child.isSynced());
         values.put(created_at.getColumnName(), child.getCreatedAt());

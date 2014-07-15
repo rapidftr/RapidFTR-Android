@@ -5,6 +5,9 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
+import com.rapidftr.forms.FormField;
+import com.rapidftr.forms.FormSection;
+import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.utils.JSONArrays;
@@ -15,6 +18,8 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.robolectric.Robolectric;
 
 import java.io.IOException;
 import java.util.*;
@@ -39,10 +44,18 @@ public class ChildRepositoryTest {
     public DatabaseSession session;
     public ChildRepository repository;
 
+    List<FormField> highlightedFormFields;
+
     @Before
-    public void setupSession() {
+    public void setupSession() throws IOException {
         session = new ShadowSQLiteHelper("test_database").getSession();
         repository = new ChildRepository("user1", session);
+
+        highlightedFormFields = new ArrayList<FormField>();
+        List<FormSection> formSections = FormSectionTest.loadFormSectionsFromClassPathResource();
+        for(FormSection formSection : formSections) {
+            highlightedFormFields.addAll(formSection.getOrderedHighLightedFields());
+        }
     }
 
     @Test
@@ -118,10 +131,10 @@ public class ChildRepositoryTest {
     }
 
     @Test
-    public void shouldReturnMatchedChildRecords() throws Exception{
+    public void shouldReturnMatchedChildRecordsBasedOnId() throws Exception {
         Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ] }");
+        Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ], \"x\": \"y\" }");
         Child child4 = new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
 
         repository.createOrUpdate(child1);
@@ -129,19 +142,39 @@ public class ChildRepositoryTest {
         repository.createOrUpdate(child3);
         repository.createOrUpdate(child4);
 
-        List<Child> children = repository.getMatchingChildren("hiLd1");
+        List<Child> children = repository.getMatchingChildren("hiLd1", null);
+        assertEquals(1, children.size());
+    }
+
+    @Test
+    public void shouldReturnMatchedChildRecordsBasedOnHighlightedFields() throws JSONException, IOException {
+        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ], \"x\": \"y\" }");
+        Child child4 = new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
+
+        repository.createOrUpdate(child1);
+        repository.createOrUpdate(child2);
+        repository.createOrUpdate(child3);
+        repository.createOrUpdate(child4);
+
+        List<Child> children = repository.getMatchingChildren("child3", highlightedFormFields);
+        assertEquals(1, children.size());
+
+        children = repository.getMatchingChildren("hiLd", highlightedFormFields);
+        assertEquals(4, children.size());
+
+        children = repository.getMatchingChildren("hiLd1", highlightedFormFields);
         assertEquals(2, children.size());
-        assertThat(child1, equalTo(children.get(0)));
-        assertThat(child4, equalTo(children.get(1)));
     }
 
     @Test
     public void shouldNotReturnChildrenCreatedByOtherUnAuthorizedUsers() throws Exception {
         User user1 = createUser("user1");
-	    user1.setVerified(false);
+        user1.setVerified(false);
         User user2 = createUser("user2");
-	    user2.setVerified(false);
-	    RapidFtrApplication.getApplicationInstance().setCurrentUser(user1);
+        user2.setVerified(false);
+        RapidFtrApplication.getApplicationInstance().setCurrentUser(user1);
 
         Child child1 = new Child("id1", user1.getUserName(), "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         Child child2 = new Child("id2", user2.getUserName(), "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
@@ -149,12 +182,12 @@ public class ChildRepositoryTest {
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
-        List<Child> children = repository.getMatchingChildren("hiLd");
+        List<Child> children = repository.getMatchingChildren("hild", highlightedFormFields);
         assertEquals(1, children.size());
     }
 
     @Test
-    public void shouldReturnChildRecordsGivenListOfIds() throws Exception{
+    public void shouldReturnChildRecordsGivenListOfIds() throws Exception {
         Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ] }");
@@ -164,7 +197,7 @@ public class ChildRepositoryTest {
         repository.createOrUpdate(child2);
         repository.createOrUpdate(child3);
         repository.createOrUpdate(child4);
-        
+
         ArrayList<String> listOfIds = new ArrayList<String>();
         listOfIds.add("id1");
         listOfIds.add("id2");
@@ -178,7 +211,7 @@ public class ChildRepositoryTest {
         assertTrue(children.contains(child3));
         assertTrue(children.contains(child4));
     }
-    
+
     @Test
     public void shouldCorrectlyGetSyncedStateWhenGettingAllRecords() throws JSONException, IOException {
         Child syncedChild = new Child("syncedID", "user1", null, true);
@@ -200,8 +233,8 @@ public class ChildRepositoryTest {
 
         List<Child> children = repository.getChildrenByOwner();
         assertThat(children.size(), equalTo(2));
-        assertThat(child2, equalTo(children.get(0)));
-        assertThat(child1, equalTo(children.get(1)));
+        assertThat(child2.getInternalId(), equalTo(children.get(0).getInternalId()));
+        assertThat(child1.getInternalId(), equalTo(children.get(1).getInternalId()));
     }
 
     @Test
@@ -265,7 +298,7 @@ public class ChildRepositoryTest {
         repository.update(child);
         Child updatedChild = repository.get("id1");
 
-        assertThat((String)updatedChild.get(Database.ChildTableColumn.owner.getColumnName()), is("new owner"));
+        assertThat((String) updatedChild.get(Database.ChildTableColumn.owner.getColumnName()), is("new owner"));
         assertThat(updatedChild.get("someNewField").toString(), is("someNewValue"));
     }
 
@@ -320,7 +353,7 @@ public class ChildRepositoryTest {
         assertOnHistory(jsonObject, "protected", "yes", "");
     }
 
-    private void assertOnHistory(JSONObject jsonObject, String name,  String toString, String fromString) throws JSONException {
+    private void assertOnHistory(JSONObject jsonObject, String name, String toString, String fromString) throws JSONException {
         JSONObject changesKey = (JSONObject) ((JSONObject) jsonObject.get("changes")).get(name);
         assertThat(changesKey.optString("to"), is(toString));
         assertThat(changesKey.optString("from"), is(fromString));
@@ -353,11 +386,11 @@ public class ChildRepositoryTest {
         Child childWithHistories = new Child("id", "user", oldContent);
         repository.createOrUpdate(childWithHistories);
 
-        String newContent = String.format("{'last_synced_at':'%s','gender' : 'female','nationality' : 'Indian', 'name' : 'new-name', 'rc_id_no': '1234', 'separated' : 'true', 'histories' : '%s'}",last_synced_at, oldHistories);
+        String newContent = String.format("{'last_synced_at':'%s','gender' : 'female','nationality' : 'Indian', 'name' : 'new-name', 'rc_id_no': '1234', 'separated' : 'true', 'histories' : '%s'}", last_synced_at, oldHistories);
         Child updatedChild = new Child("id", "user", newContent);
 
         repository.createOrUpdate(updatedChild);
-        assertThat(((JSONArray)updatedChild.get(HISTORIES)).length(), is(1));
+        assertThat(((JSONArray) updatedChild.get(HISTORIES)).length(), is(1));
     }
 
     @Test

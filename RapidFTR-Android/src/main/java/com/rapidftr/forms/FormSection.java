@@ -25,9 +25,9 @@ public class FormSection implements Comparable<FormSection> {
     @JsonProperty("help_text")
     protected Map<String, String> helpText = new HashMap<String, String>();
 
-	protected List<FormField> fields = new ArrayList<FormField>();
+    protected List<FormField> fields = new ArrayList<FormField>();
 
-	public String getLocalizedName() {
+    public String getLocalizedName() {
         return getLocalized(name);
     }
 
@@ -36,9 +36,9 @@ public class FormSection implements Comparable<FormSection> {
     }
 
     private String getLocalized(Map<String, String> valueMap) {
-        if(valueMap != null){
+        if (valueMap != null) {
             String value = valueMap.get(Locale.getDefault().getLanguage());
-            return (value == null || "".equals(value)) ? valueMap.get(RapidFtrApplication.getDefaultLocale()) : value ;
+            return (value == null || "".equals(value)) ? valueMap.get(RapidFtrApplication.getDefaultLocale()) : value;
         }
         return null;
     }
@@ -53,4 +53,15 @@ public class FormSection implements Comparable<FormSection> {
         return getLocalizedName();
     }
 
+    public List<FormField> getOrderedHighLightedFields() {
+        SortedMap<Integer, FormField> sortedFormFields = new TreeMap<Integer, FormField>();
+        for (FormField formField : fields) {
+            if (formField.getHighlightInfo() != null && formField.getHighlightInfo().getHighlighted()) {
+                Integer order = Integer.parseInt(formField.getHighlightInfo().getOrder());
+                sortedFormFields.put(order, formField);
+            }
+        }
+
+        return Arrays.asList(sortedFormFields.values().toArray(new FormField[]{}));
+    }
 }
