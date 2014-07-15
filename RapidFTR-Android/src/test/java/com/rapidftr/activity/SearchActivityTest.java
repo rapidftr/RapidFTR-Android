@@ -5,6 +5,10 @@ import android.widget.TextView;
 import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.database.ShadowSQLiteHelper;
+import com.rapidftr.forms.FormField;
+import com.rapidftr.forms.FormSection;
+import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.SpyActivityController;
@@ -15,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.util.ActivityController;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +37,7 @@ public class SearchActivityTest {
     private ChildRepository childRepository;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         initMocks(this);
         activityController = SpyActivityController.of(SearchActivity.class);
         activity = activityController.attach().get();
@@ -47,7 +52,7 @@ public class SearchActivityTest {
         List<Child> searchResults = new ArrayList<Child>();
         searchResults.add(new Child("id1", "user1", "{ \"name\" : \"child1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }"));
         String searchString = "Hild";
-        when(childRepository.getMatchingChildren(searchString)).thenReturn(searchResults);
+        when(childRepository.getMatchingChildren(eq(searchString), anyListOf(FormField.class))).thenReturn(searchResults);
 
         activityController.create();
         TextView textView = (TextView) activity.findViewById(R.id.search_text);
@@ -62,7 +67,7 @@ public class SearchActivityTest {
     public void shouldShowEmptyViewForNoSearchResults() throws JSONException {
         List<Child> searchResults = new ArrayList<Child>();
         String searchString = "Hild";
-        when(childRepository.getMatchingChildren(searchString)).thenReturn(searchResults);
+        when(childRepository.getMatchingChildren(eq(searchString), anyListOf(FormField.class))).thenReturn(searchResults);
 
         activityController.create();
         TextView textView = (TextView) activity.findViewById(R.id.search_text);
@@ -80,7 +85,7 @@ public class SearchActivityTest {
         textView.setText(searchString);
         activity.findViewById(R.id.search_btn).performClick();
         ListView listView = (ListView) activity.findViewById(R.id.child_list);
-        verify(childRepository,never()).getMatchingChildren(searchString);
+        verify(childRepository,never()).getMatchingChildren(eq(searchString), anyListOf(FormField.class));
         assertNotNull(listView.getEmptyView());
     }
 

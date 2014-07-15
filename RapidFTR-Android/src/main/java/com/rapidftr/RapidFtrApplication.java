@@ -18,6 +18,7 @@ import com.google.common.io.CharStreams;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.activity.RapidFtrActivity;
+import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.User;
 import com.rapidftr.task.AsyncTaskWithDialog;
@@ -31,6 +32,7 @@ import org.androidannotations.annotations.EApplication;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -222,5 +224,15 @@ public class RapidFtrApplication extends Application {
 
     public void cancelNotification(int notificationId) {
         notificationManager.cancel(notificationId);
+    }
+
+    public List<FormField> getHighlightedFields() {
+        List<FormField> formFields = new ArrayList<FormField>();
+
+        for (FormSection formSection : formSections) {
+            formFields.addAll(formSection.getOrderedHighLightedFields());
+        }
+
+        return formFields;
     }
 }
