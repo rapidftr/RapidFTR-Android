@@ -82,7 +82,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
         highlightedFields = (highlightedFields == null) ? Collections.EMPTY_LIST : highlightedFields;
         String query = buildSQLQueryForSearch(searchString, RapidFtrApplication.getApplicationInstance());
         @Cleanup Cursor cursor = session.rawQuery(query, null);
-        return filterByHighlightedFields(cursor, searchString, highlightedFields);
+        return filterChildrenWithRegularExpression(cursor, searchString, highlightedFields);
     }
 
     private String buildSQLQueryForSearch(String searchString, RapidFtrApplication context) throws JSONException {
@@ -97,9 +97,9 @@ public class ChildRepository implements Closeable, Repository<Child> {
         return queryBuilder.append(")").toString();
     }
 
-    private List<Child> filterByHighlightedFields(Cursor cursor, String searchString, List<FormField> highlightedFields) throws JSONException {
+    private List<Child> filterChildrenWithRegularExpression(Cursor cursor, String filterString, List<FormField> highlightedFields) throws JSONException {
         List<Child> children = new ArrayList<Child>();
-        Pattern pattern = buildPatternFromSearchString(searchString);
+        Pattern pattern = buildPatternFromSearchString(filterString);
 
         while (cursor.moveToNext()) {
             Child child = childFrom(cursor);
