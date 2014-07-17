@@ -18,7 +18,6 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
@@ -37,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.*;
 
@@ -155,7 +155,7 @@ public class FluentRequest {
             while(keys.hasNext())
             {
                 String currentKey = keys.next().toString();
-                multipartEntity.addPart(modelType+"["+currentKey+"]", new StringBody(baseModel.get(currentKey).toString()));
+                multipartEntity.addPart(modelType+"["+currentKey+"]", new StringBody(baseModel.get(currentKey).toString(), Charset.defaultCharset()));
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);
