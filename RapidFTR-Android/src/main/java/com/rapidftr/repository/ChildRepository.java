@@ -103,7 +103,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
 
         while (cursor.moveToNext()) {
             Child child = childFrom(cursor);
-            if (pattern.matcher(child.getUniqueId()).matches()) {
+            if (pattern.matcher(child.getShortId()).matches()) {
                 children.add(child);
             } else {
                 for (FormField formField : highlightedFields) {
