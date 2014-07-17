@@ -176,8 +176,9 @@ public class ChildRepositoryTest {
     @Test
     public void shouldMatchIndependentOfSearchTermOrder() throws JSONException, IOException {
         Child child1 = new Child("id1", "user1", "{ 'name' : 'first second', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child2 = new Child("id1", "user1", "{ 'name' : 'john smith', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        Child child2 = new Child("id2", "user1", "{ 'name' : 'john smith', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         repository.createOrUpdate(child1);
+        repository.createOrUpdate(child2);
 
         List<Child> children = repository.getMatchingChildren("first second", highlightedFormFields);
         assertEquals(1, children.size());
@@ -188,6 +189,22 @@ public class ChildRepositoryTest {
         children = repository.getMatchingChildren("sam", highlightedFormFields);
         assertEquals(0, children.size());
     }
+
+
+    @Test
+    public void shouldMatchOnlyShortId() throws JSONException, IOException {
+        String childId = "abcdefghijklmnop";
+        String childShortId = "jklmnop";
+        Child child1 = new Child(childId, "user1", "{ 'name' : 'first second', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
+        repository.createOrUpdate(child1);
+
+        List<Child> children = repository.getMatchingChildren(childId, highlightedFormFields);
+        assertEquals(0, children.size());
+
+        children = repository.getMatchingChildren(childShortId, highlightedFormFields);
+        assertEquals(1, children.size());
+    }
+
 
     @Test
     public void shouldNotReturnChildrenCreatedByOtherUnAuthorizedUsers() throws Exception {
