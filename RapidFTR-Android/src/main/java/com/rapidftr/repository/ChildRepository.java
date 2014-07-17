@@ -17,7 +17,10 @@ import org.json.JSONException;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.rapidftr.database.Database.BooleanColumn;
@@ -78,55 +81,39 @@ public class ChildRepository implements Closeable, Repository<Child> {
         session.execSQL("DELETE FROM children WHERE child_owner = '" + userName + "';");
     }
 
-    public List<Child> getMatchingChildren(String searchString, List<FormField> highlightedFields) throws JSONException {
-        highlightedFields = (highlightedFields == null) ? Collections.EMPTY_LIST : highlightedFields;
-        String query = buildSQLQueryForSearch(searchString, RapidFtrApplication.getApplicationInstance());
-        @Cleanup Cursor cursor = session.rawQuery(query, null);
-        return filterByHighlightedFields(cursor, searchString, highlightedFields);
+    public List<Child> getMatchingChildren(String subString, List<FormField> highlightedFields) throws JSONException {
+        if (highlightedFields == null)
+            highlightedFields = Collections.EMPTY_LIST;
+
+        String searchString = String.format("%%%s%%", subString);
+        RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();
+
+        String query = new StringBuilder("SELECT child_json, synced FROM children WHERE ")
+                .append(fetchByOwner(context))
+                .append("(child_json LIKE ? OR id LIKE ?)").toString();
+        @Cleanup Cursor cursor = session.rawQuery(query, new String[]{searchString, searchString});
+        return toRegexpFilteredChildren(cursor, subString, highlightedFields);
     }
 
-    private String buildSQLQueryForSearch(String searchString, RapidFtrApplication context) throws JSONException {
-        StringBuilder queryBuilder = new StringBuilder("SELECT child_json, synced FROM children WHERE (").append(fetchByOwner(context));
-        String[] subQueries = searchString.split("\\s+");
-        for (int i = 0;i<subQueries.length;i++) {
-            queryBuilder.append(String.format("child_json LIKE '%%%s%%' OR id LIKE '%%%s%%'", subQueries[i], subQueries[i]));
-            if(i < subQueries.length-1)  {
-                queryBuilder.append(" OR ");
-            }
-        }
-        return queryBuilder.append(")").toString();
-    }
-
-    private List<Child> filterByHighlightedFields(Cursor cursor, String searchString, List<FormField> highlightedFields) throws JSONException {
+    private List<Child> toRegexpFilteredChildren(Cursor cursor, String filterString, List<FormField> highlightedFields) throws JSONException {
         List<Child> children = new ArrayList<Child>();
-        Pattern pattern = buildPatternFromSearchString(searchString);
-
+        String patternStr = String.format(".*(%s)+.*", filterString);
+        Pattern pattern = Pattern.compile(patternStr, Pattern.CASE_INSENSITIVE);
         while (cursor.moveToNext()) {
             Child child = childFrom(cursor);
+
             if (pattern.matcher(child.getUniqueId()).matches()) {
                 children.add(child);
             } else {
                 for (FormField formField : highlightedFields) {
-                    boolean formFieldMatchesPattern = pattern.matcher(child.optString(formField.getId())).matches();
-                    if (!children.contains(child) && formFieldMatchesPattern) {
+                    if (pattern.matcher(child.optString(formField.getId())).matches()) {
                         children.add(child);
                     }
                 }
             }
         }
-        return children;
-    }
 
-    private Pattern buildPatternFromSearchString(String searchString) {
-        String[] splitQuery = searchString.split("\\s+");
-        StringBuilder regexBuilder = new StringBuilder();
-        for(int i = 0; i < splitQuery.length; i++) {
-            regexBuilder.append(String.format(".*(%s)+.*", splitQuery[i]));
-            if((i < splitQuery.length-1)){
-                regexBuilder.append("|");
-            }
-        }
-        return Pattern.compile(regexBuilder.toString(), Pattern.CASE_INSENSITIVE);
+        return children;
     }
 
     private String fetchByOwner(RapidFtrApplication context) throws JSONException {

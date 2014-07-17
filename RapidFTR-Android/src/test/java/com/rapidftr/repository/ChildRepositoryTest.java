@@ -18,12 +18,11 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.robolectric.Robolectric;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 import static com.rapidftr.CustomTestRunner.createUser;
 import static com.rapidftr.model.Child.History.*;
@@ -32,11 +31,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
 public class ChildRepositoryTest {
@@ -171,22 +171,6 @@ public class ChildRepositoryTest {
 
         children = repository.getMatchingChildren("developer", highlightedFormFields);
         assertEquals(1, children.size());
-    }
-
-    @Test
-    public void shouldMatchIndependentOfSearchTermOrder() throws JSONException, IOException {
-        Child child1 = new Child("id1", "user1", "{ 'name' : 'first second', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child2 = new Child("id1", "user1", "{ 'name' : 'john smith', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        repository.createOrUpdate(child1);
-
-        List<Child> children = repository.getMatchingChildren("first second", highlightedFormFields);
-        assertEquals(1, children.size());
-
-        children = repository.getMatchingChildren("second first", highlightedFormFields);
-        assertEquals(1, children.size());
-
-        children = repository.getMatchingChildren("sam", highlightedFormFields);
-        assertEquals(0, children.size());
     }
 
     @Test
