@@ -96,3 +96,24 @@ Then(/^I should see all the Child Registration Tabs$/) do
     performAction('assert_text', tab, true)
   end
 end
+
+Then(/^I should see the following fields$/) do |fields_table|
+  fields_table.hashes.each do |field|
+    performAction('assert_text', field['fieldname'], true)
+  end
+end
+
+When(/^I press enter$/) do
+  system("adb shell input keyevent KEYCODE_ENTER")
+end
+
+And(/^I enter the following form details$/) do |form_details|
+  form_details.hashes.each do |field|
+    performAction('clear_id_field', field['fieldname'])
+    performAction('enter_text_into_id_field', field['details'], field['fieldname'])
+  end
+end
+
+When(/^I press the menu button$/) do
+  system("adb shell input keyevent KEYCODE_MENU")
+end
