@@ -117,15 +117,3 @@ end
 When(/^I press the menu button$/) do
   system("adb shell input keyevent KEYCODE_MENU")
 end
-
-When(/^I enter the sync location$/) do
-  mimic.clear
-  mimic.post("/api/register") do
-    [200, {}, '{"response":"ok"}']
-  end
-  mimic.post("api/login") do
-    [200, {}, '{"db_key":"c781d5014e806915","organisation":"N/A","language":"en","verified":false}']
-  end
-
-  query('EditText', :setText => $WEB_URL)
-end
