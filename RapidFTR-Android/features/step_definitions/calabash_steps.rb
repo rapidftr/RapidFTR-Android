@@ -1,5 +1,4 @@
 require 'calabash-android/calabash_steps'
-require 'mimic'
 
 When(/^I enter the username "(.*?)" and password "(.*?)"$/) do |username, password|
   performAction('clear_id_field','username')
@@ -10,10 +9,9 @@ end
 
 
 Given(/^that I am logged in as "(.*?)" with password "(.*?)"$/) do |username, password|
-  mimic.clear
-  mimic.post("/api/login") do
-    [201, {}, '{"db_key":"9d5994dd5da322d0","organisation":"N/A","language":"en","verified":true}']
-  end
+  stub_server_request(:post, '/api/login')
+    .to_return(status: 201, body: '{"db_key":"9d5994dd5da322d0","organisation":"N/A","language":"en","verified":true}')
+
   macro "I enter the username \"#{username}\" and password \"#{password}\""
   performAction('clear_id_field','url')
   performAction('enter_text_into_id_field', $WEB_URL, 'url')
@@ -28,13 +26,13 @@ end
 
 
 When(/^I fill the Change Password Form with "(.*?)", "(.*?)", "(.*?)"$/) do |currentpass, newpass, newpassconfirmation|
+  stub_server_request(:post, '/users/update_password')
+    .to_return(status: 200, body: 'OK')
+
   performAction('select_from_menu', 'Change Password')
   performAction('enter_text_into_id_field', currentpass, 'current_password')
   performAction('enter_text_into_id_field', newpass, 'new_password')
   performAction('enter_text_into_id_field', newpassconfirmation, 'new_password_confirm')
-  mimic.post "/users/update_password" do
-    [200, {}, 'OK']
-  end
   performAction('press',"Change Password")
 end
 
@@ -51,15 +49,12 @@ end
 
 
 When(/^I login with the "(.*?)" credentials "(.*?)" and password "(.*?)"$/) do |state, username, password|
-  mimic.clear
-  mimic.post("/api/login") do
-      [401, {}, 'Invalid credentials. Please try again!']
-  end
+  stub_server_request(:post, '/api/login')
+    .to_return(status: 401, body: 'Invalid credentials. Please try again!')
 
   if state=='valid' then
-    mimic.post("/api/login") do
-      [201, {}, '{"db_key":"9d5994dd5da322d0","organisation":"N/A","language":"en","verified":true}']
-    end
+    stub_server_request(:post, '/api/login')
+      .to_return(status: 201, body: '{"db_key":"9d5994dd5da322d0","organisation":"N/A","language":"en","verified":true}')
   end
   macro "I enter the username \"#{username}\" and password \"#{password}\""
   performAction('press',"Log In")
@@ -68,16 +63,16 @@ end
 
 Then(/^I should see all the default form sections$/) do
   default_form_sections = [
-    "Family details", 
-    "Care Arrangements", 
-    "Separation History", 
-    "Protection Concerns", 
-    "Other Interviews", 
+    "Family details",
+    "Care Arrangements",
+    "Separation History",
+    "Protection Concerns",
+    "Other Interviews",
     "Other Tracing Info",
     "Interview Details",
     "Photos and Audio"
   ]
-  
+
   default_form_sections.each do |section|
     performAction('assert_text', section, true)
   end
