@@ -117,3 +117,7 @@ end
 When(/^I press the menu button$/) do
   system("adb shell input keyevent KEYCODE_MENU")
 end
+
+Then(/^I should see "(.*?)" within "(.*?)" seconds$/) do |text, timeout|
+  performAction('wait_for_text', text, timeout)
+end
