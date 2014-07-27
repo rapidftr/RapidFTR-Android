@@ -2,4 +2,4 @@ source 'https://rubygems.org'
 
 gem 'calabash-android',      '0.4.20'
 gem 'httparty', '~> 0.13.1'
-gem 'mimic', '~> 0.4.3'
+gem 'webmock-server', git: 'http://github.com/rdsubhas/webmock-server', branch: 'master'

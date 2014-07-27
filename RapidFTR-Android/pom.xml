@@ -456,5 +456,20 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>calabash</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <artifactId>android-maven-plugin</artifactId>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <androidManifestFile>${project.basedir}/travis/AndroidManifest.xml</androidManifestFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
