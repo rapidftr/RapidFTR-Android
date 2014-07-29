@@ -5,8 +5,7 @@ cd RapidFTR-Android
 echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI --skin WXGA800
 emulator -avd test -no-skin -no-audio -no-window -no-boot-anim &
 
-cp -f travis/AndroidManifest.xml ./AndroidManifest.xml
-mvn clean package -DskipTests
+mvn clean package -DskipTests -P calabash
 bundle install
 
 ./travis/wait_for_emulator.sh
