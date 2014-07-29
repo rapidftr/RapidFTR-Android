@@ -10,12 +10,13 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.ViewChildActivity;
 import com.rapidftr.forms.FormField;
-import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.view.ChildHighlightedFieldViewGroup;
 import org.json.JSONException;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
@@ -31,7 +32,7 @@ public class ChildViewAdapter extends BaseModelViewAdapter<Child> {
 
         int counter = 0;
         for (FormField formField : fields) {
-            int id = ++counter + (int) System.currentTimeMillis();
+            int id = ++counter;
             highlightedFields.put(id, formField);
         }
     }

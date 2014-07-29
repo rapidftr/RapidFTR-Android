@@ -41,9 +41,9 @@ public class ChildHighlightedFieldViewTest {
 
         highlightedFields = new TreeMap<Integer, FormField>();
         int counter = 0;
+
         for (FormField formField : fields) {
-            int id = ++counter + (int) System.currentTimeMillis();
-            highlightedFields.put(id, formField);
+            highlightedFields.put(++counter, formField);
         }
 
         child = new Child("1", "field_worker", loadChildDataFromClassPathResource());
