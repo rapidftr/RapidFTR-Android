@@ -23,7 +23,7 @@ public class FormService {
     public void getPublishedFormSections() throws IOException {
         FluentResponse formSectionsResponse = http()
                 .context(context)
-		        .path("/published_form_sections")
+		        .path("/api/form_sections")
                 .get();
 
         if (formSectionsResponse.isSuccess()) {

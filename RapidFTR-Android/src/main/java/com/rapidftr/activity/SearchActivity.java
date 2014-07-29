@@ -57,7 +57,7 @@ public class SearchActivity extends RapidFtrActivity {
         if ("".equals(subString)) {
             return new ArrayList<Child>();
         }
-        return childRepository.getMatchingChildren(subString);
+        return childRepository.getMatchingChildren(subString, getContext().getHighlightedFields());
     }
 
 }

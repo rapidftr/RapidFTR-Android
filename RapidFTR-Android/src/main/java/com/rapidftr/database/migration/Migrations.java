@@ -16,11 +16,10 @@ public enum Migrations {
     v001_createChildTable(1, MigrationSQL.createChildTable),
     v001_addCreatedAtColumn(1, MigrationSQL.addCreatedAtColumn),
     v001_addUpdatedAtColumn(1, MigrationSQL.addLastUpdatedAtColumn),
-    v001_addNameColumn(1, MigrationSQL.addNameColumn),
     v001_add_idColumn(1, MigrationSQL.addIdColumn),
     v001_add_revColumn(1, MigrationSQL.addRevColumn),
     v001_add_last_synced_at_column(1,MigrationSQL.addLastSyncedAtColumn),
-    v002_createEnquiryTable(2, MigrationSQL.createEnquiryTable),
+    v001_createEnquiryTable(1, MigrationSQL.createEnquiryTable),
     ;
 
     private int databaseVersion;
@@ -71,12 +70,6 @@ class MigrationSQL {
             + Database.child.getTableName()
             + " ADD COLUMN "
             + Database.ChildTableColumn.last_updated_at.getColumnName()
-            + " text";
-
-    public static final String addNameColumn = "ALTER TABLE "
-            + Database.child.getTableName()
-            + " ADD COLUMN "
-            + Database.ChildTableColumn.name.getColumnName()
             + " text";
 
     public static String addIdColumn = "ALTER TABLE "

@@ -82,7 +82,7 @@
 
     <string name="sync_complete">Sinc. completada.</string>
     <string name="sync_error">Error sincronizando. Trate de nuevo después de un tiempo.</string>
-    <string name="search_child">Buscar un registro por nombre/id</string>
+    <string name="search_child">Buscar récord</string>
     <string name="go">Acción</string>
     <string name="child_not_found">No Se Encontró Ningún Registro</string>
 
