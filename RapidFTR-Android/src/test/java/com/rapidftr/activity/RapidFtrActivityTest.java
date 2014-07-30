@@ -8,11 +8,16 @@ import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SynchronisationAsyncTask;
+import com.rapidftr.utils.TestInjectionModule;
 import org.hamcrest.MatcherAssert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowToast;
 
 import java.io.IOException;
@@ -28,6 +33,13 @@ import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
 public class RapidFtrActivityTest {
+    @Before
+    public void setUp() throws Exception {
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        TestInjectionModule.setUp(this, module);
+
+    }
 
     @Test
     public void shouldNotRenderMenuWhenUserIsNotLoggedIn() throws IOException {
@@ -44,6 +56,7 @@ public class RapidFtrActivityTest {
 
     @Test
     public void shouldRenderMenuWhenUserIsLoggedIn() throws IOException {
+
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         instance.setCurrentUser(createUser());
         RapidFtrActivity loginActivity = new LoginActivity_();
@@ -57,9 +70,11 @@ public class RapidFtrActivityTest {
 
     @Test
     public void shouldFinishActivityOnLogout() throws IOException {
+
         RapidFtrApplication instance = RapidFtrApplication.getApplicationInstance();
         instance.setCurrentUser(createUser());
-        RapidFtrActivity loginActivity = new LoginActivity_();
+        RapidFtrActivity loginActivity = Robolectric.buildActivity(LoginActivity.class).create().get();
+
         MenuItem menuItem = mock(MenuItem.class);
         given(menuItem.getItemId()).willReturn(R.id.logout);
 
@@ -183,6 +198,6 @@ public class RapidFtrActivityTest {
         doReturn(mockApplication).when(mainActivity).getContext();
 
         mainActivity.synchronise();
-        MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(),equalTo(mainActivity.getString(R.string.connection_off)));
+        MatcherAssert.assertThat(ShadowToast.getTextOfLatestToast(), equalTo(mainActivity.getString(R.string.connection_off)));
     }
 }

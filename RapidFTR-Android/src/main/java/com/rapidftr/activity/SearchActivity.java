@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.adapter.ChildViewAdapter;
 import com.rapidftr.model.Child;
@@ -18,6 +19,8 @@ import java.util.List;
 public class SearchActivity extends RapidFtrActivity {
 
     private ChildViewAdapter childViewAdapter;
+    @Inject
+    private ChildRepository childRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class SearchActivity extends RapidFtrActivity {
     }
 
     private List<Child> search(String subString) throws JSONException {
-        @Cleanup ChildRepository childRepository = inject(ChildRepository.class);
+        @Cleanup ChildRepository childRepository = this.childRepository;
         subString = subString.trim();
         if ("".equals(subString)) {
             return new ArrayList<Child>();

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.service.EnquiryHttpDao;
@@ -17,6 +18,8 @@ import org.json.JSONException;
 import java.io.IOException;
 
 public class ViewEnquiryActivity extends BaseEnquiryActivity {
+    @Inject
+    private LogOutService logOutService;
 
     @Override
     protected void initializeView() {
@@ -58,7 +61,7 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
                 sync();
                 return true;
             case R.id.logout:
-                inject(LogOutService.class).attemptLogOut(this);
+                logOutService.attemptLogOut(this);
                 return true;
             case R.id.info:
                 startActivity(new Intent(this, InfoActivity.class));

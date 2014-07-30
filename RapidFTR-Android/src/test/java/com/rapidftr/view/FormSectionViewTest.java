@@ -1,13 +1,15 @@
 package com.rapidftr.view;
 
 import android.app.Activity;
-import android.view.LayoutInflater;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.activity.RegisterChildActivity;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
+import com.rapidftr.utils.TestInjectionModule;
 import com.rapidftr.view.fields.*;
 import org.json.JSONException;
 import org.junit.Before;
@@ -36,20 +38,34 @@ public class FormSectionViewTest {
 
     @Before
     public void setUp() throws JSONException {
+
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        TestInjectionModule.setUp(this, module);
         Activity activity = Robolectric.buildActivity(RegisterChildActivity.class).create().get();
         view = (FormSectionView) activity.getLayoutInflater().inflate(R.layout.form_section, null);
         child = new Child();
 
         section = new FormSection();
-        section.setName(new HashMap<String, String>(){{put("en", "Test Section");}});
-        section.setHelpText(new HashMap<String, String>(){{put("en", "Help Section");}});
+        section.setName(new HashMap<String, String>() {{
+            put("en", "Test Section");
+        }});
+        section.setHelpText(new HashMap<String, String>() {{
+            put("en", "Help Section");
+        }});
 
         view.initialize(section, child);
         field = new FormField();
         field.setId("test_field");
-        field.setDisplayName(new HashMap<String, String>(){{put("en", "Test Field");}});
-        field.setHelpText(new HashMap<String, String>(){{put("en", "Help Field");}});
-        field.setOptionStrings(new HashMap<String, List<String>>(){{put("en",  new ArrayList<String>());}});
+        field.setDisplayName(new HashMap<String, String>() {{
+            put("en", "Test Field");
+        }});
+        field.setHelpText(new HashMap<String, String>() {{
+            put("en", "Help Field");
+        }});
+        field.setOptionStrings(new HashMap<String, List<String>>() {{
+            put("en", new ArrayList<String>());
+        }});
     }
 
     @Test

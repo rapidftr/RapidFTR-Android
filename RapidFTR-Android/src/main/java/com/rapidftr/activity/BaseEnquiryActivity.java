@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Enquiry;
@@ -19,6 +20,7 @@ import java.io.IOException;
 public abstract class BaseEnquiryActivity extends CollectionActivity {
     public static final String PHOTO_KEYS = "photo_keys";
     protected Enquiry enquiry;
+    @Inject
     protected EnquiryRepository enquiryRepository;
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     protected boolean editable = true;
@@ -35,7 +37,6 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        enquiryRepository = inject(EnquiryRepository.class);
         super.onCreate(savedInstanceState);
     }
 
@@ -104,7 +105,7 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
     }
 
     private Enquiry saveEnquiry() throws Exception {
-        @Cleanup EnquiryRepository repository = inject(EnquiryRepository.class);
+        @Cleanup EnquiryRepository repository = enquiryRepository;
         if (enquiry.isNew()) {
             enquiry.setCreatedBy(getCurrentUser().getUserName());
             enquiry.setOrganisation(getCurrentUser().getOrganisation());

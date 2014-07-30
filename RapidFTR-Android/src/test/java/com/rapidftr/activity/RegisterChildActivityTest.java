@@ -2,8 +2,11 @@ package com.rapidftr.activity;
 
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Child;
 import com.rapidftr.utils.SpyActivityController;
+import com.rapidftr.utils.TestInjectionModule;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +25,9 @@ public class RegisterChildActivityTest {
 
     @Before
     public void setUp() {
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        TestInjectionModule.setUp(this, module);
         activityController = SpyActivityController.of(RegisterChildActivity.class);
         activity = activityController.attach().get();
     }

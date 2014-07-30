@@ -9,8 +9,11 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.RegisterChildActivity;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Child;
 import com.rapidftr.utils.AudioCaptureHelper;
+import com.rapidftr.utils.TestInjectionModule;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +41,9 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
 
     @Before
     public void setUp() {
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        TestInjectionModule.setUp(this, module);
         initMocks(this);
         RegisterChildActivity activity = Robolectric.buildActivity(RegisterChildActivity.class).create().get();
         view = spy((AudioUploadBox) activity.getLayoutInflater().inflate(R.layout.form_audio_upload_box, null));
@@ -86,7 +92,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         verify(mediaRecorder).setAudioSource(MediaRecorder.AudioSource.MIC);
         verify(mediaRecorder).setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
         verify(mediaRecorder).setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        verify(mediaRecorder).setOutputFile(audioCaptureHelper.getDir().getAbsolutePath()+"/audio_file_name");
+        verify(mediaRecorder).setOutputFile(audioCaptureHelper.getDir().getAbsolutePath() + "/audio_file_name");
         verify(mediaRecorder).prepare();
         verify(mediaRecorder).start();
     }
@@ -114,7 +120,8 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
-    public void shouldAddAudioToAttachmentsWhenStopRecordMethodHasBeenCalled() {}
+    public void shouldAddAudioToAttachmentsWhenStopRecordMethodHasBeenCalled() {
+    }
 
     @Test
     public void shouldPlayRecordWhenPlayMethodHasBeenCalled() throws IOException, JSONException {
@@ -148,15 +155,15 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
-    public void shouldEnableStopButtonWhenStartRecordMethodCalled(){
+    public void shouldEnableStopButtonWhenStartRecordMethodCalled() {
         doReturn("audio_file_name").when(view).getFileName();
         view.startRecording(view);
-        Button stopButton = (Button)view.findViewById(R.id.stop_record);
+        Button stopButton = (Button) view.findViewById(R.id.stop_record);
         assertEquals(VISIBLE, stopButton.getVisibility());
     }
 
     @Test
-    public void shouldEnablePlayButtonIfThereIsAnAudioFileAvailableForGivenUser(){
+    public void shouldEnablePlayButtonIfThereIsAnAudioFileAvailableForGivenUser() {
         Child givenChild = new Child();
         givenChild.put(field.getId(), "some_audio_file");
         view.initialize(field, givenChild);
@@ -165,7 +172,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
     }
 
     @Test
-    public void shouldGiveUniqueFileName(){
+    public void shouldGiveUniqueFileName() {
         view.initialize(field, child);
         String fileName1 = view.getFileName();
         String fileName2 = view.getFileName();

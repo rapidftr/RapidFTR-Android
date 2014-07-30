@@ -9,12 +9,13 @@ import java.lang.reflect.Method;
 public class TestRapidFtrApplication_ extends RapidFtrApplication implements TestLifecycleApplication {
 
     public TestRapidFtrApplication_() {
-        super(CustomTestRunner.INJECTOR);
+        super();
     }
 
     @Override
     public void beforeTest(Method method) {
         try {
+
             getSharedPreferences().edit().putString(SERVER_URL_PREF, "http://1.2.3.4:5");
             setFormSections(CustomTestRunner.formSectionSeed);
             setCurrentUser(CustomTestRunner.createUser());

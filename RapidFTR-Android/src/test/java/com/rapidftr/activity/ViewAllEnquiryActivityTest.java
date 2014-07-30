@@ -1,12 +1,14 @@
 package com.rapidftr.activity;
 
 import android.widget.ListView;
-import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.utils.SpyActivityController;
+import com.rapidftr.utils.TestInjectionModule;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -19,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(CustomTestRunner.class)
@@ -33,11 +35,12 @@ public class ViewAllEnquiryActivityTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        module.addBinding(EnquiryRepository.class, repository);
+        TestInjectionModule.setUp(this, module);
         activityController = SpyActivityController.of(ViewAllEnquiryActivity.class);
         activity = activityController.attach().get();
-        Injector mockInjector = mock(Injector.class);
-        doReturn(mockInjector).when(activity).getInjector();
-        doReturn(repository).when(mockInjector).getInstance(EnquiryRepository.class);
     }
 
     @Test

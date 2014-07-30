@@ -10,9 +10,12 @@ import android.widget.Spinner;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
 import com.rapidftr.utils.SpyActivityController;
+import com.rapidftr.utils.TestInjectionModule;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -45,7 +48,8 @@ public class BaseChildActivityTest {
         }
 
         @Override
-        protected void saveChild() {}
+        protected void saveChild() {
+        }
     }
 
     private ActivityController<BaseChildActivityImpl> activityController;
@@ -53,8 +57,12 @@ public class BaseChildActivityTest {
 
     @Before
     public void setUp() {
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        TestInjectionModule.setUp(this, module);
         activityController = SpyActivityController.of(BaseChildActivityImpl.class);
         activity = activityController.attach().get();
+
     }
 
     @Test
@@ -74,6 +82,7 @@ public class BaseChildActivityTest {
         bundle.putString("child_state", child.toString());
 
         activityController.create(bundle);
+
         assertThat(activity.child, equalTo(child));
     }
 
@@ -112,7 +121,8 @@ public class BaseChildActivityTest {
         verify(pager).setAdapter(eq(new FormSectionPagerAdapter(formSections, child, editable)));
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void testSpinnerChangeWhenPagerChange() throws JSONException {
         Spinner spinner = mock(Spinner.class);
         doReturn(spinner).when(activity).getSpinner();
@@ -145,7 +155,8 @@ public class BaseChildActivityTest {
         assertThat(ShadowToast.getTextOfLatestToast(), equalTo(activity.getString(R.string.save_child_invalid)));
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void shouldMarkChildSyncStateToFalseWhenEverChildIsSaved() throws Exception {
         activity.child = new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
         activity.child.setSynced(true);
@@ -162,7 +173,7 @@ public class BaseChildActivityTest {
     }
 
     @Test
-    public void shouldReleaseMediaRecorderAndPlayerOnStopIfPresent(){
+    public void shouldReleaseMediaRecorderAndPlayerOnStopIfPresent() {
         MediaPlayer mediaPlayer = mock(MediaPlayer.class);
         MediaRecorder mediaRecorder = mock(MediaRecorder.class);
         activity.setMediaPlayer(mediaPlayer);

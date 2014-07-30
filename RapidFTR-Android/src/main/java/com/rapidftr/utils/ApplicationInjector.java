@@ -29,7 +29,6 @@ public class ApplicationInjector extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(Context.class).to(RapidFtrApplication.class);
         bind(DatabaseHelper.class).to(SQLCipherHelper.class);
         bind(new TypeLiteral<Repository<Child>>() {
         }).to(ChildRepository.class);
@@ -43,11 +42,13 @@ public class ApplicationInjector extends AbstractModule {
         }).to(ChildSyncService.class);
         bind(new TypeLiteral<SyncService<Enquiry>>() {
         }).to(EnquirySyncService.class);
-
         bind(LogOutService.class);
         bind(LoginService.class);
         bind(DeviceService.class);
     }
+
+
+
 
     @Provides
     @Named("USER_NAME")
@@ -80,9 +81,5 @@ public class ApplicationInjector extends AbstractModule {
         return user.isVerified() ? provider1.get() : provider2.get();
     }
 
-    @Provides
-    public SharedPreferences getSharedPreferences() {
-        return RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-    }
 
 }

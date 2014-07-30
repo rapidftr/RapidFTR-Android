@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.activity.LoginActivity;
 import com.rapidftr.activity.LoginActivity_;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.utils.http.FluentRequest;

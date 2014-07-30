@@ -5,6 +5,7 @@ import android.widget.TextView;
 import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
@@ -12,6 +13,7 @@ import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.SpyActivityController;
+import com.rapidftr.utils.TestInjectionModule;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,12 +41,12 @@ public class SearchActivityTest {
     @Before
     public void setUp() throws IOException {
         initMocks(this);
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        module.addBinding(ChildRepository.class, childRepository);
+        TestInjectionModule.setUp(this, module);
         activityController = SpyActivityController.of(SearchActivity.class);
         activity = activityController.attach().get();
-
-        Injector mockInjector = mock(Injector.class);
-        doReturn(mockInjector).when(activity).getInjector();
-        doReturn(childRepository).when(mockInjector).getInstance(ChildRepository.class);
     }
 
     @Test
@@ -85,7 +87,7 @@ public class SearchActivityTest {
         textView.setText(searchString);
         activity.findViewById(R.id.search_btn).performClick();
         ListView listView = (ListView) activity.findViewById(R.id.child_list);
-        verify(childRepository,never()).getMatchingChildren(eq(searchString), anyListOf(FormField.class));
+        verify(childRepository, never()).getMatchingChildren(eq(searchString), anyListOf(FormField.class));
         assertNotNull(listView.getEmptyView());
     }
 

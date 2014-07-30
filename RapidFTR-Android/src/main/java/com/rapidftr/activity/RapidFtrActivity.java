@@ -8,7 +8,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -18,8 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.inject.Injector;
-import com.google.inject.Key;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
@@ -31,6 +29,8 @@ import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.view.fields.TextField;
 import lombok.Getter;
 import lombok.Setter;
+import roboguice.RoboGuice;
+import roboguice.inject.RoboInjector;
 
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -62,6 +62,12 @@ public abstract class RapidFtrActivity extends Activity {
             finish();
         }
     };
+    @Inject
+    private LogOutService logoutService;
+    @Inject
+    private SynchronisationAsyncTask<Child> childSynchronisationAsyncTask;
+    @Inject
+    private SynchronisationAsyncTask<Enquiry> enquirySynchronisationAsyncTask;
 
     public interface ResultListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
@@ -116,14 +122,6 @@ public abstract class RapidFtrActivity extends Activity {
         Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
         toast.show();
-    }
-
-    protected Injector getInjector() {
-        return getContext().getInjector();
-    }
-
-    protected <T> T inject(Class<T> clazz) {
-        return getInjector().getInstance(clazz);
     }
 
     public void addResultListener(int requestCode, ResultListener listener) {
@@ -192,7 +190,7 @@ public abstract class RapidFtrActivity extends Activity {
                 if (this.getClass() == RegisterChildActivity.class || this.getClass() == EditChildActivity.class) {
                     saveAlertListenerForLogout();
                 } else {
-                    inject(LogOutService.class).attemptLogOut(this);
+                    logoutService.attemptLogOut(this);
                 }
                 return true;
             case R.id.info:
@@ -207,15 +205,12 @@ public abstract class RapidFtrActivity extends Activity {
         if (!this.getContext().isOnline()) {
             makeToast(R.string.connection_off);
         } else {
-            SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {
-            });
-            syncChildTask.setSuccessMessage(getString(R.string.child_records_sync_success));
-            executeTask(syncChildTask);
+            childSynchronisationAsyncTask.setSuccessMessage(getString(R.string.child_records_sync_success));
+            executeTask(childSynchronisationAsyncTask);
 
-            SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {
-            });
-            syncEnquiryTask.setSuccessMessage(getString(R.string.enquiry_records_sync_success));
-            executeTask(syncEnquiryTask);
+
+            enquirySynchronisationAsyncTask.setSuccessMessage(getString(R.string.enquiry_records_sync_success));
+            executeTask(enquirySynchronisationAsyncTask);
         }
     }
 
@@ -225,9 +220,6 @@ public abstract class RapidFtrActivity extends Activity {
         syncTask.execute();
     }
 
-    private <T> T getSynchronisationTask(Key<T> key) {
-        return getInjector().getInstance(key);
-    }
 
     protected User getCurrentUser() {
         return getContext().getCurrentUser();
@@ -235,11 +227,14 @@ public abstract class RapidFtrActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        final RoboInjector injector = RoboGuice.getInjector(this);
+        injector.injectMembersWithoutViews(this);
         super.onCreate(savedInstanceState);
         registerReceiver(networkChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         initializeExceptionHandler();
         initializeLogoutHandler();
     }
+
 
     @Override
     protected void onDestroy() {
@@ -374,7 +369,7 @@ public abstract class RapidFtrActivity extends Activity {
         if (activity.child.isValid()) {
             saveOrDiscardOrCancelChild(listener);
         } else {
-            inject(LogOutService.class).attemptLogOut(activity);
+            logoutService.attemptLogOut(activity);
         }
     }
 
@@ -387,7 +382,7 @@ public abstract class RapidFtrActivity extends Activity {
                         activity.saveChild();
                         break;
                     case 1:
-                        inject(LogOutService.class).attemptLogOut(activity);
+                        logoutService.attemptLogOut(activity);
                     case 2:
                         break;
                 }

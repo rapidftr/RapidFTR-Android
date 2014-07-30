@@ -11,7 +11,10 @@ import com.rapidftr.R;
 import com.rapidftr.activity.BaseChildActivity;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.activity.RegisterChildActivity;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.utils.PhotoCaptureHelper;
+import com.rapidftr.utils.TestInjectionModule;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Before;
@@ -37,6 +40,9 @@ public class PhotoUploadBoxTest extends BaseViewSpec<PhotoUploadBox> {
 
     @Before
     public void setUp() throws IOException {
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        TestInjectionModule.setUp(this, module);
         photoCaptureHelper = mock(PhotoCaptureHelper.class);
         bitmap = mock(Bitmap.class);
         imageView = mock(ImageView.class);

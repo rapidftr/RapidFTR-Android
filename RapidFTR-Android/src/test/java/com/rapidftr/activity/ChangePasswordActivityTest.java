@@ -5,8 +5,11 @@ import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.task.SyncAllDataAsyncTask;
 import com.rapidftr.utils.SpyActivityController;
+import com.rapidftr.utils.TestInjectionModule;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -26,6 +29,9 @@ public class ChangePasswordActivityTest {
 
     @Before
     public void setUp() throws Exception {
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        TestInjectionModule.setUp(this, module);
         changePasswordActivity = SpyActivityController.of(ChangePasswordActivity.class).create().get();
 
         newPassword  =  (EditText)changePasswordActivity.findViewById(R.id.new_password);

@@ -6,16 +6,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.ChangePasswordTask;
 
-public class ChangePasswordActivity extends RapidFtrActivity{
+public class ChangePasswordActivity extends RapidFtrActivity {
     String old, new_password, confirmation;
+    @Inject
+    private ChangePasswordTask changePasswordTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);    
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.change_password);
     }
 
@@ -45,15 +48,17 @@ public class ChangePasswordActivity extends RapidFtrActivity{
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 cancelSync(RapidFtrApplication.getApplicationInstance());
-                sendRequestToServer(old,new_password,confirmation);
+                sendRequestToServer(old, new_password, confirmation);
             }
         });
         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {}
+            public void onClick(DialogInterface dialog, int id) {
+            }
         });
 
         builder.create().show();
     }
+
     protected void cancelSync(RapidFtrApplication context) {
         RapidFtrApplication.getApplicationInstance().cleanSyncTask();
     }
@@ -73,10 +78,9 @@ public class ChangePasswordActivity extends RapidFtrActivity{
     }
 
     protected void sendRequestToServer(String old_password, String new_password, String confirmation) {
-        ChangePasswordTask task = inject(ChangePasswordTask.class);
-        task.setActivity(this);
-        if(RapidFtrApplication.getApplicationInstance().isOnline()){
-            task.execute(old_password, new_password, confirmation);
+        changePasswordTask.setActivity(this);
+        if (RapidFtrApplication.getApplicationInstance().isOnline()) {
+            changePasswordTask.execute(old_password, new_password, confirmation);
         } else {
             Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.no_connection, Toast.LENGTH_LONG).show();
             this.finish();

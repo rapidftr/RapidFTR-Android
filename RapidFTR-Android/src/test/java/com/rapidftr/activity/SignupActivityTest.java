@@ -3,8 +3,11 @@ package com.rapidftr.activity;
 import android.widget.EditText;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.User;
 import com.rapidftr.utils.SpyActivityController;
+import com.rapidftr.utils.TestInjectionModule;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,6 +31,9 @@ public class SignupActivityTest {
 
     @Before
     public void setup(){
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        TestInjectionModule.setUp(this, module);
         signupActivity = SpyActivityController.of(SignupActivity.class).create().get();
         userName = (EditText) signupActivity.findViewById(R.id.username);
         password = (EditText)signupActivity.findViewById(R.id.password);

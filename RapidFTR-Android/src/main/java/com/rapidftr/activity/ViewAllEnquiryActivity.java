@@ -1,6 +1,7 @@
 package com.rapidftr.activity;
 
 import android.widget.ListView;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.adapter.EnquiryViewAdapter;
 import com.rapidftr.model.Enquiry;
@@ -13,10 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewAllEnquiryActivity extends BaseEnquiryActivity {
+    @Inject
+    private EnquiryRepository enquiryRepository;
+
     @Override
     protected void initializeView() {
         setContentView(R.layout.activity_view_all_enquiries);
-        @Cleanup EnquiryRepository enquiryRepository = inject(EnquiryRepository.class);
+        @Cleanup EnquiryRepository enquiryRepository = this.enquiryRepository;
         try {
             List<Enquiry> enquiries = reconstructCriteria(enquiryRepository.all());
             listView(enquiries);

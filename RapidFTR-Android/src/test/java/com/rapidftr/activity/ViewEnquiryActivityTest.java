@@ -41,7 +41,7 @@ public class ViewEnquiryActivityTest {
         activity = SpyActivityController.of(ViewEnquiryActivity.class).attach().get();
 
         Injector mockInjector = mock(Injector.class);
-        doReturn(mockInjector).when(activity).getInjector();
+//        doReturn(mockInjector).when(activity).getInjector();
         doReturn(enquiry).when(mockInjector).getInstance(Enquiry.class);
         doReturn(mockEnquiryRepository).when(mockInjector).getInstance(EnquiryRepository.class);
         doReturn(childRepository).when(mockInjector).getInstance(ChildRepository.class);
@@ -56,7 +56,7 @@ public class ViewEnquiryActivityTest {
 
     @Test
     public void shouldInvokeSyncTask() {
-        doReturn(mockEnquiryRepository).when(activity).inject(EnquiryRepository.class);
+//        doReturn(mockEnquiryRepository).when(activity).inject(EnquiryRepository.class);
         SyncSingleRecordTask task = mock(SyncSingleRecordTask.class);
         doReturn(task).when(activity).createSyncTaskForEnquiry();
         activity.enquiry = enquiry;

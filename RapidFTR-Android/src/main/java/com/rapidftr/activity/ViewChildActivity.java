@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
@@ -23,6 +24,11 @@ import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
 
 public class ViewChildActivity extends BaseChildActivity {
+    @Inject
+    private ChildRepository childRepository;
+
+    @Inject
+    private LogOutService logOutService;
 
     @Override
     protected void initializeView() {
@@ -65,7 +71,7 @@ public class ViewChildActivity extends BaseChildActivity {
     }
 
     protected SyncSingleRecordTask createChildSyncTask() {
-        ChildRepository childRepository = inject(ChildRepository.class);
+        ChildRepository childRepository = this.childRepository;
         return new SyncSingleRecordTask(new ChildSyncService(this.getContext(), childRepository, new FluentRequest()),
                 childRepository, getCurrentUser()) {
             @Override
@@ -115,7 +121,7 @@ public class ViewChildActivity extends BaseChildActivity {
                 showSyncLog();
                 return true;
             case R.id.logout:
-                inject(LogOutService.class).attemptLogOut(this);
+                logOutService.attemptLogOut(this);
                 return true;
             case R.id.info:
                 startActivity(new Intent(this, InfoActivity.class));

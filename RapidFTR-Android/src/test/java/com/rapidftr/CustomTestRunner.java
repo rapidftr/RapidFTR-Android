@@ -15,6 +15,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.runners.model.InitializationError;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.bytecode.Setup;
 
 import java.security.Security;
 import java.util.Arrays;
@@ -40,14 +41,7 @@ public class CustomTestRunner extends RobolectricTestRunner {
         @Override
         protected void configure() {
         }
-
-        @Provides
-        public DatabaseHelper getDatabaseHelper() {
-            return ShadowSQLiteHelper.getInstance();
-        }
     }
-
-    public static Injector INJECTOR = Guice.createInjector(Modules.override(new ApplicationInjector()).with(new TestInjector()));
 
     public CustomTestRunner(Class<?> testClass) throws InitializationError {
         super(testClass);
@@ -65,4 +59,8 @@ public class CustomTestRunner extends RobolectricTestRunner {
 		return new User(userName, "testPassword", true, "localhost:3000", "testDbKey", "Test Organisation", "Test Name", "testPassword", "en");
 	}
 
+    @Override
+    public Setup createSetup() {
+        return super.createSetup();
+    }
 }

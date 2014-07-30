@@ -2,10 +2,12 @@ package com.rapidftr.view.fields;
 
 import android.app.Activity;
 import android.text.InputType;
-import android.view.LayoutInflater;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.activity.RegisterChildActivity;
+import com.rapidftr.database.DatabaseHelper;
+import com.rapidftr.database.ShadowSQLiteHelper;
+import com.rapidftr.utils.TestInjectionModule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +24,9 @@ public class DateFieldTest extends BaseViewSpec<DateField> {
 
     @Before
     public void setUp() {
+        TestInjectionModule module = new TestInjectionModule();
+        module.addBinding(DatabaseHelper.class, ShadowSQLiteHelper.getInstance());
+        TestInjectionModule.setUp(this, module);
         Activity activity = Robolectric.buildActivity(RegisterChildActivity.class).create().get();
         view = (DateField) activity.getLayoutInflater().inflate(R.layout.form_date_field, null);
     }
@@ -78,10 +83,10 @@ public class DateFieldTest extends BaseViewSpec<DateField> {
     }
 
     @Test
-    public void testShouldStoreDateInChildJSONObject(){
-         view.initialize(field, child);
-         view.onDateSet(null, 2012, 11, 31);
-          assertThat(view.getText(), equalTo("31 Dec 2012"));
+    public void testShouldStoreDateInChildJSONObject() {
+        view.initialize(field, child);
+        view.onDateSet(null, 2012, 11, 31);
+        assertThat(view.getText(), equalTo("31 Dec 2012"));
     }
 
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
@@ -21,8 +22,15 @@ public abstract class BaseChildActivity extends CollectionActivity {
 
     protected Child child;
     protected boolean editable = true;
-    @Getter @Setter MediaRecorder mediaRecorder;
-    @Getter @Setter MediaPlayer mediaPlayer;
+    @Getter
+    @Setter
+    MediaRecorder mediaRecorder;
+    @Getter
+    @Setter
+    MediaPlayer mediaPlayer;
+
+    @Inject
+    private ChildRepository childRepository;
 
     @Override
     protected Boolean getEditable() {
@@ -42,13 +50,13 @@ public abstract class BaseChildActivity extends CollectionActivity {
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onPause();
-        if(mediaPlayer != null){
+        if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        if(mediaRecorder != null){
+        if (mediaRecorder != null) {
             mediaRecorder.release();
             mediaRecorder = null;
         }
@@ -69,13 +77,13 @@ public abstract class BaseChildActivity extends CollectionActivity {
     }
 
     public Child load() throws JSONException {
-        @Cleanup ChildRepository repository = inject(ChildRepository.class);
+        @Cleanup ChildRepository repository = childRepository;
         String childId = getIntent().getExtras().getString("id");
         child = repository.get(childId);
         return child;
     }
 
-    public Child  save() throws JSONException {
+    public Child save() throws JSONException {
         if (!child.isValid()) {
             makeToast(R.string.save_child_invalid);
             return null;
@@ -88,7 +96,7 @@ public abstract class BaseChildActivity extends CollectionActivity {
 
         child.generateUniqueId();
         child.setSynced(false);
-        @Cleanup ChildRepository repository = inject(ChildRepository.class);
+        @Cleanup ChildRepository repository = childRepository;
         repository.createOrUpdate(child);
         return child;
     }
@@ -135,7 +143,7 @@ public abstract class BaseChildActivity extends CollectionActivity {
 
         @Override
         public void cancel() {
-           this.cancel(false);
+            this.cancel(false);
         }
     }
 
