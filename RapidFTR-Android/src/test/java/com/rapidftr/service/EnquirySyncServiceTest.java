@@ -41,7 +41,7 @@ public class EnquirySyncServiceTest {
     public void getRecordShouldRetrieveARecordOverHttp() throws Exception {
         String enquiryInternalId = "enquiryInternalId";
         EnquirySyncService enquirySyncService = new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository);
-        Enquiry expectedEnquiry = new Enquiry("createdBy", "reporterName", new JSONObject("{}"));
+        Enquiry expectedEnquiry = new Enquiry("createdBy", new JSONObject("{}"));
         when(enquiryHttpDao.get(enquiryInternalId)).thenReturn(expectedEnquiry);
 
         final Enquiry downloadedEnquiry = enquirySyncService.getRecord(enquiryInternalId);

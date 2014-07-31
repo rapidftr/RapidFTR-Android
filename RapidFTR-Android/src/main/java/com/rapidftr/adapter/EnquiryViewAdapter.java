@@ -35,7 +35,7 @@ public class EnquiryViewAdapter extends BaseModelViewAdapter<Enquiry> {
             ImageView imageView = (ImageView) view.findViewById(R.id.row_enquiry_thumbnail);
 
             try {
-                setFields(enquiry.getEnquirerName(), nameView);
+                setFields("", nameView);
                 setFields(enquiry.getShortId(), idView);
                 assignThumbnail(enquiry, imageView);
 

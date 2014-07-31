@@ -18,9 +18,7 @@ import org.robolectric.util.ActivityController;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -45,8 +43,8 @@ public class ViewAllEnquiryActivityTest {
     @Test
     public void shouldListAllEnquiries() throws JSONException {
         List<Enquiry> enquiries = new ArrayList<Enquiry>();
-        enquiries.add(new Enquiry("CREATEDBY", "REPORTERNAME", new JSONObject("{name:NAME}")));
-        enquiries.add(new Enquiry("CREATEDBY", "REPORTERNAME", new JSONObject("{name:NAME}")));
+        enquiries.add(new Enquiry("CREATEDBY", new JSONObject("{name:NAME}")));
+        enquiries.add(new Enquiry("CREATEDBY", new JSONObject("{name:NAME}")));
         when(repository.all()).thenReturn(enquiries);
 
         activityController.create();

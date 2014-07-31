@@ -20,20 +20,14 @@ import java.util.Calendar;
 import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
-import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
-import static com.rapidftr.database.Database.ChildTableColumn.last_synced_at;
-import static com.rapidftr.database.Database.ChildTableColumn.syncLog;
-import static com.rapidftr.database.Database.ChildTableColumn.unique_identifier;
-import static com.rapidftr.model.Child.History.DATETIME;
-import static com.rapidftr.model.Child.History.FROM;
-import static com.rapidftr.model.Child.History.HISTORIES;
-import static com.rapidftr.model.Child.History.TO;
-import static com.rapidftr.model.Child.History.USER_ORGANISATION;
+import static com.rapidftr.database.Database.ChildTableColumn.*;
+import static com.rapidftr.model.Child.History.*;
 import static com.rapidftr.utils.JSONArrays.asList;
 
 public class Child extends BaseModel {
 
     public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    public static final String CHILD_FORM_NAME = "Children";
 
     public Child() {
         super();

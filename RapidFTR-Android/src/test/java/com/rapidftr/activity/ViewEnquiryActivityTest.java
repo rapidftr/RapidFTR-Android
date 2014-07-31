@@ -24,7 +24,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @RunWith(CustomTestRunner.class)
 public class ViewEnquiryActivityTest {
     protected ViewEnquiryActivity activity;
-    
+
     public DatabaseSession session;
     private EnquiryRepository enquiryRepository;
 
@@ -39,7 +39,7 @@ public class ViewEnquiryActivityTest {
     public void setUp()throws Exception{
         initMocks(this);
         activity = SpyActivityController.of(ViewEnquiryActivity.class).attach().get();
-        
+
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
         doReturn(enquiry).when(mockInjector).getInstance(Enquiry.class);
