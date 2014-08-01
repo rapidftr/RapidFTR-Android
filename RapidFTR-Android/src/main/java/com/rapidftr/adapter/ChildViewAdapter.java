@@ -27,7 +27,7 @@ public class ChildViewAdapter extends BaseModelViewAdapter<Child> {
     public ChildViewAdapter(Context context, int textViewResourceId, List<Child> children) {
         super(context, textViewResourceId, children);
 
-        List<FormField> fields = RapidFtrApplication.getApplicationInstance().getHighlightedFields();
+        List<FormField> fields = RapidFtrApplication.getApplicationInstance().getChildHighlightedFields();
         highlightedFields = new TreeMap<Integer, FormField>();
 
         int counter = 0;

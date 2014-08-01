@@ -93,7 +93,7 @@ class MigrationSQL {
     public static final String createEnquiryTable = "create table "
             + Database.enquiry.getTableName() + "("
             + Database.EnquiryTableColumn.id.getColumnName() + " text primary key not null,"
-            + Database.EnquiryTableColumn.enquirer_name.getColumnName() + " text not null,"
+            + Database.EnquiryTableColumn.content.getColumnName() + " text not null,"
             + Database.EnquiryTableColumn.criteria.getColumnName() + " text not null,"
             + Database.EnquiryTableColumn.potential_matches.getColumnName() + " text null,"
             + Database.EnquiryTableColumn.created_by.getColumnName() + " text not null,"

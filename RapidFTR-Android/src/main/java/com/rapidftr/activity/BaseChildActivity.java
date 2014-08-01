@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.widget.*;
 import com.rapidftr.R;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
@@ -60,7 +59,7 @@ public abstract class BaseChildActivity extends CollectionActivity {
     protected abstract void saveChild();
 
     protected void initializeData(Bundle savedInstanceState) throws JSONException {
-        this.formSections = getContext().getFormSections();
+        this.formSections = getContext().getFormSections(Child.CHILD_FORM_NAME);
 
         if (savedInstanceState != null && savedInstanceState.containsKey("child_state")) {
             this.child = new Child(savedInstanceState.getString("child_state"));

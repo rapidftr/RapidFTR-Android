@@ -7,8 +7,6 @@ import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.FailedToSaveException;
-import junit.framework.Assert;
-import lombok.Cleanup;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -18,19 +16,13 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.List;
 
-import static com.rapidftr.database.Database.EnquiryTableColumn;
 import static com.rapidftr.database.Database.EnquiryTableColumn.criteria;
-import static com.rapidftr.database.Database.EnquiryTableColumn.enquirer_name;
 import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
-import static com.rapidftr.database.Database.enquiry;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 @RunWith(CustomTestRunner.class)
 public class EnquiryTest {
@@ -53,7 +45,7 @@ public class EnquiryTest {
         Enquiry enquiry = new Enquiry();
         assertNotNull(enquiry.getUniqueId());
 
-        enquiry = new Enquiry("createdBy", "enquirerName", new JSONObject("{}"));
+        enquiry = new Enquiry("createdBy", new JSONObject("{}"));
         assertNotNull(enquiry.getUniqueId());
     }
 
@@ -125,7 +117,7 @@ public class EnquiryTest {
         String expectedCriteria = "{\"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
         String expectedEnquirerName = "sam fisher";
 
-        assertEquals(expectedEnquirerName, enquiry.getEnquirerName());
+        assertEquals(expectedEnquirerName, enquiry.get("enquirer_name"));
         JSONAssert.assertEquals(expectedCriteria, enquiry.getCriteria(), true);
     }
 

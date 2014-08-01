@@ -11,7 +11,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
@@ -19,21 +21,30 @@ import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 public class Enquiry extends BaseModel {
 
     private ArrayList<String> NONE_CRITERIA_FIELDS = new ArrayList<String>();
+    public static final String ENQUIRY_FORM_NAME = "Enquiries";
 
     public Enquiry() throws JSONException {
         super();
         this.setUniqueId(createUniqueId());
     }
 
-    public Enquiry(String createdBy, String enquirerName, JSONObject criteria) throws JSONException {
+    public Enquiry(String content, String createdBy, JSONObject criteria) throws JSONException {
+        super(content);
         this.setCreatedBy(createdBy);
-        this.setEnquirerName(enquirerName);
+        this.setCriteria(criteria);
+        this.setUniqueId(createUniqueId());
+        this.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
+    }
+
+    public Enquiry(String createdBy, JSONObject criteria) throws JSONException {
+        this.setCreatedBy(createdBy);
         this.setCriteria(criteria);
         this.setUniqueId(createUniqueId());
         this.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
     }
 
     public Enquiry(Cursor cursor) throws JSONException {
+        super(cursor.getString(cursor.getColumnIndex(content.getColumnName())));
 
         for (Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
             final int columnIndex = cursor.getColumnIndex(column.getColumnName());
@@ -44,6 +55,8 @@ public class Enquiry extends BaseModel {
                 this.put(criteria.getColumnName(), new JSONObject(cursor.getString(cursor.getColumnIndex(criteria.getColumnName()))));
             } else if (column.getPrimitiveType().equals(Boolean.class)) {
                 this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
+            } else if (column.equals(content)) {
+                continue;
             } else {
                 this.put(column.getColumnName(), cursor.getString(columnIndex));
             }
@@ -79,14 +92,6 @@ public class Enquiry extends BaseModel {
 
     private void setColumn(Database.EnquiryTableColumn column, String value) throws JSONException {
         put(column.getColumnName(), value);
-    }
-
-    public String getEnquirerName() throws JSONException {
-        return getString(enquirer_name.getColumnName());
-    }
-
-    public void setEnquirerName(String reporterName) throws JSONException {
-        this.setColumn(enquirer_name, reporterName);
     }
 
     public JSONObject getCriteria() throws JSONException {
@@ -132,16 +137,6 @@ public class Enquiry extends BaseModel {
         this.put(Database.EnquiryTableColumn.criteria.getColumnName(), criteria);
     }
 
-    public boolean isValid() {
-        String enquirerName;
-        try {
-            enquirerName = getEnquirerName();
-        } catch (JSONException e) {
-            return false;
-        }
-        return null != enquirerName && !"".equals(enquirerName);
-    }
-
     public JSONObject values() throws JSONException {
         Iterable<Object> systemFields = Iterables.transform(Database.EnquiryTableColumn.fields(), new Function<Database.EnquiryTableColumn, Object>() {
             @Override
@@ -154,11 +149,11 @@ public class Enquiry extends BaseModel {
     }
 
     public String getPotentialMatchingIds() {
-       String ids = getString(potential_matches.getColumnName());
-       if(ids == null)
-           return "";
+        String ids = getString(potential_matches.getColumnName());
+        if (ids == null)
+            return "";
         else
-           return ids;
+            return ids;
     }
 
     public String getInternalId() throws JSONException {

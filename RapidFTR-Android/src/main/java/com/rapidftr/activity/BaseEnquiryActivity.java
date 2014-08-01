@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.CharStreams;
 import com.rapidftr.R;
-import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.EnquiryRepository;
@@ -17,10 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class BaseEnquiryActivity extends CollectionActivity {
     public static final String PHOTO_KEYS = "photo_keys";
@@ -40,29 +34,27 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         enquiryRepository = inject(EnquiryRepository.class);
         super.onCreate(savedInstanceState);
     }
 
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         enquiry = new Enquiry();
-        @Cleanup InputStream in = getResources().openRawResource(R.raw.enquiry_form_sections);
-        String formSectionJSON = CharStreams.toString(new InputStreamReader(in));
-        formSections = new ArrayList<FormSection>(Arrays.asList(JSON_MAPPER.readValue(formSectionJSON, FormSection[].class)));
+        formSections = getContext().getFormSections(Enquiry.ENQUIRY_FORM_NAME);
     }
 
     protected Enquiry loadEnquiry(Bundle bundle, EnquiryRepository enquiryRepository) throws JSONException {
         String enquiryId = bundle.getString("id");
         Enquiry retrievedEnquiry = enquiryRepository.get(enquiryId);
         enquiryRepository.close();
-        
+
         JSONObject criteria = removeCriteria(retrievedEnquiry);
 
         return addCriteriaKeysAndValuesToEnquiry(retrievedEnquiry, criteria);
     }
 
-    protected JSONObject removeCriteria(Enquiry enquiry){
+    protected JSONObject removeCriteria(Enquiry enquiry) {
         return (JSONObject) enquiry.remove("criteria");
     }
 
@@ -70,8 +62,8 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         JSONArray criteriaKeys = criteria.names();
         for (int i = 0; i < criteriaKeys.length(); i++) {
             String key = criteriaKeys.get(i).toString();
-            if(key.equals(PHOTO_KEYS))
-                enquiry.put(key,new JSONArray(criteria.getString(key)));
+            if (key.equals(PHOTO_KEYS))
+                enquiry.put(key, new JSONArray(criteria.getString(key)));
             else
                 enquiry.put(key, criteria.get(key).toString());
         }
@@ -79,13 +71,8 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
     }
 
     public Enquiry save(View view) {
-        if (enquiry.isValid()) {
-            AsyncTaskWithDialog.wrap(this, new SaveEnquiryTask(), R.string.save_enquiry_progress, R.string.save_enqury_success, R.string.save_enquiry_failed).execute();
-            return enquiry;
-        } else {
-            makeToast(R.string.save_enquiry_invalid);
-            return null;
-        }
+        AsyncTaskWithDialog.wrap(this, new SaveEnquiryTask(), R.string.save_enquiry_progress, R.string.save_enqury_success, R.string.save_enquiry_failed).execute();
+        return enquiry;
     }
 
     private class SaveEnquiryTask extends AsyncTaskWithDialog<Void, Void, Enquiry> {

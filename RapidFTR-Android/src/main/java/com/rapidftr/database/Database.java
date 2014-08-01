@@ -103,7 +103,7 @@ public enum Database {
     public enum EnquiryTableColumn {
         id("id"),
         unique_identifier("unique_identifier"),
-        enquirer_name("enquirer_name"),
+        content("enquiry_json"),
         criteria("criteria"),
         created_by("created_by"),
         created_at("created_at"),
