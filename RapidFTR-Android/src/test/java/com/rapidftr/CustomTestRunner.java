@@ -23,6 +23,8 @@ import java.util.List;
 
 public class CustomTestRunner extends RobolectricTestRunner {
 
+
+
     public static List<FormSection> formSectionSeed = Arrays.asList(
         new FormSection(new HashMap<String, String>(){{put("en", "Section 1");}}, 1, true, new HashMap<String, String>(){{put("en", "Section Help 1");}}, Arrays.asList(
             new FormField("f1", null, true, "text_field", new HashMap<String, String>(){{put("en", "Field 1");}}, new HashMap<String, String>(){{put("en", "Help 1");}}, null, null),

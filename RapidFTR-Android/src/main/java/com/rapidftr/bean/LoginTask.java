@@ -150,7 +150,7 @@ public class LoginTask {
     protected void loadFormSections() {
         try {
             notifyProgress(login_form_progress);
-            new FormService(application).getPublishedFormSections();
+            new FormService(application).downloadPublishedFormSections();
         } catch (Exception e) {
             throw new LoginException(login_form_failed, e);
         }

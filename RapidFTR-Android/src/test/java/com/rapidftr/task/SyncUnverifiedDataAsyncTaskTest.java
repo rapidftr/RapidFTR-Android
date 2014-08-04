@@ -88,7 +88,7 @@ public class SyncUnverifiedDataAsyncTaskTest {
         task.onPreExecute();
         task.execute();
 
-        verify(formService).getPublishedFormSections();
+        verify(formService).downloadPublishedFormSections();
     }
 
     @Test

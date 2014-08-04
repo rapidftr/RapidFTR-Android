@@ -9,6 +9,7 @@ import com.rapidftr.R;
 import com.rapidftr.adapter.ChildViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.service.FormService;
 import lombok.Cleanup;
 import org.json.JSONException;
 
@@ -19,11 +20,14 @@ public class SearchActivity extends RapidFtrActivity {
 
     private ChildViewAdapter childViewAdapter;
 
+    private FormService formService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_child);
         findViewById(R.id.search_btn).setOnClickListener(searchListener());
+        formService = inject(FormService.class);
     }
 
     private void listView(List<Child> children) {
@@ -57,7 +61,7 @@ public class SearchActivity extends RapidFtrActivity {
         if ("".equals(subString)) {
             return new ArrayList<Child>();
         }
-        return childRepository.getMatchingChildren(subString, getContext().getChildHighlightedFields());
+        return childRepository.getMatchingChildren(subString, formService.getHighlightedFields(Child.CHILD_FORM_NAME));
     }
 
 }

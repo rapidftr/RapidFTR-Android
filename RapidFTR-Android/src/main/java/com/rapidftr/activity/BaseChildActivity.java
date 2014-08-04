@@ -19,10 +19,15 @@ public abstract class BaseChildActivity extends CollectionActivity {
 
     public static final int CLOSE_ACTIVITY = 999;
 
+
     protected Child child;
     protected boolean editable = true;
-    @Getter @Setter MediaRecorder mediaRecorder;
-    @Getter @Setter MediaPlayer mediaPlayer;
+    @Getter
+    @Setter
+    MediaRecorder mediaRecorder;
+    @Getter
+    @Setter
+    MediaPlayer mediaPlayer;
 
     @Override
     protected Boolean getEditable() {
@@ -42,13 +47,13 @@ public abstract class BaseChildActivity extends CollectionActivity {
     }
 
     @Override
-    protected void onStop(){
+    protected void onStop() {
         super.onPause();
-        if(mediaPlayer != null){
+        if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-        if(mediaRecorder != null){
+        if (mediaRecorder != null) {
             mediaRecorder.release();
             mediaRecorder = null;
         }
@@ -59,7 +64,7 @@ public abstract class BaseChildActivity extends CollectionActivity {
     protected abstract void saveChild();
 
     protected void initializeData(Bundle savedInstanceState) throws JSONException {
-        this.formSections = getContext().getFormSections(Child.CHILD_FORM_NAME);
+        this.formSections = getFormService().getFormSections(Child.CHILD_FORM_NAME);
 
         if (savedInstanceState != null && savedInstanceState.containsKey("child_state")) {
             this.child = new Child(savedInstanceState.getString("child_state"));
@@ -75,7 +80,7 @@ public abstract class BaseChildActivity extends CollectionActivity {
         return child;
     }
 
-    public Child  save() throws JSONException {
+    public Child save() throws JSONException {
         if (!child.isValid()) {
             makeToast(R.string.save_child_invalid);
             return null;
@@ -135,7 +140,7 @@ public abstract class BaseChildActivity extends CollectionActivity {
 
         @Override
         public void cancel() {
-           this.cancel(false);
+            this.cancel(false);
         }
     }
 

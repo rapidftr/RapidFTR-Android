@@ -41,7 +41,7 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
 
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         enquiry = new Enquiry();
-        formSections = getContext().getFormSections(Enquiry.ENQUIRY_FORM_NAME);
+        formSections = getFormService().getFormSections(Enquiry.ENQUIRY_FORM_NAME);
     }
 
     protected Enquiry loadEnquiry(Bundle bundle, EnquiryRepository enquiryRepository) throws JSONException {

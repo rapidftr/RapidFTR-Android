@@ -11,30 +11,22 @@ import android.net.NetworkInfo;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import com.google.common.io.CharStreams;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.forms.Form;
-import com.rapidftr.forms.FormField;
-import com.rapidftr.forms.FormSection;
-import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.utils.ApplicationInjector;
-import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
 import org.androidannotations.annotations.EApplication;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @EApplication
 public class RapidFtrApplication extends Application {
@@ -42,12 +34,8 @@ public class RapidFtrApplication extends Application {
 
     public static final String SHARED_PREFERENCES_FILE = "RAPIDFTR_PREFERENCES";
     public static final String APP_IDENTIFIER = "RapidFTR";
-    public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-
     public static final String CURRENT_USER_PREF = "CURRENT_USER";
     public static final String SERVER_URL_PREF = "SERVER_URL";
-    public static final String FORM_SECTIONS_PREF = "FORM_SECTION";
-
     public static final String LAST_CHILD_SYNC = "LAST_CHILD_SYNC";
     public static final String LAST_ENQUIRY_SYNC = "LAST_ENQUIRY_SYNC";
 
@@ -86,6 +74,10 @@ public class RapidFtrApplication extends Application {
         this.injector = injector;
     }
 
+    public <T> T getBean(Class<T> type) {
+        return getInjector().getInstance(type);
+    }
+
     public SharedPreferences getSharedPreferences() {
         return getSharedPreferences(SHARED_PREFERENCES_FILE, MODE_PRIVATE);
     }
@@ -94,46 +86,11 @@ public class RapidFtrApplication extends Application {
     public void onCreate() {
         super.onCreate();
         try {
-            reloadFormSections();
             reloadCurrentUser();
-
             notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         } catch (IOException e) {
             Log.e(APP_IDENTIFIER, "Failed to load form sections", e);
         }
-    }
-
-    public void setFormSections(String formSectionResponse) throws IOException {
-        getSharedPreferences().edit().putString(FORM_SECTIONS_PREF, formSectionResponse).commit();
-        reloadFormSections();
-    }
-
-    public void setFormSections(List<FormSection> formSections) throws IOException {
-        setFormSections(JSON_MAPPER.writeValueAsString(formSections.toArray()));
-    }
-
-    protected void reloadFormSections() throws IOException {
-        String formSections = getSharedPreferences().getString(FORM_SECTIONS_PREF, null);
-        if (formSections == null) {
-            @Cleanup InputStream in = getResources().openRawResource(R.raw.form_sections);
-            formSections = CharStreams.toString(new InputStreamReader(in));
-        }
-
-        JsonNode rootNode = JSON_MAPPER.readTree(formSections);
-        Iterator<Map.Entry<String, JsonNode>> childNodes = rootNode.fields();
-        while (childNodes.hasNext()) {
-            Map.Entry<String, JsonNode> entry = childNodes.next();
-            Form form = new Form(entry.getKey(), new ArrayList<FormSection>(Arrays.asList(JSON_MAPPER.readValue(entry.getValue().toString(), FormSection[].class))));
-            this.forms.put(entry.getKey(), form);
-        }
-    }
-
-    public List<FormSection> getFormSections(String formName) {
-        if (this.forms.containsKey(formName)) {
-            return this.forms.get(formName).getFormsections();
-        }
-        
-        return Collections.EMPTY_LIST;
     }
 
     protected void setCurrentUser(String user) throws IOException {
@@ -238,16 +195,5 @@ public class RapidFtrApplication extends Application {
 
     public void cancelNotification(int notificationId) {
         notificationManager.cancel(notificationId);
-    }
-
-    public List<FormField> getChildHighlightedFields() {
-        List<FormField> formFields = new ArrayList<FormField>();
-
-        List<FormSection> formSections = getFormSections(Child.CHILD_FORM_NAME);
-        for (FormSection formSection : formSections) {
-            formFields.addAll(formSection.getOrderedHighLightedFields());
-        }
-
-        return formFields;
     }
 }

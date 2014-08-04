@@ -5,12 +5,11 @@ import android.widget.TextView;
 import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
-import com.rapidftr.database.ShadowSQLiteHelper;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormField;
-import com.rapidftr.forms.FormSection;
-import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.service.FormService;
 import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
 import org.junit.Before;
@@ -36,14 +35,19 @@ public class SearchActivityTest {
     @Mock
     private ChildRepository childRepository;
 
+    private RapidFtrApplication application;
+
     @Before
     public void setUp() throws IOException {
         initMocks(this);
         activityController = SpyActivityController.of(SearchActivity.class);
         activity = activityController.attach().get();
 
+        application = RapidFtrApplication.getApplicationInstance();
+
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
+        doReturn(new FormService(application)).when(mockInjector).getInstance(FormService.class);
         doReturn(childRepository).when(mockInjector).getInstance(ChildRepository.class);
     }
 
@@ -85,7 +89,7 @@ public class SearchActivityTest {
         textView.setText(searchString);
         activity.findViewById(R.id.search_btn).performClick();
         ListView listView = (ListView) activity.findViewById(R.id.child_list);
-        verify(childRepository,never()).getMatchingChildren(eq(searchString), anyListOf(FormField.class));
+        verify(childRepository, never()).getMatchingChildren(eq(searchString), anyListOf(FormField.class));
         assertNotNull(listView.getEmptyView());
     }
 

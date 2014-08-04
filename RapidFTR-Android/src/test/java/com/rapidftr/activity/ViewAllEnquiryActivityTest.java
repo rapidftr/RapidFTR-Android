@@ -4,8 +4,10 @@ import android.widget.ListView;
 import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.service.FormService;
 import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,8 +37,12 @@ public class ViewAllEnquiryActivityTest {
         initMocks(this);
         activityController = SpyActivityController.of(ViewAllEnquiryActivity.class);
         activity = activityController.attach().get();
+
+        RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
+
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
+        doReturn(new FormService(application)).when(mockInjector).getInstance(FormService.class);
         doReturn(repository).when(mockInjector).getInstance(EnquiryRepository.class);
     }
 

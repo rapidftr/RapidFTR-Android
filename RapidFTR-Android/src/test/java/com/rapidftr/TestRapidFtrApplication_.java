@@ -1,5 +1,6 @@
 package com.rapidftr;
 
+import com.rapidftr.service.FormService;
 import org.junit.Ignore;
 import org.robolectric.TestLifecycleApplication;
 
@@ -8,15 +9,19 @@ import java.lang.reflect.Method;
 @Ignore
 public class TestRapidFtrApplication_ extends RapidFtrApplication implements TestLifecycleApplication {
 
+    private FormService formService;
+
     public TestRapidFtrApplication_() {
         super(CustomTestRunner.INJECTOR);
+        formService = this.getBean(FormService.class);
     }
 
     @Override
     public void beforeTest(Method method) {
         try {
             getSharedPreferences().edit().putString(SERVER_URL_PREF, "http://1.2.3.4:5");
-            setFormSections(CustomTestRunner.formSectionSeed);
+            formService.setFormSections(CustomTestRunner.formSectionSeed);
+
             setCurrentUser(CustomTestRunner.createUser());
         } catch (Exception e) {
             throw new RuntimeException(e);
