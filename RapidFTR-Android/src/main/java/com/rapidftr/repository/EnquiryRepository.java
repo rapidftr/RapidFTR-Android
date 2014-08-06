@@ -45,7 +45,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
         enquiryValues.put(created_by.getColumnName(), enquiry.getCreatedBy());
         enquiryValues.put(content.getColumnName(), enquiry.getJsonString());
-        enquiryValues.put(criteria.getColumnName(), enquiry.getCriteria().toString());
+        //enquiryValues.put(criteria.getColumnName(), enquiry.getCriteria().toString());
         enquiryValues.put(created_at.getColumnName(), enquiry.getCreatedAt());
         enquiryValues.put(potential_matches.getColumnName(), enquiry.getPotentialMatchingIds());
         enquiryValues.put(unique_identifier.getColumnName(), enquiry.getUniqueId());

@@ -10,7 +10,6 @@ import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.service.FormService;
 import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,8 +48,8 @@ public class ViewAllEnquiryActivityTest {
     @Test
     public void shouldListAllEnquiries() throws JSONException {
         List<Enquiry> enquiries = new ArrayList<Enquiry>();
-        enquiries.add(new Enquiry("CREATEDBY", new JSONObject("{name:NAME}")));
-        enquiries.add(new Enquiry("CREATEDBY", new JSONObject("{name:NAME}")));
+        enquiries.add(new Enquiry("{name:NAME}", "CREATEDBY"));
+        enquiries.add(new Enquiry("{name:NAME}", "CREATEDBY"));
         when(repository.all()).thenReturn(enquiries);
 
         activityController.create();

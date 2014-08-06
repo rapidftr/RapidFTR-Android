@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -40,7 +39,7 @@ public class EnquiryRepositoryTest {
 
     @Ignore
     public void shouldCreateAnEnquiryInTheDatabase() throws JSONException, SQLException {
-        Enquiry enquiry = new Enquiry(user, new JSONObject("{\"age\":14,\"name\":\"Subhas\"}"));
+        Enquiry enquiry = new Enquiry("{\"age\":14,\"name\":\"Subhas\"}", user);
         enquiryRepository.createOrUpdate(enquiry);
         assertEquals(1, enquiryRepository.size());
 
@@ -79,7 +78,7 @@ public class EnquiryRepositoryTest {
     @Test
     @Ignore
     public void getShouldReturnEnquiryForId() throws Exception {
-        Enquiry enquiry1 = new Enquiry(user, new JSONObject("{age:14,name:Subhas}"));
+        Enquiry enquiry1 = new Enquiry("{age:14,name:Subhas}", user);
         String enquiryId = enquiry1.getUniqueId();
 
         enquiryRepository.createOrUpdate(enquiry1);
@@ -88,27 +87,12 @@ public class EnquiryRepositoryTest {
     }
 
     @Test
-    public void shouldMaintainWellFormedCriteriaWhenEnquiryIsSaved() throws JSONException, SQLException {
-        String enquiryJSON = "{ \"enquirer_name\":\"sam fisher\", \"name\":\"foo bar\"," +
-                "\"nationality\":\"ugandan\",\"created_by\" : \"Tom Reed\",\"synced\" : \"false\"}";
-        Enquiry enquiry = new Enquiry(enquiryJSON);
-        String expectedEnquirerName = "sam fisher";
-        String expectedCriteria = "{\"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
-
-        enquiryRepository.createOrUpdate(enquiry);
-
-        Enquiry retrievedEnquiry = enquiryRepository.get(enquiry.getUniqueId());
-        assertEquals(expectedEnquirerName, retrievedEnquiry.get("enquirer_name"));
-        JSONAssert.assertEquals(expectedCriteria, retrievedEnquiry.getCriteria(), true);
-    }
-
-    @Test
     public void toBeSyncedShouldReturnAListOfEnquiriesWithSyncedStatusFalse() throws Exception {
-        Enquiry enquiry1 = new Enquiry(user, new JSONObject("{age:14,name:Subhas}"));
+        Enquiry enquiry1 = new Enquiry("{age:14,name:Subhas}", user);
         enquiry1.setSynced(false);
         enquiryRepository.createOrUpdate(enquiry1);
 
-        Enquiry enquiry2 = new Enquiry("field worker 2", new JSONObject("{age:14,name:Subhas}"));
+        Enquiry enquiry2 = new Enquiry("{age:14,name:Subhas}", "field worker 2");
         enquiry2.setSynced(true);
         enquiryRepository.createOrUpdate(enquiry2);
 
@@ -120,7 +104,7 @@ public class EnquiryRepositoryTest {
 
     @Test
     public void existsShouldReturnTrueGivenAnIdOfAnEnquiryThatAlreadyExists() throws Exception {
-        Enquiry enquiry1 = new Enquiry(user, new JSONObject("{age:14,name:Subhas}"));
+        Enquiry enquiry1 = new Enquiry("{age:14,name:Subhas}", user);
         enquiryRepository.createOrUpdate(enquiry1);
 
         assertTrue(enquiryRepository.exists(enquiry1.getUniqueId()));
@@ -129,14 +113,14 @@ public class EnquiryRepositoryTest {
 
     @Test
     public void getAllIdsAndRevs_shouldReturnIdsAndRevsForAllEnquiries() throws Exception {
-        Enquiry enquiry1 = new Enquiry(user, new JSONObject("{age:14,name:Subhas}"));
+        Enquiry enquiry1 = new Enquiry("{age:14,name:Subhas}", user);
         String enquiry1CouchId = UUID.randomUUID().toString();
         String enquiry1CouchRev = UUID.randomUUID().toString();
         enquiry1.put("_id", enquiry1CouchId);
         enquiry1.put("_rev", enquiry1CouchRev);
         enquiryRepository.createOrUpdate(enquiry1);
 
-        Enquiry enquiry2 = new Enquiry("field worker 2", new JSONObject("{age:14,name:Subhas}"));
+        Enquiry enquiry2 = new Enquiry("{age:14,name:Subhas}", "field worker 2");
         String enquiry2CouchId = UUID.randomUUID().toString();
         String enquiry2CouchRev = UUID.randomUUID().toString();
         enquiry2.put("_id", enquiry2CouchId);
@@ -167,7 +151,6 @@ public class EnquiryRepositoryTest {
         assertTrue(enquiry.getPotentialMatchingIds().length() == 0);
 
         enquiry.put("enquirer_name", "New Reporter Name");
-        enquiry.setCriteria(new JSONObject("{}"));
         enquiry.setCreatedBy("NEW USER");
         enquiry.setSynced(true);
         enquiry.put(Database.EnquiryTableColumn.potential_matches.getColumnName(), "some potential matches id");
@@ -178,7 +161,6 @@ public class EnquiryRepositoryTest {
         Enquiry retrieved = enquiryRepository.all().get(0);
 
         assertThat(retrieved.optString("enquirer_name"), is("New Reporter Name"));
-        assertThat(retrieved.getCriteria().toString(), is("{}"));
         assertThat(retrieved.getCreatedBy().toString(), is("NEW USER"));
         assertTrue(retrieved.isSynced());
         assertThat(retrieved.getString(Database.EnquiryTableColumn.internal_id.getColumnName()), is("new internal id"));
