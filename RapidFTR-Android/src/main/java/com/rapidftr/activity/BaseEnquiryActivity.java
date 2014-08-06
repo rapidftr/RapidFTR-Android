@@ -41,7 +41,7 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
 
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         enquiry = new Enquiry();
-        formSections = getContext().getFormSections(Enquiry.ENQUIRY_FORM_NAME);
+        formSections = getFormService().getFormSections(Enquiry.ENQUIRY_FORM_NAME);
     }
 
     protected Enquiry loadEnquiry(Bundle bundle, EnquiryRepository enquiryRepository) throws JSONException {
@@ -60,19 +60,26 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
 
     protected Enquiry addCriteriaKeysAndValuesToEnquiry(Enquiry enquiry, JSONObject criteria) throws JSONException {
         JSONArray criteriaKeys = criteria.names();
-        for (int i = 0; i < criteriaKeys.length(); i++) {
-            String key = criteriaKeys.get(i).toString();
-            if (key.equals(PHOTO_KEYS))
-                enquiry.put(key, new JSONArray(criteria.getString(key)));
-            else
-                enquiry.put(key, criteria.get(key).toString());
+        if (criteriaKeys != null) {
+            for (int i = 0; i < criteriaKeys.length(); i++) {
+                String key = criteriaKeys.get(i).toString();
+                if (key.equals(PHOTO_KEYS))
+                    enquiry.put(key, new JSONArray(criteria.getString(key)));
+                else
+                    enquiry.put(key, criteria.get(key).toString());
+            }
         }
         return enquiry;
     }
 
     public Enquiry save(View view) {
-        AsyncTaskWithDialog.wrap(this, new SaveEnquiryTask(), R.string.save_enquiry_progress, R.string.save_enqury_success, R.string.save_enquiry_failed).execute();
-        return enquiry;
+        if (enquiry.isValid()) {
+            AsyncTaskWithDialog.wrap(this, new SaveEnquiryTask(), R.string.save_enquiry_progress, R.string.save_enqury_success, R.string.save_enquiry_failed).execute();
+            return enquiry;
+        } else {
+            makeToast(R.string.save_enquiry_invalid);
+            return null;
+        }
     }
 
     private class SaveEnquiryTask extends AsyncTaskWithDialog<Void, Void, Enquiry> {

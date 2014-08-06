@@ -7,6 +7,7 @@ import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.FailedToSaveException;
+import junit.framework.Assert;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -141,4 +142,18 @@ public class EnquiryTest {
         assertTrue(enquiry.getPotentialMatchingIds().length() == 0);
     }
 
+    @Test
+    public void shouldBeValidEnquiry() throws JSONException {
+        String enquiryJSON = "{\"enquirer_name\":\"sam fisher\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+
+        Assert.assertTrue(enquiry.isValid());
+    }
+
+    @Test
+    public void shouldNotBeValidEnquiry() throws JSONException {
+        String enquiryJSON = "{}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        Assert.assertFalse(enquiry.isValid());
+    }
 }

@@ -1,15 +1,11 @@
 package com.rapidftr.forms;
 
-import com.google.common.io.CharStreams;
-import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
-import lombok.Cleanup;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rapidftr.utils.ResourceLoader;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,9 +40,7 @@ public class FormSectionTest {
     }
 
     public static List<FormSection> loadFormSectionsFromClassPathResource() throws IOException {
-        @Cleanup InputStream inputStream = FormSectionTest.class.getClassLoader().getResourceAsStream("form_sections.json");
-
-        String json = CharStreams.toString(new InputStreamReader(inputStream));
-        return Arrays.asList(RapidFtrApplication.JSON_MAPPER.readValue(json, FormSection[].class));
+        String json = ResourceLoader.loadResourceAsStringFromClasspath("form_sections.json");
+        return Arrays.asList(new ObjectMapper().readValue(json, FormSection[].class));
     }
 }

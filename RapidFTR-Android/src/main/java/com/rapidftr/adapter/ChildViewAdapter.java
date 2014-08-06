@@ -11,6 +11,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.ViewChildActivity;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
+import com.rapidftr.service.FormService;
 import com.rapidftr.view.ChildHighlightedFieldViewGroup;
 import org.json.JSONException;
 
@@ -24,10 +25,15 @@ public class ChildViewAdapter extends BaseModelViewAdapter<Child> {
 
     protected Map<Integer, FormField> highlightedFields;
 
+    private FormService formService;
+
     public ChildViewAdapter(Context context, int textViewResourceId, List<Child> children) {
         super(context, textViewResourceId, children);
 
-        List<FormField> fields = RapidFtrApplication.getApplicationInstance().getChildHighlightedFields();
+        formService = RapidFtrApplication.getApplicationInstance().getBean(FormService.class);
+
+        List<FormField> fields = formService.getHighlightedFields(Child.CHILD_FORM_NAME);
+
         highlightedFields = new TreeMap<Integer, FormField>();
 
         int counter = 0;

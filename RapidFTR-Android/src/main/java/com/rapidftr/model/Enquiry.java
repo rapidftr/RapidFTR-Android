@@ -137,6 +137,17 @@ public class Enquiry extends BaseModel {
         this.put(Database.EnquiryTableColumn.criteria.getColumnName(), criteria);
     }
 
+    public boolean isValid() {
+        int numberOfInternalFields = names().length();
+
+        for (Database.EnquiryTableColumn field : Database.EnquiryTableColumn.internalFields()) {
+            if (has(field.getColumnName())) {
+                numberOfInternalFields--;
+            }
+        }
+        return numberOfInternalFields > 0;
+    }
+
     public JSONObject values() throws JSONException {
         Iterable<Object> systemFields = Iterables.transform(Database.EnquiryTableColumn.fields(), new Function<Database.EnquiryTableColumn, Object>() {
             @Override
