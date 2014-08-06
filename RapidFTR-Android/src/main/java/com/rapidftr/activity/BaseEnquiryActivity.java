@@ -3,24 +3,19 @@ package com.rapidftr.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rapidftr.R;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import lombok.Cleanup;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 
 public abstract class BaseEnquiryActivity extends CollectionActivity {
-    public static final String PHOTO_KEYS = "photo_keys";
     protected Enquiry enquiry;
     protected EnquiryRepository enquiryRepository;
-    public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     protected boolean editable = true;
 
     @Override
@@ -49,27 +44,7 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
         Enquiry retrievedEnquiry = enquiryRepository.get(enquiryId);
         enquiryRepository.close();
 
-        JSONObject criteria = removeCriteria(retrievedEnquiry);
-
-        return addCriteriaKeysAndValuesToEnquiry(retrievedEnquiry, criteria);
-    }
-
-    protected JSONObject removeCriteria(Enquiry enquiry) {
-        return (JSONObject) enquiry.remove("criteria");
-    }
-
-    protected Enquiry addCriteriaKeysAndValuesToEnquiry(Enquiry enquiry, JSONObject criteria) throws JSONException {
-        JSONArray criteriaKeys = criteria.names();
-        if (criteriaKeys != null) {
-            for (int i = 0; i < criteriaKeys.length(); i++) {
-                String key = criteriaKeys.get(i).toString();
-                if (key.equals(PHOTO_KEYS))
-                    enquiry.put(key, new JSONArray(criteria.getString(key)));
-                else
-                    enquiry.put(key, criteria.get(key).toString());
-            }
-        }
-        return enquiry;
+        return retrievedEnquiry;
     }
 
     public Enquiry save(View view) {

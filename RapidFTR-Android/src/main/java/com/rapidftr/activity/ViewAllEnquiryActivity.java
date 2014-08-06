@@ -18,7 +18,7 @@ public class ViewAllEnquiryActivity extends BaseEnquiryActivity {
         setContentView(R.layout.activity_view_all_enquiries);
         @Cleanup EnquiryRepository enquiryRepository = inject(EnquiryRepository.class);
         try {
-            List<Enquiry> enquiries = reconstructCriteria(enquiryRepository.all());
+            List<Enquiry> enquiries = enquiryRepository.all();
             listView(enquiries);
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -28,25 +28,17 @@ public class ViewAllEnquiryActivity extends BaseEnquiryActivity {
     private void listView(List<Enquiry> enquiries) {
         EnquiryViewAdapter enquiryViewAdapter = new EnquiryViewAdapter(this, R.layout.row_enquiry, enquiries);
         ListView enquiryListView = (ListView) findViewById(R.id.enquiry_list);
-        if (enquiries.isEmpty()){
+        if (enquiries.isEmpty()) {
             enquiryListView.setEmptyView(findViewById(R.id.no_enquiry_view));
         }
         enquiryListView.setAdapter(enquiryViewAdapter);
     }
 
-    private List<Enquiry> reconstructCriteria(List <Enquiry> enquiries) throws JSONException {
-        List <Enquiry> reconstructedEnquiries = new ArrayList<Enquiry>();
-        for(Enquiry enquiry : enquiries){
-            JSONObject criteria = removeCriteria(enquiry);
-            reconstructedEnquiries.add(addCriteriaKeysAndValuesToEnquiry(enquiry,criteria));
-        }
-
-        return reconstructedEnquiries;
+    @Override
+    protected void initializePager() {
     }
 
     @Override
-    protected void initializePager() {}
-
-    @Override
-    protected void initializeSpinner() {}
+    protected void initializeSpinner() {
+    }
 }

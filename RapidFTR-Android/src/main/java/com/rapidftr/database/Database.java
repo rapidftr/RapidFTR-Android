@@ -106,7 +106,6 @@ public enum Database {
         id("id"),
         unique_identifier("unique_identifier", true, false),
         content("enquiry_json"),
-        criteria("criteria"),
         created_by("created_by", true, false),
         created_at("created_at", true, false),
         last_updated_at("last_updated_at"),
