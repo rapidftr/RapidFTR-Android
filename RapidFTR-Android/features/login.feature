@@ -4,15 +4,10 @@ Feature: Login feature
     When I press "Log In"
     Then I should see "Username is required"
 
-  Scenario: Web Server Not Specified
-    When I enter the username "invalid" and password "invalid"
-    And I press "Log In"
-    Then I should see "Online login failed, will try to login offline"
-
   Scenario: Incorrect login details
     When I enter the Web Server URL
     And I login with the "invalid" credentials "invalid" and password "invalid"
-    Then I should see "Invalid credentials. Please try again!"
+    Then I should see "Invalid credentials. Please try again!" within "60" seconds
     
   Scenario: Correct Login Details
     Given that I am logged in as "field_worker" with password "field_worker"
@@ -20,7 +15,7 @@ Feature: Login feature
     And I should see "New Registration"
 
   Scenario: User able to see last successful login
-    When I wait up to 20 seconds for "Basic Identity" to appear
+    When I wait up to 60 seconds for "Basic Identity" to appear
     And I select "Log Out" from the menu
     And I press "Change URL"
     Then I should see the url used for the last successful login
@@ -40,7 +35,7 @@ Feature: Login feature
     And I login with the "invalid" credentials "field_worker" and password "field_worker"
     Then I should see "Incorrect username or password"
     When I login with the "valid" credentials "field_worker" and password "rapidftrnew"
-    And I wait up to 20 seconds for "Basic Identity" to appear
+    And I wait up to 60 seconds for "Basic Identity" to appear
     Then I should see "Name"
 
   @reinstall

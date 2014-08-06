@@ -18,7 +18,7 @@ Given(/^that I am logged in as "(.*?)" with password "(.*?)"$/) do |username, pa
   performAction('clear_id_field','url')
   performAction('enter_text_into_id_field', $WEB_URL, 'url')
   performAction('press',"Log In")
-  performAction('wait_for_text', 'Basic Identity', 20)
+  performAction('wait_for_text', 'Basic Identity', 60)
 end
 
 
