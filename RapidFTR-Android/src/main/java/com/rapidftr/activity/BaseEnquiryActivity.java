@@ -74,13 +74,18 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
 
         @Override
         protected void onPostExecute(Enquiry result) {
-            if (result != null)
-                view();
+            try {
+                if (result != null)
+                    view();
+            } catch (JSONException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
-    private void view() {
-        Intent intent = new Intent(this, CreateEnquiryActivity.class);
+    private void view() throws JSONException {
+        Intent intent = new Intent(this, EditEnquiryActivity.class);
+        intent.putExtra("id", enquiry.getUniqueId());
         finish();
         startActivity(intent);
     }
