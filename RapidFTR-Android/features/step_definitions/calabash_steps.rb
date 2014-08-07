@@ -11,9 +11,11 @@ end
 
 Given(/^that I am logged in as "(.*?)" with password "(.*?)"$/) do |username, password|
   mimic.clear
+
   mimic.post("/api/login") do
     [201, {}, '{"db_key":"9d5994dd5da322d0","organisation":"N/A","language":"en","verified":true}']
   end
+
   macro "I enter the username \"#{username}\" and password \"#{password}\""
   performAction('clear_id_field','url')
   performAction('enter_text_into_id_field', $WEB_URL, 'url')
@@ -121,3 +123,19 @@ end
 Then(/^I should see "(.*?)" within "(.*?)" seconds$/) do |text, timeout|
   performAction('wait_for_text', text, timeout)
 end
+
+Given(/^I have updated form sections$/) do
+  mimic.clear
+  mimic.get("/api/is_blacklisted/000000000000000") do
+    [200, {}, '{"blacklisted":false}']
+  end
+  mimic.get("/api/children/ids") do
+    [200, {}, '[]']
+  end
+  mimic.get("/api/form_sections") do
+    [200, {}, UPDATED_FORM_SECTIONS]
+  end
+end
+
+DEFAULT_FORM_SECTIONS = File.open("features/lib/default_form_sections.json", "rb").read
+UPDATED_FORM_SECTIONS = File.open("features/lib/updated_form_sections.json", "rb").read
