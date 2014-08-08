@@ -84,7 +84,7 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
     }
 
     private void view() throws JSONException {
-        Intent intent = new Intent(this, EditEnquiryActivity.class);
+        Intent intent = new Intent(this, ViewEnquiryActivity.class);
         intent.putExtra("id", enquiry.getUniqueId());
         finish();
         startActivity(intent);
