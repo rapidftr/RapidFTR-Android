@@ -8,7 +8,6 @@ import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.task.AsyncTaskWithDialog;
-import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -42,7 +41,6 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
     protected Enquiry loadEnquiry(Bundle bundle, EnquiryRepository enquiryRepository) throws JSONException {
         String enquiryId = bundle.getString("id");
         Enquiry retrievedEnquiry = enquiryRepository.get(enquiryId);
-        enquiryRepository.close();
 
         return retrievedEnquiry;
     }
@@ -91,12 +89,11 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
     }
 
     private Enquiry saveEnquiry() throws Exception {
-        @Cleanup EnquiryRepository repository = inject(EnquiryRepository.class);
         if (enquiry.isNew()) {
             enquiry.setCreatedBy(getCurrentUser().getUserName());
             enquiry.setOrganisation(getCurrentUser().getOrganisation());
         }
-        repository.createOrUpdate(enquiry);
+        enquiryRepository.createOrUpdate(enquiry);
         return enquiry;
     }
 }
