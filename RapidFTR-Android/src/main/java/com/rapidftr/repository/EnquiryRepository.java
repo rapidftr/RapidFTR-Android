@@ -3,6 +3,7 @@ package com.rapidftr.repository;
 import android.content.ContentValues;
 import android.database.Cursor;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
@@ -21,6 +22,7 @@ import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 import static com.rapidftr.database.Database.enquiry;
 import static java.lang.String.format;
 
+@Singleton
 public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
     private final String user;

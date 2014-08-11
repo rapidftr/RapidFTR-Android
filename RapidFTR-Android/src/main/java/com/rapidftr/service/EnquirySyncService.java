@@ -8,8 +8,6 @@ import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
-import com.rapidftr.utils.http.FluentResponse;
-import lombok.Cleanup;
 import org.apache.http.HttpException;
 import org.joda.time.DateTime;
 import org.json.JSONException;
@@ -47,10 +45,9 @@ public class EnquirySyncService implements SyncService<Enquiry> {
             record.setSynced(false);
             record.setLastUpdatedAt(null);
             enquiryRepository.update(record);
-            enquiryRepository.close();
             throw new SyncFailedException(exception.getMessage());
         }
-        enquiryRepository.close();
+
         return record;
     }
 
