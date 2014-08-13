@@ -17,3 +17,5 @@ Feature: Sync
 
     When I press "Updated Family Details"
     Then I should see "Updated Father's Name"
+
+  Scenario: Get Child Details
