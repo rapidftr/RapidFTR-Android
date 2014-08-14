@@ -3,31 +3,30 @@ package com.rapidftr.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormField;
-import com.rapidftr.model.Child;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.utils.StringUtils;
 
 import java.util.Iterator;
 import java.util.Map;
 
-public class ChildHighlightedFieldViewGroup extends LinearLayout {
-    public ChildHighlightedFieldViewGroup(Context context) {
+public class HighlightedFieldViewGroup extends LinearLayout {
+    public HighlightedFieldViewGroup(Context context) {
         super(context);
     }
 
-    public ChildHighlightedFieldViewGroup(Context context, AttributeSet attrs) {
+    public HighlightedFieldViewGroup(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ChildHighlightedFieldViewGroup(Context context, AttributeSet attrs, int defStyle) {
+    public HighlightedFieldViewGroup(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public void prepare(Child child, Map<Integer, FormField> highlightedFields) {
+    public void prepare(BaseModel baseModel, Map<Integer, FormField> highlightedFields) {
         Iterator<Integer> iterator = highlightedFields.keySet().iterator();
         while (iterator.hasNext()) {
             Integer fieldId = iterator.next();
@@ -41,10 +40,10 @@ public class ChildHighlightedFieldViewGroup extends LinearLayout {
                 this.addView(textView);
             }
 
-            if (StringUtils.isNotEmpty(child.optString(highlightedFields.get(fieldId).getId()))) {
+            if (StringUtils.isNotEmpty(baseModel.optString(highlightedFields.get(fieldId).getId()))) {
                 String fieldValue = String.format("%s: %s",
                         highlightedFields.get(fieldId).getDisplayName().get(RapidFtrApplication.getApplicationInstance().getCurrentUser().getLanguage()),
-                        child.optString(highlightedFields.get(fieldId).getId()));
+                        baseModel.optString(highlightedFields.get(fieldId).getId()));
 
                 textView.setText(fieldValue);
                 textView.setVisibility(View.VISIBLE);

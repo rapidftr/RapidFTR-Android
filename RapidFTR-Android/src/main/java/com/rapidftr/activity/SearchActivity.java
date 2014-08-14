@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.rapidftr.R;
-import com.rapidftr.adapter.ChildViewAdapter;
+import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.FormService;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class SearchActivity extends RapidFtrActivity {
 
-    private ChildViewAdapter childViewAdapter;
+    private HighlightedFieldsViewAdapter highlightedFieldsViewAdapter;
 
     private FormService formService;
 
@@ -31,12 +31,12 @@ public class SearchActivity extends RapidFtrActivity {
     }
 
     private void listView(List<Child> children) {
-        childViewAdapter = new ChildViewAdapter(this, R.layout.row_child, children);
+        highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, children, Child.CHILD_FORM_NAME, ViewChildActivity.class);
         ListView childListView = (ListView) findViewById(R.id.child_list);
         if (children.isEmpty()) {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
         }
-        childListView.setAdapter(childViewAdapter);
+        childListView.setAdapter(highlightedFieldsViewAdapter);
     }
 
     private View.OnClickListener searchListener() {
