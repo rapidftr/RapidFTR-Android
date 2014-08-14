@@ -8,11 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.activity.ViewChildActivity;
+import com.rapidftr.activity.CollectionActivity;
 import com.rapidftr.forms.FormField;
-import com.rapidftr.model.Child;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.service.FormService;
-import com.rapidftr.view.ChildHighlightedFieldViewGroup;
+import com.rapidftr.view.HighlightedFieldViewGroup;
 import org.json.JSONException;
 
 import java.util.List;
@@ -21,20 +21,21 @@ import java.util.TreeMap;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
-public class ChildViewAdapter extends BaseModelViewAdapter<Child> {
+public class HighlightedFieldsViewAdapter<T extends BaseModel> extends BaseModelViewAdapter<T> {
 
     protected Map<Integer, FormField> highlightedFields;
-
     private FormService formService;
+    private Class<CollectionActivity> activityToLaunch;
 
-    public ChildViewAdapter(Context context, int textViewResourceId, List<Child> children) {
-        super(context, textViewResourceId, children);
+    public HighlightedFieldsViewAdapter(Context context, int textViewResourceId, List<T> baseModels, String formName, Class<CollectionActivity> activityToLaunch) {
+        super(context, textViewResourceId, baseModels);
 
         formService = RapidFtrApplication.getApplicationInstance().getBean(FormService.class);
 
-        List<FormField> fields = formService.getHighlightedFields(Child.CHILD_FORM_NAME);
+        List<FormField> fields = formService.getHighlightedFields(formName);
 
         highlightedFields = new TreeMap<Integer, FormField>();
+        this.activityToLaunch = activityToLaunch;
 
         int counter = 0;
         for (FormField formField : fields) {
@@ -50,19 +51,19 @@ public class ChildViewAdapter extends BaseModelViewAdapter<Child> {
             LayoutInflater vi = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
             view = vi.inflate(textViewResourceId, null);
         }
-        final Child child = objects.get(position);
-        if (child != null) {
+        final BaseModel baseModel = objects.get(position);
+        if (baseModel != null) {
             TextView uniqueIdView = (TextView) view.findViewById(R.id.row_child_unique_id);
 
-            ChildHighlightedFieldViewGroup childHighlightedFieldViewGroup = (ChildHighlightedFieldViewGroup) view.findViewById(R.id.child_field_group);
-            childHighlightedFieldViewGroup.prepare(child, highlightedFields);
+            HighlightedFieldViewGroup highlightedFieldViewGroup = (HighlightedFieldViewGroup) view.findViewById(R.id.child_field_group);
+            highlightedFieldViewGroup.prepare(baseModel, highlightedFields);
 
             ImageView imageView = (ImageView) view.findViewById(R.id.thumbnail);
             try {
-                setFields(String.valueOf(child.getShortId()), uniqueIdView);
-                assignThumbnail(child, imageView);
+                setFields(String.valueOf(baseModel.getShortId()), uniqueIdView);
+                assignThumbnail(baseModel, imageView);
 
-                view.setOnClickListener(createClickListener(child, ViewChildActivity.class));
+                view.setOnClickListener(createClickListener(baseModel, activityToLaunch));
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }

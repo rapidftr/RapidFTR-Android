@@ -13,7 +13,7 @@
             android:scaleType="fitCenter"
             style="@style/photoThumbnail"
             android:background="#aaaaaa"/>
-    <com.rapidftr.view.ChildHighlightedFieldViewGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.rapidftr.view.HighlightedFieldViewGroup xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="fill_parent"
                   android:layout_toRightOf="@id/thumbnail"
                   android:orientation="vertical"
@@ -23,5 +23,5 @@
                   android:layout_height="wrap_content"
                   style="@style/childid"
                   android:id="@+id/row_child_unique_id"/>
-    </com.rapidftr.view.ChildHighlightedFieldViewGroup>
+    </com.rapidftr.view.HighlightedFieldViewGroup>
 </LinearLayout>

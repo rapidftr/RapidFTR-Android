@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 import com.rapidftr.R;
-import com.rapidftr.adapter.ChildViewAdapter;
+import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import lombok.Cleanup;
@@ -36,11 +36,11 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
     }
     
     private void listView(List<Child> children) {
-        ChildViewAdapter childViewAdapter = new ChildViewAdapter(this, R.layout.row_child, children);
+        HighlightedFieldsViewAdapter highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, R.layout.row_child, children, Child.CHILD_FORM_NAME, ViewChildActivity.class);
         ListView childListView = (ListView) findViewById(R.id.child_list);
         if (children.isEmpty()) {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
         }
-        childListView.setAdapter(childViewAdapter);
+        childListView.setAdapter(highlightedFieldsViewAdapter);
     }
 }
