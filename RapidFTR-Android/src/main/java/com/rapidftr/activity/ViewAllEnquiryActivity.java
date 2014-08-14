@@ -2,7 +2,6 @@ package com.rapidftr.activity;
 
 import android.widget.ListView;
 import com.rapidftr.R;
-import com.rapidftr.adapter.EnquiryViewAdapter;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Enquiry;
 import org.json.JSONException;
@@ -22,8 +21,7 @@ public class ViewAllEnquiryActivity extends BaseEnquiryActivity {
     }
 
     private void listView(List<Enquiry> enquiries) {
-//        EnquiryViewAdapter enquiryViewAdapter = new EnquiryViewAdapter(this, R.layout.row_enquiry, enquiries);
-        HighlightedFieldsViewAdapter highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, R.layout.row_child, enquiries, Enquiry.ENQUIRY_FORM_NAME, ViewEnquiryActivity.class);
+        HighlightedFieldsViewAdapter highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, enquiries, Enquiry.ENQUIRY_FORM_NAME, ViewEnquiryActivity.class);
         ListView enquiryListView = (ListView) findViewById(R.id.enquiry_list);
         if (enquiries.isEmpty()) {
             enquiryListView.setEmptyView(findViewById(R.id.no_enquiry_view));

@@ -31,7 +31,7 @@ public class SearchActivity extends RapidFtrActivity {
     }
 
     private void listView(List<Child> children) {
-        highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, R.layout.row_child, children, Child.CHILD_FORM_NAME, ViewChildActivity.class);
+        highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, children, Child.CHILD_FORM_NAME, ViewChildActivity.class);
         ListView childListView = (ListView) findViewById(R.id.child_list);
         if (children.isEmpty()) {
             childListView.setEmptyView(findViewById(R.id.no_child_view));

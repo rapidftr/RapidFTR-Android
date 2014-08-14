@@ -27,8 +27,8 @@ public class HighlightedFieldsViewAdapter<T extends BaseModel> extends BaseModel
     private FormService formService;
     private Class<CollectionActivity> activityToLaunch;
 
-    public HighlightedFieldsViewAdapter(Context context, int textViewResourceId, List<T> baseModels, String formName, Class<CollectionActivity> activityToLaunch) {
-        super(context, textViewResourceId, baseModels);
+    public HighlightedFieldsViewAdapter(Context context, List<T> baseModels, String formName, Class<CollectionActivity> activityToLaunch) {
+        super(context, R.layout.row_highlighted_fields, baseModels);
 
         formService = RapidFtrApplication.getApplicationInstance().getBean(FormService.class);
 

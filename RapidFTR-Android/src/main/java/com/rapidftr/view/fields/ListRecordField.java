@@ -42,7 +42,7 @@ public class ListRecordField extends BaseView {
         Injector inject = Guice.createInjector(new ApplicationInjector());
 
         List<Child> children = enquiry.getPotentialMatches(inject.getInstance(ChildRepository.class));
-        HighlightedFieldsViewAdapter highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(getContext(), R.layout.row_child, children, Child.CHILD_FORM_NAME, ViewChildActivity.class);
+        HighlightedFieldsViewAdapter highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(getContext(), children, Child.CHILD_FORM_NAME, ViewChildActivity.class);
         ListView childListView = (ListView) findViewById(R.id.list_records);
         if (children.isEmpty()) {
             childListView.setEmptyView(findViewById(R.id.no_matches));
