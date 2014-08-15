@@ -19,3 +19,15 @@ Feature: Sync
     Then I should see "Updated Father's Name"
 
   Scenario: Get Child Details
+    Given I have a new child record (Name: John Doe, Father: Jonathan Doe) on the server
+    And I select "Synchronize All" from the menu
+    And I wait up to 60 seconds for "View All" to appear
+    And I press "View All"
+    Then I should see "John Doe"
+
+    When I press list item number 1
+    And I wait up to 60 seconds for "Basic Identity" to appear
+    And I press "Basic Identity"
+    And I wait up to 60 seconds for "Updated Family Details" to appear
+    And I press "Updated Family Details"
+    Then I should see "Jonathan Doe"
