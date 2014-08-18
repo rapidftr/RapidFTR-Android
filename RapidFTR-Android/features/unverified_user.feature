@@ -40,9 +40,8 @@ Feature: Unverified User
   Scenario: Sync with unverified user account
     When I enter the username "unverified_user" and password "password"
     And I press "Log In"
-    Then I should see "Offline login successful"
-    When I wait up to 60 seconds for "Basic Identity" to appear
-    And I press the menu button
+    Then I should see "Basic Identity" within "60" seconds
+    When I press the menu button
     Then I should not see "Change Password"
     When I select "Synchronize All" from the menu
     Then I should see "Enter sync location"

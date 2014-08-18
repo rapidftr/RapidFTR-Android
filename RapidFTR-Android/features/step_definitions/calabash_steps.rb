@@ -137,5 +137,19 @@ Given(/^I have updated form sections$/) do
   end
 end
 
+Given(/^I have a new child record \(Name: John Doe, Father: Jonathan Doe\) on the server$/) do
+  mimic.clear
+  mimic.get("/api/is_blacklisted/000000000000000") do
+    [200, {}, '{"blacklisted":false}']
+  end
+  mimic.get("/api/children/ids") do
+    [200, {}, '[{"_id":"bc1b66ff85837b7afe915687a1b13b8e","_rev":"1-1ed25e16e90524b1112171f1b6bedf41"}]']
+  end
+  mimic.get("/api/children/bc1b66ff85837b7afe915687a1b13b8e") do
+    [200, {}, CHILD_RECORD]
+  end
+end
+
 DEFAULT_FORM_SECTIONS = File.open("features/lib/default_form_sections.json", "rb").read
 UPDATED_FORM_SECTIONS = File.open("features/lib/updated_form_sections.json", "rb").read
+CHILD_RECORD = File.open("features/lib/child_record.json", "rb").read

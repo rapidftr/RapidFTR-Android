@@ -5,7 +5,7 @@ Feature: Register Child
     And I press "Basic Identity"
     Then I should see all the default form sections
   
-  Scenario: Enter, Save and Edit Child Details
+  Scenario: Enter and Save Child Details
     When I wait up to 60 seconds for "Basic Identity" to appear
     And I enter "Child Name" into the "Name" field of the Child Registration Form
   	And I press "Save"
@@ -13,7 +13,16 @@ Feature: Register Child
     And I wait up to 60 seconds for "Edit" to appear
     Then I should see "Child Name"
   	And I should not see "Save"
-  	When I press "Edit"
+    When I press "View All"
+    Then I should see "Child Name" within "60" seconds
+
+  Scenario: Edit Child Details
+    When I wait up to 60 seconds for "View All" to appear
+    And I press "View All"
+    And I wait up to 60 seconds for "Child Name" to appear
+    And I press list item number 1
+    And I wait up to 60 seconds for "Edit" to appear
+    And I press "Edit"
     And I wait up to 60 seconds for "Save" to appear
   	Then I should not see "Edit"
   	When I enter "Updated Child Name" into the "Name" field of the Child Registration Form
