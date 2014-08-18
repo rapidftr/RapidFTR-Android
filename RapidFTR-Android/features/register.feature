@@ -17,9 +17,11 @@ Feature: Register Child
     Then I should see "Child Name" within "60" seconds
 
   Scenario: Edit Child Details
-    When I press "View All"
+    When I wait up to 60 seconds for "View All" to appear
+    And I press "View All"
     And I wait up to 60 seconds for "Child Name" to appear
     And I press list item number 1
+    And I wait up to 60 seconds for "Edit" to appear
     And I press "Edit"
     And I wait up to 60 seconds for "Save" to appear
   	Then I should not see "Edit"

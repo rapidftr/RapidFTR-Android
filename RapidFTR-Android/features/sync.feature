@@ -23,7 +23,7 @@ Feature: Sync
     And I select "Synchronize All" from the menu
     And I wait up to 60 seconds for "View All" to appear
     And I press "View All"
-    Then I should see "John Doe"
+    Then I should see "John Doe" within "60" seconds
 
     When I press list item number 1
     And I wait up to 60 seconds for "Basic Identity" to appear
