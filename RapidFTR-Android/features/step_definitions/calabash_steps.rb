@@ -11,14 +11,16 @@ end
 
 Given(/^that I am logged in as "(.*?)" with password "(.*?)"$/) do |username, password|
   mimic.clear
+
   mimic.post("/api/login") do
     [201, {}, '{"db_key":"9d5994dd5da322d0","organisation":"N/A","language":"en","verified":true}']
   end
+
   macro "I enter the username \"#{username}\" and password \"#{password}\""
   performAction('clear_id_field','url')
   performAction('enter_text_into_id_field', $WEB_URL, 'url')
   performAction('press',"Log In")
-  performAction('wait_for_text', 'Basic Identity', 20)
+  performAction('wait_for_text', 'Basic Identity', 60)
 end
 
 
@@ -121,3 +123,33 @@ end
 Then(/^I should see "(.*?)" within "(.*?)" seconds$/) do |text, timeout|
   performAction('wait_for_text', text, timeout)
 end
+
+Given(/^I have updated form sections$/) do
+  mimic.clear
+  mimic.get("/api/is_blacklisted/000000000000000") do
+    [200, {}, '{"blacklisted":false}']
+  end
+  mimic.get("/api/children/ids") do
+    [200, {}, '[]']
+  end
+  mimic.get("/api/form_sections") do
+    [200, {}, UPDATED_FORM_SECTIONS]
+  end
+end
+
+Given(/^I have a new child record \(Name: John Doe, Father: Jonathan Doe\) on the server$/) do
+  mimic.clear
+  mimic.get("/api/is_blacklisted/000000000000000") do
+    [200, {}, '{"blacklisted":false}']
+  end
+  mimic.get("/api/children/ids") do
+    [200, {}, '[{"_id":"bc1b66ff85837b7afe915687a1b13b8e","_rev":"1-1ed25e16e90524b1112171f1b6bedf41"}]']
+  end
+  mimic.get("/api/children/bc1b66ff85837b7afe915687a1b13b8e") do
+    [200, {}, CHILD_RECORD]
+  end
+end
+
+DEFAULT_FORM_SECTIONS = File.open("features/lib/default_form_sections.json", "rb").read
+UPDATED_FORM_SECTIONS = File.open("features/lib/updated_form_sections.json", "rb").read
+CHILD_RECORD = File.open("features/lib/child_record.json", "rb").read

@@ -1,5 +1,7 @@
 package com.rapidftr.task;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -31,6 +33,8 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
     protected Repository<T> repository;
     protected User currentUser;
     protected RapidFtrActivity context;
+    protected Notification notification;
+    protected NotificationManager notificationManager;
 
     protected int formSectionProgress;
     protected int maxProgress;
@@ -76,7 +80,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
 
     protected void getFormSections() throws IOException {
         if (!isCancelled()) {
-            formService.getPublishedFormSections();
+            formService.downloadPublishedFormSections();
         }
     }
 

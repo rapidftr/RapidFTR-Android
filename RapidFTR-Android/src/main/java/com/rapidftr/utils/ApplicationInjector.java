@@ -2,11 +2,17 @@ package com.rapidftr.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matcher;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Named;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.DatabaseSession;
@@ -24,6 +30,8 @@ import com.rapidftr.task.SyncUnverifiedDataAsyncTask;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.utils.http.FluentRequest;
 import org.json.JSONException;
+
+import java.io.IOException;
 
 public class ApplicationInjector extends AbstractModule {
 

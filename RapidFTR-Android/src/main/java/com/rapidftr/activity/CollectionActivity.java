@@ -8,15 +8,19 @@ import com.rapidftr.R;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.BaseModel;
+import com.rapidftr.service.FormService;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
 
 public abstract class CollectionActivity extends RapidFtrActivity {
+    protected FormService formService;
+
     protected List<FormSection> formSections;
 
     protected abstract BaseModel getModel();
+
     protected abstract Boolean getEditable();
 
     protected Spinner getSpinner() {
@@ -25,6 +29,10 @@ public abstract class CollectionActivity extends RapidFtrActivity {
 
     protected ViewPager getPager() {
         return (ViewPager) findViewById(R.id.pager);
+    }
+
+    protected CollectionActivity() {
+        super();
     }
 
     protected void initializePager() {
@@ -55,11 +63,13 @@ public abstract class CollectionActivity extends RapidFtrActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
+            formService = inject(FormService.class);
             initializeView();
+
             try {
                 initializeData(savedInstanceState);
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
             initializePager();
             initializeSpinner();
@@ -69,9 +79,13 @@ public abstract class CollectionActivity extends RapidFtrActivity {
         }
     }
 
-    protected void initializeLabels() throws JSONException{};
+    protected void initializeLabels() throws JSONException {
+    }
+
+    ;
 
     protected abstract void initializeView();
+
     protected abstract void initializeData(Bundle savedInstanceState) throws JSONException, IOException;
 
     protected void setLabel(int label) {
@@ -80,5 +94,12 @@ public abstract class CollectionActivity extends RapidFtrActivity {
 
     protected void setTitle(String title) {
         ((TextView) findViewById(R.id.title)).setText(title);
+    }
+
+    protected FormService getFormService() {
+        if (this.formService == null)
+            formService = inject(FormService.class);
+
+        return formService;
     }
 }

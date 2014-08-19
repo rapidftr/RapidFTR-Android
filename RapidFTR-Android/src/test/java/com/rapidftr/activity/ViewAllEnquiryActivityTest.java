@@ -4,11 +4,12 @@ import android.widget.ListView;
 import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.service.FormService;
 import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,9 +19,7 @@ import org.robolectric.util.ActivityController;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -37,16 +36,20 @@ public class ViewAllEnquiryActivityTest {
         initMocks(this);
         activityController = SpyActivityController.of(ViewAllEnquiryActivity.class);
         activity = activityController.attach().get();
+
+        RapidFtrApplication application = RapidFtrApplication.getApplicationInstance();
+
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
+        doReturn(new FormService(application)).when(mockInjector).getInstance(FormService.class);
         doReturn(repository).when(mockInjector).getInstance(EnquiryRepository.class);
     }
 
     @Test
     public void shouldListAllEnquiries() throws JSONException {
         List<Enquiry> enquiries = new ArrayList<Enquiry>();
-        enquiries.add(new Enquiry("CREATEDBY", "REPORTERNAME", new JSONObject("{name:NAME}")));
-        enquiries.add(new Enquiry("CREATEDBY", "REPORTERNAME", new JSONObject("{name:NAME}")));
+        enquiries.add(new Enquiry("{name:NAME}", "CREATEDBY"));
+        enquiries.add(new Enquiry("{name:NAME}", "CREATEDBY"));
         when(repository.all()).thenReturn(enquiries);
 
         activityController.create();

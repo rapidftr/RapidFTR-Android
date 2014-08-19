@@ -72,7 +72,9 @@ public enum Database {
         created_organisation("created_organisation", true, false),
 
         last_synced_at("last_synced_at", true, true);
-        private @Getter final String columnName;
+        private
+        @Getter
+        final String columnName;
         private final boolean isInternal;
         private final boolean isSystem;
 
@@ -102,27 +104,50 @@ public enum Database {
     @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum EnquiryTableColumn {
         id("id"),
-        unique_identifier("unique_identifier"),
-        enquirer_name("enquirer_name"),
-        criteria("criteria"),
-        created_by("created_by"),
-        created_at("created_at"),
+        unique_identifier("unique_identifier", true, false),
+        content("enquiry_json"),
+        created_by("created_by", true, false),
+        created_at("created_at", true, false),
         last_updated_at("last_updated_at"),
-        synced("synced", Boolean.class),
+        synced("synced", Boolean.class, true, true),
         potential_matches("potential_matches"),
 
         created_organisation("created_organisation"),
-        internal_id("_id"),
-        internal_rev("_rev");
-        private @Getter final String columnName;
-        private @Getter final Class<?> primitiveType;
+        internal_id("_id", true, false),
+        internal_rev("_rev", true, false);
+
+        @Getter
+        private final String columnName;
+
+        @Getter
+        private final Class<?> primitiveType;
+        private final boolean isInternal;
+        private final boolean isSystem;
+
 
         EnquiryTableColumn(String columnName) {
-            this(columnName, String.class);
+            this(columnName, String.class, false, false);
         }
+
+        EnquiryTableColumn(String columnName, boolean isInternal, boolean isSystem) {
+            this(columnName, String.class, isInternal, isSystem);
+        }
+
         public static Iterable<EnquiryTableColumn> fields() {
             List<EnquiryTableColumn> allColumns = Arrays.asList(EnquiryTableColumn.values());
-           return allColumns;
+            return allColumns;
         }
+
+        public static Iterable<EnquiryTableColumn> internalFields() {
+            List<EnquiryTableColumn> allColumns = Arrays.asList(EnquiryTableColumn.values());
+
+            return filter(allColumns, new Predicate<EnquiryTableColumn>() {
+                @Override
+                public boolean apply(EnquiryTableColumn column) {
+                    return column.isInternal;
+                }
+            });
+        }
+
     }
 }

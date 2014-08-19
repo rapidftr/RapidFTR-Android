@@ -8,3 +8,4 @@ gen/
 .nomedia/
 screenshot_*
 .irb-history
+rerun.txt

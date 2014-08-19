@@ -1,13 +1,11 @@
 package com.rapidftr.service;
 
 import android.content.SharedPreferences;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.EnquiryRepository;
 import org.hamcrest.CoreMatchers;
 import org.joda.time.DateTime;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -41,7 +39,7 @@ public class EnquirySyncServiceTest {
     public void getRecordShouldRetrieveARecordOverHttp() throws Exception {
         String enquiryInternalId = "enquiryInternalId";
         EnquirySyncService enquirySyncService = new EnquirySyncService(sharedPreferences, enquiryHttpDao, enquiryRepository);
-        Enquiry expectedEnquiry = new Enquiry("createdBy", "reporterName", new JSONObject("{}"));
+        Enquiry expectedEnquiry = new Enquiry("{}", "createdBy");
         when(enquiryHttpDao.get(enquiryInternalId)).thenReturn(expectedEnquiry);
 
         final Enquiry downloadedEnquiry = enquirySyncService.getRecord(enquiryInternalId);

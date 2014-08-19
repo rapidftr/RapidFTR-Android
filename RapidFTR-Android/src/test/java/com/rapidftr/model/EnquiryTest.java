@@ -6,31 +6,20 @@ import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
-import com.rapidftr.repository.FailedToSaveException;
 import junit.framework.Assert;
-import lombok.Cleanup;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.List;
 
-import static com.rapidftr.database.Database.EnquiryTableColumn;
-import static com.rapidftr.database.Database.EnquiryTableColumn.criteria;
-import static com.rapidftr.database.Database.EnquiryTableColumn.enquirer_name;
 import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
-import static com.rapidftr.database.Database.enquiry;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 @RunWith(CustomTestRunner.class)
 public class EnquiryTest {
@@ -53,37 +42,16 @@ public class EnquiryTest {
         Enquiry enquiry = new Enquiry();
         assertNotNull(enquiry.getUniqueId());
 
-        enquiry = new Enquiry("createdBy", "enquirerName", new JSONObject("{}"));
+        enquiry = new Enquiry("{}", "createdBy");
         assertNotNull(enquiry.getUniqueId());
-    }
-
-    @Test
-    public void shouldPopulateCriteria() throws Exception {
-        String enquiryJSON = "{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\", \"sex\": \"Male\"}";
-        Enquiry enquiry = new Enquiry(enquiryJSON);
-
-        JSONObject expectedCriteria = enquiry.getCriteria();
-
-        JSONAssert.assertEquals(enquiryJSON, expectedCriteria, true);
-    }
-
-    @Test
-    public void shouldKnowHowToRemoveEnquirerName() throws Exception {
-        String enquiryJSON = "{\"enquirer_name\": \"godwin\", \"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}";
-        Enquiry enquiry = new Enquiry(enquiryJSON);
-        String expectedJSON = "{\"name\": \"robin\", \"age\": \"10\", \"location\": \"Kampala\"}";
-
-        JSONObject criteriaJSON = enquiry.getCriteria();
-
-        JSONAssert.assertEquals(expectedJSON, criteriaJSON, true);
     }
 
     @Test
     public void enquiryShouldGetPotentialMatches() throws JSONException {
         Cursor cursor = mock(Cursor.class);
         doReturn(potential_matches.ordinal()).when(cursor).getColumnIndex(potential_matches.getColumnName());
-        doReturn(criteria.ordinal()).when(cursor).getColumnIndex(criteria.getColumnName());
-        doReturn("{}").when(cursor).getString(criteria.ordinal());
+        //doReturn(criteria.ordinal()).when(cursor).getColumnIndex(criteria.getColumnName());
+        //doReturn("{}").when(cursor).getString(criteria.ordinal());
         doReturn("[\"internal_id1\", \"internal_id2\"]").when(cursor).getString(potential_matches.ordinal());
 
         Child child1 = new Child("id1", "owner1", "{'test1':'value1', '_id':'internal_id1' }");
@@ -100,41 +68,21 @@ public class EnquiryTest {
     }
 
     @Test
-    public void criteriaShouldBeAJSONObjectWhenCreatingEnquiryFromCursor() throws JSONException, FailedToSaveException {
-        String enquiryJSON = "{\"enquirer_name\":\"sam fisher\",\"name\":\"foo bar\",\"nationality\":\"ugandan\"," +
-                "\"created_by\":\"Tom Reed\",\"synced\":\"false\", \"created_organisation\":\"TW\"}";
-
-        Enquiry enquiry = new Enquiry(enquiryJSON);
-        enquiryRepo.createOrUpdate(enquiry);
-        JSONObject expectedCriteria = new JSONObject("{\"name\":\"foo bar\",\"nationality\":\"ugandan\"}");
-
-        Enquiry enquiryFromCursor = enquiryRepo.all().get(0);
-
-        assertEquals(JSONObject.class, enquiryFromCursor.getCriteria().getClass());
-        assertEquals(enquiryFromCursor.getCriteria().getString("name"), "foo bar");
-        assertEquals(enquiryFromCursor.getCriteria().getString("nationality"), "ugandan");
-        JSONAssert.assertEquals(enquiryFromCursor.getCriteria(), expectedCriteria, true);
-
-    }
-
-    @Test
     public void shouldCreateWellFormedEnquiryFromJSONString() throws JSONException {
         String enquiryJSON = "{\"enquirer_name\":\"sam fisher\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
         Enquiry enquiry = new Enquiry(enquiryJSON);
 
-        String expectedCriteria = "{\"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
         String expectedEnquirerName = "sam fisher";
+        String expectedNationality = "ugandan";
 
-        assertEquals(expectedEnquirerName, enquiry.getEnquirerName());
-        JSONAssert.assertEquals(expectedCriteria, enquiry.getCriteria(), true);
+        assertEquals(expectedEnquirerName, enquiry.get("enquirer_name"));
+        assertEquals(expectedNationality, enquiry.get("nationality"));
     }
 
     @Test
     public void enquiryShouldGetMatchingIds() throws JSONException {
         Cursor cursor = mock(Cursor.class);
         doReturn(potential_matches.ordinal()).when(cursor).getColumnIndex(potential_matches.getColumnName());
-        doReturn(criteria.ordinal()).when(cursor).getColumnIndex(criteria.getColumnName());
-        doReturn("{}").when(cursor).getString(criteria.ordinal());
         doReturn("[\"id1\", \"id2\"]").when(cursor).getString(potential_matches.ordinal());
 
         Enquiry enquiry = new Enquiry(cursor);
@@ -149,4 +97,18 @@ public class EnquiryTest {
         assertTrue(enquiry.getPotentialMatchingIds().length() == 0);
     }
 
+    @Test
+    public void shouldBeValidEnquiry() throws JSONException {
+        String enquiryJSON = "{\"enquirer_name\":\"sam fisher\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+
+        Assert.assertTrue(enquiry.isValid());
+    }
+
+    @Test
+    public void shouldNotBeValidEnquiry() throws JSONException {
+        String enquiryJSON = "{}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        Assert.assertFalse(enquiry.isValid());
+    }
 }

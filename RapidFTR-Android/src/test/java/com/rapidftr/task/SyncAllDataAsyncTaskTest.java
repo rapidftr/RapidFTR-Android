@@ -94,7 +94,7 @@ public class SyncAllDataAsyncTaskTest {
         syncAllDataAsyncTask.setContext(rapidFtrActivity);
 
         syncAllDataAsyncTask.execute();
-        verify(formService).getPublishedFormSections();
+        verify(formService).downloadPublishedFormSections();
         verify(childSyncService).sync(child1, currentUser);
         verify(childSyncService).sync(child2, currentUser);
     }
@@ -107,7 +107,7 @@ public class SyncAllDataAsyncTaskTest {
 
         syncAllDataAsyncTask.doInBackground();
 
-        verify(formService, never()).getPublishedFormSections();
+        verify(formService, never()).downloadPublishedFormSections();
     }
 
     @Test
@@ -247,7 +247,7 @@ public class SyncAllDataAsyncTaskTest {
         syncAllDataAsyncTask.setContext(rapidFtrActivity);
         syncAllDataAsyncTask.execute();
 
-        verify(formService).getPublishedFormSections();
+        verify(formService).downloadPublishedFormSections();
         verify(childSyncService).sync(child1, currentUser);
         verify(childSyncService).sync(child2, currentUser);
         verify(childSyncService).getIdsToDownload();

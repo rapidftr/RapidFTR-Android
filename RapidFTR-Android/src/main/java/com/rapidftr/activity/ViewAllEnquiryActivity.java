@@ -2,23 +2,18 @@ package com.rapidftr.activity;
 
 import android.widget.ListView;
 import com.rapidftr.R;
-import com.rapidftr.adapter.EnquiryViewAdapter;
+import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Enquiry;
-import com.rapidftr.repository.EnquiryRepository;
-import lombok.Cleanup;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ViewAllEnquiryActivity extends BaseEnquiryActivity {
     @Override
     protected void initializeView() {
         setContentView(R.layout.activity_view_all_enquiries);
-        @Cleanup EnquiryRepository enquiryRepository = inject(EnquiryRepository.class);
         try {
-            List<Enquiry> enquiries = reconstructCriteria(enquiryRepository.all());
+            List<Enquiry> enquiries = enquiryRepository.all();
             listView(enquiries);
         } catch (JSONException e) {
             throw new RuntimeException(e);
@@ -26,27 +21,19 @@ public class ViewAllEnquiryActivity extends BaseEnquiryActivity {
     }
 
     private void listView(List<Enquiry> enquiries) {
-        EnquiryViewAdapter enquiryViewAdapter = new EnquiryViewAdapter(this, R.layout.row_enquiry, enquiries);
+        HighlightedFieldsViewAdapter highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, enquiries, Enquiry.ENQUIRY_FORM_NAME, ViewEnquiryActivity.class);
         ListView enquiryListView = (ListView) findViewById(R.id.enquiry_list);
-        if (enquiries.isEmpty()){
+        if (enquiries.isEmpty()) {
             enquiryListView.setEmptyView(findViewById(R.id.no_enquiry_view));
         }
-        enquiryListView.setAdapter(enquiryViewAdapter);
-    }
-
-    private List<Enquiry> reconstructCriteria(List <Enquiry> enquiries) throws JSONException {
-        List <Enquiry> reconstructedEnquiries = new ArrayList<Enquiry>();
-        for(Enquiry enquiry : enquiries){
-            JSONObject criteria = removeCriteria(enquiry);
-            reconstructedEnquiries.add(addCriteriaKeysAndValuesToEnquiry(enquiry,criteria));
-        }
-
-        return reconstructedEnquiries;
+        enquiryListView.setAdapter(highlightedFieldsViewAdapter);
     }
 
     @Override
-    protected void initializePager() {}
+    protected void initializePager() {
+    }
 
     @Override
-    protected void initializeSpinner() {}
+    protected void initializeSpinner() {
+    }
 }

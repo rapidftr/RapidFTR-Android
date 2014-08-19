@@ -6,9 +6,10 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.rapidftr.R;
-import com.rapidftr.adapter.ChildViewAdapter;
+import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.service.FormService;
 import lombok.Cleanup;
 import org.json.JSONException;
 
@@ -17,22 +18,25 @@ import java.util.List;
 
 public class SearchActivity extends RapidFtrActivity {
 
-    private ChildViewAdapter childViewAdapter;
+    private HighlightedFieldsViewAdapter highlightedFieldsViewAdapter;
+
+    private FormService formService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_child);
         findViewById(R.id.search_btn).setOnClickListener(searchListener());
+        formService = inject(FormService.class);
     }
 
     private void listView(List<Child> children) {
-        childViewAdapter = new ChildViewAdapter(this, R.layout.row_child, children);
+        highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, children, Child.CHILD_FORM_NAME, ViewChildActivity.class);
         ListView childListView = (ListView) findViewById(R.id.child_list);
         if (children.isEmpty()) {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
         }
-        childListView.setAdapter(childViewAdapter);
+        childListView.setAdapter(highlightedFieldsViewAdapter);
     }
 
     private View.OnClickListener searchListener() {
@@ -57,7 +61,7 @@ public class SearchActivity extends RapidFtrActivity {
         if ("".equals(subString)) {
             return new ArrayList<Child>();
         }
-        return childRepository.getMatchingChildren(subString, getContext().getHighlightedFields());
+        return childRepository.getMatchingChildren(subString, formService.getHighlightedFields(Child.CHILD_FORM_NAME));
     }
 
 }

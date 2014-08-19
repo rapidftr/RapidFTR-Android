@@ -240,7 +240,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
     public List<Child> getAllWithInternalIds(List<String> internalIds) throws JSONException {
         List<Child> children = new ArrayList<Child>();
         for (String internalId : internalIds) {
-            Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE _id = ?", new String[]{internalId});
+            @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE _id = ?", new String[]{internalId});
             if (cursor.moveToNext())
                 children.add(childFrom(cursor));
         }

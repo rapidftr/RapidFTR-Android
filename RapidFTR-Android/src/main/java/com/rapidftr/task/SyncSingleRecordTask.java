@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import com.google.inject.Inject;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.Repository;
@@ -13,9 +14,9 @@ import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
 public class SyncSingleRecordTask extends AsyncTaskWithDialog<BaseModel, Void, Boolean> {
 
-    protected  SyncService service;
-    protected  Repository repository;
-    protected  User currentUser;
+    protected SyncService service;
+    protected Repository repository;
+    protected User currentUser;
     private Activity activity;
 
     @Inject
@@ -32,6 +33,7 @@ public class SyncSingleRecordTask extends AsyncTaskWithDialog<BaseModel, Void, B
             return true;
         } catch (Exception e) {
             Log.e(APP_IDENTIFIER, "Error syncing one child record", e);
+            ((RapidFtrApplication) activity.getApplication()).showNotification(service.getNotificationId(), service.getNotificationTitle(), e.getMessage());
             return false;
         }
     }

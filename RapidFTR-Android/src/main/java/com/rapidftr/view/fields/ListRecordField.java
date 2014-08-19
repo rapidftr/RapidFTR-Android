@@ -9,7 +9,8 @@ import android.widget.ListView;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.R;
-import com.rapidftr.adapter.ChildViewAdapter;
+import com.rapidftr.activity.ViewChildActivity;
+import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
@@ -41,12 +42,12 @@ public class ListRecordField extends BaseView {
         Injector inject = Guice.createInjector(new ApplicationInjector());
 
         List<Child> children = enquiry.getPotentialMatches(inject.getInstance(ChildRepository.class));
-        ChildViewAdapter childViewAdapter = new ChildViewAdapter(getContext(), R.layout.row_child, children);
+        HighlightedFieldsViewAdapter highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(getContext(), children, Child.CHILD_FORM_NAME, ViewChildActivity.class);
         ListView childListView = (ListView) findViewById(R.id.list_records);
         if (children.isEmpty()) {
             childListView.setEmptyView(findViewById(R.id.no_matches));
         } else
-        childListView.setAdapter(childViewAdapter);
+        childListView.setAdapter(highlightedFieldsViewAdapter);
         setListViewHeightBasedOnChildren(childListView);
     }
 

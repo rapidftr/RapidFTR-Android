@@ -58,7 +58,7 @@ public class ChildHighlightedFieldViewTest {
 
     @Test
     public void shouldShowHighlightedFields() {
-        ChildHighlightedFieldViewGroup viewGroup = new ChildHighlightedFieldViewGroup(application);
+        HighlightedFieldViewGroup viewGroup = new HighlightedFieldViewGroup(application);
         viewGroup.prepare(child, highlightedFields);
 
         Iterator<Integer> iterator = highlightedFields.keySet().iterator();
