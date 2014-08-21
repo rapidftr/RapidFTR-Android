@@ -635,7 +635,7 @@
          ],
          "editable":true,
          "name":{
-            "en":"Family details"
+            "en":"Family Details"
          },
          "unique_id":"family_details",
          "order":2,
