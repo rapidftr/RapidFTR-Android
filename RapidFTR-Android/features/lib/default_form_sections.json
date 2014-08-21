@@ -606,12 +606,12 @@
         },
         {
             "name": {
-                "en": "Family details",
-                "fr": "Family details",
-                "ar": "Family details",
-                "zh": "Family details",
-                "es": "Family details",
-                "ru": "Family details"
+                "en": "Family Details",
+                "fr": "Family Details",
+                "ar": "Family Details",
+                "zh": "Family Details",
+                "es": "Family Details",
+                "ru": "Family Details"
             },
             "description": {
                 "en": "Information about a child's known family",
@@ -630,8 +630,8 @@
                     "visible": true,
                     "type": "text_field",
                     "highlight_information": {
-                        "order": null,
-                        "highlighted": false
+                        "order": 5,
+                        "highlighted": true
                     },
                     "editable": true,
                     "display_name": {

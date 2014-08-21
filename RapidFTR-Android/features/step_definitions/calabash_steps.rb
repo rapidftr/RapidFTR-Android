@@ -70,7 +70,7 @@ end
 
 Then(/^I should see all the default form sections$/) do
   default_form_sections = [
-    "Family details", 
+    "Family Details",
     "Care Arrangements", 
     "Separation History", 
     "Protection Concerns", 
@@ -147,6 +147,12 @@ Given(/^I have a new child record \(Name: John Doe, Father: Jonathan Doe\) on th
   end
   mimic.get("/api/children/bc1b66ff85837b7afe915687a1b13b8e") do
     [200, {}, CHILD_RECORD]
+  end
+end
+
+Given(/^I have form sections with the highlighted field "Father"$/) do
+  mimic.get("/api/form_sections") do
+    [200, {}, DEFAULT_FORM_SECTIONS]
   end
 end
 
