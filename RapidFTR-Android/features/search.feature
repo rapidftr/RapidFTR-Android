@@ -15,12 +15,13 @@ Feature: Search
     Given I have a new child record (Name: John Doe, Father: Jonathan Doe) on the server
     And I have form sections with the highlighted field "Father"
     And I select "Synchronize All" from the menu
+    And I wait up to 60 seconds for "Child Records successfully synchronized" to appear
     And I wait up to 60 seconds for "Search" to appear
     And I press "Search"
     When I enter text "John Doe" into field with id "search_text"
     And I press "Go"
-    Then I should see "John Doe" within "60" seconds
-    And I should see "Jonathan Doe"
+    Then I should see "Name: John Doe" within "60" seconds
+    And I should see "Father's Name: Jonathan Doe"
 
     When I press list item number 1
     And I wait up to 60 seconds for "Basic Identity" to appear
