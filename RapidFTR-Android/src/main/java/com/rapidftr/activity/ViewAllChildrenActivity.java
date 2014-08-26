@@ -27,7 +27,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
         List<Child> children = new ArrayList<Child>();
         @Cleanup ChildRepository childRepository = inject(ChildRepository.class);
         try {
-            children = childRepository.getChildrenByOwner();
+            children = childRepository.allCreatedByCurrentUser();
         } catch (JSONException e) {
             Log.e("ViewAllChildrenActivity","Error while displaying children list");
             makeToast(R.string.fetch_child_error);

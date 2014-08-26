@@ -59,7 +59,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
         return cursor.moveToNext() ? cursor.getInt(0) : 0;
     }
 
-    public List<Child> getChildrenByOwner() throws JSONException {
+    public List<Child> allCreatedByCurrentUser() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE child_owner = ? ORDER BY id", new String[]{userName});
         return toChildren(cursor);
     }

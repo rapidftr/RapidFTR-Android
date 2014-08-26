@@ -26,4 +26,6 @@ public interface Repository<T extends BaseModel> {
     public List<T> currentUsersUnsyncedRecords() throws JSONException;
 
     public List<String> getRecordIdsByOwner() throws JSONException;
+
+    public List<T> allCreatedByCurrentUser() throws JSONException;
 }

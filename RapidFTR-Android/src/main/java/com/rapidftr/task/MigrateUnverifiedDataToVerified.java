@@ -38,7 +38,7 @@ public class MigrateUnverifiedDataToVerified extends AsyncTask<Void, Void, Void>
 
     private void migrateChildren(ChildRepository unverifiedChildRepo, ChildRepository verifiedChildRepo) {
         try {
-            List<Child> children = unverifiedChildRepo.getChildrenByOwner();
+            List<Child> children = unverifiedChildRepo.allCreatedByCurrentUser();
             for (Child child : children) {
                 verifiedChildRepo.createOrUpdate(child);
                 JSONArray photoKeys = child.getPhotos();

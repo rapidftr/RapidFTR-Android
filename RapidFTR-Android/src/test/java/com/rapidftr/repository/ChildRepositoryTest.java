@@ -275,7 +275,7 @@ public class ChildRepositoryTest {
         repository.createOrUpdate(syncedChild);
         repository.createOrUpdate(unsyncedChild);
 
-        List<Child> all = repository.getChildrenByOwner();
+        List<Child> all = repository.allCreatedByCurrentUser();
         assertThat(all.get(0).isSynced(), is(true));
         assertThat(all.get(1).isSynced(), is(false));
     }
@@ -287,7 +287,7 @@ public class ChildRepositoryTest {
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
-        List<Child> children = repository.getChildrenByOwner();
+        List<Child> children = repository.allCreatedByCurrentUser();
         assertThat(children.size(), equalTo(2));
         assertThat(child2.getInternalId(), equalTo(children.get(0).getInternalId()));
         assertThat(child1.getInternalId(), equalTo(children.get(1).getInternalId()));
@@ -302,8 +302,8 @@ public class ChildRepositoryTest {
         Child child2 = new Child("id2", "user2", null);
         anotherUsersRepository.createOrUpdate(child2);
 
-        assertThat(repository.getChildrenByOwner(), not(hasItem(child2)));
-        assertThat(anotherUsersRepository.getChildrenByOwner(), not(hasItem(child1)));
+        assertThat(repository.allCreatedByCurrentUser(), not(hasItem(child2)));
+        assertThat(anotherUsersRepository.allCreatedByCurrentUser(), not(hasItem(child1)));
     }
 
     @Test
@@ -541,7 +541,7 @@ public class ChildRepositoryTest {
         repository.createOrUpdate(unSyncedChild);
 
         repository.deleteChildrenByOwner();
-        assertEquals(0, repository.getChildrenByOwner().size());
+        assertEquals(0, repository.allCreatedByCurrentUser().size());
     }
 
     public class ChildBuilder {
