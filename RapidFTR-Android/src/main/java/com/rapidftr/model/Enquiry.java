@@ -12,16 +12,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 import static com.rapidftr.database.Database.EnquiryTableColumn.content;
 import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
 
 public class Enquiry extends BaseModel {
 
-    private ArrayList<String> NONE_CRITERIA_FIELDS = new ArrayList<String>();
     public static final String ENQUIRY_FORM_NAME = "Enquiries";
 
     public Enquiry() throws JSONException {
@@ -37,18 +34,16 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(Cursor cursor) throws JSONException {
+
         super(cursor.getString(cursor.getColumnIndex(content.getColumnName())));
 
         for (Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
             final int columnIndex = cursor.getColumnIndex(column.getColumnName());
-            if (columnIndex < 0) {
-                throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
-            }
 
-            if (column.getPrimitiveType().equals(Boolean.class)) {
-                this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
-            } else if (column.equals(content)) {
+            if (columnIndex < 0 || column.equals(content)) {
                 continue;
+            }else if (column.getPrimitiveType().equals(Boolean.class)) {
+                this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
             } else {
                 this.put(column.getColumnName(), cursor.getString(columnIndex));
             }
@@ -82,19 +77,6 @@ public class Enquiry extends BaseModel {
         return matchingChildList;
     }
 
-    private void setColumn(Database.EnquiryTableColumn column, String value) throws JSONException {
-        put(column.getColumnName(), value);
-    }
-
-    private ArrayList<String> getKeys() {
-        Iterator keys = this.keys();
-        ArrayList<String> enquiryKeys = new ArrayList<String>();
-        while (keys.hasNext()) {
-            enquiryKeys.add(keys.next().toString());
-        }
-        return enquiryKeys;
-    }
-
     public boolean isValid() {
         int numberOfInternalFields = names().length();
 
@@ -118,14 +100,9 @@ public class Enquiry extends BaseModel {
     }
 
     public String getPotentialMatchingIds() {
-        String ids = getString(potential_matches.getColumnName());
-        if (ids == null)
-            return "";
-        else
-            return ids;
+        String ids = getString(potential_matches.getColumnName()) ;
+        String matchingChildIds = ids == null ? "" : ids;
+        return matchingChildIds;
     }
 
-    public String getInternalId() throws JSONException {
-        return getString(internal_id.getColumnName());
-    }
 }

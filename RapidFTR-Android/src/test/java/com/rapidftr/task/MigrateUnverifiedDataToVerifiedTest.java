@@ -42,7 +42,7 @@ public class MigrateUnverifiedDataToVerifiedTest {
                                       new Child("2", unverifiedUser.getUserName(), "{\"name\":\"some content\"}"),
                                       new Child("3", unverifiedUser.getUserName(), "{\"name\":\"some content\"}"));
 
-        doReturn(children).when(unverifiedChildRepo).getChildrenByOwner();
+        doReturn(children).when(unverifiedChildRepo).allCreatedByCurrentUser();
         doNothing().when(verifiedChildRepo).createOrUpdate(children.get(0));
         doNothing().when(verifiedChildRepo).createOrUpdate(children.get(1));
         doNothing().when(verifiedChildRepo).createOrUpdate(children.get(2));

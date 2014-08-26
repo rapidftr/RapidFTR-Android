@@ -50,7 +50,7 @@ public class ViewAllChildrenActivityTest {
     public void shouldListChildrenCreatedByTheLoggedInUser() throws JSONException {
         List<Child> children = new ArrayList<Child>();
         children.add(new Child("id1", "user1", "{ \"name\" : \"child1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }"));
-        when(childRepository.getChildrenByOwner()).thenReturn(children);
+        when(childRepository.allCreatedByCurrentUser()).thenReturn(children);
 
         activityController.create();
         ListView listView = (ListView) activity.findViewById(R.id.child_list);
@@ -61,7 +61,7 @@ public class ViewAllChildrenActivityTest {
     @Test
     public void shouldShowNoChildMessageWhenNoChildrenPresent() throws JSONException {
         List<Child> children = new ArrayList<Child>();
-        when(childRepository.getChildrenByOwner()).thenReturn(children);
+        when(childRepository.allCreatedByCurrentUser()).thenReturn(children);
 
         activityController.create();
         ListView listView = (ListView) activity.findViewById(R.id.child_list);

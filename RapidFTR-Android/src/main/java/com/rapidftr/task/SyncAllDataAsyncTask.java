@@ -1,9 +1,7 @@
 package com.rapidftr.task;
 
-import android.widget.Toast;
 import com.google.inject.Inject;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication_;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.Repository;
@@ -14,7 +12,6 @@ import org.apache.http.HttpException;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 

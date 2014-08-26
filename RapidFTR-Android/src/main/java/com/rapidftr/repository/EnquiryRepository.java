@@ -3,7 +3,6 @@ package com.rapidftr.repository;
 import android.content.ContentValues;
 import android.database.Cursor;
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
@@ -22,15 +21,14 @@ import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 import static com.rapidftr.database.Database.enquiry;
 import static java.lang.String.format;
 
-@Singleton
 public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
-    private final String user;
+    private final String userName;
     private final DatabaseSession session;
 
     @Inject
-    public EnquiryRepository(@Named("USER_NAME") String user, DatabaseSession session) {
-        this.user = user;
+    public EnquiryRepository(@Named("USER_NAME") String userName, DatabaseSession session) {
+        this.userName = userName;
         this.session = session;
     }
 
@@ -47,7 +45,6 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         enquiryValues.put(id.getColumnName(), enquiry.getUniqueId());
         enquiryValues.put(created_by.getColumnName(), enquiry.getCreatedBy());
         enquiryValues.put(content.getColumnName(), enquiry.getJsonString());
-        //enquiryValues.put(criteria.getColumnName(), enquiry.getCriteria().toString());
         enquiryValues.put(created_at.getColumnName(), enquiry.getCreatedAt());
         enquiryValues.put(potential_matches.getColumnName(), enquiry.getPotentialMatchingIds());
         enquiryValues.put(unique_identifier.getColumnName(), enquiry.getUniqueId());
@@ -79,6 +76,11 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
                 values,
                 format("%s=?", id.getColumnName()),
                 new String[]{enquiry.getUniqueId()});
+    }
+
+    public List<Enquiry> allCreatedByCurrentUser() throws JSONException {
+        @Cleanup Cursor cursor = session.rawQuery("SELECT enquiry_json FROM enquiry WHERE created_by = ? ORDER BY id", new String[]{userName});
+        return toEnquiries(cursor);
     }
 
     @Override
@@ -132,6 +134,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         return enquiries;
     }
 
+    //TODO move this to the enquiry class
     private Enquiry buildEnquiry(Cursor cursor) throws JSONException {
         return new Enquiry(cursor);
     }
