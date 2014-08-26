@@ -4,16 +4,19 @@ import android.widget.ListView;
 import com.rapidftr.R;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Enquiry;
+import com.rapidftr.repository.EnquiryRepository;
+import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.util.List;
 
 public class ViewAllEnquiryActivity extends BaseEnquiryActivity {
+
     @Override
     protected void initializeView() {
         setContentView(R.layout.activity_view_all_enquiries);
         try {
-            List<Enquiry> enquiries = enquiryRepository.all();
+            List<Enquiry> enquiries = enquiryRepository.allCreatedByCurrentUser();
             listView(enquiries);
         } catch (JSONException e) {
             throw new RuntimeException(e);

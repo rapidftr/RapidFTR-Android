@@ -37,18 +37,16 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(Cursor cursor) throws JSONException {
+
         super(cursor.getString(cursor.getColumnIndex(content.getColumnName())));
 
         for (Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
             final int columnIndex = cursor.getColumnIndex(column.getColumnName());
-            if (columnIndex < 0) {
-                throw new IllegalArgumentException("Column " + column.getColumnName() + " does not exist");
-            }
 
-            if (column.getPrimitiveType().equals(Boolean.class)) {
-                this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
-            } else if (column.equals(content)) {
+            if (columnIndex < 0 || column.equals(content)) {
                 continue;
+            }else if (column.getPrimitiveType().equals(Boolean.class)) {
+                this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
             } else {
                 this.put(column.getColumnName(), cursor.getString(columnIndex));
             }

@@ -69,6 +69,22 @@ public class EnquiryRepositoryTest {
         compareEnquiries(enquiry2, enquiries.get(1));
     }
 
+    @Test
+    public void shouldReturnAllEnquiriesCreatedByUser() throws JSONException, FailedToSaveException {
+        String enquiryJSON1 = "{\"enquirer_name\":\"sam fisher\",\"name\":\"foo bar\",\"nationality\":\"ugandan\"," +
+                "\"created_by\":\"field worker\",\"synced\":\"false\", \"created_organisation\":\"TW\"}";
+        String enquiryJSON2 = "{\"enquirer_name\":\"fisher sam\",\"name\":\"bar foo\",\"nationality\":\"ugandan\"," +
+                "\"created_by\":\"Tom Reed\",\"synced\":\"false\", \"created_organisation\":\"TW\"}";
+        Enquiry enquiry1 = new Enquiry(enquiryJSON1);
+        enquiryRepository.createOrUpdate(enquiry1);
+        Enquiry enquiry2 = new Enquiry(enquiryJSON2);
+        enquiryRepository.createOrUpdate(enquiry2);
+
+        List<Enquiry> enquiries = enquiryRepository.allCreatedByCurrentUser();
+        assertEquals(2, enquiryRepository.size());
+        compareEnquiries(enquiry1, enquiries.get(0));
+    }
+
     private void compareEnquiries(Enquiry enquiry1, Enquiry enquiry2) throws JSONException {
         assertThat(enquiry1.getUniqueId(), is(enquiry2.getUniqueId()));
         assertThat(enquiry1.getCreatedBy(), is(enquiry2.getCreatedBy()));
