@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -232,7 +231,6 @@ public class SyncAllDataAsyncTaskTest {
         syncAllDataAsyncTask.execute();
 
         verify(notificationManager, never()).notify(anyInt(), (Notification) anyObject());
-        //assertThat(ShadowToast.getTextOfLatestToast(), equalTo("Your session is timed out"));
     }
 
     @Test
