@@ -20,14 +20,23 @@ public class FormSectionView extends ScrollView {
 
     public FormSectionView(Context context) {
         super(context);
+        inflateView(context);
     }
 
     public FormSectionView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        inflateView(context);
     }
 
     public FormSectionView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        inflateView(context);
+    }
+
+
+    private void inflateView(Context context) {
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        layoutInflater.inflate(R.layout.form_section, this);
     }
 
     protected TextView getLabel() {
@@ -83,7 +92,7 @@ public class FormSectionView extends ScrollView {
         super.setEnabled(enabled);
 
         LinearLayout container = getContainer();
-        for (int i=0, j=container.getChildCount(); i<j; i++)
+        for (int i = 0, j = container.getChildCount(); i < j; i++)
             container.getChildAt(i).setEnabled(enabled);
     }
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical" android:id="@+id/no_child_view"
+              android:layout_weight="4"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              style="@style/no_child_text">
+
+    <TextView android:text="@string/child_not_found"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content">
+    </TextView>
+
+</LinearLayout>
