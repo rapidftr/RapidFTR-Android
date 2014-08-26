@@ -38,7 +38,7 @@ public class FormSectionViewTest {
     @Before
     public void setUp() throws JSONException {
         Activity activity = Robolectric.buildActivity(RegisterChildActivity.class).create().get();
-        view = (FormSectionView) activity.getLayoutInflater().inflate(R.layout.form_section, null);
+        view = new FormSectionView(activity);
         child = new Child();
 
         section = new FormSection();

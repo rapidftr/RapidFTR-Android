@@ -2,11 +2,14 @@ package com.rapidftr.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.adapter.PotentialMatchesFormSectionPagerAdapter;
+import com.rapidftr.forms.PotentialMatchesFormSection;
 import com.rapidftr.service.EnquiryHttpDao;
 import com.rapidftr.service.EnquirySyncService;
 import com.rapidftr.service.LogOutService;
@@ -24,10 +27,25 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     }
 
     @Override
+    protected void initializePager() {
+        getPager().setAdapter(new PotentialMatchesFormSectionPagerAdapter(formSections, getModel(), getEditable()));
+        getPager().setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                getSpinner().setSelection(position);
+            }
+        });
+    }
+
+    @Override
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         super.initializeData(savedInstanceState);
         this.editable = false;
+
         this.enquiry = loadEnquiry(getIntent().getExtras(), enquiryRepository);
+        PotentialMatchesFormSection section = new PotentialMatchesFormSection();
+        section.setOrder(formSections.size());
+        formSections.add(section);
     }
 
     @Override
@@ -79,3 +97,4 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
         return syncRecordTask;
     }
 }
+
