@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
-import static com.rapidftr.model.Child.History.*;
+import static com.rapidftr.model.BaseModel.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;

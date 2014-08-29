@@ -47,7 +47,7 @@ public class EnquiryHttpDao {
         FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
                 .host(apiRoot + "/api/enquiries/" + enquiry.get("_id"))
-                .param("enquiry", enquiry.getJsonString())
+                .param("enquiry", enquiry.values().toString())
                 .putWithMultiPart()
                 .ensureSuccess();
         String json = CharStreams.toString(new InputStreamReader(fluentResponse.getEntity().getContent()));
