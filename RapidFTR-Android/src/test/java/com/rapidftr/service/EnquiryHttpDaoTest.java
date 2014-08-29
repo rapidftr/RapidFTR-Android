@@ -6,6 +6,7 @@ import org.apache.http.HttpRequest;
 import org.apache.http.RequestLine;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -42,11 +43,16 @@ public class EnquiryHttpDaoTest {
     public void updateEnquiryShouldPutEnquiryUpdateToApi() throws Exception {
         final String id = "123";
         final String json = "{\"some\":\"json\"}";
-        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao( apiRoot);
+        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao(apiRoot);
+
 
         Enquiry enquiry = mock(Enquiry.class);
+        JSONObject jsonObject = mock(JSONObject.class);
+        when(jsonObject.toString()).thenReturn(json);
+
         when(enquiry.get("_id")).thenReturn(id);
-        when(enquiry.getJsonString()).thenReturn(json);
+        when(enquiry.values()).thenReturn(jsonObject);
+        when(enquiry.values().toString()).thenReturn(json);
 
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, json);
 
@@ -56,13 +62,13 @@ public class EnquiryHttpDaoTest {
         final RequestLine requestLine = sentHttpRequest.getRequestLine();
         assertThat(requestLine.getUri(), is(apiRoot + "/api/enquiries/" + id + "/"));
         assertThat(requestLine.getMethod(), is("PUT"));
-        assertThat((String)updatedEnquiry.get("some"), is("json"));
+        assertThat((String) updatedEnquiry.get("some"), is("json"));
         // TODO test that the body is being sent
     }
 
     @Test
     public void getIdsOfUpdatedShouldRetrieveJsonAndReturnListOfUrls() throws Exception {
-        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao( apiRoot);
+        EnquiryHttpDao enquiryHttpDao = new EnquiryHttpDao(apiRoot);
 
         String json = "[{\"location\":\"blah.com/1\"}, {\"location\":\"blah.com/2\"}]";
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(200, json);
@@ -95,7 +101,7 @@ public class EnquiryHttpDaoTest {
         final RequestLine requestLine = sentHttpRequest.getRequestLine();
         assertThat(requestLine.getUri(), is(apiRoot + "/api/enquiries/"));
         assertThat(requestLine.getMethod(), is("POST"));
-        assertThat((String)updatedEnquiry.get("_id"), is("123abc"));
+        assertThat((String) updatedEnquiry.get("_id"), is("123abc"));
         // TODO not sure how to test the body (currently encoded as a form param)
     }
 }

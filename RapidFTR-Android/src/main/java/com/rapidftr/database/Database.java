@@ -108,13 +108,13 @@ public enum Database {
         content("enquiry_json"),
         created_by("created_by", true, false),
         created_at("created_at", true, false),
-        last_updated_at("last_updated_at"),
         synced("synced", Boolean.class, true, true),
         potential_matches("potential_matches"),
 
         created_organisation("created_organisation"),
         internal_id("_id", true, false),
-        internal_rev("_rev", true, false);
+        internal_rev("_rev", true, false),
+        revision("_rev", true, true);
 
         @Getter
         private final String columnName;
@@ -145,6 +145,15 @@ public enum Database {
                 @Override
                 public boolean apply(EnquiryTableColumn column) {
                     return column.isInternal;
+                }
+            });
+        }
+
+        public static Iterable<EnquiryTableColumn> systemFields() {
+            List<EnquiryTableColumn> allColumns = Arrays.asList(EnquiryTableColumn.values());
+            return filter(allColumns, new Predicate<EnquiryTableColumn>() {
+                public boolean apply(EnquiryTableColumn column) {
+                    return column.isSystem;
                 }
             });
         }

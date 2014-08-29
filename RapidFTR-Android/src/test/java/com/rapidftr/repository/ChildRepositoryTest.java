@@ -26,7 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.rapidftr.CustomTestRunner.createUser;
-import static com.rapidftr.model.Child.History.*;
+import static com.rapidftr.model.BaseModel.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -189,7 +189,7 @@ public class ChildRepositoryTest {
         children = repository.getMatchingChildren("sam", highlightedFormFields);
         assertEquals(0, children.size());
     }
-    
+
     @Test
     public void shouldReturnMatchedChildRecordsWithAccentedCharacters() throws JSONException {
         Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");

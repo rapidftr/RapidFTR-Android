@@ -16,6 +16,7 @@ import java.util.List;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.content;
 import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
+import static com.rapidftr.utils.JSONArrays.asList;
 
 public class Enquiry extends BaseModel {
 
@@ -34,7 +35,6 @@ public class Enquiry extends BaseModel {
     }
 
     public Enquiry(Cursor cursor) throws JSONException {
-
         super(cursor.getString(cursor.getColumnIndex(content.getColumnName())));
 
         for (Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
@@ -42,7 +42,7 @@ public class Enquiry extends BaseModel {
 
             if (columnIndex < 0 || column.equals(content)) {
                 continue;
-            }else if (column.getPrimitiveType().equals(Boolean.class)) {
+            } else if (column.getPrimitiveType().equals(Boolean.class)) {
                 this.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
             } else {
                 this.put(column.getColumnName(), cursor.getString(columnIndex));
@@ -52,6 +52,7 @@ public class Enquiry extends BaseModel {
 
     public Enquiry(String enquiryJSON) throws JSONException {
         super(enquiryJSON);
+        setHistories();
     }
 
     public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
@@ -89,18 +90,21 @@ public class Enquiry extends BaseModel {
     }
 
     public JSONObject values() throws JSONException {
-        Iterable<Object> systemFields = Iterables.transform(Database.EnquiryTableColumn.fields(), new Function<Database.EnquiryTableColumn, Object>() {
+        List<Object> names = asList(names());
+
+        Iterable<Object> systemFields = Iterables.transform(Database.EnquiryTableColumn.systemFields(), new Function<Database.EnquiryTableColumn, Object>() {
             @Override
             public Object apply(Database.EnquiryTableColumn enquiryTableColumn) {
                 return enquiryTableColumn.getColumnName();
             }
         });
-        List<Object> fields = Lists.newArrayList(systemFields);
-        return new JSONObject(this, fields.toArray(new String[fields.size()]));
+
+        Iterables.removeAll(names, Lists.newArrayList(systemFields));
+        return new JSONObject(this, names.toArray(new String[names.size()]));
     }
 
     public String getPotentialMatchingIds() {
-        String ids = getString(potential_matches.getColumnName()) ;
+        String ids = getString(potential_matches.getColumnName());
         String matchingChildIds = ids == null ? "" : ids;
         return matchingChildIds;
     }

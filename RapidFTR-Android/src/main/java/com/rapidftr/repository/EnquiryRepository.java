@@ -6,8 +6,12 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Enquiry;
+import com.rapidftr.utils.JSONArrays;
+import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.Closeable;
@@ -34,9 +38,22 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
     @Override
     public void createOrUpdate(Enquiry enquiry) throws JSONException, FailedToSaveException {
+
+        if (exists(enquiry.getUniqueId())) {
+            addHistory(enquiry);
+        }
+        enquiry.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
         long errorCode = session.replace(Database.enquiry.getTableName(), null, getContentValuesFrom(enquiry));
         if (errorCode < 0)
             throw new FailedToSaveException("Failed to save enquiry.", errorCode);
+    }
+
+    private void addHistory(Enquiry enquiry) throws JSONException {
+        Enquiry existingEnquiry = get(enquiry.getUniqueId());
+        JSONArray existingHistories = (JSONArray) existingEnquiry.opt(BaseModel.History.HISTORIES);
+        List<BaseModel.History> histories = enquiry.changeLogs(existingEnquiry, existingHistories);
+        if (histories.size() > 0)
+            enquiry.put(BaseModel.History.HISTORIES, JSONArrays.asJSONObjectArray(histories));
     }
 
     protected ContentValues getContentValuesFrom(Enquiry enquiry) throws JSONException {
@@ -136,7 +153,21 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
     //TODO move this to the enquiry class
     private Enquiry buildEnquiry(Cursor cursor) throws JSONException {
-        return new Enquiry(cursor);
+        int contentColumnIndex = cursor.getColumnIndex(content.getColumnName());
+        Enquiry enquiry = new Enquiry(cursor.getString(contentColumnIndex));
+        for (Database.EnquiryTableColumn column : Database.EnquiryTableColumn.values()) {
+            final int columnIndex = cursor.getColumnIndex(column.getColumnName());
+
+            if (columnIndex < 0 || column.equals(content)) {
+                continue;
+            } else if (column.getPrimitiveType().equals(Boolean.class)) {
+                enquiry.put(column.getColumnName(), cursor.getInt(columnIndex) == 1);
+            } else {
+                enquiry.put(column.getColumnName(), cursor.getString(columnIndex));
+            }
+        }
+
+        return enquiry;
     }
 
     public Enquiry get(String enquiryId) throws JSONException {

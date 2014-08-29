@@ -11,6 +11,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -194,5 +197,84 @@ public class BaseModel extends JSONObject implements Parcelable {
 
         int length = getUniqueId().length();
         return length > 7 ? getUniqueId().substring(length - 7) : getUniqueId();
+    }
+
+    protected void setHistories() throws JSONException {
+        String histories = this.optString(History.HISTORIES, null);
+        if (histories != null)
+            this.put(History.HISTORIES, new JSONArray(histories));
+    }
+
+    public List<History> changeLogs(BaseModel model, JSONArray existingHistories) throws JSONException {
+        //fetch all the histories from this child, which are greater than last_synced_at and merge the histories
+        JSONArray names = this.names();
+        List<History> histories = getHistoriesFromJsonArray(existingHistories);
+        try {
+            if (!model.optString("last_synced_at").equals("")) {
+                Calendar lastSync = RapidFtrDateTime.getDateTime(model.optString("last_synced_at"));
+                for (History history : histories) {
+                    Calendar lastSavedAt = RapidFtrDateTime.getDateTime((String) history.get("datetime"));
+                    if (lastSavedAt.after(lastSync)) {
+                        JSONObject changes = (JSONObject) history.get("changes");
+                        for (int i = 0; i < names.length(); i++) {
+                            String newValue = this.optString(names.getString(i), "");
+                            String oldValue = model.optString(names.getString(i), "");
+                            if (!oldValue.equals(newValue)) {
+                                JSONObject fromTo = new JSONObject();
+                                fromTo.put(History.FROM, oldValue);
+                                fromTo.put(History.TO, newValue);
+                                changes.put(names.getString(i), fromTo);
+                            }
+                        }
+                        history.put(History.USER_NAME, RapidFtrApplication.getApplicationInstance().getSharedPreferences().getString("USER_NAME", ""));
+                        history.put(History.USER_ORGANISATION, RapidFtrApplication.getApplicationInstance().getSharedPreferences().getString("USER_ORG", ""));
+                        history.put(History.DATETIME, RapidFtrDateTime.now().defaultFormat());
+                        break;
+                    }
+                }
+            }
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return histories;
+    }
+
+    private List<History> getHistoriesFromJsonArray(JSONArray histories) throws JSONException {
+        List<Object> objects = histories != null ? asList(histories) : new ArrayList<Object>();
+        List<History> childHistories = new ArrayList<History>();
+        for (Object object : objects) {
+            childHistories.add(new History(object.toString()));
+        }
+        return childHistories;
+    }
+
+    public class History extends JSONObject implements Parcelable {
+        public static final String HISTORIES = "histories";
+        public static final String USER_NAME = "user_name";
+        public static final String USER_ORGANISATION = "user_organisation";
+        public static final String DATETIME = "datetime";
+        public static final String CHANGES = "changes";
+        public static final String FROM = "from";
+        public static final String TO = "to";
+
+        public History(String jsonSource) throws JSONException {
+            super(jsonSource);
+        }
+
+        public History() {
+
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int flags) {
+            parcel.writeString(this.toString());
+        }
+
     }
 }

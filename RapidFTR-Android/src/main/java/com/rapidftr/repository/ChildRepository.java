@@ -8,6 +8,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.forms.FormField;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -17,13 +18,15 @@ import org.json.JSONException;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
-import static com.rapidftr.model.Child.History.HISTORIES;
 import static java.lang.String.format;
 
 public class ChildRepository implements Closeable, Repository<Child> {
@@ -88,9 +91,9 @@ public class ChildRepository implements Closeable, Repository<Child> {
     private String buildSQLQueryForSearch(String searchString, RapidFtrApplication context) throws JSONException {
         StringBuilder queryBuilder = new StringBuilder("SELECT child_json, synced FROM children WHERE (").append(fetchByOwner(context));
         String[] subQueries = searchString.split("\\s+");
-        for (int i = 0;i<subQueries.length;i++) {
+        for (int i = 0; i < subQueries.length; i++) {
             queryBuilder.append(String.format("child_json LIKE '%%%s%%' OR id LIKE '%%%s%%'", subQueries[i], subQueries[i]));
-            if(i < subQueries.length-1)  {
+            if (i < subQueries.length - 1) {
                 queryBuilder.append(" OR ");
             }
         }
@@ -120,9 +123,9 @@ public class ChildRepository implements Closeable, Repository<Child> {
     private Pattern buildPatternFromSearchString(String searchString) {
         String[] splitQuery = searchString.split("\\s+");
         StringBuilder regexBuilder = new StringBuilder();
-        for(int i = 0; i < splitQuery.length; i++) {
+        for (int i = 0; i < splitQuery.length; i++) {
             regexBuilder.append(String.format(".*(%s)+.*", splitQuery[i]));
-            if((i < splitQuery.length-1)){
+            if ((i < splitQuery.length - 1)) {
                 regexBuilder.append("|");
             }
         }
@@ -161,10 +164,10 @@ public class ChildRepository implements Closeable, Repository<Child> {
 
     private void addHistory(Child child) throws JSONException {
         Child existingChild = get(child.getUniqueId());
-        JSONArray existingHistories = (JSONArray) existingChild.opt(HISTORIES);
+        JSONArray existingHistories = (JSONArray) existingChild.opt(BaseModel.History.HISTORIES);
         List<Child.History> histories = child.changeLogs(existingChild, existingHistories);
         if (histories.size() > 0)
-            child.put(HISTORIES, JSONArrays.asJSONObjectArray(histories));
+            child.put(BaseModel.History.HISTORIES, JSONArrays.asJSONObjectArray(histories));
     }
 
     @Override

@@ -53,7 +53,12 @@ public class EnquirySyncService implements SyncService<Enquiry> {
 
     @Override
     public Enquiry getRecord(String url) throws IOException, JSONException, HttpException {
-        return enquiryHttpDao.get(url);
+        Enquiry enquiry = enquiryHttpDao.get(url);
+        enquiry.setSynced(true);
+        enquiry.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
+        enquiry.remove("_attachments");
+
+        return enquiry;
     }
 
 
