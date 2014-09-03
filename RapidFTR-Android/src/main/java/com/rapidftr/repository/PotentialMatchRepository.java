@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
+import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.PotentialMatch;
 import lombok.Cleanup;
 import org.json.JSONException;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import static com.rapidftr.database.Database.*;
 import static com.rapidftr.database.Database.PotentialMatchTableColumn.*;
+import static com.rapidftr.database.Database.enquiry;
 
 public class PotentialMatchRepository implements Closeable, Repository<PotentialMatch>{
 
@@ -32,7 +34,12 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
+        try {
+            session.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -93,5 +100,18 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
     @Override
     public List<PotentialMatch> allCreatedByCurrentUser() throws JSONException {
         return new ArrayList<PotentialMatch>();
+    }
+
+    public List<PotentialMatch> getPotentialMatchesFor(Enquiry enquiry) throws JSONException {
+        ArrayList<PotentialMatch> potentialMatches = new ArrayList<PotentialMatch>();
+        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE enquiry_id = ?", new String[]{enquiry.getUniqueId()});
+        while(cursor.moveToNext()) {
+            int enquiryIdIndex = cursor.getColumnIndex(enquiry_id.getColumnName());
+            int childIdIndex = cursor.getColumnIndex(child_id.getColumnName());
+            int idIndex = cursor.getColumnIndex(id.getColumnName());
+
+            potentialMatches.add(new PotentialMatch(cursor.getString(enquiryIdIndex), cursor.getString(childIdIndex), cursor.getString(idIndex)));
+        }
+        return potentialMatches;
     }
 }

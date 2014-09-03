@@ -6,6 +6,7 @@ import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import junit.framework.Assert;
 import org.json.JSONException;
 import org.junit.Before;
@@ -26,6 +27,7 @@ public class EnquiryTest {
 
     private DatabaseSession session;
     private ChildRepository childRepository;
+    private PotentialMatchRepository potentialMatchRepository;
     private EnquiryRepository enquiryRepo;
     private String user;
 
@@ -34,6 +36,7 @@ public class EnquiryTest {
         user = "Foo";
         session = new ShadowSQLiteHelper("test_database").getSession();
         childRepository = new ChildRepository("user1", session);
+        potentialMatchRepository = new PotentialMatchRepository("user1", session);
         enquiryRepo = new EnquiryRepository(user, session);
     }
 
@@ -60,7 +63,7 @@ public class EnquiryTest {
         childRepository.createOrUpdate(child2);
 
         Enquiry enquiry = new Enquiry(cursor);
-        List<Child> potentialMatches = enquiry.getPotentialMatches(childRepository);
+        List<Child> potentialMatches = enquiry.getPotentialMatches(childRepository, potentialMatchRepository);
 
         assertEquals(2, potentialMatches.size());
         assertTrue(potentialMatches.contains(child1));

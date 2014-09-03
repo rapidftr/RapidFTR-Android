@@ -7,6 +7,7 @@ import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.PotentialMatch;
 import org.json.JSONException;
 import org.junit.Before;
@@ -43,6 +44,19 @@ public class PotentialMatchRepositoryTest {
         PotentialMatch match = new PotentialMatch("enquiry", "child", "unique_identifier");
         repository.createOrUpdate(match);
         assertThat(repository.exists("unique_identifier"), is(true));
+    }
+
+    @Test
+    public void shouldReturnPotentialMatchesByEnquiry() throws JSONException, SQLException {
+        String enquiryJSON = "{\"unique_identifier\":\"enquiry_id\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_2");
+        repository.createOrUpdate(potentialMatch);
+        repository.createOrUpdate(new PotentialMatch("no_matching","child_id","unique_id_1"));
+
+        List<PotentialMatch> matches = repository.getPotentialMatchesFor(enquiry);
+
+        assertThat(matches.size(), is(1));
     }
 
 }

@@ -6,6 +6,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.rapidftr.database.Database;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,27 +56,17 @@ public class Enquiry extends BaseModel {
         setHistories();
     }
 
-    public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
+    public List<Child> getPotentialMatches(ChildRepository childRepository, PotentialMatchRepository potentialMatchRepository) throws JSONException {
         try {
-
-            JSONArray matchingChildId = new JSONArray(getPotentialMatchingIds());
-
-            List<String> matchingChildList = getListOfMatchingChildrenFrom(matchingChildId);
-
-            return childRepository.getAllWithInternalIds(new ArrayList<String>(matchingChildList));
+            List<PotentialMatch> potentialMatches = potentialMatchRepository.getPotentialMatchesFor(this);
+            List<String> childIds = new ArrayList<String>();
+            for (PotentialMatch potentialMatch : potentialMatches) {
+                childIds.add(potentialMatch.getChildId());
+            }
+            return childRepository.getAllWithInternalIds(childIds);
         } catch (JSONException exception) {
             return new ArrayList<Child>();
         }
-    }
-
-
-    private List<String> getListOfMatchingChildrenFrom(JSONArray matchingChildId) throws JSONException {
-        List<String> matchingChildList = new ArrayList<String>();
-
-        for (int i = 0; i < matchingChildId.length(); i++) {
-            matchingChildList.add((String) matchingChildId.get(i));
-        }
-        return matchingChildList;
     }
 
     public boolean isValid() {

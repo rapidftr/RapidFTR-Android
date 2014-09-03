@@ -16,6 +16,7 @@ import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import lombok.Cleanup;
 import org.json.JSONException;
 
@@ -43,8 +44,9 @@ public class PotentialMatchesFormSectionView extends FormSectionView {
             getLabel().setText(formSection.getLocalizedName());
 
             @Cleanup ChildRepository childRepository = RapidFtrApplication.getApplicationInstance().getBean(ChildRepository.class);
+            @Cleanup PotentialMatchRepository potentialMatchRepository = RapidFtrApplication.getApplicationInstance().getBean(PotentialMatchRepository.class);
             try {
-                List<Child> potentialMatches = enquiry.getPotentialMatches(childRepository);
+                List<Child> potentialMatches = enquiry.getPotentialMatches(childRepository, potentialMatchRepository);
                 getContainer().addView(createPotentialMatchView(getContext(), potentialMatches));
             } catch (JSONException e) {
                 Log.e(null, null, e);

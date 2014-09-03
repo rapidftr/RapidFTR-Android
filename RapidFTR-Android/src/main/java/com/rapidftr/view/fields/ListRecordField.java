@@ -14,7 +14,9 @@ import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.utils.ApplicationInjector;
+import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.util.List;
@@ -41,7 +43,9 @@ public class ListRecordField extends BaseView {
         Enquiry enquiry=(Enquiry) model;
         Injector inject = Guice.createInjector(new ApplicationInjector());
 
-        List<Child> children = enquiry.getPotentialMatches(inject.getInstance(ChildRepository.class));
+        @Cleanup ChildRepository childRepo = inject.getInstance(ChildRepository.class);
+        @Cleanup PotentialMatchRepository potentialMatchRepo = inject.getInstance(PotentialMatchRepository.class);
+        List<Child> children = enquiry.getPotentialMatches(childRepo, potentialMatchRepo);
         HighlightedFieldsViewAdapter highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(getContext(), children, Child.CHILD_FORM_NAME, ViewChildActivity.class);
         ListView childListView = (ListView) findViewById(R.id.list_records);
         if (children.isEmpty()) {

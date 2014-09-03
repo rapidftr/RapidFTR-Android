@@ -2,6 +2,7 @@ package com.rapidftr.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
+import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.PotentialMatch;
@@ -23,11 +24,12 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 
-public class PotentialMatchSyncService implements SyncService {
+public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
     private RapidFtrApplication context;
     private PotentialMatchRepository repository;
     private FluentRequest fluentRequest;
 
+    @Inject
     public PotentialMatchSyncService(RapidFtrApplication rapidFtrApplication, PotentialMatchRepository repository, FluentRequest fluentRequest) {
         this.context = rapidFtrApplication;
         this.repository = repository;
@@ -35,12 +37,12 @@ public class PotentialMatchSyncService implements SyncService {
     }
 
     @Override
-    public BaseModel sync(BaseModel record, User currentUser) throws IOException, JSONException, HttpException {
+    public PotentialMatch sync(PotentialMatch record, User currentUser) throws IOException, JSONException, HttpException {
         return null;
     }
 
     @Override
-    public BaseModel getRecord(String id) throws IOException, JSONException, HttpException {
+    public PotentialMatch getRecord(String id) throws IOException, JSONException, HttpException {
         HttpResponse response = fluentRequest
                 .context(context)
                 .path(String.format("/api/potential_matches/%s", id))
@@ -53,7 +55,6 @@ public class PotentialMatchSyncService implements SyncService {
         PotentialMatch potentialMatch = new PotentialMatch(json.getString("enquiry_id"), json.getString("child_id"), json.getString("_id"));
         return potentialMatch;
     }
-
 
     public List<String> getIdsToDownload() throws IOException, HttpException, JSONException {
         HashMap<String, String> serverIdsRevs = getAllIdsAndRevs();
@@ -70,6 +71,9 @@ public class PotentialMatchSyncService implements SyncService {
         return idsToDownload;
     }
 
+    @Override
+    public void setMedia(PotentialMatch potentialMatch) throws IOException, JSONException {}
+
     private HashMap<String, String> getAllIdsAndRevs() throws IOException, HttpException {
         final ObjectMapper objectMapper = new ObjectMapper();
         HttpResponse response = fluentRequest.path("/api/potential_matches/ids").context(context).get().ensureSuccess();
@@ -80,10 +84,6 @@ public class PotentialMatchSyncService implements SyncService {
             idRevMapping.put(idRev.get("_id").toString(), idRev.get("_rev").toString());
         }
         return idRevMapping;
-    }
-    @Override
-    public void setMedia(BaseModel baseModel) throws IOException, JSONException {
-
     }
 
     @Override

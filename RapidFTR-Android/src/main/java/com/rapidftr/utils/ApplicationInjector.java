@@ -23,6 +23,7 @@ import com.rapidftr.model.PotentialMatch;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.repository.Repository;
 import com.rapidftr.service.*;
 import com.rapidftr.task.RegisterUnverifiedUserAsyncTask;
@@ -44,6 +45,8 @@ public class ApplicationInjector extends AbstractModule {
         }).to(ChildRepository.class);
         bind(new TypeLiteral<Repository<Enquiry>>() {
         }).to(EnquiryRepository.class);
+        bind(new TypeLiteral<Repository<PotentialMatch>>() {
+        }).to(PotentialMatchRepository.class);
         bind(FormService.class);
         bind(RegisterUserService.class);
         bind(RegisterUnverifiedUserAsyncTask.class);
@@ -52,6 +55,8 @@ public class ApplicationInjector extends AbstractModule {
         }).to(ChildSyncService.class);
         bind(new TypeLiteral<SyncService<Enquiry>>() {
         }).to(EnquirySyncService.class);
+        bind(new TypeLiteral<SyncService<PotentialMatch>>() {
+        }).to(PotentialMatchSyncService.class);
 
         bind(LogOutService.class);
         bind(LoginService.class);

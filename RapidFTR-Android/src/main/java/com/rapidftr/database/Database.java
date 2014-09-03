@@ -108,7 +108,6 @@ public enum Database {
         enquiry_id("enquiry_id"),
         child_id("child_id"),
         created_at("created_at", true, false),
-        unique_id("_id", true, true),
         revision("_rev", true, true);
 
         private
