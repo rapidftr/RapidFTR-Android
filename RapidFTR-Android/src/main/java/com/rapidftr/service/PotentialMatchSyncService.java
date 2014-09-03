@@ -1,16 +1,21 @@
 package com.rapidftr.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.CharStreams;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
+import com.rapidftr.model.PotentialMatch;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.PotentialMatchRepository;
+import com.rapidftr.utils.RapidFtrDateTime;
 import com.rapidftr.utils.http.FluentRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,8 +41,21 @@ public class PotentialMatchSyncService implements SyncService {
 
     @Override
     public BaseModel getRecord(String id) throws IOException, JSONException, HttpException {
-        return null;
+        HttpResponse response = fluentRequest
+                .context(context)
+                .path(String.format("/api/potential_matches/%s", id))
+                .get();
+        String potentialMatchJson = CharStreams.toString(new InputStreamReader(response.getEntity().getContent()));
+        return buildPotentialMatch(new JSONObject(potentialMatchJson));
     }
+
+    private PotentialMatch buildPotentialMatch(JSONObject json) throws JSONException {
+        PotentialMatch potentialMatch = new PotentialMatch(json.getString("enquiry_id"), json.getString("child_id"));
+        potentialMatch.setSynced(true);
+        potentialMatch.setLastSyncedAt(RapidFtrDateTime.now().defaultFormat());
+        return potentialMatch;
+    }
+
 
     public List<String> getIdsToDownload() throws IOException, HttpException, JSONException {
         HashMap<String, String> serverIdsRevs = getAllIdsAndRevs();
