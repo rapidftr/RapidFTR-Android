@@ -22,10 +22,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.model.BaseModel;
-import com.rapidftr.model.Child;
-import com.rapidftr.model.Enquiry;
-import com.rapidftr.model.User;
+import com.rapidftr.model.*;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.view.fields.TextField;
@@ -216,6 +213,11 @@ public abstract class RapidFtrActivity extends Activity {
             });
             syncEnquiryTask.setSuccessMessage(getString(R.string.enquiry_records_sync_success));
             executeTask(syncEnquiryTask);
+
+            SynchronisationAsyncTask<PotentialMatch> syncPotentialMatchesTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<PotentialMatch>>() {
+            });
+            syncPotentialMatchesTask.setSuccessMessage(getString(R.string.potential_match_records_sync_success));
+            executeTask(syncPotentialMatchesTask);
         }
     }
 

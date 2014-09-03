@@ -4,7 +4,6 @@ import android.content.Context;
 import com.google.inject.Inject;
 import com.rapidftr.database.migration.Migrations;
 import com.rapidftr.model.User;
-import com.sun.media.jfxmedia.logging.Logger;
 import lombok.Getter;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;

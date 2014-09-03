@@ -19,6 +19,7 @@ import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.SQLCipherHelper;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
+import com.rapidftr.model.PotentialMatch;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
@@ -85,6 +86,11 @@ public class ApplicationInjector extends AbstractModule {
 
     @Provides
     public SynchronisationAsyncTask<Enquiry> getEnquirySynchronisationAsyncTask(User user, Provider<SyncAllDataAsyncTask<Enquiry>> provider1, Provider<SyncUnverifiedDataAsyncTask<Enquiry>> provider2) {
+        return user.isVerified() ? provider1.get() : provider2.get();
+    }
+
+    @Provides
+    public SynchronisationAsyncTask<PotentialMatch> getPotentialMatchSynchronisationAsyncTask(User user, Provider<SyncAllDataAsyncTask<PotentialMatch>> provider1, Provider<SyncUnverifiedDataAsyncTask<PotentialMatch>> provider2) {
         return user.isVerified() ? provider1.get() : provider2.get();
     }
 
