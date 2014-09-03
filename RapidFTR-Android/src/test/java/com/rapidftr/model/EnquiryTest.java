@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
@@ -50,24 +51,27 @@ public class EnquiryTest {
     }
 
     @Test
-    public void enquiryShouldGetPotentialMatches() throws JSONException {
-        Cursor cursor = mock(Cursor.class);
-        doReturn(potential_matches.ordinal()).when(cursor).getColumnIndex(potential_matches.getColumnName());
-        //doReturn(criteria.ordinal()).when(cursor).getColumnIndex(criteria.getColumnName());
-        //doReturn("{}").when(cursor).getString(criteria.ordinal());
-        doReturn("[\"internal_id1\", \"internal_id2\"]").when(cursor).getString(potential_matches.ordinal());
-
-        Child child1 = new Child("id1", "owner1", "{'test1':'value1', '_id':'internal_id1' }");
+    public void enquiryShouldGetPotentialMatches() throws JSONException, SQLException {
+        Child child1 = new Child("id1", "owner1", "{'test':'a','_id':'child_id_1' }");
+        Child child2 = new Child("id2", "owner1", "{'test':'a','_id':'child_id_2' }");
+        Child child3 = new Child("id3", "owner1", "{'test':'a','_id':'child_id_3' }");
         childRepository.createOrUpdate(child1);
-        Child child2 = new Child("id2", "owner1", "{'test1':'value1', '_id':'internal_id2' }");
         childRepository.createOrUpdate(child2);
+        childRepository.createOrUpdate(child3);
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_1", "potential_match_id_1"));
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_3", "potential_match_id_2"));
 
-        Enquiry enquiry = new Enquiry(cursor);
+        String enquiryJSON = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"unique_identifier\":\"enquiry_id_1\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
         List<Child> potentialMatches = enquiry.getPotentialMatches(childRepository, potentialMatchRepository);
 
         assertEquals(2, potentialMatches.size());
         assertTrue(potentialMatches.contains(child1));
-        assertTrue(potentialMatches.contains(child2));
+        assertTrue(potentialMatches.contains(child3));
     }
 
     @Test

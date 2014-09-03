@@ -8,7 +8,6 @@ import com.rapidftr.database.Database;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,17 +55,21 @@ public class Enquiry extends BaseModel {
         setHistories();
     }
 
-    public List<Child> getPotentialMatches(ChildRepository childRepository, PotentialMatchRepository potentialMatchRepository) throws JSONException {
+    public List<Child> getPotentialMatches(ChildRepository childRepo, PotentialMatchRepository potentialMatchRepo) throws JSONException {
         try {
-            List<PotentialMatch> potentialMatches = potentialMatchRepository.getPotentialMatchesFor(this);
-            List<String> childIds = new ArrayList<String>();
-            for (PotentialMatch potentialMatch : potentialMatches) {
-                childIds.add(potentialMatch.getChildId());
-            }
-            return childRepository.getAllWithInternalIds(childIds);
+            List<PotentialMatch> potentialMatches = potentialMatchRepo.getPotentialMatchesFor(this);
+            return childRepo.getAllWithInternalIds(idsFromMatches(potentialMatches));
         } catch (JSONException exception) {
             return new ArrayList<Child>();
         }
+    }
+
+    private List<String> idsFromMatches(List<PotentialMatch> potentialMatches) {
+        List<String> ids = new ArrayList<String>();
+        for (PotentialMatch potentialMatch : potentialMatches) {
+            ids.add(potentialMatch.getChildId());
+        }
+        return ids;
     }
 
     public boolean isValid() {

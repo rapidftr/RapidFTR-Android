@@ -7,6 +7,7 @@ import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.BaseModel;
+import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -177,5 +178,27 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         } else {
             throw new NullPointerException(enquiryId);  //  I don't think it's cool to throw NullPointerExceptions - love John
         }
+    }
+
+    public List<Enquiry> getAllWithInternalIds(List<String> ids) {
+        @Cleanup Cursor cursor = session.rawQuery(buildSelectAllQuery(ids), null);
+        try {
+            return toEnquiries(cursor);
+        } catch (JSONException e) {
+            return new ArrayList<Enquiry>();
+        }
+    }
+
+    private String buildSelectAllQuery(List<String> ids) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT * from enquiry where _id in (");
+        for(int i = 0; i < ids.size(); i++) {
+            queryBuilder.append("'" + ids.get(i) + "'");
+            if(i < ids.size() - 1) {
+                queryBuilder.append(",");
+            }
+        }
+        queryBuilder.append(")");
+        return queryBuilder.toString();
     }
 }
