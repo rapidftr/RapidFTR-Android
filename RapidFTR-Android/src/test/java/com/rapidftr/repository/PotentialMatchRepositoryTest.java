@@ -52,11 +52,26 @@ public class PotentialMatchRepositoryTest {
         Enquiry enquiry = new Enquiry(enquiryJSON);
         PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_2");
         repository.createOrUpdate(potentialMatch);
-        repository.createOrUpdate(new PotentialMatch("no_matching","child_id","unique_id_1"));
+        repository.createOrUpdate(new PotentialMatch("not_matching","child_id","unique_id_1"));
 
         List<PotentialMatch> matches = repository.getPotentialMatchesFor(enquiry);
 
         assertThat(matches.size(), is(1));
+        assertThat(matches.get(0).getEnquiryId(), is("enquiry_id"));
     }
 
+
+    @Test
+    public void shouldReturnPotentialMatchesByChild() throws JSONException, SQLException {
+        String childJSON = "{\"unique_identifier\":\"child_id\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
+        Child child = new Child(childJSON);
+        PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_1");
+        repository.createOrUpdate(potentialMatch);
+        repository.createOrUpdate(new PotentialMatch("enquiry_id","not_matching","unique_id_2"));
+
+        List<PotentialMatch> matches = repository.getPotentialMatchesFor(child);
+
+        assertThat(matches.size(), is(1));
+        assertThat(matches.get(0).getChildId(), is("child_id"));
+    }
 }

@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
+import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.PotentialMatch;
 import lombok.Cleanup;
@@ -103,15 +104,27 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
     }
 
     public List<PotentialMatch> getPotentialMatchesFor(Enquiry enquiry) throws JSONException {
-        ArrayList<PotentialMatch> potentialMatches = new ArrayList<PotentialMatch>();
         @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE enquiry_id = ?", new String[]{enquiry.getUniqueId()});
-        while(cursor.moveToNext()) {
-            int enquiryIdIndex = cursor.getColumnIndex(enquiry_id.getColumnName());
-            int childIdIndex = cursor.getColumnIndex(child_id.getColumnName());
-            int idIndex = cursor.getColumnIndex(id.getColumnName());
+        return buildPotentialMatches(cursor);
+    }
 
-            potentialMatches.add(new PotentialMatch(cursor.getString(enquiryIdIndex), cursor.getString(childIdIndex), cursor.getString(idIndex)));
+    public List<PotentialMatch> getPotentialMatchesFor(Child child) throws JSONException {
+        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE child_id = ?", new String[]{child.getUniqueId()});
+        return buildPotentialMatches(cursor);
+    }
+
+    private ArrayList<PotentialMatch> buildPotentialMatches(Cursor cursor) {
+        ArrayList<PotentialMatch> potentialMatches = new ArrayList<PotentialMatch>();
+        while(cursor.moveToNext()) {
+            potentialMatches.add(buildPotentialMatch(cursor));
         }
         return potentialMatches;
+    }
+
+    private PotentialMatch buildPotentialMatch(Cursor cursor) {
+        int enquiryIdIndex = cursor.getColumnIndex(enquiry_id.getColumnName());
+        int childIdIndex = cursor.getColumnIndex(child_id.getColumnName());
+        int idIndex = cursor.getColumnIndex(id.getColumnName());
+        return new PotentialMatch(cursor.getString(enquiryIdIndex), cursor.getString(childIdIndex), cursor.getString(idIndex));
     }
 }
