@@ -6,6 +6,8 @@ import android.util.Log;
 import com.google.common.base.Strings;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
+import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.Repository;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -249,7 +251,11 @@ public class BaseModel extends JSONObject implements Parcelable {
         return childHistories;
     }
 
-    public class History extends JSONObject implements Parcelable {
+    public List<BaseModel> getPotentiallyMatchedModels() throws JSONException {
+        return new ArrayList<BaseModel>();
+    }
+
+        public class History extends JSONObject implements Parcelable {
         public static final String HISTORIES = "histories";
         public static final String USER_NAME = "user_name";
         public static final String USER_ORGANISATION = "user_organisation";

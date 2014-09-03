@@ -112,6 +112,10 @@ public class Child extends BaseModel {
         return super.isSynced();
     }
 
+    @Override
+    public List<BaseModel> getPotentiallyMatchedModels() throws JSONException {
+        return new ArrayList<BaseModel>();
+    }
 
     public boolean isNew() {
         return !has(internal_id.getColumnName());
