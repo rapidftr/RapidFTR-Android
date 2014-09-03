@@ -244,19 +244,11 @@ public class ChildSyncService implements SyncService<Child> {
         HashMap<String, String> repoIdsAndRevs = childRepository.getAllIdsAndRevs();
         ArrayList<String> idsToDownload = new ArrayList<String>();
         for (Map.Entry<String, String> serverIdRev : serverIdsRevs.entrySet()) {
-            if (!isServerIdExistingInRepository(repoIdsAndRevs, serverIdRev) || (repoIdsAndRevs.get(serverIdRev.getKey()) != null && isRevisionMismatch(repoIdsAndRevs, serverIdRev))) {
+            if (!(repoIdsAndRevs.get(serverIdRev.getKey()) != null) || (repoIdsAndRevs.get(serverIdRev.getKey()) != null && !repoIdsAndRevs.get(serverIdRev.getKey()).equals(serverIdRev.getValue()))) {
                 idsToDownload.add(serverIdRev.getKey());
             }
         }
         return idsToDownload;
-    }
-
-    private boolean isRevisionMismatch(HashMap<String, String> repoIdsAndRevs, Map.Entry<String, String> serverIdRev) {
-        return !repoIdsAndRevs.get(serverIdRev.getKey()).equals(serverIdRev.getValue());
-    }
-
-    private boolean isServerIdExistingInRepository(HashMap<String, String> repoIdsAndRevs, Map.Entry<String, String> serverIdRev) {
-        return repoIdsAndRevs.get(serverIdRev.getKey()) != null;
     }
 
     protected JSONArray updatedPhotoKeys(BaseModel model) throws JSONException {
