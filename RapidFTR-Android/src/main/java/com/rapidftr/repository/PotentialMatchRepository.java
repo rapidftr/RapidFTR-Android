@@ -1,16 +1,24 @@
 package com.rapidftr.repository;
 
+import android.content.ContentValues;
+import android.database.Cursor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.PotentialMatch;
+import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.rapidftr.database.Database.*;
+import static com.rapidftr.database.Database.PotentialMatchTableColumn.*;
 
 public class PotentialMatchRepository implements Closeable, Repository<PotentialMatch>{
 
@@ -25,17 +33,18 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
 
     @Override
     public void close() throws IOException {
-
     }
 
     @Override
     public List<PotentialMatch> toBeSynced() throws JSONException {
-        return null;
+        return new ArrayList<PotentialMatch>();
     }
 
     @Override
     public boolean exists(String id) {
-        return false;
+        String dbId = (id == null ? "" : id);
+        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE id = ?", new String[]{dbId});
+        return cursor.moveToNext() && cursor.getCount() > 0;
     }
 
     @Override
@@ -50,12 +59,20 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
 
     @Override
     public void createOrUpdate(PotentialMatch potentialMatch) throws JSONException, SQLException {
+        ContentValues values = new ContentValues();
+        values.put(enquiry_id.getColumnName(), potentialMatch.getEnquiryId());
+        values.put(child_id.getColumnName(), potentialMatch.getChildId());
+        values.put(created_at.getColumnName(), potentialMatch.getCreatedAt());
+        values.put(id.getColumnName(), potentialMatch.getUniqueId());
+        values.put(revision.getColumnName(), potentialMatch.getRevision());
 
+        long id = session.replace(Database.potential_match.getTableName(), null, values);
+        if (id <= 0) throw new IllegalArgumentException(id + "");
     }
 
     @Override
     public HashMap<String, String> getAllIdsAndRevs() throws JSONException {
-        return null;
+        return new HashMap<String, String>();
     }
 
     @Override
@@ -65,16 +82,16 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
 
     @Override
     public List<PotentialMatch> currentUsersUnsyncedRecords() throws JSONException {
-        return null;
+        return new ArrayList<PotentialMatch>();
     }
 
     @Override
     public List<String> getRecordIdsByOwner() throws JSONException {
-        return null;
+        return new ArrayList<String>();
     }
 
     @Override
     public List<PotentialMatch> allCreatedByCurrentUser() throws JSONException {
-        return null;
+        return new ArrayList<PotentialMatch>();
     }
 }

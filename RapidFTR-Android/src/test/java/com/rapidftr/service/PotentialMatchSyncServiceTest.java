@@ -44,15 +44,6 @@ public class PotentialMatchSyncServiceTest {
     }
 
     @Test
-    public void shouldMarkPotentialMatchAsSyncedWhenSyncing() throws IOException, JSONException, GeneralSecurityException {
-
-    }
-
-    @Test
-    public void shouldUpdatePotentialMatchAttributesAfterSync() throws IOException, JSONException {
-    }
-
-    @Test
     public void shouldFetchListOfIdsToUpdate() throws Exception {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         String response = "[{\"_rev\":\"5-1ed26a0a9064361a570684f6\",\"_id\":\"dfb2031ebfb468f5200edc\"}]";
@@ -83,13 +74,14 @@ public class PotentialMatchSyncServiceTest {
     public void shouldGetPotentialMatch() throws IOException, JSONException, HttpException {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         String id = "dfb2031ebfb468f5200edc";
-        String response = "{\"child_id\":\"a0b2135fff78223s4h1edc\",\"enquiry_id\":\"78223s4h1e468f5200edc\"}";
+        String response = "{\"_id\" : \"couch_id\", \"child_id\":\"a0b2135fff78223s4h1edc\",\"enquiry_id\":\"78223s4h1e468f5200edc\"}";
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/potential_matches/dfb2031ebfb468f5200edc", response);
         PotentialMatchSyncService service = new PotentialMatchSyncService(mockContext(), repository, mockFluentRequest);
         PotentialMatch record = (PotentialMatch) service.getRecord(id);
 
         assertEquals("a0b2135fff78223s4h1edc", record.getChildId());
         assertEquals("78223s4h1e468f5200edc", record.getEnquiryId());
+        assertEquals("couch_id", record.getUniqueId());
     }
 
 

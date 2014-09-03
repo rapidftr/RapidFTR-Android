@@ -4,13 +4,14 @@ import android.content.Context;
 import com.google.inject.Inject;
 import com.rapidftr.database.migration.Migrations;
 import com.rapidftr.model.User;
+import com.sun.media.jfxmedia.logging.Logger;
 import lombok.Getter;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
 public class SQLCipherHelper extends SQLiteOpenHelper implements DatabaseHelper {
 
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
 
     protected @Getter final DatabaseSession session;
 

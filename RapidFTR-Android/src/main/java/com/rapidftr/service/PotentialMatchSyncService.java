@@ -50,9 +50,7 @@ public class PotentialMatchSyncService implements SyncService {
     }
 
     private PotentialMatch buildPotentialMatch(JSONObject json) throws JSONException {
-        PotentialMatch potentialMatch = new PotentialMatch(json.getString("enquiry_id"), json.getString("child_id"));
-        potentialMatch.setSynced(true);
-        potentialMatch.setLastSyncedAt(RapidFtrDateTime.now().defaultFormat());
+        PotentialMatch potentialMatch = new PotentialMatch(json.getString("enquiry_id"), json.getString("child_id"), json.getString("_id"));
         return potentialMatch;
     }
 

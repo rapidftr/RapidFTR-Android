@@ -1,6 +1,7 @@
 package com.rapidftr.database;
 
 import com.google.common.base.Predicate;
+import com.rapidftr.model.PotentialMatch;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +12,7 @@ import static com.google.common.collect.Iterables.filter;
 
 public enum Database {
 
-    child("children"), enquiry("enquiry"),;
+    child("children"), enquiry("enquiry"), potential_match("potential_match");
     private String tableName;
 
     Database(String tableName) {
@@ -95,6 +96,44 @@ public enum Database {
             List<ChildTableColumn> allColumns = Arrays.asList(ChildTableColumn.values());
             return filter(allColumns, new Predicate<ChildTableColumn>() {
                 public boolean apply(ChildTableColumn column) {
+                    return column.isSystem;
+                }
+            });
+        }
+    }
+
+    @RequiredArgsConstructor(suppressConstructorProperties = true)
+    public enum PotentialMatchTableColumn {
+        id("id"),
+        enquiry_id("enquiry_id"),
+        child_id("child_id"),
+        created_at("created_at", true, false),
+        unique_id("_id", true, true),
+        revision("_rev", true, true);
+
+        private
+        @Getter
+        final String columnName;
+        private final boolean isInternal;
+        private final boolean isSystem;
+
+        PotentialMatchTableColumn(String columnName) {
+            this(columnName, false, false);
+        }
+
+        public static Iterable<PotentialMatchTableColumn> internalFields() {
+            List<PotentialMatchTableColumn> allColumns = Arrays.asList(PotentialMatchTableColumn.values());
+            return filter(allColumns, new Predicate<PotentialMatchTableColumn>() {
+                public boolean apply(PotentialMatchTableColumn column) {
+                    return column.isInternal;
+                }
+            });
+        }
+
+        public static Iterable<PotentialMatchTableColumn> systemFields() {
+            List<PotentialMatchTableColumn> allColumns = Arrays.asList(PotentialMatchTableColumn.values());
+            return filter(allColumns, new Predicate<PotentialMatchTableColumn>() {
+                public boolean apply(PotentialMatchTableColumn column) {
                     return column.isSystem;
                 }
             });
