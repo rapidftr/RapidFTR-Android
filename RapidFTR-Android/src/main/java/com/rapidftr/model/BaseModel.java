@@ -6,8 +6,6 @@ import android.util.Log;
 import com.google.common.base.Strings;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.repository.Repository;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +23,8 @@ import static com.rapidftr.utils.JSONArrays.asList;
 
 public class BaseModel extends JSONObject implements Parcelable {
 
+    public static final String FIELD_INTERNAL_ID = "_id";
+    public static final String FIELD_REVISION_ID = "_rev";
     public static final String EMPTY_STRING = "";
 
     public BaseModel(String content) throws JSONException {
@@ -255,7 +255,7 @@ public class BaseModel extends JSONObject implements Parcelable {
         return new ArrayList<BaseModel>();
     }
 
-        public class History extends JSONObject implements Parcelable {
+    public class History extends JSONObject implements Parcelable {
         public static final String HISTORIES = "histories";
         public static final String USER_NAME = "user_name";
         public static final String USER_ORGANISATION = "user_organisation";

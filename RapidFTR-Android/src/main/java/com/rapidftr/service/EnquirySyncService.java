@@ -56,7 +56,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
         Enquiry enquiry = enquiryHttpDao.get(url);
         enquiry.setSynced(true);
         enquiry.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
-        enquiry.remove("_attachments");
+        enquiry.remove(Enquiry.FIELD_ATTACHMENTS);
 
         return enquiry;
     }

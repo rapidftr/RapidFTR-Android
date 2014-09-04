@@ -21,6 +21,7 @@ import static com.rapidftr.utils.JSONArrays.asList;
 public class Enquiry extends BaseModel {
 
     public static final String ENQUIRY_FORM_NAME = "Enquiries";
+    public static final String FIELD_ATTACHMENTS = "_attachments";
 
     public Enquiry() throws JSONException {
         super();

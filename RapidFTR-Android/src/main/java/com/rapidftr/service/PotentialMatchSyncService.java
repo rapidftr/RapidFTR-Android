@@ -4,11 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.PotentialMatch;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.PotentialMatchRepository;
-import com.rapidftr.utils.RapidFtrDateTime;
 import com.rapidftr.utils.http.FluentRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
@@ -25,6 +23,8 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 
 public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
+    public static final String ENQUIRY_ID = "enquiry_id";
+    public static final String CHILD_ID = "child_id";
     private RapidFtrApplication context;
     private PotentialMatchRepository repository;
     private FluentRequest fluentRequest;
@@ -52,7 +52,7 @@ public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
     }
 
     private PotentialMatch buildPotentialMatch(JSONObject json) throws JSONException {
-        PotentialMatch potentialMatch = new PotentialMatch(json.getString("enquiry_id"), json.getString("child_id"), json.getString("_id"));
+        PotentialMatch potentialMatch = new PotentialMatch(json.getString(ENQUIRY_ID), json.getString(CHILD_ID), json.getString(PotentialMatch.FIELD_INTERNAL_ID));
         return potentialMatch;
     }
 
@@ -72,7 +72,8 @@ public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
     }
 
     @Override
-    public void setMedia(PotentialMatch potentialMatch) throws IOException, JSONException {}
+    public void setMedia(PotentialMatch potentialMatch) throws IOException, JSONException {
+    }
 
     private HashMap<String, String> getAllIdsAndRevs() throws IOException, HttpException {
         final ObjectMapper objectMapper = new ObjectMapper();
@@ -81,7 +82,7 @@ public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
         List<Map> idRevs = asList(objectMapper.readValue(response.getEntity().getContent(), Map[].class));
         HashMap<String, String> idRevMapping = new HashMap<String, String>();
         for (Map idRev : idRevs) {
-            idRevMapping.put(idRev.get("_id").toString(), idRev.get("_rev").toString());
+            idRevMapping.put(idRev.get(PotentialMatch.FIELD_INTERNAL_ID).toString(), idRev.get(PotentialMatch.FIELD_REVISION_ID).toString());
         }
         return idRevMapping;
     }

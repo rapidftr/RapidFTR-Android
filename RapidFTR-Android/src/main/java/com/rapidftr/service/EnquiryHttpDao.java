@@ -22,6 +22,13 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 
 public class EnquiryHttpDao {
 
+    public static final String ENQUIRIES_API_PATH = "/api/enquiries/";
+    private static final String ENQUIRY_FORM_PARAMETER = "enquiry";
+    private static final String UPDATED_AFTER_FORM_PARAMETER = "updated_after";
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private static final String LOCATION_ATTRIBUTE = "location";
+    private static final String CHARACTER_SET = "UFT-8";
+
     private final String apiRoot;
 
     @Inject
@@ -46,8 +53,8 @@ public class EnquiryHttpDao {
     public Enquiry update(Enquiry enquiry) throws JSONException, IOException, HttpException {
         FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
-                .host(apiRoot + "/api/enquiries/" + enquiry.get("_id"))
-                .param("enquiry", enquiry.values().toString())
+                .host(apiRoot + ENQUIRIES_API_PATH + enquiry.get(Enquiry.FIELD_INTERNAL_ID))
+                .param(ENQUIRY_FORM_PARAMETER, enquiry.values().toString())
                 .putWithMultiPart()
                 .ensureSuccess();
         String json = CharStreams.toString(new InputStreamReader(fluentResponse.getEntity().getContent()));
@@ -55,17 +62,17 @@ public class EnquiryHttpDao {
     }
 
     public List<String> getIdsOfUpdated(DateTime lastUpdate) throws IOException, JSONException, HttpException {
-        String utcString = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss").withZone(DateTimeZone.UTC).print(lastUpdate) + "UTC";
+        String utcString = new StringBuilder(DateTimeFormat.forPattern(DATE_PATTERN).withZone(DateTimeZone.UTC).print(lastUpdate)).append("UTC").toString();
         final FluentResponse fluentResponse = http().context(RapidFtrApplication.getApplicationInstance())
-                .host(apiRoot + "/api/enquiries")
-                .param("updated_after", URLEncoder.encode(utcString, "UTF-8"))
+                .host(apiRoot + ENQUIRIES_API_PATH)
+                .param(UPDATED_AFTER_FORM_PARAMETER, URLEncoder.encode(utcString, CHARACTER_SET))
                 .get()
                 .ensureSuccess();
         String json = CharStreams.toString(new InputStreamReader(fluentResponse.getEntity().getContent()));
         JSONArray jsonArray = new JSONArray(json);
         List<String> urls = new ArrayList<String>();
         for (int i = 0; i < jsonArray.length(); i++) {
-            urls.add(jsonArray.getJSONObject(i).getString("location"));
+            urls.add(jsonArray.getJSONObject(i).getString(LOCATION_ATTRIBUTE));
         }
         return urls;
     }
@@ -73,8 +80,8 @@ public class EnquiryHttpDao {
     public Enquiry create(Enquiry enquiry) throws IOException, HttpException, JSONException {
         FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
-                .host(apiRoot + "/api/enquiries")
-                .param("enquiry", enquiry.getJsonString())
+                .host(apiRoot + ENQUIRIES_API_PATH)
+                .param(ENQUIRY_FORM_PARAMETER, enquiry.getJsonString())
                 .post()
                 .ensureSuccess();
         String json = CharStreams.toString(new InputStreamReader(fluentResponse.getEntity().getContent()));
