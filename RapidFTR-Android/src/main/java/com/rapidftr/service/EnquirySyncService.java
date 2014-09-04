@@ -45,6 +45,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
             record.setSynced(false);
             record.setLastUpdatedAt(null);
             enquiryRepository.update(record);
+            enquiryRepository.close();
             throw new SyncFailedException(exception.getMessage());
         }
 

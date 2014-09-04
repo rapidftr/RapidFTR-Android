@@ -1,15 +1,12 @@
 package com.rapidftr.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
@@ -98,8 +95,7 @@ public class ViewChildActivity extends BaseChildActivity {
 
     protected SyncSingleRecordTask createChildSyncTask() {
         ChildRepository childRepository = inject(ChildRepository.class);
-        return new SyncSingleRecordTask(new ChildSyncService(this.getContext(), childRepository, new FluentRequest()),
-                childRepository, getCurrentUser()) {
+        return new SyncSingleRecordTask(new ChildSyncService(this.getContext(), childRepository, new FluentRequest()), getCurrentUser()) {
             @Override
             public Boolean doInBackground(BaseModel... params) {
                 try {

@@ -1,15 +1,11 @@
 package com.rapidftr.activity;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
@@ -17,7 +13,7 @@ import com.rapidftr.adapter.PotentialMatchesFormSectionPagerAdapter;
 import com.rapidftr.forms.PotentialMatchesFormSection;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
-import com.rapidftr.model.Enquiry;
+import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.service.EnquiryHttpDao;
 import com.rapidftr.service.EnquirySyncService;
 import com.rapidftr.service.LogOutService;
@@ -25,6 +21,7 @@ import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncSingleRecordTask;
 import com.rapidftr.view.FormSectionView;
 import com.rapidftr.view.PotentialMatchesFormSectionView;
+import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -58,6 +55,8 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         super.initializeData(savedInstanceState);
         this.editable = false;
+
+        @Cleanup EnquiryRepository enquiryRepository = inject(EnquiryRepository.class);
 
         this.enquiry = loadEnquiry(getIntent().getExtras(), enquiryRepository);
         PotentialMatchesFormSection section = new PotentialMatchesFormSection();
@@ -109,8 +108,9 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     }
 
     protected SyncSingleRecordTask createSyncTaskForEnquiry() {
+
         SyncSingleRecordTask syncRecordTask = new SyncSingleRecordTask(
-                new EnquirySyncService(this.getContext().getSharedPreferences(), new EnquiryHttpDao(), enquiryRepository), enquiryRepository, getCurrentUser());
+                new EnquirySyncService(this.getContext().getSharedPreferences(), new EnquiryHttpDao(), inject(EnquiryRepository.class)), getCurrentUser());
         return syncRecordTask;
     }
 }
