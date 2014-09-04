@@ -147,8 +147,6 @@ public enum Database {
         created_by("created_by", true, false),
         created_at("created_at", true, false),
         synced("synced", Boolean.class, true, true),
-        potential_matches("potential_matches"),
-
         created_organisation("created_organisation"),
         internal_id("_id", true, false),
         internal_rev("_rev", true, false),

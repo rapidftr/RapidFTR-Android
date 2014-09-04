@@ -1,12 +1,10 @@
 package com.rapidftr.model;
 
 
-import android.database.Cursor;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
-import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -25,16 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
-import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
 import static com.rapidftr.model.BaseModel.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 @RunWith(CustomTestRunner.class)
@@ -195,7 +190,7 @@ public class ChildTest {
         JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
         HashMap fromTo = (HashMap) changesMap.get("name");
 
-        assertThat(histories.size() ,is(1));
+        assertThat(histories.size(), is(1));
         assertThat(histories.get(0).get(USER_NAME).toString(), is(updatedChild.getCreatedBy()));
         assertThat(changesMap.names().get(0).toString(), is("name"));
         assertThat(fromTo.get(FROM).toString(), is("old-name"));
@@ -214,6 +209,7 @@ public class ChildTest {
         child.put(internal_id.getColumnName(), "xyz");
         assertThat(child.isNew(), is(false));
     }
+
     @Test
     public void testAtLeastOneFieldIsFilledExcludingOwner() throws JSONException {
         Child child = new Child("id1", "owner1", "");
@@ -248,7 +244,8 @@ public class ChildTest {
         potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_1", "potential_match_id_1"));
         potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_2", "child_id_2", "potential_match_id_2"));
 
-        List<Enquiry> enquiries = child.getPotentialMatches(enquiryRepository, potentialMatchRepository);
+        List<PotentialMatch> potentialMatches = potentialMatchRepository.getPotentialMatchesFor(child);
+        List<Enquiry> enquiries = enquiryRepository.getAllWithInternalIds(Enquiry.idsFromMatches(potentialMatches));
 
         assertThat(enquiries.size(), is(1));
         assertEquals(enquiry.getUniqueId(), enquiries.get(0).getUniqueId());

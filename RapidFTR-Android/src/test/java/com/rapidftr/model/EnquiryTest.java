@@ -1,6 +1,5 @@
 package com.rapidftr.model;
 
-import android.database.Cursor;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
@@ -16,12 +15,9 @@ import org.junit.runner.RunWith;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 @RunWith(CustomTestRunner.class)
 public class EnquiryTest {
@@ -67,11 +63,12 @@ public class EnquiryTest {
                 "\"created_by\":\"some guy\"" +
                 "}";
         Enquiry enquiry = new Enquiry(enquiryJSON);
-        List<Child> potentialMatches = enquiry.getPotentialMatches(childRepository, potentialMatchRepository);
+        List<PotentialMatch> potentialMatches = potentialMatchRepository.getPotentialMatchesFor(enquiry);
+        List<Child> children = childRepository.getAllWithInternalIds(Child.idsFromMatches(potentialMatches));
 
-        assertEquals(2, potentialMatches.size());
-        assertTrue(potentialMatches.contains(child1));
-        assertTrue(potentialMatches.contains(child3));
+        assertEquals(2, children.size());
+        assertTrue(children.contains(child1));
+        assertTrue(children.contains(child3));
     }
 
     @Test
@@ -84,24 +81,6 @@ public class EnquiryTest {
 
         assertEquals(expectedEnquirerName, enquiry.get("enquirer_name"));
         assertEquals(expectedNationality, enquiry.get("nationality"));
-    }
-
-    @Test
-    public void enquiryShouldGetMatchingIds() throws JSONException {
-        Cursor cursor = mock(Cursor.class);
-        doReturn(potential_matches.ordinal()).when(cursor).getColumnIndex(potential_matches.getColumnName());
-        doReturn("[\"id1\", \"id2\"]").when(cursor).getString(potential_matches.ordinal());
-
-        Enquiry enquiry = new Enquiry(cursor);
-
-        assertEquals("[\"id1\", \"id2\"]", enquiry.getPotentialMatchingIds());
-    }
-
-    @Test
-    public void newEnquiryShouldNotHaveMatchingIds() throws JSONException {
-        String enquiryJSON = "{\"enquirer_name\":\"sam fisher\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
-        Enquiry enquiry = new Enquiry(enquiryJSON);
-        assertTrue(enquiry.getPotentialMatchingIds().length() == 0);
     }
 
     @Test

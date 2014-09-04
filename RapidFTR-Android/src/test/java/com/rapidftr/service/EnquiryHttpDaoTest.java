@@ -63,7 +63,6 @@ public class EnquiryHttpDaoTest {
         assertThat(requestLine.getUri(), is(apiRoot + "/api/enquiries/" + id + "/"));
         assertThat(requestLine.getMethod(), is("PUT"));
         assertThat((String) updatedEnquiry.get("some"), is("json"));
-        // TODO test that the body is being sent
     }
 
     @Test
@@ -76,7 +75,6 @@ public class EnquiryHttpDaoTest {
         final List<String> idsOfUpdated = enquiryHttpDao.getIdsOfUpdated(new DateTime(2013, 9, 25, 18, 7, 31, DateTimeZone.UTC));
 
         final String uri = Robolectric.getSentHttpRequest(0).getRequestLine().getUri();
-//        assertThat(uri, is(apiRoot + "/api/enquiries/?" + "updated_after=" + URLEncoder.encode("2013-09-25 18:07:31UTC", "UTF-8")));
         assertThat(uri, containsString(apiRoot + "/api/enquiries"));
 
         assertThat(idsOfUpdated.get(0), is("blah.com/1"));
@@ -102,6 +100,5 @@ public class EnquiryHttpDaoTest {
         assertThat(requestLine.getUri(), is(apiRoot + "/api/enquiries/"));
         assertThat(requestLine.getMethod(), is("POST"));
         assertThat((String) updatedEnquiry.get("_id"), is("123abc"));
-        // TODO not sure how to test the body (currently encoded as a form param)
     }
 }

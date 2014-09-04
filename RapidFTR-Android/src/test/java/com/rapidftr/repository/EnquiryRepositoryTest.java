@@ -165,12 +165,10 @@ public class EnquiryRepositoryTest {
         enquiryRepository.createOrUpdate(enquiry);
 
         assertThat(enquiryRepository.all().size(), is(1));
-        assertTrue(enquiry.getPotentialMatchingIds().length() == 0);
 
         enquiry.put("enquirer_name", "New Reporter Name");
         enquiry.setCreatedBy("NEW USER");
         enquiry.setSynced(true);
-        enquiry.put(Database.EnquiryTableColumn.potential_matches.getColumnName(), "some potential matches id");
         enquiry.put(Database.EnquiryTableColumn.internal_id.getColumnName(), "new internal id");
         enquiry.put(Database.EnquiryTableColumn.internal_rev.getColumnName(), "new internal revision");
         enquiryRepository.update(enquiry);
@@ -181,7 +179,6 @@ public class EnquiryRepositoryTest {
         assertThat(retrieved.getCreatedBy().toString(), is("NEW USER"));
         assertTrue(retrieved.isSynced());
         assertThat(retrieved.getString(Database.EnquiryTableColumn.internal_id.getColumnName()), is("new internal id"));
-        assertThat(retrieved.getString(Database.EnquiryTableColumn.potential_matches.getColumnName()), is("some potential matches id"));
         assertThat(retrieved.getString(Database.EnquiryTableColumn.internal_rev.getColumnName()), is("new internal revision"));
     }
 

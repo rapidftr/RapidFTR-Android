@@ -6,9 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.repository.EnquiryRepository;
-import com.rapidftr.repository.PotentialMatchRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -131,19 +128,17 @@ public class Child extends BaseModel {
         return photo_keys;
     }
 
-    public List<Enquiry> getPotentialMatches(EnquiryRepository enquiryRepository, PotentialMatchRepository potentialMatchRepository) throws JSONException {
-        try {
-            List<PotentialMatch> potentialMatches = potentialMatchRepository.getPotentialMatchesFor(this);
-            return enquiryRepository.getAllWithInternalIds(idsFromMatches(potentialMatches));
-        } catch (JSONException exception) {
-            return new ArrayList<Enquiry>();
-        }
-    }
 
-    private List<String> idsFromMatches(List<PotentialMatch> potentialMatches) {
+    /**
+     * gets the ids of children from the given potential matches.
+     *
+     * @param potentialMatches
+     * @return
+     */
+    public static List<String> idsFromMatches(List<PotentialMatch> potentialMatches) {
         List<String> ids = new ArrayList<String>();
         for (PotentialMatch potentialMatch : potentialMatches) {
-            ids.add(potentialMatch.getEnquiryId());
+            ids.add(potentialMatch.getChildId());
         }
         return ids;
     }
