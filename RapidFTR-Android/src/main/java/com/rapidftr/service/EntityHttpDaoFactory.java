@@ -17,7 +17,7 @@ public class EntityHttpDaoFactory {
     }
 
     public static EntityHttpDao<Child> createChildHttpDao(String serverUrl, String apiPath, String apiParameter) {
-        return new MultiMediaEntityHttpDao<Child>(serverUrl, apiPath, apiParameter) {
+        return new EntityHttpDao<Child>(serverUrl, apiPath, apiParameter) {
         };
     }
 }

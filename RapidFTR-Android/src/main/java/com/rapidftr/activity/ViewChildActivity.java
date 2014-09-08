@@ -95,7 +95,7 @@ public class ViewChildActivity extends BaseChildActivity {
 
     protected SyncSingleRecordTask createChildSyncTask() {
         ChildRepository childRepository = inject(ChildRepository.class);
-        return new SyncSingleRecordTask(new ChildSyncService(this.getContext(), childRepository, new FluentRequest()), getCurrentUser()) {
+        return new SyncSingleRecordTask(new ChildSyncService(this.getContext(), childRepository), getCurrentUser()) {
             @Override
             public Boolean doInBackground(BaseModel... params) {
                 try {
