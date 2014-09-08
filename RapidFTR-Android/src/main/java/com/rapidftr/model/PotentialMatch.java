@@ -1,30 +1,44 @@
 package com.rapidftr.model;
 
+import org.json.JSONException;
+
 public class PotentialMatch extends BaseModel {
-    private String childId;
-    private String uniqueIdentifier;
-    private String enquiryId;
-    private String revision;
+    private static final String ENQUIRY_ID_FIELD = "enquiry_id";
+    private static final String CHILD_ID_FIELD = "child_id";
+
+    public PotentialMatch(String jsonString) throws JSONException {
+        super(jsonString);
+    }
 
     public PotentialMatch(String enquiryId, String childId, String uniqueIdentifier) {
-        this.enquiryId = enquiryId;
-        this.childId = childId;
-        this.uniqueIdentifier = uniqueIdentifier;
+        this.put(ENQUIRY_ID_FIELD, enquiryId);
+        this.put(CHILD_ID_FIELD, childId);
+        this.put(FIELD_INTERNAL_ID, uniqueIdentifier);
     }
 
     public String getChildId() {
-        return childId;
+        return getString(CHILD_ID_FIELD);
     }
 
     public String getEnquiryId() {
-        return enquiryId;
+        return getString(ENQUIRY_ID_FIELD);
     }
 
     public String getUniqueId() {
-        return uniqueIdentifier;
+        return getString(FIELD_INTERNAL_ID);
     }
 
     public String getRevision() {
-        return revision;
+        return getString(FIELD_REVISION_ID);
+    }
+
+    @Override
+    public String getApiPath() {
+        return "/api/potential_matches";
+    }
+
+    @Override
+    public String getApiParameter() {
+        return "potential_match";
     }
 }

@@ -255,6 +255,14 @@ public class BaseModel extends JSONObject implements Parcelable {
         return new ArrayList<BaseModel>();
     }
 
+    public String getApiPath() {
+        return null;
+    }
+
+    public String getApiParameter() {
+        return null;
+    }
+
     public class History extends JSONObject implements Parcelable {
         public static final String HISTORIES = "histories";
         public static final String USER_NAME = "user_name";

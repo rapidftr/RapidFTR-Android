@@ -28,7 +28,6 @@ public class Enquiry extends BaseModel {
     public Enquiry(String content, String createdBy) throws JSONException {
         super(content);
         this.setCreatedBy(createdBy);
-        this.setUniqueId(createUniqueId());
         this.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
     }
 
@@ -92,4 +91,13 @@ public class Enquiry extends BaseModel {
         return ids;
     }
 
+    @Override
+    public String getApiPath() {
+        return "/api/enquiries";
+    }
+
+    @Override
+    public String getApiParameter() {
+        return "enquiry";
+    }
 }

@@ -14,7 +14,6 @@ import com.rapidftr.forms.PotentialMatchesFormSection;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.EnquiryRepository;
-import com.rapidftr.service.EnquiryHttpDao;
 import com.rapidftr.service.EnquirySyncService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
@@ -110,7 +109,8 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     protected SyncSingleRecordTask createSyncTaskForEnquiry() {
 
         SyncSingleRecordTask syncRecordTask = new SyncSingleRecordTask(
-                new EnquirySyncService(this.getContext().getSharedPreferences(), new EnquiryHttpDao(), inject(EnquiryRepository.class)), getCurrentUser());
+                new EnquirySyncService(this.getContext(),
+                        inject(EnquiryRepository.class)), getCurrentUser());
         return syncRecordTask;
     }
 }

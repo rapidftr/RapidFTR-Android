@@ -19,18 +19,22 @@ import java.util.List;
 
 public class EnquirySyncService implements SyncService<Enquiry> {
 
-    private final EnquiryHttpDao enquiryHttpDao;
+    public static final String ENQUIRIES_API_PATH = "/api/enquiries";
+    public static final String ENQUIRIES_API_PARAMETER = "enquiry";
+
+    private EntityHttpDao<Enquiry> enquiryHttpDao;
     private final EnquiryRepository enquiryRepository;
     private final SharedPreferences sharedPreferences;
 
     private static final int NOTIFICATION_ID = 1021;
 
     @Inject
-    public EnquirySyncService(SharedPreferences sharedPreferences,
-                              EnquiryHttpDao enquiryHttpDao,
+    public EnquirySyncService(RapidFtrApplication rapidFtrApplication,
                               EnquiryRepository enquiryRepository) {
-        this.sharedPreferences = sharedPreferences;
-        this.enquiryHttpDao = enquiryHttpDao;
+        this.sharedPreferences = rapidFtrApplication.getSharedPreferences();
+        this.enquiryHttpDao = EntityHttpDaoFactory.createEnquiryHttpDao(
+                sharedPreferences.getString(RapidFtrApplication.SERVER_URL_PREF, ""),
+                ENQUIRIES_API_PATH, ENQUIRIES_API_PARAMETER);
         this.enquiryRepository = enquiryRepository;
     }
 
@@ -67,7 +71,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {
         long lastUpdateMillis = sharedPreferences.getLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, 0);  // Default value is currently epoch
         DateTime lastUpdate = new DateTime(lastUpdateMillis);
-        return enquiryHttpDao.getIdsOfUpdated(lastUpdate);
+        return enquiryHttpDao.getUpdatedResourceUrls(lastUpdate);
     }
 
     @Override

@@ -36,6 +36,9 @@ import static com.rapidftr.view.fields.PhotoUploadBox.PHOTO_KEYS;
 import static java.util.Arrays.asList;
 
 public class ChildSyncService implements SyncService<Child> {
+    public static final String CHILDREN_API_PATH = "/api/children";
+    public static final String CHILDREN_API_PARAMETER = "child";
+
     private RapidFtrApplication context;
     private ChildRepository childRepository;
     private FluentRequest fluentRequest;
@@ -43,12 +46,17 @@ public class ChildSyncService implements SyncService<Child> {
     private Object audioAttachments;
 
     private static final int NOTIFICATION_ID = 1022;
+    private EntityHttpDao<Child> childEntityHttpDao;
+
 
     @Inject
     public ChildSyncService(RapidFtrApplication context, ChildRepository childRepository, FluentRequest fluentRequest) {
         this.context = context;
         this.childRepository = childRepository;
         this.fluentRequest = fluentRequest;
+        this.childEntityHttpDao = EntityHttpDaoFactory.createChildHttpDao(
+                context.getSharedPreferences().getString(RapidFtrApplication.SERVER_URL_PREF, ""),
+                CHILDREN_API_PATH, CHILDREN_API_PARAMETER);
     }
 
     @Override
