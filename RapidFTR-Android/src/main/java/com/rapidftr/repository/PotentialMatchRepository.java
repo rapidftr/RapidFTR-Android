@@ -104,12 +104,12 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
     }
 
     public List<PotentialMatch> getPotentialMatchesFor(Enquiry enquiry) throws JSONException {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE enquiry_id = ?", new String[]{enquiry.getUniqueId()});
+        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE enquiry_id = ?", new String[]{enquiry.getInternalId()});
         return buildPotentialMatches(cursor);
     }
 
     public List<PotentialMatch> getPotentialMatchesFor(Child child) throws JSONException {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE child_id = ?", new String[]{child.getUniqueId()});
+        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE child_id = ?", new String[]{child.getInternalId()});
         return buildPotentialMatches(cursor);
     }
 

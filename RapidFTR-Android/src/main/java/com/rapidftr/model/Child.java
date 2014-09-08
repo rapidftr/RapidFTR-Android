@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -110,8 +113,15 @@ public class Child extends BaseModel {
     }
 
     @Override
-    public List<BaseModel> getPotentiallyMatchedModels() throws JSONException {
-        return new ArrayList<BaseModel>();
+    public List<BaseModel> getPotentialMatchingModels(PotentialMatchRepository potentialMatchRepo, ChildRepository childRepo, EnquiryRepository enquiryRepository) throws JSONException {
+        List<BaseModel> models = new ArrayList<BaseModel>();
+        try {
+            List<PotentialMatch> potentialMatches = potentialMatchRepo.getPotentialMatchesFor(this);
+            models.addAll(enquiryRepository.getAllWithInternalIds(idsFromMatches(potentialMatches)));
+            return models;
+        } catch (JSONException exception) {
+            return new ArrayList<BaseModel>();
+        }
     }
 
     public boolean isNew() {
@@ -128,17 +138,10 @@ public class Child extends BaseModel {
         return photo_keys;
     }
 
-
-    /**
-     * gets the ids of children from the given potential matches.
-     *
-     * @param potentialMatches
-     * @return
-     */
     public static List<String> idsFromMatches(List<PotentialMatch> potentialMatches) {
         List<String> ids = new ArrayList<String>();
         for (PotentialMatch potentialMatch : potentialMatches) {
-            ids.add(potentialMatch.getChildId());
+            ids.add(potentialMatch.getEnquiryId());
         }
         return ids;
     }

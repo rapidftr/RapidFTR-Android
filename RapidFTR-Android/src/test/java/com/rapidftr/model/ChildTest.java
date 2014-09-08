@@ -5,6 +5,7 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
+import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -224,7 +225,7 @@ public class ChildTest {
 
     @Test
     public void shouldGetPotentialMatches() throws JSONException, SQLException {
-        Child child = new Child("child_id_1", "", "");
+        Child child = new Child("id_1", "", "{'_id' : 'child_id_1'}");
 
         String enquiryJSON = "{\n" +
                 "\"synced\":\"true\",\n" +
@@ -244,8 +245,7 @@ public class ChildTest {
         potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_1", "potential_match_id_1"));
         potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_2", "child_id_2", "potential_match_id_2"));
 
-        List<PotentialMatch> potentialMatches = potentialMatchRepository.getPotentialMatchesFor(child);
-        List<Enquiry> enquiries = enquiryRepository.getAllWithInternalIds(Enquiry.idsFromMatches(potentialMatches));
+        List<BaseModel> enquiries = child.getPotentialMatchingModels(potentialMatchRepository, null, enquiryRepository);
 
         assertThat(enquiries.size(), is(1));
         assertEquals(enquiry.getUniqueId(), enquiries.get(0).getUniqueId());

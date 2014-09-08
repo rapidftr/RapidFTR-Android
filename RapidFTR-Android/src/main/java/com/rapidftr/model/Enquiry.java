@@ -5,6 +5,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.rapidftr.database.Database;
+import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,18 +80,28 @@ public class Enquiry extends BaseModel {
         return new JSONObject(this, names.toArray(new String[names.size()]));
     }
 
-    /**
-     * gets the ids of the enquiries from given potential matches.
-     *
-     * @param potentialMatches
-     * @return
-     */
+    @Override
+    public List<BaseModel> getPotentialMatchingModels(PotentialMatchRepository potentialMatchRepo, ChildRepository childRepo, EnquiryRepository enquiryRepository) throws JSONException {
+        List<BaseModel> models = new ArrayList<BaseModel>();
+        try {
+            List<PotentialMatch> potentialMatches = potentialMatchRepo.getPotentialMatchesFor(this);
+            models.addAll(childRepo.getAllWithInternalIds(idsFromMatches(potentialMatches)));
+            return models;
+        } catch (JSONException exception) {
+            return new ArrayList<BaseModel>();
+        }
+    }
+
     public static List<String> idsFromMatches(List<PotentialMatch> potentialMatches) {
         List<String> ids = new ArrayList<String>();
         for (PotentialMatch potentialMatch : potentialMatches) {
-            ids.add(potentialMatch.getEnquiryId());
+            ids.add(potentialMatch.getChildId());
         }
         return ids;
+    }
+
+    public String getInternalId() {
+        return getString(Database.EnquiryTableColumn.internal_id.getColumnName());
     }
 
     @Override

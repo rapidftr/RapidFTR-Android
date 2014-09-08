@@ -13,6 +13,7 @@ import com.rapidftr.forms.FormSection;
 import com.rapidftr.forms.PotentialMatchesFormSection;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.PotentialMatchRepository;
 import lombok.Cleanup;
 import org.json.JSONException;
@@ -38,10 +39,12 @@ public abstract class PotentialMatchesFormSectionView extends FormSectionView {
         if (formSection instanceof PotentialMatchesFormSection) {
             getLabel().setText(formSection.getLocalizedName());
 
-            @Cleanup ChildRepository childRepository = RapidFtrApplication.getApplicationInstance().getBean(ChildRepository.class);
             @Cleanup PotentialMatchRepository potentialMatchRepository = RapidFtrApplication.getApplicationInstance().getBean(PotentialMatchRepository.class);
+            @Cleanup ChildRepository childRepository = RapidFtrApplication.getApplicationInstance().getBean(ChildRepository.class);
+            @Cleanup EnquiryRepository enquiryRepository = RapidFtrApplication.getApplicationInstance().getBean(EnquiryRepository.class);
+
             try {
-                List<BaseModel> potentialMatches = model.getPotentiallyMatchedModels();
+                List<BaseModel> potentialMatches = model.getPotentialMatchingModels(potentialMatchRepository, childRepository, enquiryRepository);
                 getContainer().addView(createPotentialMatchView(getContext(), potentialMatches));
             } catch (JSONException e) {
                 Log.e(null, null, e);

@@ -59,12 +59,11 @@ public class EnquiryTest {
 
         String enquiryJSON = "{\n" +
                 "\"synced\":\"true\",\n" +
-                "\"unique_identifier\":\"enquiry_id_1\",\n" +
+                "\"_id\":\"enquiry_id_1\",\n" +
                 "\"created_by\":\"some guy\"" +
                 "}";
         Enquiry enquiry = new Enquiry(enquiryJSON);
-        List<PotentialMatch> potentialMatches = potentialMatchRepository.getPotentialMatchesFor(enquiry);
-        List<Child> children = childRepository.getAllWithInternalIds(Child.idsFromMatches(potentialMatches));
+        List<BaseModel> children = enquiry.getPotentialMatchingModels(potentialMatchRepository, childRepository, null);
 
         assertEquals(2, children.size());
         assertTrue(children.contains(child1));

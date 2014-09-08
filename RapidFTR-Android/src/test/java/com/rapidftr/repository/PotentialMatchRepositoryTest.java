@@ -48,7 +48,7 @@ public class PotentialMatchRepositoryTest {
 
     @Test
     public void shouldReturnPotentialMatchesByEnquiry() throws JSONException, SQLException {
-        String enquiryJSON = "{\"unique_identifier\":\"enquiry_id\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
+        String enquiryJSON = "{\"_id\":\"enquiry_id\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
         Enquiry enquiry = new Enquiry(enquiryJSON);
         PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_2");
         repository.createOrUpdate(potentialMatch);
@@ -63,7 +63,7 @@ public class PotentialMatchRepositoryTest {
 
     @Test
     public void shouldReturnPotentialMatchesByChild() throws JSONException, SQLException {
-        String childJSON = "{\"unique_identifier\":\"child_id\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
+        String childJSON = "{\"_id\":\"child_id\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
         Child child = new Child(childJSON);
         PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_1");
         repository.createOrUpdate(potentialMatch);
