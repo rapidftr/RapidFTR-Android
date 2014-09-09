@@ -6,8 +6,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.rapidftr.database.Database;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.rapidftr.database.Database.EnquiryTableColumn.content;
-import static com.rapidftr.database.Database.EnquiryTableColumn.potential_matches;
 import static com.rapidftr.utils.JSONArrays.asList;
 
 public class Enquiry extends BaseModel {
 
     public static final String ENQUIRY_FORM_NAME = "Enquiries";
+    public static final String FIELD_ATTACHMENTS = "_attachments";
 
     public Enquiry() throws JSONException {
         super();
@@ -30,7 +31,6 @@ public class Enquiry extends BaseModel {
     public Enquiry(String content, String createdBy) throws JSONException {
         super(content);
         this.setCreatedBy(createdBy);
-        this.setUniqueId(createUniqueId());
         this.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
     }
 
@@ -53,29 +53,6 @@ public class Enquiry extends BaseModel {
     public Enquiry(String enquiryJSON) throws JSONException {
         super(enquiryJSON);
         setHistories();
-    }
-
-    public List<Child> getPotentialMatches(ChildRepository childRepository) throws JSONException {
-        try {
-
-            JSONArray matchingChildId = new JSONArray(getPotentialMatchingIds());
-
-            List<String> matchingChildList = getListOfMatchingChildrenFrom(matchingChildId);
-
-            return childRepository.getAllWithInternalIds(new ArrayList<String>(matchingChildList));
-        } catch (JSONException exception) {
-            return new ArrayList<Child>();
-        }
-    }
-
-
-    private List<String> getListOfMatchingChildrenFrom(JSONArray matchingChildId) throws JSONException {
-        List<String> matchingChildList = new ArrayList<String>();
-
-        for (int i = 0; i < matchingChildId.length(); i++) {
-            matchingChildList.add((String) matchingChildId.get(i));
-        }
-        return matchingChildList;
     }
 
     public boolean isValid() {
@@ -103,10 +80,37 @@ public class Enquiry extends BaseModel {
         return new JSONObject(this, names.toArray(new String[names.size()]));
     }
 
-    public String getPotentialMatchingIds() {
-        String ids = getString(potential_matches.getColumnName());
-        String matchingChildIds = ids == null ? "" : ids;
-        return matchingChildIds;
+    @Override
+    public List<BaseModel> getPotentialMatchingModels(PotentialMatchRepository potentialMatchRepo, ChildRepository childRepo, EnquiryRepository enquiryRepository) throws JSONException {
+        List<BaseModel> models = new ArrayList<BaseModel>();
+        try {
+            List<PotentialMatch> potentialMatches = potentialMatchRepo.getPotentialMatchesFor(this);
+            models.addAll(childRepo.getAllWithInternalIds(idsFromMatches(potentialMatches)));
+            return models;
+        } catch (JSONException exception) {
+            return new ArrayList<BaseModel>();
+        }
     }
 
+    public static List<String> idsFromMatches(List<PotentialMatch> potentialMatches) {
+        List<String> ids = new ArrayList<String>();
+        for (PotentialMatch potentialMatch : potentialMatches) {
+            ids.add(potentialMatch.getChildId());
+        }
+        return ids;
+    }
+
+    public String getInternalId() {
+        return getString(Database.EnquiryTableColumn.internal_id.getColumnName());
+    }
+
+    @Override
+    public String getApiPath() {
+        return "/api/enquiries";
+    }
+
+    @Override
+    public String getApiParameter() {
+        return "enquiry";
+    }
 }

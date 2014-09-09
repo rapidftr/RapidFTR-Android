@@ -2,11 +2,13 @@ package com.rapidftr.activity;
 
 import android.os.Bundle;
 import com.rapidftr.R;
+import com.rapidftr.repository.EnquiryRepository;
+import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.io.IOException;
 
-public class EditEnquiryActivity extends BaseEnquiryActivity{
+public class EditEnquiryActivity extends BaseEnquiryActivity {
 
     @Override
     protected void initializeView() {
@@ -16,9 +18,11 @@ public class EditEnquiryActivity extends BaseEnquiryActivity{
     @Override
     protected void initializeData(Bundle savedInstanceState) throws JSONException, IOException {
         super.initializeData(savedInstanceState);
-        if(formSections.get(0).getName().containsValue("Potential matches"))
+        if (formSections.get(0).getName().containsValue("Potential matches"))
             formSections.remove(0);
         this.editable = true;
-        this.enquiry = loadEnquiry(getIntent().getExtras(), this.enquiryRepository);
+
+        @Cleanup EnquiryRepository enquiryRepository = inject(EnquiryRepository.class);
+        this.enquiry = loadEnquiry(getIntent().getExtras(), enquiryRepository);
     }
 }

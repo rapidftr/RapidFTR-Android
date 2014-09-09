@@ -1,6 +1,7 @@
 package com.rapidftr.database;
 
 import com.google.common.base.Predicate;
+import com.rapidftr.model.PotentialMatch;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +12,7 @@ import static com.google.common.collect.Iterables.filter;
 
 public enum Database {
 
-    child("children"), enquiry("enquiry"),;
+    child("children"), enquiry("enquiry"), potential_match("potential_match");
     private String tableName;
 
     Database(String tableName) {
@@ -102,6 +103,43 @@ public enum Database {
     }
 
     @RequiredArgsConstructor(suppressConstructorProperties = true)
+    public enum PotentialMatchTableColumn {
+        id("id"),
+        enquiry_id("enquiry_id"),
+        child_id("child_id"),
+        created_at("created_at", true, false),
+        revision("_rev", true, true);
+
+        private
+        @Getter
+        final String columnName;
+        private final boolean isInternal;
+        private final boolean isSystem;
+
+        PotentialMatchTableColumn(String columnName) {
+            this(columnName, false, false);
+        }
+
+        public static Iterable<PotentialMatchTableColumn> internalFields() {
+            List<PotentialMatchTableColumn> allColumns = Arrays.asList(PotentialMatchTableColumn.values());
+            return filter(allColumns, new Predicate<PotentialMatchTableColumn>() {
+                public boolean apply(PotentialMatchTableColumn column) {
+                    return column.isInternal;
+                }
+            });
+        }
+
+        public static Iterable<PotentialMatchTableColumn> systemFields() {
+            List<PotentialMatchTableColumn> allColumns = Arrays.asList(PotentialMatchTableColumn.values());
+            return filter(allColumns, new Predicate<PotentialMatchTableColumn>() {
+                public boolean apply(PotentialMatchTableColumn column) {
+                    return column.isSystem;
+                }
+            });
+        }
+    }
+
+    @RequiredArgsConstructor(suppressConstructorProperties = true)
     public enum EnquiryTableColumn {
         id("id"),
         unique_identifier("unique_identifier", true, false),
@@ -109,8 +147,6 @@ public enum Database {
         created_by("created_by", true, false),
         created_at("created_at", true, false),
         synced("synced", Boolean.class, true, true),
-        potential_matches("potential_matches"),
-
         created_organisation("created_organisation"),
         internal_id("_id", true, false),
         internal_rev("_rev", true, false),

@@ -16,6 +16,7 @@ public class ViewAllEnquiryActivity extends BaseEnquiryActivity {
     protected void initializeView() {
         setContentView(R.layout.activity_view_all_enquiries);
         try {
+            @Cleanup EnquiryRepository enquiryRepository = inject(EnquiryRepository.class);
             List<Enquiry> enquiries = enquiryRepository.allCreatedByCurrentUser();
             listView(enquiries);
         } catch (JSONException e) {

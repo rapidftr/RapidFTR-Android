@@ -10,5 +10,4 @@ bundle install
 
 ./travis/wait_for_emulator.sh
 adb shell input keyevent 82
-calabash-android run `ls target/*.apk | head -1` -f rerun --out rerun.txt -f pretty
-calabash-android run `ls target/*.apk | head -1` @rerun.txt -f pretty
+calabash-android run `ls target/*.apk | head -1` -f rerun --out rerun.txt -f pretty --tags ~@ignore

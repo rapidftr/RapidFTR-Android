@@ -8,13 +8,13 @@ import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.task.AsyncTaskWithDialog;
+import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.io.IOException;
 
 public abstract class BaseEnquiryActivity extends CollectionActivity {
     protected Enquiry enquiry;
-    protected EnquiryRepository enquiryRepository;
     protected boolean editable = true;
 
     @Override
@@ -29,7 +29,6 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        enquiryRepository = inject(EnquiryRepository.class);
         super.onCreate(savedInstanceState);
     }
 
@@ -93,6 +92,8 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
             enquiry.setCreatedBy(getCurrentUser().getUserName());
             enquiry.setOrganisation(getCurrentUser().getOrganisation());
         }
+
+        @Cleanup EnquiryRepository enquiryRepository = inject(EnquiryRepository.class);
         enquiryRepository.createOrUpdate(enquiry);
         return enquiry;
     }

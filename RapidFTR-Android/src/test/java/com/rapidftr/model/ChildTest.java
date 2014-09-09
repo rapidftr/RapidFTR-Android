@@ -3,15 +3,22 @@ package com.rapidftr.model;
 
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.Database;
+import com.rapidftr.database.DatabaseSession;
+import com.rapidftr.database.ShadowSQLiteHelper;
+import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +35,19 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(CustomTestRunner.class)
 public class ChildTest {
+
+    private EnquiryRepository enquiryRepository;
+    private PotentialMatchRepository potentialMatchRepository;
+    private String user;
+    private DatabaseSession session;
+
+    @Before
+    public void setUp() throws JSONException {
+        user = "Foo";
+        session = new ShadowSQLiteHelper("test_database").getSession();
+        potentialMatchRepository = new PotentialMatchRepository(user, session);
+        enquiryRepository = new EnquiryRepository(user, session);
+    }
 
     @Test
     public void shouldCreateChildWithBlankContent() throws JSONException {
@@ -171,7 +191,7 @@ public class ChildTest {
         JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
         HashMap fromTo = (HashMap) changesMap.get("name");
 
-        assertThat(histories.size() ,is(1));
+        assertThat(histories.size(), is(1));
         assertThat(histories.get(0).get(USER_NAME).toString(), is(updatedChild.getCreatedBy()));
         assertThat(changesMap.names().get(0).toString(), is("name"));
         assertThat(fromTo.get(FROM).toString(), is("old-name"));
@@ -190,6 +210,7 @@ public class ChildTest {
         child.put(internal_id.getColumnName(), "xyz");
         assertThat(child.isNew(), is(false));
     }
+
     @Test
     public void testAtLeastOneFieldIsFilledExcludingOwner() throws JSONException {
         Child child = new Child("id1", "owner1", "");
@@ -200,5 +221,33 @@ public class ChildTest {
 
         child.remove("test1");
         Assert.assertThat(child.isValid(), is(false));
+    }
+
+    @Test
+    public void shouldGetPotentialMatches() throws JSONException, SQLException {
+        Child child = new Child("id_1", "", "{'_id' : 'child_id_1'}");
+
+        String enquiryJSON = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_1\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        enquiryRepository.createOrUpdate(enquiry);
+
+        String enquiryJSON2 = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_2\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        enquiryRepository.createOrUpdate(new Enquiry(enquiryJSON2));
+
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_1", "potential_match_id_1"));
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_2", "child_id_2", "potential_match_id_2"));
+
+        List<BaseModel> enquiries = child.getPotentialMatchingModels(potentialMatchRepository, null, enquiryRepository);
+
+        assertThat(enquiries.size(), is(1));
+        assertEquals(enquiry.getUniqueId(), enquiries.get(0).getUniqueId());
     }
 }

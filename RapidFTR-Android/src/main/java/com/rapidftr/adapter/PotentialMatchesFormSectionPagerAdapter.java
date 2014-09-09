@@ -12,8 +12,11 @@ import java.util.List;
 
 public class PotentialMatchesFormSectionPagerAdapter extends FormSectionPagerAdapter {
 
-    public PotentialMatchesFormSectionPagerAdapter(List<FormSection> formSections, BaseModel baseModel, boolean editable) {
+    private FormSectionView potentialMatchesView;
+
+    public PotentialMatchesFormSectionPagerAdapter(List<FormSection> formSections, BaseModel baseModel, boolean editable, FormSectionView potentialMatchesView) {
         super(formSections, baseModel, editable);
+        this.potentialMatchesView = potentialMatchesView;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class PotentialMatchesFormSectionPagerAdapter extends FormSectionPagerAda
         FormSectionView view;
 
         if (formSection instanceof PotentialMatchesFormSection) {
-            view = new PotentialMatchesFormSectionView(container.getContext());
+            view = potentialMatchesView;
         } else {
             view = createFormSectionView(container);
         }

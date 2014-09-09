@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -164,12 +165,10 @@ public class EnquiryRepositoryTest {
         enquiryRepository.createOrUpdate(enquiry);
 
         assertThat(enquiryRepository.all().size(), is(1));
-        assertTrue(enquiry.getPotentialMatchingIds().length() == 0);
 
         enquiry.put("enquirer_name", "New Reporter Name");
         enquiry.setCreatedBy("NEW USER");
         enquiry.setSynced(true);
-        enquiry.put(Database.EnquiryTableColumn.potential_matches.getColumnName(), "some potential matches id");
         enquiry.put(Database.EnquiryTableColumn.internal_id.getColumnName(), "new internal id");
         enquiry.put(Database.EnquiryTableColumn.internal_rev.getColumnName(), "new internal revision");
         enquiryRepository.update(enquiry);
@@ -180,7 +179,6 @@ public class EnquiryRepositoryTest {
         assertThat(retrieved.getCreatedBy().toString(), is("NEW USER"));
         assertTrue(retrieved.isSynced());
         assertThat(retrieved.getString(Database.EnquiryTableColumn.internal_id.getColumnName()), is("new internal id"));
-        assertThat(retrieved.getString(Database.EnquiryTableColumn.potential_matches.getColumnName()), is("some potential matches id"));
         assertThat(retrieved.getString(Database.EnquiryTableColumn.internal_rev.getColumnName()), is("new internal revision"));
     }
 
@@ -203,5 +201,57 @@ public class EnquiryRepositoryTest {
         when(enquiryRepository1.getContentValuesFrom(enquiry)).thenReturn(contentValues);
 
         enquiryRepository1.createOrUpdate(enquiry);
+    }
+
+    @Test
+    public void shouldAnEnquiryUsingInternalIds() throws JSONException, FailedToSaveException {
+        String enquiryJSON = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_1\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        enquiryRepository.createOrUpdate(enquiry);
+
+        List<String> ids = new ArrayList<String>();
+        ids.add("enquiry_id_1");
+        List<Enquiry> enquiries = enquiryRepository.getAllWithInternalIds(ids);
+        assertThat(enquiries.size(), is(1));
+        assertThat(enquiries.get(0).getUniqueId(), is(enquiry.getUniqueId()));
+    }
+
+    @Test
+    public void shouldReturnAllWithInternalIds() throws JSONException, FailedToSaveException {
+        String enquiryJSON = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_1\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        Enquiry enquiry1 = new Enquiry(enquiryJSON);
+        enquiryRepository.createOrUpdate(enquiry1);
+
+        String enquiryJSON2 = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_2\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        Enquiry enquiry2 = new Enquiry(enquiryJSON2);
+        enquiryRepository.createOrUpdate(enquiry2);
+
+        String enquiryJSON3 = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_3\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        Enquiry enquiry3 = new Enquiry(enquiryJSON3);
+        enquiryRepository.createOrUpdate(enquiry3);
+
+        List<String> ids = new ArrayList<String>();
+        ids.add("enquiry_id_1");
+        ids.add("enquiry_id_3");
+        List<Enquiry> enquiries = enquiryRepository.getAllWithInternalIds(ids);
+        assertThat(enquiries.size(), is(2));
+        assertThat(enquiries.get(0).getUniqueId(), is(enquiry1.getUniqueId()));
+        assertThat(enquiries.get(1).getUniqueId(), is(enquiry3.getUniqueId()));
     }
 }

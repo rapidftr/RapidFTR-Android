@@ -36,7 +36,7 @@ public class ShadowSQLiteHelper extends SQLiteOpenHelper implements DatabaseHelp
     private @Getter DatabaseSession session;
 
     public ShadowSQLiteHelper(String dbName) {
-        super(new Activity(), dbName, null, 1);
+        super(new Activity(), dbName, null, 2);
         session = new ShadowSQLiteSession(getWritableDatabase());
     }
 

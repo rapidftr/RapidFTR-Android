@@ -6,11 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn;
@@ -108,6 +112,17 @@ public class Child extends BaseModel {
         return super.isSynced();
     }
 
+    @Override
+    public List<BaseModel> getPotentialMatchingModels(PotentialMatchRepository potentialMatchRepo, ChildRepository childRepo, EnquiryRepository enquiryRepository) throws JSONException {
+        List<BaseModel> models = new ArrayList<BaseModel>();
+        try {
+            List<PotentialMatch> potentialMatches = potentialMatchRepo.getPotentialMatchesFor(this);
+            models.addAll(enquiryRepository.getAllWithInternalIds(idsFromMatches(potentialMatches)));
+            return models;
+        } catch (JSONException exception) {
+            return new ArrayList<BaseModel>();
+        }
+    }
 
     public boolean isNew() {
         return !has(internal_id.getColumnName());
@@ -121,5 +136,13 @@ public class Child extends BaseModel {
             Log.e("Fetching photos", "photo_keys field is available");
         }
         return photo_keys;
+    }
+
+    public static List<String> idsFromMatches(List<PotentialMatch> potentialMatches) {
+        List<String> ids = new ArrayList<String>();
+        for (PotentialMatch potentialMatch : potentialMatches) {
+            ids.add(potentialMatch.getEnquiryId());
+        }
+        return ids;
     }
 }

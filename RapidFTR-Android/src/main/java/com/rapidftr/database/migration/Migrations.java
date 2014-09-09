@@ -12,7 +12,6 @@ import static java.util.Arrays.asList;
 
 public enum Migrations {
 
-
     v001_createChildTable(1, MigrationSQL.createChildTable),
     v001_addCreatedAtColumn(1, MigrationSQL.addCreatedAtColumn),
     v001_addUpdatedAtColumn(1, MigrationSQL.addLastUpdatedAtColumn),
@@ -20,6 +19,7 @@ public enum Migrations {
     v001_add_revColumn(1, MigrationSQL.addRevColumn),
     v001_add_last_synced_at_column(1,MigrationSQL.addLastSyncedAtColumn),
     v001_createEnquiryTable(1, MigrationSQL.createEnquiryTable),
+    v002_createPotentialMatchTable(2, MigrationSQL.createPotentialMatchTable)
     ;
 
     private int databaseVersion;
@@ -94,7 +94,6 @@ class MigrationSQL {
             + Database.enquiry.getTableName() + "("
             + Database.EnquiryTableColumn.id.getColumnName() + " text primary key not null,"
             + Database.EnquiryTableColumn.content.getColumnName() + " text not null,"
-            + Database.EnquiryTableColumn.potential_matches.getColumnName() + " text null,"
             + Database.EnquiryTableColumn.created_by.getColumnName() + " text not null,"
             + Database.EnquiryTableColumn.created_at.getColumnName() + " text not null default '" + RapidFtrDateTime.now().defaultFormat() + "',"
             + Database.EnquiryTableColumn.synced.getColumnName() + "  text not null,"
@@ -102,6 +101,15 @@ class MigrationSQL {
             + Database.EnquiryTableColumn.internal_id.getColumnName() + "  text ,"
             + Database.EnquiryTableColumn.internal_rev.getColumnName() + "  text ,"
             + Database.EnquiryTableColumn.unique_identifier.getColumnName() + " text "
+            + ");";
+
+    public static final String createPotentialMatchTable ="create table "
+            + Database.potential_match.getTableName() + "("
+            + Database.PotentialMatchTableColumn.id.getColumnName() + " text primary key not null,"
+            + Database.EnquiryTableColumn.created_at.getColumnName() + " text not null default '" + RapidFtrDateTime.now().defaultFormat() + "',"
+            + Database.PotentialMatchTableColumn.child_id.getColumnName() + " text,"
+            + Database.PotentialMatchTableColumn.enquiry_id.getColumnName() + " text,"
+            + Database.PotentialMatchTableColumn.revision.getColumnName() + " text"
             + ");";
 }
 

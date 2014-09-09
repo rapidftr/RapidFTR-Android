@@ -14,8 +14,8 @@ import static org.mockito.Mockito.verify;
 public class SyncChildTaskTest {
 
     @Test
-    public void shouldRestartActivityOnSuccess(){
-        SyncSingleRecordTask task = new SyncSingleRecordTask(null, null, null);
+    public void shouldRestartActivityOnSuccess() {
+        SyncSingleRecordTask task = new SyncSingleRecordTask(null, null);
         Activity activity = mock(Activity.class);
         Intent mockIntent = mock(Intent.class);
         given(activity.getIntent()).willReturn(mockIntent);

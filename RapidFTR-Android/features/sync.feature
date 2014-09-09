@@ -18,6 +18,7 @@ Feature: Sync
     When I press "Updated Family Details"
     Then I should see "Updated Father's Name"
 
+  @ignore
   Scenario: Get Child Details
     Given I have a new child record (Name: John Doe, Father: Jonathan Doe) on the server
     And I select "Synchronize All" from the menu

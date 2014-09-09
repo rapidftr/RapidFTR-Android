@@ -11,6 +11,7 @@ Feature: Search
     And I press "Go"
     Then I should see "Name: Chïld Nàmê" within "60" seconds
 
+  @ignore
   Scenario: Highlighted fields are used to show summary of child records in search
     Given I have a new child record (Name: John Doe, Father: Jonathan Doe) on the server
     And I have form sections with the highlighted field "Father"

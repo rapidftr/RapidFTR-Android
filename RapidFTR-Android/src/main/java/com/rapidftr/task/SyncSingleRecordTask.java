@@ -20,9 +20,8 @@ public class SyncSingleRecordTask extends AsyncTaskWithDialog<BaseModel, Void, B
     private Activity activity;
 
     @Inject
-    public SyncSingleRecordTask(SyncService service, Repository repository, User currentUser) {
+    public SyncSingleRecordTask(SyncService service, User currentUser) {
         this.service = service;
-        this.repository = repository;
         this.currentUser = currentUser;
     }
 
