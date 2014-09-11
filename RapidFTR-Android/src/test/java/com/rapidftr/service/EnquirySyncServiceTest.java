@@ -65,7 +65,7 @@ public class EnquirySyncServiceTest {
     @Test
     public void getIdsToDownloadShouldRetrieveUrlsFromApiSinceLastUpdate() throws Exception {
         String response = "[{\"location\":\"http://blah.com/123\"},{\"location\":\"http://blah.com/234\"}]";
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/enquiries/?updated_after=1970-01-01%2B00%253A00%253A00UTC", response);
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/enquiries?updated_after=1970-01-01%2B00%253A00%253A00UTC", response);
 
         List<String> enquiryIds = new EnquirySyncService(mockContext(), enquiryRepository).getIdsToDownload();
 
@@ -77,13 +77,14 @@ public class EnquirySyncServiceTest {
     public void shouldUpdateEnquiryWhenItIsNotNew() throws Exception {
         String response = "{\"_id\" : \"couch_id\", \"child_name\":\"subhas\",\"unique_identifier\":\"78223s4h1e468f5200edc\"}";
         Enquiry enquiry = spy(new Enquiry(response, "createdBy"));
+        enquiry.put(Enquiry.FIELD_INTERNAL_ID, "id");
 
         doReturn(false).when(enquiry).isNew();
 
         BasicHttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
         httpResponse.setEntity(new StringEntity(response, ContentType.APPLICATION_JSON));
 
-        getFakeHttpLayer().addHttpResponseRule("PUT", "http://whatever/api/enquiries/", httpResponse);
+        getFakeHttpLayer().addHttpResponseRule("PUT", "http://whatever/api/enquiries/id", httpResponse);
         Enquiry returnedEnquiry = new EnquirySyncService(mockContext(), enquiryRepository).sync(enquiry, user);
 
         verify(enquiryRepository).createOrUpdate(returnedEnquiry);
@@ -99,7 +100,7 @@ public class EnquirySyncServiceTest {
         BasicHttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
         httpResponse.setEntity(new StringEntity(response, ContentType.APPLICATION_JSON));
 
-        getFakeHttpLayer().addHttpResponseRule("POST", "http://whatever/api/enquiries/", httpResponse);
+        getFakeHttpLayer().addHttpResponseRule("POST", "http://whatever/api/enquiries", httpResponse);
         Enquiry returnedEnquiry = new EnquirySyncService(mockContext(), enquiryRepository).sync(enquiry, user);
 
         verify(enquiryRepository).createOrUpdate(returnedEnquiry);
@@ -109,13 +110,14 @@ public class EnquirySyncServiceTest {
     public void shouldUpdateEnquiryAttributesAfterSync() throws Exception {
         String response = "{\"_id\" : \"couch_id\", \"child_name\":\"subhas\",\"unique_identifier\":\"78223s4h1e468f5200edc\"}";
         Enquiry enquiry = spy(new Enquiry(response, "createdBy"));
+        enquiry.put(Enquiry.FIELD_INTERNAL_ID, "id");
 
         doReturn(false).when(enquiry).isNew();
 
         BasicHttpResponse httpResponse = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
         httpResponse.setEntity(new StringEntity(response, ContentType.APPLICATION_JSON));
 
-        getFakeHttpLayer().addHttpResponseRule("PUT", "http://whatever/api/enquiries/", httpResponse);
+        getFakeHttpLayer().addHttpResponseRule("PUT", "http://whatever/api/enquiries/id", httpResponse);
         Enquiry returnedEnquiry = new Enquiry();
 
         assertThat(returnedEnquiry.isSynced(), CoreMatchers.is(false));

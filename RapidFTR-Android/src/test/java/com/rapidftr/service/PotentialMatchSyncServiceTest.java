@@ -42,7 +42,7 @@ public class PotentialMatchSyncServiceTest {
     @Test
     public void shouldFetchListOfResourceUrlsToUpdate() throws Exception {
         String response = "[{\"location\":\"http://testserver/api/potential_matches/cc6d605e5f5591551a62f9cd181ee832\"}]";
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/potential_matches/?updated_after=1970-01-01%2B00%253A00%253A00UTC", response);
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/potential_matches?updated_after=1970-01-01%2B00%253A00%253A00UTC", response);
 
         List<String> resourceUrlsToUpdate = new PotentialMatchSyncService(mockContext(), repository).getIdsToDownload();
         assertEquals(1, resourceUrlsToUpdate.size());

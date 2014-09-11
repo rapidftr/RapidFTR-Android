@@ -1,6 +1,7 @@
 package com.rapidftr.service;
 
 import com.google.inject.Inject;
+import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.PotentialMatch;
 import com.rapidftr.model.User;
@@ -18,13 +19,13 @@ public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
     public static final String POTENTIAL_MATCH_API_PARAMETER = "potential_match";
 
     private RapidFtrApplication context;
-    private PotentialMatchRepository repository;
     private EntityHttpDao<PotentialMatch> entityHttpDao;
+    private static final int NOTIFICATION_ID = 1023;
+
 
     @Inject
     public PotentialMatchSyncService(RapidFtrApplication rapidFtrApplication, PotentialMatchRepository repository) {
         this.context = rapidFtrApplication;
-        this.repository = repository;
         this.entityHttpDao = EntityHttpDaoFactory.createPotentialMatchHttpDao(rapidFtrApplication.getSharedPreferences().getString(RapidFtrApplication.SERVER_URL_PREF, ""),
                 POTENTIAL_MATCH_API_PATH, POTENTIAL_MATCH_API_PARAMETER);
     }
@@ -53,11 +54,11 @@ public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
 
     @Override
     public int getNotificationId() {
-        return 0;
+        return NOTIFICATION_ID;
     }
 
     @Override
     public String getNotificationTitle() {
-        return null;
+        return context.getString(R.string.potential_matches_sync_title);
     }
 }
