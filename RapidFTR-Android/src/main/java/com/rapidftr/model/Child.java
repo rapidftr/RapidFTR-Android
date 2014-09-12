@@ -2,6 +2,7 @@ package com.rapidftr.model;
 
 import android.os.Parcel;
 import android.util.Log;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -12,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import static com.rapidftr.utils.JSONArrays.asList;
 
 public class Child extends BaseModel {
 
+    public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     public static final String CHILD_FORM_NAME = "Children";
 
     public Child() {
@@ -75,6 +78,14 @@ public class Child extends BaseModel {
             }
         }
         return numberOfNonInternalFields > 0;
+    }
+
+    public boolean equals(Object other) {
+        try {
+            return (other != null && other instanceof JSONObject) && JSON_MAPPER.readTree(toString()).equals(JSON_MAPPER.readTree(other.toString()));
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     public JSONObject values() throws JSONException {

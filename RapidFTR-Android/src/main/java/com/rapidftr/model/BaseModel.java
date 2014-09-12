@@ -3,7 +3,6 @@ package com.rapidftr.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
@@ -15,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,8 +25,6 @@ import static com.rapidftr.utils.JSONArrays.asJSONArray;
 import static com.rapidftr.utils.JSONArrays.asList;
 
 public class BaseModel extends JSONObject implements Parcelable {
-
-    public static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     public static final String FIELD_INTERNAL_ID = "_id";
     public static final String FIELD_REVISION_ID = "_rev";
@@ -274,16 +270,6 @@ public class BaseModel extends JSONObject implements Parcelable {
         return null;
     }
 
-    @Override
-    public boolean equals(Object other) {
-        try {
-            return (other != null && other instanceof JSONObject) && JSON_MAPPER.readTree(toString()).equals(JSON_MAPPER.readTree(other.toString()));
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-
     public class History extends JSONObject implements Parcelable {
         public static final String HISTORIES = "histories";
         public static final String USER_NAME = "user_name";
@@ -312,5 +298,4 @@ public class BaseModel extends JSONObject implements Parcelable {
         }
 
     }
-
 }
