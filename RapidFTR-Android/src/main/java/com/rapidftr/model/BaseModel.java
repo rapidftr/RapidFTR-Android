@@ -65,6 +65,10 @@ public class BaseModel extends JSONObject implements Parcelable {
         return has(unique_identifier.getColumnName()) ? getString(unique_identifier.getColumnName()) : null;
     }
 
+    public String getInternalId() {
+        return has(FIELD_INTERNAL_ID) ? getString(FIELD_INTERNAL_ID) : null;
+    }
+
     public void setUniqueId(String id) throws JSONException {
         put(unique_identifier.getColumnName(), id);
     }

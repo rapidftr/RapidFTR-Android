@@ -18,7 +18,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.ParameterizedType;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static com.rapidftr.utils.http.FluentRequest.http;
 
@@ -67,7 +70,8 @@ public class EntityHttpDao<T extends BaseModel> {
     public T update(T entity) throws IOException, JSONException, HttpException {
         FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
-                .host(buildUrl())
+                .host(serverUrl)
+                .path(buildUpdatePath(entity))
                 .param(apiParameter, entity.values().toString())
                 .putWithMultiPart()
                 .ensureSuccess();
@@ -95,31 +99,27 @@ public class EntityHttpDao<T extends BaseModel> {
 
     public List<String> getUpdatedResourceUrls(DateTime lastUpdate) throws IOException, HttpException, JSONException {
         String utcString = new StringBuilder(DateTimeFormat.forPattern(DATE_PATTERN).withZone(DateTimeZone.UTC).print(lastUpdate)).append("UTC").toString();
-        try {
-            final FluentResponse fluentResponse = http()
-                    .context(RapidFtrApplication.getApplicationInstance())
-                    .host(buildUrl())
-                    .param(UPDATED_AFTER_FORM_PARAMETER, URLEncoder.encode(utcString, CHARACTER_SET))
-                    .get()
-                    .ensureSuccess();
-            String json = getJsonResponse(fluentResponse);
-            JSONArray jsonArray = new JSONArray(json);
-            List<String> urls = new ArrayList<String>();
-            for (int i = 0; i < jsonArray.length(); i++) {
-                urls.add(jsonArray.getJSONObject(i).getString(LOCATION_ATTRIBUTE));
-            }
-            return urls;
-        } catch (Exception e) {
-            Log.e(null, e.getMessage(), e);
+        final FluentResponse fluentResponse = http()
+                .context(RapidFtrApplication.getApplicationInstance())
+                .host(serverUrl)
+                .path(apiPath)
+                .param(UPDATED_AFTER_FORM_PARAMETER, URLEncoder.encode(utcString, CHARACTER_SET))
+                .get()
+                .ensureSuccess();
+        String json = getJsonResponse(fluentResponse);
+        JSONArray jsonArray = new JSONArray(json);
+        List<String> urls = new ArrayList<String>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            urls.add(jsonArray.getJSONObject(i).getString(LOCATION_ATTRIBUTE));
         }
-
-        return Collections.emptyList();
+        return urls;
     }
 
     public T create(T entity) throws IOException, HttpException, JSONException {
         FluentResponse fluentResponse = http()
                 .context(RapidFtrApplication.getApplicationInstance())
-                .host(buildUrl())
+                .host(serverUrl)
+                .path(apiPath)
                 .param(apiParameter, entity.getJsonString())
                 .postWithMultiPart()
                 .ensureSuccess();
@@ -149,8 +149,12 @@ public class EntityHttpDao<T extends BaseModel> {
         return CharStreams.toString(new InputStreamReader(fluentResponse.getEntity().getContent()));
     }
 
-    protected String buildUrl() {
-        return new StringBuilder(serverUrl).append(apiPath).toString();
+    private String buildUpdatePath(T entity) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(apiPath.endsWith("/") ? apiPath : apiPath + "/");
+        builder.append(entity.getInternalId() != null ? entity.getInternalId() : "");
+
+        return builder.toString();
     }
 
     protected T buildEntityFromJson(String jsonResponse) {

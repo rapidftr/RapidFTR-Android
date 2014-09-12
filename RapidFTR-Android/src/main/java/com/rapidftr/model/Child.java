@@ -53,12 +53,6 @@ public class Child extends BaseModel {
         setSynced(synced);
     }
 
-
-    public String getInternalId() throws JSONException {
-        return getString(internal_id.getColumnName());
-    }
-
-
     public void setLastSyncedAt(String lastSyncedAt) throws JSONException {
         put(last_synced_at.getColumnName(), lastSyncedAt);
     }
