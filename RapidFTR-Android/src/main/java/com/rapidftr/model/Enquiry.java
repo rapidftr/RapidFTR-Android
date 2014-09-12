@@ -100,10 +100,6 @@ public class Enquiry extends BaseModel {
         return ids;
     }
 
-    public String getInternalId() {
-        return getString(Database.EnquiryTableColumn.internal_id.getColumnName());
-    }
-
     @Override
     public String getApiPath() {
         return "/api/enquiries";

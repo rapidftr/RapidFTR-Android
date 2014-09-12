@@ -70,7 +70,7 @@ public class BaseModel extends JSONObject implements Parcelable {
     }
 
     public String getInternalId() {
-        return has(FIELD_INTERNAL_ID) ? getString(FIELD_INTERNAL_ID) : null;
+        return has(FIELD_INTERNAL_ID) ? getString(FIELD_INTERNAL_ID) : "";
     }
 
     public void setUniqueId(String id) throws JSONException {
