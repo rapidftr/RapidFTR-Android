@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.BaseModel;
-import com.rapidftr.view.FormSectionView;
+import com.rapidftr.view.DefaultFormSectionView;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -29,15 +29,15 @@ public class FormSectionPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        FormSectionView view = createFormSectionView(container);
+        DefaultFormSectionView view = createFormSectionView(container);
         view.initialize(formSections.get(position), baseModel);
         view.setEnabled(editable);
         container.addView(view, 0);
         return view;
     }
 
-    protected FormSectionView createFormSectionView(ViewGroup container) {
-        return new FormSectionView(container.getContext());
+    protected DefaultFormSectionView createFormSectionView(ViewGroup container) {
+        return new DefaultFormSectionView(container.getContext());
     }
 
     @Override

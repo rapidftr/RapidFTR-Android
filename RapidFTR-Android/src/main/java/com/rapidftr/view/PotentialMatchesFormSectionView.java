@@ -5,7 +5,10 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
@@ -20,18 +23,28 @@ import org.json.JSONException;
 
 import java.util.List;
 
-public abstract class PotentialMatchesFormSectionView extends FormSectionView {
+public abstract class PotentialMatchesFormSectionView extends LinearLayout implements FormSectionView {
 
     public PotentialMatchesFormSectionView(Context context) {
         super(context);
+        this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        initializeView(context);
     }
 
     public PotentialMatchesFormSectionView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initializeView(context);
     }
 
     public PotentialMatchesFormSectionView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        initializeView(context);
+    }
+
+    private void initializeView(Context context) {
+        this.setOrientation(LinearLayout.VERTICAL);
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
+        layoutInflater.inflate(R.layout.form_section, this);
     }
 
     @Override
@@ -45,11 +58,24 @@ public abstract class PotentialMatchesFormSectionView extends FormSectionView {
 
             try {
                 List<BaseModel> potentialMatches = model.getPotentialMatchingModels(potentialMatchRepository, childRepository, enquiryRepository);
+                getContainer().removeAllViews();
                 getContainer().addView(createPotentialMatchView(getContext(), potentialMatches));
             } catch (JSONException e) {
                 Log.e(null, null, e);
             }
         }
+    }
+
+    protected LinearLayout getContainer() {
+        return (LinearLayout) findViewById(R.id.container);
+    }
+
+    protected TextView getLabel() {
+        return (TextView) findViewById(R.id.label);
+    }
+
+    protected TextView getHelpText() {
+        return (TextView) findViewById(R.id.help_text);
     }
 
     private View createPotentialMatchView(Context context, List<BaseModel> models) {
