@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.Child;
-import com.rapidftr.view.FormSectionView;
+import com.rapidftr.view.DefaultFormSectionView;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -38,7 +38,7 @@ public class FormSectionPagerAdapterTest {
 
     @Test
     public void testInstantiateEnabledItem() {
-        FormSectionView view = mock(FormSectionView.class);
+        DefaultFormSectionView view = mock(DefaultFormSectionView.class);
         ViewGroup container = mock(ViewGroup.class);
 
         doReturn(view).when(adapter).createFormSectionView(container);
@@ -51,7 +51,7 @@ public class FormSectionPagerAdapterTest {
 
     @Test
     public void testInstantiateDisabledItem() {
-        FormSectionView view = mock(FormSectionView.class);
+        DefaultFormSectionView view = mock(DefaultFormSectionView.class);
         ViewGroup container = mock(ViewGroup.class);
 
         doReturn(view).when(adapter).createFormSectionView(container);
@@ -65,7 +65,7 @@ public class FormSectionPagerAdapterTest {
 
     @Test
     public void shouldReturnViewAsKey() {
-        FormSectionView view = mock(FormSectionView.class);
+        DefaultFormSectionView view = mock(DefaultFormSectionView.class);
         doReturn(view).when(adapter).createFormSectionView(any(ViewGroup.class));
 
         Object actual = adapter.instantiateItem(mock(ViewGroup.class), 0);

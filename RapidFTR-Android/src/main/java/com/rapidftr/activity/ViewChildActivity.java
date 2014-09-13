@@ -21,8 +21,6 @@ import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncSingleRecordTask;
-import com.rapidftr.utils.http.FluentRequest;
-import com.rapidftr.view.FormSectionView;
 import com.rapidftr.view.PotentialMatchesFormSectionView;
 import org.json.JSONException;
 
@@ -61,10 +59,10 @@ public class ViewChildActivity extends BaseChildActivity {
 
     @Override
     protected void initializePager() {
-        FormSectionView potentialMatchesView = new PotentialMatchesFormSectionView(this) {
+        PotentialMatchesFormSectionView potentialMatchesView = new PotentialMatchesFormSectionView(this) {
             @Override
             protected HighlightedFieldsViewAdapter getHighlightedFieldsViewAdapter(List<BaseModel> models) {
-                return new HighlightedFieldsViewAdapter(getContext(), models, Enquiry.ENQUIRY_FORM_NAME, ViewEnquiryActivity.class);
+                return new HighlightedFieldsViewAdapter(ViewChildActivity.this, models, Enquiry.ENQUIRY_FORM_NAME, ViewEnquiryActivity.class);
             }
         };
         getPager().setAdapter(new PotentialMatchesFormSectionPagerAdapter(formSections, getModel(), getEditable(), potentialMatchesView));
