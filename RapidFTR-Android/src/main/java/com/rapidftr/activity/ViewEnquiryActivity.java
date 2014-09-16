@@ -19,6 +19,7 @@ import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncSingleRecordTask;
 import com.rapidftr.view.PotentialMatchesFormSectionView;
+import com.rapidftr.view.PotentialMatchesViewAdapter;
 import lombok.Cleanup;
 import org.json.JSONException;
 
@@ -36,8 +37,8 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
     protected void initializePager() {
         PotentialMatchesFormSectionView potentialMatchesView = new PotentialMatchesFormSectionView(this) {
             @Override
-            protected HighlightedFieldsViewAdapter getHighlightedFieldsViewAdapter(List<BaseModel> models) {
-                return new HighlightedFieldsViewAdapter(ViewEnquiryActivity.this, models, Child.CHILD_FORM_NAME, ViewChildActivity.class);
+            protected PotentialMatchesViewAdapter getHighlightedFieldsViewAdapter(List<BaseModel> allModels, List<BaseModel> confirmedModels) {
+                return new PotentialMatchesViewAdapter(ViewEnquiryActivity.this, allModels, confirmedModels, Child.CHILD_FORM_NAME, ViewChildActivity.class);
             }
         };
         getPager().setAdapter(new PotentialMatchesFormSectionPagerAdapter(formSections, getModel(), getEditable(), potentialMatchesView));

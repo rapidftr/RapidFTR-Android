@@ -5,6 +5,7 @@ import org.json.JSONException;
 public class PotentialMatch extends BaseModel {
     private static final String ENQUIRY_ID_FIELD = "enquiry_id";
     private static final String CHILD_ID_FIELD = "child_id";
+    private static final String CONFIRMED = "confirmed";
 
     public PotentialMatch(String jsonString) throws JSONException {
         super(jsonString);
@@ -14,6 +15,11 @@ public class PotentialMatch extends BaseModel {
         this.put(ENQUIRY_ID_FIELD, enquiryId);
         this.put(CHILD_ID_FIELD, childId);
         this.put(FIELD_INTERNAL_ID, uniqueIdentifier);
+    }
+
+    public PotentialMatch(String enquiryId, String childId, String uniqueIdentifier, Boolean isConfirmed) {
+        this(enquiryId, childId, uniqueIdentifier);
+        this.put(CONFIRMED, isConfirmed.toString());
     }
 
     public String getChildId() {
@@ -40,5 +46,9 @@ public class PotentialMatch extends BaseModel {
     @Override
     public String getApiParameter() {
         return "potential_match";
+    }
+
+    public Boolean isConfirmed() {
+        return Boolean.valueOf(getString(CONFIRMED));
     }
 }

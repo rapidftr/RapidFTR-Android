@@ -21,6 +21,7 @@ import com.rapidftr.repository.PotentialMatchRepository;
 import lombok.Cleanup;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class PotentialMatchesFormSectionView extends LinearLayout implements FormSectionView {
@@ -57,9 +58,10 @@ public abstract class PotentialMatchesFormSectionView extends LinearLayout imple
             @Cleanup EnquiryRepository enquiryRepository = RapidFtrApplication.getApplicationInstance().getBean(EnquiryRepository.class);
 
             try {
+                List<BaseModel> confirmedMatches = model.getConfirmedMatchingModels(potentialMatchRepository, childRepository, enquiryRepository);
                 List<BaseModel> potentialMatches = model.getPotentialMatchingModels(potentialMatchRepository, childRepository, enquiryRepository);
                 getContainer().removeAllViews();
-                getContainer().addView(createPotentialMatchView(getContext(), potentialMatches));
+                getContainer().addView(createPotentialMatchView(potentialMatches, confirmedMatches));
             } catch (JSONException e) {
                 Log.e(null, null, e);
             }
@@ -78,11 +80,12 @@ public abstract class PotentialMatchesFormSectionView extends LinearLayout imple
         return (TextView) findViewById(R.id.help_text);
     }
 
-    private View createPotentialMatchView(Context context, List<BaseModel> models) {
+    private View createPotentialMatchView(List<BaseModel> models, List<BaseModel> confirmedModels) {
+        List<BaseModel> combinedModels = combineModels(models, confirmedModels);
         HighlightedFieldsViewAdapter highlightedFieldsViewAdapter =
-                getHighlightedFieldsViewAdapter(models);
+                getHighlightedFieldsViewAdapter(combinedModels, confirmedModels);
         ListView listView = (ListView) LayoutInflater.from(getContext()).inflate(R.layout.child_list, null);
-        if (models.isEmpty()) {
+        if (combinedModels.isEmpty()) {
             listView.setEmptyView(LayoutInflater.from(getContext()).inflate(R.layout.no_child_view, null));
         }
         listView.setAdapter(highlightedFieldsViewAdapter);
@@ -90,5 +93,12 @@ public abstract class PotentialMatchesFormSectionView extends LinearLayout imple
         return listView;
     }
 
-    abstract protected HighlightedFieldsViewAdapter getHighlightedFieldsViewAdapter(List<BaseModel> models);
+    private List<BaseModel> combineModels(List<BaseModel> models, List<BaseModel> confirmedModels) {
+        List<BaseModel> combinedModels = new ArrayList<BaseModel>();
+        combinedModels.addAll(confirmedModels);
+        combinedModels.addAll(models);
+        return combinedModels;
+    }
+
+    abstract protected HighlightedFieldsViewAdapter getHighlightedFieldsViewAdapter(List<BaseModel> models, List<BaseModel> confirmedModels);
 }

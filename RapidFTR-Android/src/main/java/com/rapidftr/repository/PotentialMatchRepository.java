@@ -73,6 +73,7 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
         values.put(created_at.getColumnName(), potentialMatch.getCreatedAt());
         values.put(id.getColumnName(), potentialMatch.getUniqueId());
         values.put(revision.getColumnName(), potentialMatch.getRevision());
+        values.put(confirmed.getColumnName(), potentialMatch.isConfirmed().toString());
 
         long id = session.replace(Database.potential_match.getTableName(), null, values);
         if (id <= 0) throw new IllegalArgumentException(id + "");
@@ -125,6 +126,8 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
         int enquiryIdIndex = cursor.getColumnIndex(enquiry_id.getColumnName());
         int childIdIndex = cursor.getColumnIndex(child_id.getColumnName());
         int idIndex = cursor.getColumnIndex(id.getColumnName());
-        return new PotentialMatch(cursor.getString(enquiryIdIndex), cursor.getString(childIdIndex), cursor.getString(idIndex));
+        int confirmedIndex = cursor.getColumnIndex(confirmed.getColumnName());
+        return new PotentialMatch(cursor.getString(enquiryIdIndex), cursor.getString(childIdIndex), cursor.getString(idIndex),
+                Boolean.valueOf(cursor.getString(confirmedIndex)));
     }
 }
