@@ -123,7 +123,7 @@ public class Child extends BaseModel {
         List<BaseModel> models = new ArrayList<BaseModel>();
         try {
             List<PotentialMatch> matches = potentialMatchRepo.getPotentialMatchesFor(this);
-            Collection<PotentialMatch> potentialMatches = Collections2.filter(matches, new FilterByConfirmationStatus(status));
+            Collection<PotentialMatch> potentialMatches = Collections2.filter(matches, new PotentialMatch.FilterByConfirmationStatus(status));
             models.addAll(enquiryRepository.getAllWithInternalIds(idsFromMatches(potentialMatches)));
             return models;
         } catch (JSONException exception) {
@@ -151,18 +151,5 @@ public class Child extends BaseModel {
             ids.add(potentialMatch.getEnquiryId());
         }
         return ids;
-    }
-
-    private static class FilterByConfirmationStatus implements Predicate<PotentialMatch> {
-        private Boolean keepConfirmedMatches;
-
-        public FilterByConfirmationStatus(Boolean keepConfirmedMatches){
-            this.keepConfirmedMatches = keepConfirmedMatches;
-        }
-
-        @Override
-        public boolean apply(PotentialMatch potentialMatch) {
-            return potentialMatch.isConfirmed() == keepConfirmedMatches;
-        }
     }
 }

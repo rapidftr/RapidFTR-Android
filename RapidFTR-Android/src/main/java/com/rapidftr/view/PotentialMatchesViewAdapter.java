@@ -57,11 +57,11 @@ public class PotentialMatchesViewAdapter<T extends BaseModel> extends Highlighte
         Iterable<String> uniqueIds = Iterables.transform(confirmedModels, new Function<T, String>() {
             @Override
             public String apply(T t) {
-                try {
-                    return t.getUniqueId();
-                } catch (JSONException e) {
-                    return null;
-                }
+            try {
+                return t.getUniqueId();
+            } catch (JSONException e) {
+                return null;
+            }
             }
         });
         return Lists.newArrayList(Iterables.filter(uniqueIds,Predicates.notNull()));

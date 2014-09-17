@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsNull.nullValue;
 
 @RunWith(CustomTestRunner.class)
 public class PotentialMatchRepositoryTest {
@@ -73,5 +75,26 @@ public class PotentialMatchRepositoryTest {
 
         assertThat(matches.size(), is(1));
         assertThat(matches.get(0).getChildId(), is("child_id"));
+    }
+
+    @Test
+    public void shouldUpdateExistingRecords() throws JSONException, SQLException {
+        PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_1");
+        repository.createOrUpdate(potentialMatch);
+        repository.update(new PotentialMatch("enquiry_id", "child_id", "unique_id_1", true));
+        PotentialMatch savedPotentialMatch = repository.get("unique_id_1");
+        assert(savedPotentialMatch.isConfirmed());
+    }
+
+    @Test
+    public void shouldGetExistingRecords() throws JSONException, SQLException {
+        PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_1");
+        repository.createOrUpdate(potentialMatch);
+        assertThat(repository.get("unique_id_1"), is(notNullValue()));
+    }
+
+    @Test
+    public void shouldReturnNullIfPotentialMatchDoesNotExist() throws JSONException, SQLException {
+        assertThat(repository.get("unique_id_1"), is(nullValue()));
     }
 }

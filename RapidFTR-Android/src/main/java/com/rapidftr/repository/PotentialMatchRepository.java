@@ -57,7 +57,12 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
 
     @Override
     public PotentialMatch get(String id) throws JSONException {
-        return null;
+        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE id = ?", new String[]{id});
+        if (cursor.moveToNext()) {
+            return buildPotentialMatch(cursor);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -86,7 +91,11 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
 
     @Override
     public void update(PotentialMatch potentialMatch) throws JSONException {
-
+        try {
+            createOrUpdate(potentialMatch);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

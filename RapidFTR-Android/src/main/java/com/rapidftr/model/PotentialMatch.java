@@ -1,5 +1,6 @@
 package com.rapidftr.model;
 
+import com.google.common.base.Predicate;
 import org.json.JSONException;
 
 public class PotentialMatch extends BaseModel {
@@ -50,5 +51,18 @@ public class PotentialMatch extends BaseModel {
 
     public Boolean isConfirmed() {
         return Boolean.valueOf(getString(CONFIRMED));
+    }
+
+    public static class FilterByConfirmationStatus implements Predicate<PotentialMatch> {
+        private Boolean keepConfirmedMatches;
+
+        public FilterByConfirmationStatus(Boolean keepConfirmedMatches){
+            this.keepConfirmedMatches = keepConfirmedMatches;
+        }
+
+        @Override
+        public boolean apply(PotentialMatch potentialMatch) {
+            return potentialMatch.isConfirmed() == keepConfirmedMatches;
+        }
     }
 }

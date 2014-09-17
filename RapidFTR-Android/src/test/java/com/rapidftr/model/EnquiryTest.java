@@ -17,6 +17,8 @@ import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(CustomTestRunner.class)
@@ -68,6 +70,48 @@ public class EnquiryTest {
         assertEquals(2, children.size());
         assertTrue(children.contains(child1));
         assertTrue(children.contains(child3));
+    }
+
+    @Test
+    public void shouldNotReturnConfirmedMatchesForPotentialMatches() throws JSONException, SQLException {
+        Child child1 = new Child("id1", "owner1", "{'test':'a','_id':'child_id_1' }");
+        Child child2 = new Child("id2", "owner1", "{'test':'a','_id':'child_id_2' }");
+        childRepository.createOrUpdate(child1);
+        childRepository.createOrUpdate(child2);
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_1", "potential_match_id_1"));
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_2", "potential_match_id_2", true));
+
+        String enquiryJSON = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_1\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        List<BaseModel> children = enquiry.getPotentialMatchingModels(potentialMatchRepository, childRepository, null);
+
+        assertEquals(1, children.size());
+        assertTrue(children.contains(child1));
+    }
+
+    @Test
+    public void shouldGetConfirmedMatches() throws JSONException, SQLException {
+        Child child1 = new Child("id1", "owner1", "{'test':'a','_id':'child_id_1' }");
+        Child child2 = new Child("id2", "owner1", "{'test':'a','_id':'child_id_2' }");
+        childRepository.createOrUpdate(child1);
+        childRepository.createOrUpdate(child2);
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_1", "potential_match_id_1"));
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_2", "potential_match_id_2", true));
+
+        String enquiryJSON = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_1\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        List<BaseModel> children = enquiry.getConfirmedMatchingModels(potentialMatchRepository, childRepository, null);
+
+        assertEquals(1, children.size());
+        assertTrue(children.contains(child2));
     }
 
     @Test
