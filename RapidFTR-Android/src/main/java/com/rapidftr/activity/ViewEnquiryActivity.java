@@ -35,12 +35,9 @@ public class ViewEnquiryActivity extends BaseEnquiryActivity {
 
     @Override
     protected void initializePager() {
-        PotentialMatchesFormSectionView potentialMatchesView = new PotentialMatchesFormSectionView(this) {
-            @Override
-            protected PotentialMatchesViewAdapter getHighlightedFieldsViewAdapter(List<BaseModel> allModels, List<BaseModel> confirmedModels) {
-                return new PotentialMatchesViewAdapter(ViewEnquiryActivity.this, allModels, confirmedModels, Child.CHILD_FORM_NAME, ViewChildActivity.class);
-            }
-        };
+        PotentialMatchesViewAdapter adapter = new PotentialMatchesViewAdapter.Builder(this).forEnquiry(getModel()).build();
+        PotentialMatchesFormSectionView potentialMatchesView = new PotentialMatchesFormSectionView(this, adapter);
+
         getPager().setAdapter(new PotentialMatchesFormSectionPagerAdapter(formSections, getModel(), getEditable(), potentialMatchesView));
         getPager().setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
