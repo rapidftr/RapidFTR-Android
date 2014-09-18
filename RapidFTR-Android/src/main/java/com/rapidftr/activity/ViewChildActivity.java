@@ -10,20 +10,24 @@ import android.view.View;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.adapter.PotentialMatchesFormSectionPagerAdapter;
 import com.rapidftr.forms.PotentialMatchesFormSection;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.EnquiryRepository;
+import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncSingleRecordTask;
 import com.rapidftr.view.PotentialMatchesFormSectionView;
+import com.rapidftr.view.PotentialMatchesViewAdapter;
+import lombok.Cleanup;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
@@ -59,12 +63,9 @@ public class ViewChildActivity extends BaseChildActivity {
 
     @Override
     protected void initializePager() {
-        PotentialMatchesFormSectionView potentialMatchesView = new PotentialMatchesFormSectionView(this) {
-            @Override
-            protected HighlightedFieldsViewAdapter getHighlightedFieldsViewAdapter(List<BaseModel> models) {
-                return new HighlightedFieldsViewAdapter(ViewChildActivity.this, models, Enquiry.ENQUIRY_FORM_NAME, ViewEnquiryActivity.class);
-            }
-        };
+        PotentialMatchesViewAdapter adapter = new PotentialMatchesViewAdapter.Builder(this).forChild(getModel()).build();
+        PotentialMatchesFormSectionView potentialMatchesView = new PotentialMatchesFormSectionView(this, adapter);
+
         getPager().setAdapter(new PotentialMatchesFormSectionPagerAdapter(formSections, getModel(), getEditable(), potentialMatchesView));
         getPager().setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -153,5 +154,4 @@ public class ViewChildActivity extends BaseChildActivity {
     protected void showSyncLog() {
         Toast.makeText(this, getText(R.string.temp_sync_error), Toast.LENGTH_LONG).show();
     }
-
 }

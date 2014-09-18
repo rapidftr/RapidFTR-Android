@@ -250,4 +250,60 @@ public class ChildTest {
         assertThat(enquiries.size(), is(1));
         assertEquals(enquiry.getUniqueId(), enquiries.get(0).getUniqueId());
     }
+
+    @Test
+    public void shouldNotReturnConfirmedMatchesForPotentialMatches() throws JSONException, SQLException {
+        Child child = new Child("id_1", "", "{'_id' : 'child_id_1'}");
+
+        String enquiryJSON = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_1\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        enquiryRepository.createOrUpdate(enquiry);
+
+        String enquiryJSON2 = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_2\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        enquiryRepository.createOrUpdate(new Enquiry(enquiryJSON2));
+
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_1", "potential_match_id_1"));
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_2", "child_id_1", "potential_match_id_2", true));
+
+        List<BaseModel> enquiries = child.getPotentialMatchingModels(potentialMatchRepository, null, enquiryRepository);
+
+        assertThat(enquiries.size(), is(1));
+        assertEquals(enquiry.getUniqueId(), enquiries.get(0).getUniqueId());
+    }
+
+    @Test
+    public void shouldGetConfirmedMatches() throws JSONException, SQLException {
+        Child child = new Child("id_1", "", "{'_id' : 'child_id_1'}");
+
+        String enquiryJSON = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_1\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        enquiryRepository.createOrUpdate(new Enquiry(enquiryJSON));
+
+        String enquiryJSON2 = "{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_2\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}";
+        Enquiry enquiry = new Enquiry(enquiryJSON2);
+        enquiryRepository.createOrUpdate(enquiry);
+
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_1", "potential_match_id_1"));
+        potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_2", "child_id_1", "potential_match_id_2", true));
+
+        List<BaseModel> enquiries = child.getConfirmedMatchingModels(potentialMatchRepository, null, enquiryRepository);
+
+        assertEquals(1, enquiries.size());
+        assertEquals(enquiry.getUniqueId(), enquiries.get(0).getUniqueId());
+    }
 }

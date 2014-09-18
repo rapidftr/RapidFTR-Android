@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.rapidftr.R;
@@ -21,12 +22,16 @@ import com.rapidftr.repository.PotentialMatchRepository;
 import lombok.Cleanup;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PotentialMatchesFormSectionView extends LinearLayout implements FormSectionView {
+public class PotentialMatchesFormSectionView extends LinearLayout implements FormSectionView {
 
-    public PotentialMatchesFormSectionView(Context context) {
+    private HighlightedFieldsViewAdapter highlightedFieldsViewAdapter;
+
+    public PotentialMatchesFormSectionView(Context context, HighlightedFieldsViewAdapter highlightedFieldsViewAdapter) {
         super(context);
+        this.highlightedFieldsViewAdapter = highlightedFieldsViewAdapter;
         this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         initializeView(context);
     }
@@ -51,18 +56,7 @@ public abstract class PotentialMatchesFormSectionView extends LinearLayout imple
     public void initialize(FormSection formSection, BaseModel model) {
         if (formSection instanceof PotentialMatchesFormSection) {
             getLabel().setText(formSection.getLocalizedName());
-
-            @Cleanup PotentialMatchRepository potentialMatchRepository = RapidFtrApplication.getApplicationInstance().getBean(PotentialMatchRepository.class);
-            @Cleanup ChildRepository childRepository = RapidFtrApplication.getApplicationInstance().getBean(ChildRepository.class);
-            @Cleanup EnquiryRepository enquiryRepository = RapidFtrApplication.getApplicationInstance().getBean(EnquiryRepository.class);
-
-            try {
-                List<BaseModel> potentialMatches = model.getPotentialMatchingModels(potentialMatchRepository, childRepository, enquiryRepository);
-                getContainer().removeAllViews();
-                getContainer().addView(createPotentialMatchView(getContext(), potentialMatches));
-            } catch (JSONException e) {
-                Log.e(null, null, e);
-            }
+            getContainer().addView(createPotentialMatchView());
         }
     }
 
@@ -78,17 +72,13 @@ public abstract class PotentialMatchesFormSectionView extends LinearLayout imple
         return (TextView) findViewById(R.id.help_text);
     }
 
-    private View createPotentialMatchView(Context context, List<BaseModel> models) {
-        HighlightedFieldsViewAdapter highlightedFieldsViewAdapter =
-                getHighlightedFieldsViewAdapter(models);
+    private View createPotentialMatchView() {
         ListView listView = (ListView) LayoutInflater.from(getContext()).inflate(R.layout.child_list, null);
-        if (models.isEmpty()) {
+        if (highlightedFieldsViewAdapter.getCount() == 0) {
             listView.setEmptyView(LayoutInflater.from(getContext()).inflate(R.layout.no_child_view, null));
         }
         listView.setAdapter(highlightedFieldsViewAdapter);
 
         return listView;
     }
-
-    abstract protected HighlightedFieldsViewAdapter getHighlightedFieldsViewAdapter(List<BaseModel> models);
 }

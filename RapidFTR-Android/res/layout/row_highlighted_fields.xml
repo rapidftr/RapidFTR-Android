@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
-              android:orientation="horizontal"
               android:layout_height="wrap_content"
               style="@style/childrow"
               android:background="@drawable/list_bg">
@@ -11,11 +10,23 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:scaleType="fitCenter"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             style="@style/photoThumbnail"
             android:background="#aaaaaa"/>
+    <ImageView android:id="@+id/confirmation_tick"
+               android:layout_width="60dp"
+               android:layout_height="60dp"
+               android:scaleType="fitCenter"
+               android:layout_alignParentTop="true"
+               android:layout_alignParentRight="true"
+               android:visibility="gone"
+               style="@style/photoThumbnail"
+               android:src="@drawable/confirmation_tick"/>
     <com.rapidftr.view.HighlightedFieldViewGroup xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="fill_parent"
                   android:layout_toRightOf="@id/thumbnail"
+                  android:layout_toLeftOf="@id/confirmation_tick"
                   android:orientation="vertical"
                   android:layout_height="wrap_content"
                   android:id="@+id/child_field_group">
@@ -24,4 +35,5 @@
                   style="@style/childid"
                   android:id="@+id/row_child_unique_id"/>
     </com.rapidftr.view.HighlightedFieldViewGroup>
-</LinearLayout>
+
+</RelativeLayout>
