@@ -49,6 +49,14 @@ public class PotentialMatchRepositoryTest {
     }
 
     @Test
+    public void shouldReturnEmptyListIfEnquiryDoesNotHaveInternalId() throws JSONException, SQLException {
+        String enquiryJSON = "{\"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
+        Enquiry enquiry = new Enquiry(enquiryJSON);
+        List<PotentialMatch> matches = repository.getPotentialMatchesFor(enquiry);
+        assertThat(matches.size(), is(0));
+    }
+
+    @Test
     public void shouldReturnPotentialMatchesByEnquiry() throws JSONException, SQLException {
         String enquiryJSON = "{\"_id\":\"enquiry_id\", \"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
         Enquiry enquiry = new Enquiry(enquiryJSON);
@@ -62,6 +70,13 @@ public class PotentialMatchRepositoryTest {
         assertThat(matches.get(0).getEnquiryId(), is("enquiry_id"));
     }
 
+    @Test
+    public void shouldReturnEmptyListIfChildDoesNotHaveInternalId() throws JSONException, SQLException {
+        String childJSON = "{\"name\":\"foo bar\", \"nationality\":\"ugandan\"}";
+        Child child = new Child(childJSON);
+        List<PotentialMatch> matches = repository.getPotentialMatchesFor(child);
+        assertThat(matches.size(), is(0));
+    }
 
     @Test
     public void shouldReturnPotentialMatchesByChild() throws JSONException, SQLException {
