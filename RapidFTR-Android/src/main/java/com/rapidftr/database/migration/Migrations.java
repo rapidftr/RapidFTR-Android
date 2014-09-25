@@ -109,7 +109,8 @@ class MigrationSQL {
             + Database.EnquiryTableColumn.created_at.getColumnName() + " text not null default '" + RapidFtrDateTime.now().defaultFormat() + "',"
             + Database.PotentialMatchTableColumn.child_id.getColumnName() + " text,"
             + Database.PotentialMatchTableColumn.enquiry_id.getColumnName() + " text,"
-            + Database.PotentialMatchTableColumn.revision.getColumnName() + " text"
+            + Database.PotentialMatchTableColumn.revision.getColumnName() + " text,"
+            + Database.PotentialMatchTableColumn.confirmed.getColumnName() + " text default 'false'"
             + ");";
 }
 

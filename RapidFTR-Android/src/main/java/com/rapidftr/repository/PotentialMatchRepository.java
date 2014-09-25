@@ -57,7 +57,12 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
 
     @Override
     public PotentialMatch get(String id) throws JSONException {
-        return null;
+        @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE id = ?", new String[]{id});
+        if (cursor.moveToNext()) {
+            return buildPotentialMatch(cursor);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -73,6 +78,7 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
         values.put(created_at.getColumnName(), potentialMatch.getCreatedAt());
         values.put(id.getColumnName(), potentialMatch.getUniqueId());
         values.put(revision.getColumnName(), potentialMatch.getRevision());
+        values.put(confirmed.getColumnName(), potentialMatch.isConfirmed().toString());
 
         long id = session.replace(Database.potential_match.getTableName(), null, values);
         if (id <= 0) throw new IllegalArgumentException(id + "");
@@ -85,7 +91,11 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
 
     @Override
     public void update(PotentialMatch potentialMatch) throws JSONException {
-
+        try {
+            createOrUpdate(potentialMatch);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -104,11 +114,17 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
     }
 
     public List<PotentialMatch> getPotentialMatchesFor(Enquiry enquiry) throws JSONException {
+        if(enquiry.getInternalId() == null) {
+            return new ArrayList<PotentialMatch>();
+        }
         @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE enquiry_id = ?", new String[]{enquiry.getInternalId()});
         return buildPotentialMatches(cursor);
     }
 
     public List<PotentialMatch> getPotentialMatchesFor(Child child) throws JSONException {
+        if(child.getInternalId() == null) {
+            return new ArrayList<PotentialMatch>();
+        }
         @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE child_id = ?", new String[]{child.getInternalId()});
         return buildPotentialMatches(cursor);
     }
@@ -125,6 +141,8 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
         int enquiryIdIndex = cursor.getColumnIndex(enquiry_id.getColumnName());
         int childIdIndex = cursor.getColumnIndex(child_id.getColumnName());
         int idIndex = cursor.getColumnIndex(id.getColumnName());
-        return new PotentialMatch(cursor.getString(enquiryIdIndex), cursor.getString(childIdIndex), cursor.getString(idIndex));
+        int confirmedIndex = cursor.getColumnIndex(confirmed.getColumnName());
+        return new PotentialMatch(cursor.getString(enquiryIdIndex), cursor.getString(childIdIndex), cursor.getString(idIndex),
+                Boolean.valueOf(cursor.getString(confirmedIndex)));
     }
 }

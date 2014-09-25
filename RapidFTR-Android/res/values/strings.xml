@@ -156,4 +156,6 @@
     <string name="enquires_sync_title">Synchronising Enquiries</string>
     <string name="child_sync_title">Synchronising Children</string>
     <string name="potential_matches_sync_title">Synchronising Potential Matches</string>
+    <string name="matches">Matches</string>
+    <string name="matches_help_text">Matches</string>
 </resources>

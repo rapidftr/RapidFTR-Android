@@ -1,9 +1,7 @@
 package com.rapidftr.view;
 
 import android.app.Activity;
-import android.view.LayoutInflater;
 import com.rapidftr.CustomTestRunner;
-import com.rapidftr.R;
 import com.rapidftr.activity.RegisterChildActivity;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
@@ -14,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +27,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(CustomTestRunner.class)
 public class FormSectionViewTest {
 
-    private FormSectionView view;
+    private DefaultFormSectionView view;
     private FormSection section;
     private FormField field;
     private Child child;
@@ -38,7 +35,7 @@ public class FormSectionViewTest {
     @Before
     public void setUp() throws JSONException {
         Activity activity = Robolectric.buildActivity(RegisterChildActivity.class).create().get();
-        view = new FormSectionView(activity);
+        view = new DefaultFormSectionView(activity);
         child = new Child();
 
         section = new FormSection();

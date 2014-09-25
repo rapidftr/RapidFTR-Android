@@ -283,6 +283,9 @@ public class BaseModel extends JSONObject implements Parcelable {
         }
     }
 
+    public List<BaseModel> getConfirmedMatchingModels(PotentialMatchRepository potentialMatchRepository, ChildRepository childRepository, EnquiryRepository enquiryRepository) {
+        return new ArrayList<BaseModel>();
+    }
 
     public class History extends JSONObject implements Parcelable {
         public static final String HISTORIES = "histories";
