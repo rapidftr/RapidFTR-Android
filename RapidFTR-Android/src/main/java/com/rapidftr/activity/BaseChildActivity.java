@@ -2,8 +2,6 @@ package com.rapidftr.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
 import android.os.Bundle;
 import com.rapidftr.R;
 import com.rapidftr.model.BaseModel;
@@ -11,23 +9,14 @@ import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import lombok.Cleanup;
-import lombok.Getter;
-import lombok.Setter;
 import org.json.JSONException;
 
 public abstract class BaseChildActivity extends CollectionActivity {
 
     public static final int CLOSE_ACTIVITY = 999;
 
-
     protected Child child;
     protected boolean editable = true;
-    @Getter
-    @Setter
-    MediaRecorder mediaRecorder;
-    @Getter
-    @Setter
-    MediaPlayer mediaPlayer;
 
     @Override
     protected Boolean getEditable() {
