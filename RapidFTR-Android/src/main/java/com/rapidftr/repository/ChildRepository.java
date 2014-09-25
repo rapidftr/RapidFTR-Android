@@ -8,12 +8,10 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.forms.FormField;
-import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
-import com.rapidftr.utils.JSONArrays;
+import com.rapidftr.model.History;
 import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.Closeable;
@@ -144,7 +142,8 @@ public class ChildRepository implements Closeable, Repository<Child> {
     public void createOrUpdate(Child child) throws JSONException {
         ContentValues values = new ContentValues();
         if (exists(child.getUniqueId())) {
-            addHistory(child);
+            Child existingChild = get(child.getUniqueId());
+            child.addHistory(History.buildHistoryBetween(existingChild, child));
         }
         child.setLastUpdatedAt(getTimeStamp());
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getCreatedBy());
@@ -160,14 +159,6 @@ public class ChildRepository implements Closeable, Repository<Child> {
     private void populateInternalColumns(Child child, ContentValues values) {
         values.put(internal_id.getColumnName(), child.optString("_id"));
         values.put(internal_rev.getColumnName(), child.optString("_rev"));
-    }
-
-    private void addHistory(Child child) throws JSONException {
-        Child existingChild = get(child.getUniqueId());
-        JSONArray existingHistories = (JSONArray) existingChild.opt(BaseModel.History.HISTORIES);
-        List<Child.History> histories = child.changeLogs(existingChild, existingHistories);
-        if (histories.size() > 0)
-            child.put(BaseModel.History.HISTORIES, JSONArrays.asJSONObjectArray(histories));
     }
 
     @Override

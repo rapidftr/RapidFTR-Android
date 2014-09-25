@@ -6,9 +6,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
-import com.rapidftr.model.BaseModel;
-import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
+import com.rapidftr.model.History;
 import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
@@ -51,10 +50,10 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
     private void addHistory(Enquiry enquiry) throws JSONException {
         Enquiry existingEnquiry = get(enquiry.getUniqueId());
-        JSONArray existingHistories = (JSONArray) existingEnquiry.opt(BaseModel.History.HISTORIES);
-        List<BaseModel.History> histories = enquiry.changeLogs(existingEnquiry, existingHistories);
+        JSONArray existingHistories = (JSONArray) existingEnquiry.opt(History.HISTORIES);
+        List<History> histories = enquiry.changeLogs(existingEnquiry, existingHistories);
         if (histories.size() > 0)
-            enquiry.put(BaseModel.History.HISTORIES, JSONArrays.asJSONObjectArray(histories));
+            enquiry.put(History.HISTORIES, JSONArrays.asJSONObjectArray(histories));
     }
 
     protected ContentValues getContentValuesFrom(Enquiry enquiry) throws JSONException {

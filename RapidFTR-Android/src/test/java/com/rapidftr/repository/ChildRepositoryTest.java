@@ -9,6 +9,7 @@ import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.History;
 import com.rapidftr.model.User;
 import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -26,7 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.rapidftr.CustomTestRunner.createUser;
-import static com.rapidftr.model.BaseModel.History.*;
+import static com.rapidftr.model.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -77,7 +78,9 @@ public class ChildRepositoryTest {
         Child child = repository.get("id1");
 
         assertThat(child.getUniqueId(), equalTo("id1"));
-        assertThat(child.values(), equalJSONIgnoreOrder(expectedString));
+        JSONObject values = child.values();
+        values.remove(History.HISTORIES);
+        assertThat(values, equalJSONIgnoreOrder(expectedString));
         assertThat(child.getLastUpdatedAt(), is("LAST_UPDATED_AT"));
     }
 
@@ -360,93 +363,13 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldAddHistoriesIfChildHasBeenUpdated() throws JSONException {
-        Child existingChild = new Child("id", "user1", "{'name' : 'old-name'}");
+        Child existingChild = new Child("id", "user1", "{'name' : 'oldname'}");
         repository.createOrUpdate(existingChild);
-
-        Child updatedChild = new Child("id", "user1", "{'name' : 'updated-name'}");
-        Child spyUpdatedChild = spy(updatedChild);
-        List<Child.History> histories = new ArrayList<Child.History>();
-        Child.History history = updatedChild.new History();
-        HashMap changes = new HashMap();
-        HashMap fromTo = new LinkedHashMap();
-        fromTo.put(FROM, "old-name");
-        fromTo.put(TO, "new-name");
-        changes.put("name", fromTo);
-        history.put(USER_NAME, "user");
-        history.put(DATETIME, "timestamp");
-        history.put(CHANGES, changes);
-        histories.add(history);
-
-        doReturn(histories).when(spyUpdatedChild).changeLogs(existingChild, null);
-        repository.createOrUpdate(spyUpdatedChild);
-        Child savedChild = repository.get(updatedChild.getUniqueId());
-        assertThat(savedChild.get(HISTORIES).toString(), is("[{\"user_name\":\"user\",\"datetime\":\"timestamp\",\"changes\":{\"name\":{\"to\":\"new-name\",\"from\":\"old-name\"}}}]"));
-    }
-
-    @Test
-    public void shouldMergeHistoriesIfHistoriesAlreadyExist() throws JSONException {
-
-        String olderHistoryLastSavedAt = new RapidFtrDateTime(1, 2, 2012).defaultFormat();
-        String last_synced_at = new RapidFtrDateTime(1, 2, 2013).defaultFormat();
-        String last_saved_at = new RapidFtrDateTime(2, 2, 2013).defaultFormat();
-
-        String oldHistories = String.format("[{\"user_name\":\"user\",\"datetime\":\"%s\",\"changes\":{\"rc_id_no\":{\"from\":\"old_rc_id\",\"to\":\"new_rc_id\"}}}, {\"user_name\":\"user\",\"datetime\":\"%s\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]", olderHistoryLastSavedAt, last_saved_at);
-        String oldContent = String.format("{'last_synced_at':'%s','gender' : 'male','nationality' : 'Indian', 'name' : 'new-name', 'separated': 'yes', 'rc_id_no': '1234', 'histories' : '%s'}", last_synced_at, oldHistories);
-        Child childWithHistories = new Child("id", "user", oldContent);
-        repository.createOrUpdate(childWithHistories);
-
-        childWithHistories.put("name", "updated-name");
-        childWithHistories.put("separated", "no");
-        childWithHistories.put("protected", "yes");
-
-        repository.createOrUpdate(childWithHistories);
-        List<Object> childHistories = JSONArrays.asList((JSONArray) childWithHistories.get("histories"));
-        assertThat(childHistories.size(), is(2));
-        JSONObject jsonObject = (JSONObject) childHistories.get(1);
-
-        assertOnHistory(jsonObject, "name", "updated-name", "new-name");
-        assertOnHistory(jsonObject, "separated", "no", "yes");
-        assertOnHistory(jsonObject, "protected", "yes", "");
-    }
-
-    private void assertOnHistory(JSONObject jsonObject, String name, String toString, String fromString) throws JSONException {
-        JSONObject changesKey = (JSONObject) ((JSONObject) jsonObject.get("changes")).get(name);
-        assertThat(changesKey.optString("to"), is(toString));
-        assertThat(changesKey.optString("from"), is(fromString));
-    }
-
-    @Test
-    public void shouldConstructTheHistoryObjectIfHistoriesArePassedAsStringInContent() throws JSONException {
-        Child child = new Child("id", "user1", "{\"histories\":[{\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}, {\"changes\":{\"sex\":{\"from\":\"\",\"to\":\"male\"}}}]}", false);
-        repository.createOrUpdate(child);
-        List<Child> children = repository.toBeSynced();
-        JSONArray histories = (JSONArray) children.get(0).get(HISTORIES);
-        assertThat(histories.length(), is(2));
-        JSONObject name = (JSONObject) ((JSONObject) ((JSONObject) histories.get(0)).get("changes")).get("name");
-        JSONObject sex = (JSONObject) ((JSONObject) ((JSONObject) histories.get(1)).get("changes")).get("sex");
-        assertThat(name.get("from").toString(), is("old-name"));
-        assertThat(name.get("to").toString(), is("new-name"));
-        assertThat(sex.get("from").toString(), is(""));
-        assertThat(sex.get("to").toString(), is("male"));
-    }
-
-
-    @Test
-    public void shouldCompareWithLastSyncedAtDateBeforeGeneratingChangeLogs() throws JSONException {
-
-        String last_synced_at = new RapidFtrDateTime(1, 2, 2013).defaultFormat();
-        String last_saved_at = new RapidFtrDateTime(2, 2, 2013).defaultFormat();
-
-        String oldHistories = String.format("[{\"user_name\":\"user\",\"datetime\":\"%s\",\"changes\":{\"name\":{\"from\":\"old-name\",\"to\":\"new-name\"}}}]", last_saved_at);
-        String oldContent = String.format("{'last_synced_at':'%s','gender' : 'male','nationality' : 'Indian', 'name' : 'new-name', 'separated': 'yes', 'rc_id_no': '1234', 'histories' : '%s'}", last_synced_at, oldHistories);
-        Child childWithHistories = new Child("id", "user", oldContent);
-        repository.createOrUpdate(childWithHistories);
-
-        String newContent = String.format("{'last_synced_at':'%s','gender' : 'female','nationality' : 'Indian', 'name' : 'new-name', 'rc_id_no': '1234', 'separated' : 'true', 'histories' : '%s'}", last_synced_at, oldHistories);
-        Child updatedChild = new Child("id", "user", newContent);
-
+        Child updatedChild = new Child("id", "user1", "{'name' : 'updatedname'}");
         repository.createOrUpdate(updatedChild);
-        assertThat(((JSONArray) updatedChild.get(HISTORIES)).length(), is(1));
+
+        Child savedChild = repository.get(updatedChild.getUniqueId());
+        assertTrue(savedChild.get(HISTORIES).toString().matches(".*\"changes\":\\{.*\"name\":\\{\"to\":\"updatedname\",\"from\":\"oldname\"\\}.*"));
     }
 
     @Test

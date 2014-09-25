@@ -5,7 +5,6 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
-import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -24,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
-import static com.rapidftr.model.BaseModel.History.*;
+import static com.rapidftr.model.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -186,7 +185,7 @@ public class ChildTest {
     public void shouldReturnListOfChangeLogsBasedOnChanges() throws JSONException {
         Child oldChild = new Child("id", "user", "{'name' : 'old-name'}");
         Child updatedChild = new Child("id", "user", "{'name' : 'updated-name'}");
-        List<Child.History> histories = updatedChild.changeLogs(oldChild, null);
+        List<History> histories = updatedChild.changeLogs(oldChild, null);
 
         JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
         HashMap fromTo = (HashMap) changesMap.get("name");

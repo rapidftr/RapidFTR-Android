@@ -249,7 +249,7 @@ public class BaseModel extends JSONObject implements Parcelable {
         return histories;
     }
 
-    private List<History> getHistoriesFromJsonArray(JSONArray histories) throws JSONException {
+    public static List<History> getHistoriesFromJsonArray(JSONArray histories) throws JSONException {
         List<Object> objects = histories != null ? asList(histories) : new ArrayList<Object>();
         List<History> childHistories = new ArrayList<History>();
         for (Object object : objects) {
@@ -274,32 +274,10 @@ public class BaseModel extends JSONObject implements Parcelable {
         return new ArrayList<BaseModel>();
     }
 
-    public class History extends JSONObject implements Parcelable {
-        public static final String HISTORIES = "histories";
-        public static final String USER_NAME = "user_name";
-        public static final String USER_ORGANISATION = "user_organisation";
-        public static final String DATETIME = "datetime";
-        public static final String CHANGES = "changes";
-        public static final String FROM = "from";
-        public static final String TO = "to";
-
-        public History(String jsonSource) throws JSONException {
-            super(jsonSource);
+    public void addHistory(History history) throws JSONException {
+        boolean meaningfulHistory = history.has(History.CHANGES) && history.get(History.CHANGES) != null;
+        if(meaningfulHistory) {
+            this.append(History.HISTORIES, history);
         }
-
-        public History() {
-
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel parcel, int flags) {
-            parcel.writeString(this.toString());
-        }
-
     }
 }
