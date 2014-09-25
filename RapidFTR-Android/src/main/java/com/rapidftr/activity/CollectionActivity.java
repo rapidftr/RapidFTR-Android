@@ -1,5 +1,7 @@
 package com.rapidftr.activity;
 
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -9,14 +11,22 @@ import com.rapidftr.adapter.FormSectionPagerAdapter;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.service.FormService;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
 
 public abstract class CollectionActivity extends RapidFtrActivity {
-    protected FormService formService;
+    @Getter
+    @Setter
+    MediaRecorder mediaRecorder;
+    @Getter
+    @Setter
+    MediaPlayer mediaPlayer;
 
+    protected FormService formService;
     protected List<FormSection> formSections;
 
     protected abstract BaseModel getModel();
