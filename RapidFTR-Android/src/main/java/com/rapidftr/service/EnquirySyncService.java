@@ -44,11 +44,11 @@ public class EnquirySyncService implements SyncService<Enquiry> {
             record = record.isNew() ? enquiryHttpDao.create(record) : enquiryHttpDao.update(record);
             record.setSynced(true);
             record.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
-            enquiryRepository.createOrUpdate(record);
+            enquiryRepository.createOrUpdateWithoutHistory(record);
         } catch (Exception exception) {
             record.setSynced(false);
             record.setLastUpdatedAt(null);
-            enquiryRepository.update(record);
+            enquiryRepository.createOrUpdateWithoutHistory(record);
             enquiryRepository.close();
             throw new SyncFailedException(exception.getMessage());
         }

@@ -182,21 +182,6 @@ public class ChildTest {
         assertThat(child.values(), equalJSONIgnoreOrder("{\"test1\":\"value1\"}"));
     }
 
-    public void shouldReturnListOfChangeLogsBasedOnChanges() throws JSONException {
-        Child oldChild = new Child("id", "user", "{'name' : 'old-name'}");
-        Child updatedChild = new Child("id", "user", "{'name' : 'updated-name'}");
-        List<History> histories = updatedChild.changeLogs(oldChild, null);
-
-        JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
-        HashMap fromTo = (HashMap) changesMap.get("name");
-
-        assertThat(histories.size(), is(1));
-        assertThat(histories.get(0).get(USER_NAME).toString(), is(updatedChild.getCreatedBy()));
-        assertThat(changesMap.names().get(0).toString(), is("name"));
-        assertThat(fromTo.get(FROM).toString(), is("old-name"));
-        assertThat(fromTo.get(TO).toString(), is("updated-name"));
-    }
-
     @Test
     public void shouldBeNewIfThereIsNoID() throws JSONException {
         Child child = new Child("id1", "user1", "{ 'test1' : 'value1' }");

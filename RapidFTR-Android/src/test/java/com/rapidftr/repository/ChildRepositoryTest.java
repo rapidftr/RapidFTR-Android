@@ -11,9 +11,7 @@ import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.History;
 import com.rapidftr.model.User;
-import com.rapidftr.utils.JSONArrays;
-import com.rapidftr.utils.RapidFtrDateTime;
-import org.json.JSONArray;
+import org.hamcrest.CoreMatchers;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -23,7 +21,6 @@ import org.junit.runner.RunWith;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.rapidftr.CustomTestRunner.createUser;
@@ -66,6 +63,13 @@ public class ChildRepositoryTest {
     }
 
     @Test
+    public void shouldCreateChildRecordAndNotSetHistories() throws Exception {
+        repository.createOrUpdate(new Child("id1", "user1", "{ 'test1' : 'value1' }"));
+        JSONObject childJsonValues = repository.get("id1").values();
+        assertFalse(childJsonValues.has(History.HISTORIES));
+    }
+
+        @Test
     public void shouldUpdateChildRecordIfIdAlreadyExistsAndSetLastUpdateAt() throws Exception {
         ChildRepository repository = spy(new ChildRepository("user1", session));
         repository.createOrUpdate(new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
@@ -85,6 +89,17 @@ public class ChildRepositoryTest {
     }
 
     @Test
+    public void shouldUpdateChildRecordWithHistory() throws Exception {
+        repository.createOrUpdate(new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
+        JSONObject childJsonValues = repository.get("id1").values();
+        assertFalse(childJsonValues.has(History.HISTORIES));
+
+        repository.createOrUpdate(new Child("id1", "user1", "{ 'test1' : 'value2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
+        childJsonValues = repository.get("id1").values();
+        assertTrue(childJsonValues.has(History.HISTORIES));
+    }
+
+    @Test
     public void shouldSaveInternalIdAndRevDuringChildCreation() throws JSONException {
         Child child1 = new ChildBuilder().withName("tester").withCreatedBy("user1").withUniqueId("abcd1234").build();
         Child child2 = new ChildBuilder().withInternalId("59cd40f39ab6aa791f73885e3bdd99f9").withName("tester").withUniqueId("1234abcd").withRev("4-b011946150a16b0d2c6271aed05e2abe").withCreatedBy("user1").build();
@@ -98,7 +113,7 @@ public class ChildRepositoryTest {
 
         child1.put("_id", "dfb2031ebfcbef39dccdb468f5200edc");
         child1.put("_rev", "5-1ed26a0e5072830a9064361a570684f6");
-        repository.update(child1);
+        repository.createOrUpdateWithoutHistory(child1);
 
         allIdsAndRevs = repository.getAllIdsAndRevs();
         assertEquals(2, allIdsAndRevs.size());
@@ -354,7 +369,7 @@ public class ChildRepositoryTest {
         child.put(Database.ChildTableColumn.owner.getColumnName(), "new owner");
         child.put("someNewField", "someNewValue");
 
-        repository.update(child);
+        repository.createOrUpdateWithoutHistory(child);
         Child updatedChild = repository.get("id1");
 
         assertThat((String) updatedChild.get(Database.ChildTableColumn.owner.getColumnName()), is("new owner"));
@@ -465,6 +480,31 @@ public class ChildRepositoryTest {
 
         repository.deleteChildrenByOwner();
         assertEquals(0, repository.allCreatedByCurrentUser().size());
+    }
+
+    @Test
+    public void shouldCreateNewChildWithoutHistory() throws JSONException {
+        Child child = new Child("syncedID", "user1", null, true);
+
+        repository.createOrUpdateWithoutHistory(child);
+
+        Child savedChild = repository.get(child.getUniqueId());
+        assertNotNull(savedChild);
+        assertFalse(savedChild.has(HISTORIES));
+    }
+
+    @Test
+    public void shouldUpdateExistingChildWithoutHistory() throws JSONException {
+        Child child = new Child("syncedID", "user1", null, true);
+        repository.createOrUpdateWithoutHistory(child);
+        child.put("more_stuff", "some_more_stuff");
+        repository.createOrUpdateWithoutHistory(child);
+
+        Child savedChild = repository.get(child.getUniqueId());
+
+        assertNotNull(savedChild);
+        assertFalse(savedChild.has(HISTORIES));
+        assertEquals("some_more_stuff", savedChild.get("more_stuff"));
     }
 
     public class ChildBuilder {

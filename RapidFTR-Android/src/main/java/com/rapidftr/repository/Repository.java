@@ -21,7 +21,7 @@ public interface Repository<T extends BaseModel> {
 
     public HashMap<String, String> getAllIdsAndRevs() throws JSONException;
 
-    public void update(T t) throws JSONException;
+    public void createOrUpdateWithoutHistory(T t) throws JSONException;
 
     public List<T> currentUsersUnsyncedRecords() throws JSONException;
 

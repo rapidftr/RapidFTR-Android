@@ -214,50 +214,6 @@ public class BaseModel extends JSONObject implements Parcelable {
             this.put(History.HISTORIES, new JSONArray(histories));
     }
 
-    public List<History> changeLogs(BaseModel model, JSONArray existingHistories) throws JSONException {
-        //fetch all the histories from this child, which are greater than last_synced_at and merge the histories
-        JSONArray names = this.names();
-        List<History> histories = getHistoriesFromJsonArray(existingHistories);
-        try {
-            if (!model.optString("last_synced_at").equals("")) {
-                Calendar lastSync = RapidFtrDateTime.getDateTime(model.optString("last_synced_at"));
-                for (History history : histories) {
-                    Calendar lastSavedAt = RapidFtrDateTime.getDateTime((String) history.get("datetime"));
-                    if (lastSavedAt.after(lastSync)) {
-                        JSONObject changes = (JSONObject) history.get("changes");
-                        for (int i = 0; i < names.length(); i++) {
-                            String newValue = this.optString(names.getString(i), "");
-                            String oldValue = model.optString(names.getString(i), "");
-                            if (!oldValue.equals(newValue)) {
-                                JSONObject fromTo = new JSONObject();
-                                fromTo.put(History.FROM, oldValue);
-                                fromTo.put(History.TO, newValue);
-                                changes.put(names.getString(i), fromTo);
-                            }
-                        }
-                        history.put(History.USER_NAME, RapidFtrApplication.getApplicationInstance().getSharedPreferences().getString("USER_NAME", ""));
-                        history.put(History.USER_ORGANISATION, RapidFtrApplication.getApplicationInstance().getSharedPreferences().getString("USER_ORG", ""));
-                        history.put(History.DATETIME, RapidFtrDateTime.now().defaultFormat());
-                        break;
-                    }
-                }
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
-        return histories;
-    }
-
-    public static List<History> getHistoriesFromJsonArray(JSONArray histories) throws JSONException {
-        List<Object> objects = histories != null ? asList(histories) : new ArrayList<Object>();
-        List<History> childHistories = new ArrayList<History>();
-        for (Object object : objects) {
-            childHistories.add(new History(object.toString()));
-        }
-        return childHistories;
-    }
-
     public List<BaseModel> getPotentialMatchingModels(PotentialMatchRepository potentialMatchRepo, ChildRepository childRepo, EnquiryRepository enquiryRepository) throws JSONException {
         return new ArrayList<BaseModel>();
     }

@@ -9,7 +9,7 @@
     <!-- The ant.properties file can be created by you. It is only edited by the
          'android' tool to add properties to it.
          This is the place to change some Ant specific build properties.
-         Here are some properties you may want to change/update:
+         Here are some properties you may want to change/updateWithoutHistory:
 
          source.dir
              The name of the source directory. Default is 'src'.
@@ -20,7 +20,7 @@
          files in the SDK, at tools/ant/build.xml
 
          Properties related to the SDK location or the project target should
-         be updated using the 'android' tool with the 'update' action.
+         be updated using the 'android' tool with the 'updateWithoutHistory' action.
 
          This file is an integral part of the build system for your
          application and should be checked into Version Control Systems.
@@ -83,8 +83,8 @@
          ***********************
          ****** IMPORTANT ******
          ***********************
-         In all cases you must update the value of version-tag below to read 'custom' instead of an integer,
-         in order to avoid having your file be overridden by tools such as "android update project"
+         In all cases you must updateWithoutHistory the value of version-tag below to read 'custom' instead of an integer,
+         in order to avoid having your file be overridden by tools such as "android updateWithoutHistory project"
     -->
     <!-- version-tag: 1 -->
     <import file="${sdk.dir}/tools/ant/build.xml" />

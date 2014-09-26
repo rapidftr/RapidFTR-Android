@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.Toast;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.RapidFtrApplication_;
 import com.rapidftr.activity.RapidFtrActivity;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
@@ -104,10 +103,10 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
             RapidFtrApplication.getApplicationInstance().showNotification(recordSyncService.getNotificationId(),
                     recordSyncService.getNotificationTitle(),
                     successMessage);
-            Toast.makeText(RapidFtrApplication_.getApplicationInstance(), successMessage, Toast.LENGTH_LONG).show();
+            Toast.makeText(RapidFtrApplication.getApplicationInstance(), successMessage, Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(RapidFtrApplication_.getApplicationInstance(),
-                    RapidFtrApplication_.getApplicationInstance().getString(R.string.sync_error), Toast.LENGTH_LONG).show();
+            Toast.makeText(RapidFtrApplication.getApplicationInstance(),
+                    RapidFtrApplication.getApplicationInstance().getString(R.string.sync_error), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -156,11 +155,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
                 break;
             }
             try {
-                if (repository.exists(incomingRecord.getUniqueId())) {
-                    repository.update(incomingRecord);
-                } else {
-                    repository.createOrUpdate(incomingRecord);
-                }
+                repository.createOrUpdateWithoutHistory(incomingRecord);
                 recordSyncService.setMedia(incomingRecord);
                 setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
                 startProgress += 1;

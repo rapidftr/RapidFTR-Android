@@ -87,7 +87,7 @@ public class EnquirySyncServiceTest {
         getFakeHttpLayer().addHttpResponseRule("PUT", "http://whatever/api/enquiries/id", httpResponse);
         Enquiry returnedEnquiry = new EnquirySyncService(mockContext(), enquiryRepository).sync(enquiry, user);
 
-        verify(enquiryRepository).createOrUpdate(returnedEnquiry);
+        verify(enquiryRepository).createOrUpdateWithoutHistory(returnedEnquiry);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class EnquirySyncServiceTest {
         getFakeHttpLayer().addHttpResponseRule("POST", "http://whatever/api/enquiries", httpResponse);
         Enquiry returnedEnquiry = new EnquirySyncService(mockContext(), enquiryRepository).sync(enquiry, user);
 
-        verify(enquiryRepository).createOrUpdate(returnedEnquiry);
+        verify(enquiryRepository).createOrUpdateWithoutHistory(returnedEnquiry);
     }
 
     @Test
@@ -125,7 +125,7 @@ public class EnquirySyncServiceTest {
 
         returnedEnquiry = new EnquirySyncService(mockContext(), enquiryRepository).sync(enquiry, user);
 
-        verify(enquiryRepository).createOrUpdate(returnedEnquiry);
+        verify(enquiryRepository).createOrUpdateWithoutHistory(returnedEnquiry);
         assertNotNull(returnedEnquiry.getLastUpdatedAt());
         assertThat(returnedEnquiry.isSynced(), CoreMatchers.is(true));
     }

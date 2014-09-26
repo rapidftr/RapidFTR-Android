@@ -6,7 +6,9 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
+import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
+import com.rapidftr.model.History;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -20,8 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import static com.rapidftr.model.History.HISTORIES;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -54,6 +58,14 @@ public class EnquiryRepositoryTest {
     }
 
     @Test
+    public void shouldCreateChildRecordAndNotSetHistories() throws Exception {
+        Enquiry enquiry = new Enquiry("{\"age\":14,\"name\":\"Subhas\"}", user);
+        enquiryRepository.createOrUpdate(enquiry);
+        JSONObject enquiryJsonValues = enquiryRepository.get(enquiry.getUniqueId()).values();
+        assertFalse(enquiryJsonValues.has(History.HISTORIES));
+    }
+
+    @Test
     public void shouldReturnAllEnquiries() throws Exception {
         String enquiryJSON1 = "{\"enquirer_name\":\"sam fisher\",\"name\":\"foo bar\",\"nationality\":\"ugandan\"," +
                 "\"created_by\":\"Tom Reed\",\"synced\":\"false\", \"created_organisation\":\"TW\"}";
@@ -71,7 +83,7 @@ public class EnquiryRepositoryTest {
     }
 
     @Test
-    public void shouldReturnAllEnquiriesCreatedByUser() throws JSONException, FailedToSaveException {
+    public void shouldReturnAllEnquiriesCreatedByUser() throws JSONException {
         String enquiryJSON1 = "{\"enquirer_name\":\"sam fisher\",\"name\":\"foo bar\",\"nationality\":\"ugandan\"," +
                 "\"created_by\":\"field worker\",\"synced\":\"false\", \"created_organisation\":\"TW\"}";
         String enquiryJSON2 = "{\"enquirer_name\":\"fisher sam\",\"name\":\"bar foo\",\"nationality\":\"ugandan\"," +
@@ -171,7 +183,7 @@ public class EnquiryRepositoryTest {
         enquiry.setSynced(true);
         enquiry.put(Database.EnquiryTableColumn.internal_id.getColumnName(), "new internal id");
         enquiry.put(Database.EnquiryTableColumn.internal_rev.getColumnName(), "new internal revision");
-        enquiryRepository.update(enquiry);
+        enquiryRepository.createOrUpdateWithoutHistory(enquiry);
 
         Enquiry retrieved = enquiryRepository.all().get(0);
 
@@ -182,9 +194,43 @@ public class EnquiryRepositoryTest {
         assertThat(retrieved.getString(Database.EnquiryTableColumn.internal_rev.getColumnName()), is("new internal revision"));
     }
 
-    @Test(expected = FailedToSaveException.class)
+    @Test
+    public void createOrUpdateShouldAddHistory() throws Exception {
+        Enquiry enquiry = new Enquiry("{\n" +
+                "\"createdBy\":\"user\",\n" +
+                "\"enquirer_name\":\"faris\",\n" +
+                "\"criteria\":{\"age\":14, \"name\": \"Subhas\"},\n" +
+                "\"synced\":\"true\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}");
+        enquiryRepository.createOrUpdate(enquiry);
+        enquiry.put("enquirer_name", "New Reporter Name");
+        enquiryRepository.createOrUpdate(enquiry);
+
+        JSONObject enquiryJsonValues = enquiryRepository.get(enquiry.getUniqueId()).values();
+        assertTrue(enquiryJsonValues.has(History.HISTORIES));
+    }
+
+    @Test
+    public void updateShouldAddHistory() throws Exception {
+        Enquiry enquiry = new Enquiry("{\n" +
+                "\"createdBy\":\"user\",\n" +
+                "\"enquirer_name\":\"faris\",\n" +
+                "\"criteria\":{\"age\":14, \"name\": \"Subhas\"},\n" +
+                "\"synced\":\"true\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}");
+        enquiryRepository.createOrUpdate(enquiry);
+        enquiry.put("enquirer_name", "New Reporter Name");
+        enquiryRepository.createOrUpdate(enquiry);
+
+        JSONObject enquiryJsonValues = enquiryRepository.get(enquiry.getUniqueId()).values();
+        assertTrue(enquiryJsonValues.has(History.HISTORIES));
+    }
+
+    @Test(expected = android.database.SQLException.class)
     public void shouldReturnFailedToSaveEnquiryExceptionWhenSavingEnquiryWithData() throws
-            FailedToSaveException, JSONException {
+            SQLException, JSONException {
 
         String enquiryJSON = "{\n" +
                 "\"created_by\":\"user\",\n" +
@@ -204,7 +250,7 @@ public class EnquiryRepositoryTest {
     }
 
     @Test
-    public void shouldAnEnquiryUsingInternalIds() throws JSONException, FailedToSaveException {
+    public void shouldAnEnquiryUsingInternalIds() throws JSONException {
         String enquiryJSON = "{\n" +
                 "\"synced\":\"true\",\n" +
                 "\"_id\":\"enquiry_id_1\",\n" +
@@ -221,7 +267,7 @@ public class EnquiryRepositoryTest {
     }
 
     @Test
-    public void shouldReturnAllWithInternalIds() throws JSONException, FailedToSaveException {
+    public void shouldReturnAllWithInternalIds() throws JSONException {
         String enquiryJSON = "{\n" +
                 "\"synced\":\"true\",\n" +
                 "\"_id\":\"enquiry_id_1\",\n" +
@@ -253,5 +299,37 @@ public class EnquiryRepositoryTest {
         assertThat(enquiries.size(), is(2));
         assertThat(enquiries.get(0).getUniqueId(), is(enquiry1.getUniqueId()));
         assertThat(enquiries.get(1).getUniqueId(), is(enquiry3.getUniqueId()));
+    }
+
+    @Test
+    public void shouldCreateNewEnquiryWithoutHistory() throws JSONException {
+        Enquiry enquiry = new Enquiry("{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_3\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}");
+
+        enquiryRepository.createOrUpdateWithoutHistory(enquiry);
+
+        Enquiry savedEnquiry = enquiryRepository.get(enquiry.getUniqueId());
+        assertNotNull(savedEnquiry);
+        assertFalse(savedEnquiry.has(HISTORIES));
+    }
+
+    @Test
+    public void shouldUpdateExistingChildWithoutHistory() throws JSONException {
+        Enquiry enquiry = new Enquiry("{\n" +
+                "\"synced\":\"true\",\n" +
+                "\"_id\":\"enquiry_id_3\",\n" +
+                "\"created_by\":\"some guy\"" +
+                "}");        enquiryRepository.createOrUpdateWithoutHistory(enquiry);
+        enquiry.put("more_stuff", "some_more_stuff");
+        enquiryRepository.createOrUpdateWithoutHistory(enquiry);
+
+        Enquiry savedEnquiry = enquiryRepository.get(enquiry.getUniqueId());
+
+        assertNotNull(savedEnquiry);
+        assertFalse(savedEnquiry.has(HISTORIES));
+        assertEquals("some_more_stuff", savedEnquiry.get("more_stuff"));
     }
 }

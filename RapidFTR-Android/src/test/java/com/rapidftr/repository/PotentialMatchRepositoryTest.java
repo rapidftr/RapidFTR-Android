@@ -3,9 +3,6 @@ package com.rapidftr.repository;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
-import com.rapidftr.forms.FormField;
-import com.rapidftr.forms.FormSection;
-import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.PotentialMatch;
@@ -16,7 +13,6 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -96,7 +92,7 @@ public class PotentialMatchRepositoryTest {
     public void shouldUpdateExistingRecords() throws JSONException, SQLException {
         PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_1");
         repository.createOrUpdate(potentialMatch);
-        repository.update(new PotentialMatch("enquiry_id", "child_id", "unique_id_1", true));
+        repository.createOrUpdateWithoutHistory(new PotentialMatch("enquiry_id", "child_id", "unique_id_1", true));
         PotentialMatch savedPotentialMatch = repository.get("unique_id_1");
         assert(savedPotentialMatch.isConfirmed());
     }

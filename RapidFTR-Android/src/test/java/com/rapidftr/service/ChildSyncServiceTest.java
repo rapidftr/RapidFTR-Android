@@ -64,7 +64,7 @@ public class ChildSyncServiceTest {
 
         child = new ChildSyncService(mockContext(), repository).sync(child, currentUser);
         assertThat(child.isSynced(), is(true));
-        verify(repository).update(child);
+        verify(repository).createOrUpdateWithoutHistory(child);
     }
 
     @Test(expected = SyncFailedException.class)
@@ -92,7 +92,7 @@ public class ChildSyncServiceTest {
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/abcd1234/photo/", "{}");
         child = new ChildSyncService(mockContext(), repository).sync(child, currentUser);
 
-        verify(repository).update(child);
+        verify(repository).createOrUpdateWithoutHistory(child);
     }
 
     @Test

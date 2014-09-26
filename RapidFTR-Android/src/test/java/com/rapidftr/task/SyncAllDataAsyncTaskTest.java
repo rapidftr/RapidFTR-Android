@@ -15,7 +15,6 @@ import com.rapidftr.roboelectric.shadows.ShadowTaskStackBuilder;
 import com.rapidftr.service.ChildSyncService;
 import com.rapidftr.service.DeviceService;
 import com.rapidftr.service.FormService;
-import com.rapidftr.utils.http.FluentRequest;
 import org.apache.http.HttpException;
 import org.json.JSONException;
 import org.junit.Before;
@@ -182,8 +181,8 @@ public class SyncAllDataAsyncTaskTest {
         syncAllDataAsyncTask.execute();
 
         verify(childSyncService).getRecord("qwerty0987");
-        verify(childRepository).update(child1);
-        verify(childRepository).createOrUpdate(child2);
+        verify(childRepository).createOrUpdateWithoutHistory(child1);
+        verify(childRepository).createOrUpdateWithoutHistory(child2);
     }
 
     @Test

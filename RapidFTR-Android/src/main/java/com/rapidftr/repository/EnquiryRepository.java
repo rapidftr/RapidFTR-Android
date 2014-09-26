@@ -8,10 +8,8 @@ import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.History;
-import com.rapidftr.utils.JSONArrays;
 import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.Closeable;
@@ -37,23 +35,18 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     }
 
     @Override
-    public void createOrUpdate(Enquiry enquiry) throws JSONException, FailedToSaveException {
-
+    public void createOrUpdate(Enquiry enquiry) throws JSONException {
         if (exists(enquiry.getUniqueId())) {
-            addHistory(enquiry);
+            Enquiry existingEnquiry = get(enquiry.getUniqueId());
+            enquiry.addHistory(History.buildHistoryBetween(existingEnquiry, enquiry));
         }
         enquiry.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
-        long errorCode = session.replace(Database.enquiry.getTableName(), null, getContentValuesFrom(enquiry));
-        if (errorCode < 0)
-            throw new FailedToSaveException("Failed to save enquiry.", errorCode);
+        createOrUpdateWithoutHistory(enquiry);
     }
 
-    private void addHistory(Enquiry enquiry) throws JSONException {
-        Enquiry existingEnquiry = get(enquiry.getUniqueId());
-        JSONArray existingHistories = (JSONArray) existingEnquiry.opt(History.HISTORIES);
-        List<History> histories = enquiry.changeLogs(existingEnquiry, existingHistories);
-        if (histories.size() > 0)
-            enquiry.put(History.HISTORIES, JSONArrays.asJSONObjectArray(histories));
+    @Override
+    public void createOrUpdateWithoutHistory(Enquiry enquiry) throws JSONException {
+        session.replaceOrThrow(Database.enquiry.getTableName(), null, getContentValuesFrom(enquiry));
     }
 
     protected ContentValues getContentValuesFrom(Enquiry enquiry) throws JSONException {
@@ -82,16 +75,6 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
             idRevs.put(cursor.getString(0), cursor.getString(1));
         }
         return idRevs;
-    }
-
-    @Override
-    public void update(Enquiry enquiry) throws JSONException {
-        ContentValues values = getContentValuesFrom(enquiry);
-        session.update(
-                Database.enquiry.getTableName(),
-                values,
-                format("%s=?", id.getColumnName()),
-                new String[]{enquiry.getUniqueId()});
     }
 
     public List<Enquiry> allCreatedByCurrentUser() throws JSONException {

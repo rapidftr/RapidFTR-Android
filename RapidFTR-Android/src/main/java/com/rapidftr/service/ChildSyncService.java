@@ -62,7 +62,7 @@ public class ChildSyncService implements SyncService<Child> {
             child = child.isNew() ? childEntityHttpDao.create(child, getSyncPath(child, currentUser), requestParameters)
                     : childEntityHttpDao.update(child, getSyncPath(child, currentUser), requestParameters);
             setChildAttributes(child);
-            childRepository.update(child);
+            childRepository.createOrUpdateWithoutHistory(child);
             setMedia(child);
             childRepository.close();
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class ChildSyncService implements SyncService<Child> {
             child.setSyncLog(e.getMessage());
             child.put("photo_keys", photoKeys);
             child.put("audio_attachments", audioAttachments);
-            childRepository.update(child);
+            childRepository.createOrUpdateWithoutHistory(child);
             childRepository.close();
             throw new SyncFailedException(e.getMessage());
         }

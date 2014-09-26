@@ -72,16 +72,7 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
 
     @Override
     public void createOrUpdate(PotentialMatch potentialMatch) throws JSONException, SQLException {
-        ContentValues values = new ContentValues();
-        values.put(enquiry_id.getColumnName(), potentialMatch.getEnquiryId());
-        values.put(child_id.getColumnName(), potentialMatch.getChildId());
-        values.put(created_at.getColumnName(), potentialMatch.getCreatedAt());
-        values.put(id.getColumnName(), potentialMatch.getUniqueId());
-        values.put(revision.getColumnName(), potentialMatch.getRevision());
-        values.put(confirmed.getColumnName(), potentialMatch.isConfirmed().toString());
-
-        long id = session.replace(Database.potential_match.getTableName(), null, values);
-        if (id <= 0) throw new IllegalArgumentException(id + "");
+        createOrUpdateWithoutHistory(potentialMatch);
     }
 
     @Override
@@ -90,12 +81,16 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
     }
 
     @Override
-    public void update(PotentialMatch potentialMatch) throws JSONException {
-        try {
-            createOrUpdate(potentialMatch);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void createOrUpdateWithoutHistory(PotentialMatch potentialMatch) throws JSONException {
+        ContentValues values = new ContentValues();
+        values.put(enquiry_id.getColumnName(), potentialMatch.getEnquiryId());
+        values.put(child_id.getColumnName(), potentialMatch.getChildId());
+        values.put(created_at.getColumnName(), potentialMatch.getCreatedAt());
+        values.put(id.getColumnName(), potentialMatch.getUniqueId());
+        values.put(revision.getColumnName(), potentialMatch.getRevision());
+        values.put(confirmed.getColumnName(), potentialMatch.isConfirmed().toString());
+
+        session.replaceOrThrow(Database.potential_match.getTableName(), null, values);
     }
 
     @Override
