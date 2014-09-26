@@ -12,9 +12,7 @@ import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.roboelectric.shadows.ShadowTaskStackBuilder;
-import com.rapidftr.service.ChildSyncService;
-import com.rapidftr.service.DeviceService;
-import com.rapidftr.service.FormService;
+import com.rapidftr.service.*;
 import org.apache.http.HttpException;
 import org.json.JSONException;
 import org.junit.Before;
@@ -225,7 +223,8 @@ public class SyncAllDataAsyncTaskTest {
     public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
         given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
-        syncAllDataAsyncTask.recordSyncService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), childRepository);
+        EntityHttpDao<Child> dao = EntityHttpDaoFactory.createChildHttpDao("","","");
+        syncAllDataAsyncTask.recordSyncService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), dao, childRepository);
         syncAllDataAsyncTask.setContext(rapidFtrActivity);
         syncAllDataAsyncTask.execute();
 

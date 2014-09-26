@@ -104,6 +104,13 @@ public class ApplicationInjector extends AbstractModule {
     }
 
     @Provides
+    public EntityHttpDao<Child> getChildHttpDao(RapidFtrApplication rapidFtrApplication) {
+        return EntityHttpDaoFactory.createChildHttpDao(rapidFtrApplication.getCurrentUser().getServerUrl(),
+                ChildSyncService.CHILDREN_API_PATH,
+                ChildSyncService.CHILDREN_API_PARAMETER);
+    }
+
+    @Provides
     public EntityHttpDao<PotentialMatch> getPotentialMatchesHttpDao(RapidFtrApplication rapidFtrApplication) {
         return EntityHttpDaoFactory.createPotentialMatchHttpDao(rapidFtrApplication.getCurrentUser().getServerUrl(), PotentialMatchSyncService.POTENTIAL_MATCH_API_PATH,
                 PotentialMatchSyncService.POTENTIAL_MATCH_API_PARAMETER);

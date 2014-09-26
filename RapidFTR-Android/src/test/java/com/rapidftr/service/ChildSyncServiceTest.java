@@ -7,6 +7,8 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.Enquiry;
+import com.rapidftr.model.History;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.AudioCaptureHelper;
@@ -25,17 +27,21 @@ import org.mockito.Mock;
 import org.robolectric.tester.org.apache.http.FakeHttpLayer;
 import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
+import javax.xml.ws.http.HTTPException;
 import java.io.*;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.robolectric.Robolectric.getFakeHttpLayer;
 
@@ -49,10 +55,15 @@ public class ChildSyncServiceTest {
 
     FluentRequest fluentRequest;
     public static final String RESPONSE = "{\"unique_identifier\":\"adf7c0c9-0137-4cae-beea-b7d282344829\",\"created_at\":\"2013-02-08 12:18:37\",\"created_by_full_name\":\"RapidFTR\",\"couchrest-type\":\"Child\",\"short_id\":\"2344829\",\"_id\":\"b7f89b978870da823e0af6491c3e295b\",\"_rev\":\"2-bc72af384e177fcaa8e9e8d181bfe05b\",\"name\":\"\",\"last_updated_at\":\"2013-02-08 11:37:33\",\"current_photo_key\":\"photo--1475374810-2013-02-08T175138\",\"created_by\":\"rapidftr\",\"photo_keys\":[\"photo--1475374810-2013-02-08T175138\"],\"created_organisation\":\"N/A\",\"posted_at\":\"2013-02-08 12:16:55UTC\",\"last_updated_by_full_name\":\"RapidFTR\"}";
+    private EntityHttpDao<Child> childHttpDao;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
+        childHttpDao = EntityHttpDaoFactory.createChildHttpDao(
+                "http://whatever",
+                ChildSyncService.CHILDREN_API_PATH,
+                ChildSyncService.CHILDREN_API_PARAMETER);
         given(currentUser.isVerified()).willReturn(true);
         fluentRequest = new FluentRequest();
     }
@@ -62,7 +73,7 @@ public class ChildSyncServiceTest {
         Child child = new Child();
         getFakeHttpLayer().setDefaultHttpResponse(201, "{}");
 
-        child = new ChildSyncService(mockContext(), repository).sync(child, currentUser);
+        child = new ChildSyncService(mockContext(), childHttpDao, repository).sync(child, currentUser);
         assertThat(child.isSynced(), is(true));
         verify(repository).createOrUpdateWithoutHistory(child);
     }
@@ -72,7 +83,7 @@ public class ChildSyncServiceTest {
         Child child = new Child();
         getFakeHttpLayer().setDefaultHttpResponse(503, "error");
 
-        assertEquals(child, new ChildSyncService(mockContext(), repository).sync(child, currentUser));
+        assertEquals(child, new ChildSyncService(mockContext(), childHttpDao, repository).sync(child, currentUser));
     }
 
     @Test
@@ -81,7 +92,7 @@ public class ChildSyncServiceTest {
         child.put(Database.ChildTableColumn.internal_id.getColumnName(), "xyz");
 
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/xyz", "{}");
-        new ChildSyncService(mockContext(), repository).sync(child, currentUser);
+        new ChildSyncService(mockContext(), childHttpDao, repository).sync(child, currentUser);
     }
 
     @Test
@@ -90,7 +101,7 @@ public class ChildSyncServiceTest {
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children", "{ 'test1' : 'value2', '_id' : 'abcd1234'}");
 
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/abcd1234/photo/", "{}");
-        child = new ChildSyncService(mockContext(), repository).sync(child, currentUser);
+        child = new ChildSyncService(mockContext(), childHttpDao, repository).sync(child, currentUser);
 
         verify(repository).createOrUpdateWithoutHistory(child);
     }
@@ -101,7 +112,7 @@ public class ChildSyncServiceTest {
         getFakeHttpLayer().setDefaultHttpResponse(201, RESPONSE);
         RapidFtrApplication context = mockContext();
         FluentRequest mockFluentRequest = spy(new FluentRequest());
-        ChildSyncService childSyncService = spy(new ChildSyncService(context, repository));
+        ChildSyncService childSyncService = spy(new ChildSyncService(context, childHttpDao, repository));
 
 
         String photoKeys = new JSONArray(Arrays.asList("photo-998877", "photo-998547", "abcd123", "1234ABC")).toString();
@@ -136,7 +147,7 @@ public class ChildSyncServiceTest {
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children", "{}");
         getFakeHttpLayer().hasRequestMatchingRule(new FakeHttpLayer.RequestMatcherBuilder().param("current_photo_key", "1234ABC"));
 
-        new ChildSyncService(context, repository).sync(child, currentUser);
+        new ChildSyncService(context, childHttpDao, repository).sync(child, currentUser);
     }
 
     @Test
@@ -152,7 +163,7 @@ public class ChildSyncServiceTest {
         AudioCaptureHelper audioCaptureHelper = new AudioCaptureHelper(context);
         audioCaptureHelper.saveAudio(child, new ByteArrayInputStream("OK".getBytes()));
 
-        new ChildSyncService(context, repository).sync(child, currentUser);
+        new ChildSyncService(context, childHttpDao, repository).sync(child, currentUser);
 
         File file = audioCaptureHelper.getFile("123456", "");
         String fileContent = CharStreams.toString(new InputStreamReader(new FileInputStream(file)));
@@ -168,7 +179,7 @@ public class ChildSyncServiceTest {
         doReturn(null).when(mockFluentRequest).postWithMultiPart();
 
         Child child = new Child("id", "user", "{'name' : 'child1', 'recorded_audio' : '123455', 'audio_attachments' : {'original' : '123455', 'amr':'123455'}}");
-        new ChildSyncService(context, repository).sync(child, currentUser);
+        new ChildSyncService(context, childHttpDao, repository).sync(child, currentUser);
         verify(mockFluentRequest, times(0)).param("recorded_audio", "123455");
     }
 
@@ -191,7 +202,7 @@ public class ChildSyncServiceTest {
 
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children", "{}");
 
-        new ChildSyncService(context, repository).sync(child, currentUser);
+        new ChildSyncService(context, childHttpDao, repository).sync(child, currentUser);
         assertThat(child.optString("photo_keys"), is(""));
         assertThat(child.optString("audio_attachments"), is(""));
     }
@@ -205,7 +216,7 @@ public class ChildSyncServiceTest {
         getFakeHttpLayer().setDefaultHttpResponse(200, response);
 
         Child child = new Child("id", "user", "{ 'name' : 'child1'}");
-        Child syncedChild = new ChildSyncService(context, repository).sync(child, currentUser);
+        Child syncedChild = new ChildSyncService(context, childHttpDao, repository).sync(child, currentUser);
         assertThat(syncedChild.isSynced(), is(true));
         assertThat(syncedChild.getString("last_synced_at"), not(is(nullValue())));
         assertThat(syncedChild.getString("_attachments"), is(nullValue()));
@@ -217,7 +228,7 @@ public class ChildSyncServiceTest {
         FluentRequest mockFluentRequest = spy(new FluentRequest());
         RapidFtrApplication context = mockContext();
         String response = "{\"recorded_audio\":\"audio-12321\",\"photo_keys\": \"[photo-998,photo-888, photo-777]\",\"_id\":\"abcd\",\"current_photo_key\": \"photo-888\",\"separation_place\":\"\",\"wishes_address_3\":\"\",\"care_arrangments_name\":\"\",\"other_family\":\"\",\"care_arrangements_knowsfamily\":\"\",\"created_at\":\"2012-12-14 10:57:39UTC\",\"wishes_contacted_details\":\"\",\"posted_from\":\"Browser\"}";
-        ChildSyncService childSyncService = spy(new ChildSyncService(context, repository));
+        ChildSyncService childSyncService = spy(new ChildSyncService(context, childHttpDao, repository));
         getFakeHttpLayer().setDefaultHttpResponse(200, response);
         Child child = new Child("id", "user", "{ 'name' : 'child1'}");
 
@@ -238,7 +249,7 @@ public class ChildSyncServiceTest {
         Child child = new Child("id1", "user1", "{ '_id' : '1234abcd' ,'current_photo_key' : 'image_file_name'}");
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/1234abcd/photo/image_file_name", "OK");
 
-        InputStream inputStream = new ChildSyncService(mockContext(), repository).getOriginalPhoto(child, "image_file_name");
+        InputStream inputStream = new ChildSyncService(mockContext(), childHttpDao, repository).getOriginalPhoto(child, "image_file_name");
 
         String response = CharStreams.toString(new InputStreamReader(inputStream));
         assertEquals("OK", response);
@@ -251,7 +262,7 @@ public class ChildSyncServiceTest {
         getFakeHttpLayer().setDefaultHttpResponse(200, "audio stream");
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/1234abcd/audio", "OK");
 
-        String response = CharStreams.toString(new InputStreamReader(new ChildSyncService(mockContext(), repository).getAudio(child)));
+        String response = CharStreams.toString(new InputStreamReader(new ChildSyncService(mockContext(), childHttpDao, repository).getAudio(child)));
         assertEquals("OK", response);
     }
 
@@ -262,7 +273,7 @@ public class ChildSyncServiceTest {
         getFakeHttpLayer().setDefaultHttpResponse(200, response);
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/", response);
 
-        List<String> idsToChange = new ChildSyncService(mockContext(), repository).getIdsToDownload();
+        List<String> idsToChange = new ChildSyncService(mockContext(), childHttpDao, repository).getIdsToDownload();
         assertEquals(2, idsToChange.size());
         assertEquals("http://whatever/api/children/5-1ed26a0e5072830a9064361a570684f6", idsToChange.get(0));
     }
@@ -275,7 +286,7 @@ public class ChildSyncServiceTest {
         String resourceUrl = "http://whatever/api/children/0369c92c8e2245e680dc9a580202e285";
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/0369c92c8e2245e680dc9a580202e285/", response);
 
-        Child child = new ChildSyncService(mockContext(), repository).getRecord(resourceUrl);
+        Child child = new ChildSyncService(mockContext(), childHttpDao, repository).getRecord(resourceUrl);
         assertEquals("kavitha working", child.get("name"));
         assertEquals("1-ec347c93b262e7db0e306b77f22c2e19", child.get("_rev"));
     }
@@ -287,10 +298,33 @@ public class ChildSyncServiceTest {
         Child child = new Child();
         given(currentUser.isVerified()).willReturn(false);
 
-        child = new ChildSyncService(mockContext(), repository).sync(child, currentUser);
+        child = new ChildSyncService(mockContext(), childHttpDao, repository).sync(child, currentUser);
 
         assertThat(child.isSynced(), is(true));
     }
+
+    @Test
+    public void shouldRemoveHistoriesAfterSuccessfulSync() throws Exception {
+        Child childSpy = spy(new Child("{\"_id\" : \"couch_id\", \"child_name\":\"subhas\",\"unique_identifier\":\"78223s4h1e468f5200edc\"}"));
+        doReturn(false).when(childSpy).isNew();
+
+        childHttpDao = mock(EntityHttpDao.class);
+        doReturn(childSpy).when(childHttpDao).update(eq(childSpy), anyString(), any(Map.class));
+        new ChildSyncService(mockContext(), childHttpDao, repository).sync(childSpy, currentUser);
+        verify(childSpy).remove(History.HISTORIES);
+    }
+
+    @Test(expected = SyncFailedException.class)
+    public void shouldNotRemoveHistoriesAfterFailedSync() throws Exception {
+        Child childSpy = spy(new Child("{\"_id\" : \"couch_id\", \"child_name\":\"subhas\",\"unique_identifier\":\"78223s4h1e468f5200edc\"}"));
+        doReturn(false).when(childSpy).isNew();
+
+        childHttpDao = mock(EntityHttpDao.class);
+        doThrow(new HTTPException(404)).when(childHttpDao).update(eq(childSpy), anyString(), any(Map.class));
+        new ChildSyncService(mockContext(), childHttpDao, repository).sync(childSpy, currentUser);
+        verify(childSpy, never()).remove(History.HISTORIES);
+    }
+
 
     private RapidFtrApplication mockContext() {
         RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();

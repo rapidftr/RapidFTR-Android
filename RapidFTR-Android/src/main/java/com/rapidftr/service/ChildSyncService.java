@@ -7,6 +7,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.History;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.AudioCaptureHelper;
@@ -44,12 +45,10 @@ public class ChildSyncService implements SyncService<Child> {
 
 
     @Inject
-    public ChildSyncService(RapidFtrApplication context, ChildRepository childRepository) {
+    public ChildSyncService(RapidFtrApplication context, EntityHttpDao<Child> childHttpDao, ChildRepository childRepository) {
         this.context = context;
         this.childRepository = childRepository;
-        this.childEntityHttpDao = EntityHttpDaoFactory.createChildHttpDao(
-                context.getSharedPreferences().getString(RapidFtrApplication.SERVER_URL_PREF, ""),
-                CHILDREN_API_PATH, CHILDREN_API_PARAMETER);
+        this.childEntityHttpDao = childHttpDao;
     }
 
     @Override
@@ -62,6 +61,7 @@ public class ChildSyncService implements SyncService<Child> {
             child = child.isNew() ? childEntityHttpDao.create(child, getSyncPath(child, currentUser), requestParameters)
                     : childEntityHttpDao.update(child, getSyncPath(child, currentUser), requestParameters);
             setChildAttributes(child);
+            child.remove(History.HISTORIES);
             childRepository.createOrUpdateWithoutHistory(child);
             setMedia(child);
             childRepository.close();
