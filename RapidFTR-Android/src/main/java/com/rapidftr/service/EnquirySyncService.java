@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
+import com.rapidftr.model.History;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -29,12 +30,9 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     private static final int NOTIFICATION_ID = 1021;
 
     @Inject
-    public EnquirySyncService(RapidFtrApplication rapidFtrApplication,
-                              EnquiryRepository enquiryRepository) {
+    public EnquirySyncService(RapidFtrApplication rapidFtrApplication, EntityHttpDao<Enquiry> enquiryHttpDao, EnquiryRepository enquiryRepository) {
         this.sharedPreferences = rapidFtrApplication.getSharedPreferences();
-        this.enquiryHttpDao = EntityHttpDaoFactory.createEnquiryHttpDao(
-                sharedPreferences.getString(RapidFtrApplication.SERVER_URL_PREF, ""),
-                ENQUIRIES_API_PATH, ENQUIRIES_API_PARAMETER);
+        this.enquiryHttpDao = enquiryHttpDao;
         this.enquiryRepository = enquiryRepository;
     }
 
@@ -44,6 +42,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
             record = record.isNew() ? enquiryHttpDao.create(record) : enquiryHttpDao.update(record);
             record.setSynced(true);
             record.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
+            record.remove(History.HISTORIES);
             enquiryRepository.createOrUpdateWithoutHistory(record);
         } catch (Exception exception) {
             record.setSynced(false);
