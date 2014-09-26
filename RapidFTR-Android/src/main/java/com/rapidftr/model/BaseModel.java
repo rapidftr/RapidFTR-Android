@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.repository.ChildRepository;
@@ -233,7 +234,12 @@ public class BaseModel extends JSONObject implements Parcelable {
     public void addHistory(History history) throws JSONException {
         boolean meaningfulHistory = history.has(History.CHANGES) && history.get(History.CHANGES) != null;
         if(meaningfulHistory) {
-            this.append(History.HISTORIES, history);
+            //Android's JSON library does not support 'append', sadly...
+            if(has(History.HISTORIES)) {
+                accumulate(History.HISTORIES, history);
+            } else {
+                put(History.HISTORIES, new JSONArray(Lists.newArrayList(history)));
+            }
         }
     }
 }

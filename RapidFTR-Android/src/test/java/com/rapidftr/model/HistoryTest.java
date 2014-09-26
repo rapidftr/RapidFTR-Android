@@ -4,6 +4,7 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -11,8 +12,8 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.text.ParseException;
 import java.util.Calendar;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(CustomTestRunner.class)
@@ -68,7 +69,7 @@ public class HistoryTest {
 
     @Test
     public void shouldAddUserName() throws JSONException {
-        RapidFtrApplication.getApplicationInstance().getSharedPreferences().edit().putString("USER_NAME", "user_name").commit();
+        RapidFtrApplication.getApplicationInstance().setCurrentUser(new User("user_name"));
 
         BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"deletion\":\"old stuff\",\"change2\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"new stuff\",\"change2\":\"Foo Bar2\",\"unique_identifier\":\"1\"}");
@@ -79,7 +80,9 @@ public class HistoryTest {
 
     @Test
     public void shouldAddUserOrganisationToHistory() throws JSONException {
-        RapidFtrApplication.getApplicationInstance().getSharedPreferences().edit().putString("USER_ORG", "UNICEF").commit();
+        User user = new User("user_name");
+        user.setOrganisation("UNICEF");
+        RapidFtrApplication.getApplicationInstance().setCurrentUser(user);
 
         BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"deletion\":\"old stuff\",\"change2\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"new stuff\",\"change2\":\"Foo Bar2\",\"unique_identifier\":\"1\"}");
@@ -96,5 +99,20 @@ public class HistoryTest {
         History history = History.buildHistoryBetween(originalModel, changedModel);
         Calendar updatedAt = RapidFtrDateTime.getDateTime(history.getString(History.DATETIME));
         assert(Calendar.getInstance().getTimeInMillis() - updatedAt.getTimeInMillis() < 1000);
+    }
+
+    @Test
+    public void shouldNotIncludeHistoryInChanges() throws JSONException, ParseException {
+        BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"deletion\":\"old stuff\",\"change2\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
+        originalModel.addHistory(new History("{\"changes\":{\"change1\":{\"from\":\"Foo Bar\",\"to\":\"old stuff\"}}}"));
+        BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"new stuff\",\"change2\":\"Foo Bar2\",\"unique_identifier\":\"1\"}");
+        changedModel.addHistory(new History("{\"changes\":{\"something_else\":{\"from\":\"Foo Bar\",\"to\":\"old stuff\"}}}"));
+
+        History history = History.buildHistoryBetween(originalModel, changedModel);
+
+        JSONObject changes = (JSONObject) history.get(History.CHANGES);
+        assertFalse(changes.has(History.HISTORIES));
+        assertTrue(changedModel.has(History.HISTORIES));
+        assertTrue(originalModel.has(History.HISTORIES));
     }
 }

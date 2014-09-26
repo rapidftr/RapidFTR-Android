@@ -40,8 +40,11 @@ public class History extends JSONObject implements Parcelable {
         History history = new History();
         addChangesForOldValues(originalModel, updatedModel, history);
         addChangesForNewValues(originalModel, updatedModel, history);
-        history.put(History.USER_NAME, RapidFtrApplication.getApplicationInstance().getSharedPreferences().getString("USER_NAME", ""));
-        history.put(History.USER_ORGANISATION, RapidFtrApplication.getApplicationInstance().getSharedPreferences().getString("USER_ORG", ""));
+        User currentUser = RapidFtrApplication.getApplicationInstance().getCurrentUser();
+        String organisation = currentUser.getOrganisation();
+        String userName = currentUser.getUserName();
+        history.put(History.USER_NAME, userName);
+        history.put(History.USER_ORGANISATION, organisation);
         history.put(History.DATETIME, RapidFtrDateTime.now().defaultFormat());
         return history;
     }
@@ -49,14 +52,14 @@ public class History extends JSONObject implements Parcelable {
     private static void addChangesForOldValues(BaseModel originalModel, BaseModel updatedModel, History history) throws JSONException {
         List<String> updatedKeys = Lists.newArrayList(updatedModel.keys());
         for (String key : (List<String>) Lists.newArrayList(originalModel.keys())) {
-
+            boolean isHistoriesEntry = key.equals(History.HISTORIES);
             boolean valueChanged = updatedKeys.contains(key) && !originalModel.get(key).equals(updatedModel.get(key));
-            if(valueChanged) {
+            if(!isHistoriesEntry && valueChanged) {
                 history.addChangeForValues(key, originalModel.get(key), updatedModel.get(key));
             }
 
             boolean valueDeleted = !updatedKeys.contains(key);
-            if(valueDeleted) {
+            if(!isHistoriesEntry && valueDeleted) {
                 history.addChangeForValues(key, originalModel.get(key), "");
             }
         }
@@ -65,9 +68,9 @@ public class History extends JSONObject implements Parcelable {
     private static void addChangesForNewValues(BaseModel originalModel, BaseModel updatedModel, History history) throws JSONException {
         List<String> originalKeys = Lists.newArrayList(originalModel.keys());
         for (String key : (List<String>) Lists.newArrayList(updatedModel.keys())) {
-
+            boolean isHistoriesEntry = key.equals(History.HISTORIES);
             boolean newValue = !originalKeys.contains(key);
-            if(newValue) {
+            if(!isHistoriesEntry && newValue) {
                 history.addChangeForValues(key, "", updatedModel.get(key));
             }
         }
