@@ -192,6 +192,15 @@ public class BaseModel extends JSONObject implements Parcelable {
         return null;
     }
 
+    public String getString(String key, String defaultValue) {
+        try {
+            return super.getString(key);
+        } catch (JSONException ex) {
+            Log.e(RapidFtrApplication.APP_IDENTIFIER, ex.getMessage());
+        }
+        return defaultValue;
+    }
+
     public void setOrganisation(String userOrg) throws JSONException {
         put(created_organisation.getColumnName(), userOrg);
     }
