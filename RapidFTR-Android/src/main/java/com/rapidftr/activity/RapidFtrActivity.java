@@ -241,6 +241,7 @@ public abstract class RapidFtrActivity extends Activity {
         registerReceiver(networkChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         initializeExceptionHandler();
         initializeLogoutHandler();
+        getInjector().injectMembers(this);
     }
 
     @Override
