@@ -3,6 +3,7 @@ package com.rapidftr.model;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.RapidFtrDateTime;
+import junit.framework.TestCase;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -99,6 +100,36 @@ public class HistoryTest {
         History history = History.buildHistoryBetween(originalModel, changedModel);
         Calendar updatedAt = RapidFtrDateTime.getDateTime(history.getString(History.DATETIME));
         assert(Calendar.getInstance().getTimeInMillis() - updatedAt.getTimeInMillis() < 1000);
+    }
+
+    @Test
+    public void shouldNotIncludeRemovingEmptyValuesInHistory() throws JSONException {
+        BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"unique_identifier\":\"1\",\"deletionz\":\"\"}");
+        BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"unique_identifier\":\"1\"}");
+
+        History history = History.buildHistoryBetween(originalModel, changedModel);
+        JSONObject changes = (JSONObject) history.get(History.CHANGES);
+        assertFalse(changes.has("deletion"));
+    }
+
+    @Test
+    public void shouldNotIncludeAddingEmptyValuesInHistory() throws JSONException {
+        BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
+        BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"\",\"unique_identifier\":\"1\"}");
+
+        History history = History.buildHistoryBetween(originalModel, changedModel);
+        JSONObject changes = (JSONObject) history.get(History.CHANGES);
+        assertFalse(changes.has("addition"));
+    }
+
+    @Test
+    public void shouldNotIncludeEmptyChangesInHistory() throws JSONException {
+        BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"addition\":\"\",\"unique_identifier\":\"1\"}");
+        BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"\",\"unique_identifier\":\"1\"}");
+
+        History history = History.buildHistoryBetween(originalModel, changedModel);
+        JSONObject changes = (JSONObject) history.get(History.CHANGES);
+        assertFalse(changes.has("addition"));
     }
 
     @Test

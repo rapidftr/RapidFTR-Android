@@ -58,7 +58,7 @@ public class History extends JSONObject implements Parcelable {
                 history.addChangeForValues(key, originalModel.get(key), updatedModel.get(key));
             }
 
-            boolean valueDeleted = !updatedKeys.contains(key);
+            boolean valueDeleted = !updatedKeys.contains(key) && !originalModel.get(key).equals("");
             if(!isHistoriesEntry && valueDeleted) {
                 history.addChangeForValues(key, originalModel.get(key), "");
             }
@@ -69,7 +69,7 @@ public class History extends JSONObject implements Parcelable {
         List<String> originalKeys = Lists.newArrayList(originalModel.keys());
         for (String key : (List<String>) Lists.newArrayList(updatedModel.keys())) {
             boolean isHistoriesEntry = key.equals(History.HISTORIES);
-            boolean newValue = !originalKeys.contains(key);
+            boolean newValue = !originalKeys.contains(key) && !updatedModel.get(key).equals("");
             if(!isHistoriesEntry && newValue) {
                 history.addChangeForValues(key, "", updatedModel.get(key));
             }
