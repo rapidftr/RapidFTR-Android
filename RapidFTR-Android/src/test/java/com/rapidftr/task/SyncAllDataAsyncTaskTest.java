@@ -2,6 +2,7 @@ package com.rapidftr.task;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -233,6 +235,8 @@ public class SyncAllDataAsyncTaskTest {
 
     @Test
     public void shouldCompareAndRetrieveIdsToBeDownloadedFromServer() throws JSONException, IOException, HttpException {
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        sharedPreferences.edit().putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, 0).commit();
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
@@ -249,6 +253,8 @@ public class SyncAllDataAsyncTaskTest {
         verify(childSyncService).getIdsToDownload();
         verify(childSyncService).getRecord("qwerty0987");
         verify(childSyncService).getRecord("abcd1234");
+        long lastSyncedTime = sharedPreferences.getLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, 0);
+        assertEquals(lastSyncedTime, System.currentTimeMillis(), 1000);
     }
 
     @Test

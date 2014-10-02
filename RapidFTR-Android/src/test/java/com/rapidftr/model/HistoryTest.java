@@ -2,6 +2,7 @@ package com.rapidftr.model;
 
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.Database;
 import com.rapidftr.utils.RapidFtrDateTime;
 import junit.framework.TestCase;
 import org.json.JSONException;
@@ -133,16 +134,17 @@ public class HistoryTest {
     }
 
     @Test
-    public void shouldNotIncludeHistoryInChanges() throws JSONException, ParseException {
-        BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"deletion\":\"old stuff\",\"change2\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
+    public void shouldNotIncludeUnecessaryFieldsInChanges() throws JSONException, ParseException {
+        BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"deletion\":\"old stuff\",\"change2\":\"Foo Bar\",\"unique_identifier\":\"1\", \"synced\":\"true\"}");
         originalModel.addHistory(new History("{\"changes\":{\"change1\":{\"from\":\"Foo Bar\",\"to\":\"old stuff\"}}}"));
-        BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"new stuff\",\"change2\":\"Foo Bar2\",\"unique_identifier\":\"1\"}");
+        BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"new stuff\",\"change2\":\"Foo Bar2\",\"unique_identifier\":\"1\", \"synced\":\"false\"}");
         changedModel.addHistory(new History("{\"changes\":{\"something_else\":{\"from\":\"Foo Bar\",\"to\":\"old stuff\"}}}"));
 
         History history = History.buildHistoryBetween(originalModel, changedModel);
 
         JSONObject changes = (JSONObject) history.get(History.CHANGES);
         assertFalse(changes.has(History.HISTORIES));
+        assertFalse(changes.has(Database.ChildTableColumn.synced.getColumnName()));
         assertTrue(changedModel.has(History.HISTORIES));
         assertTrue(originalModel.has(History.HISTORIES));
     }

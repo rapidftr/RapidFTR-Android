@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import com.google.common.collect.Lists;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.database.Database;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,14 +53,13 @@ public class History extends JSONObject implements Parcelable {
     private static void addChangesForOldValues(BaseModel originalModel, BaseModel updatedModel, History history) throws JSONException {
         List<String> updatedKeys = Lists.newArrayList(updatedModel.keys());
         for (String key : (List<String>) Lists.newArrayList(originalModel.keys())) {
-            boolean isHistoriesEntry = key.equals(History.HISTORIES);
             boolean valueChanged = updatedKeys.contains(key) && !originalModel.get(key).equals(updatedModel.get(key));
-            if(!isHistoriesEntry && valueChanged) {
+            if(shouldRecordHistoryForKey(key) && valueChanged) {
                 history.addChangeForValues(key, originalModel.get(key), updatedModel.get(key));
             }
 
             boolean valueDeleted = !updatedKeys.contains(key) && !originalModel.get(key).equals("");
-            if(!isHistoriesEntry && valueDeleted) {
+            if(shouldRecordHistoryForKey(key) && valueDeleted) {
                 history.addChangeForValues(key, originalModel.get(key), "");
             }
         }
@@ -68,12 +68,17 @@ public class History extends JSONObject implements Parcelable {
     private static void addChangesForNewValues(BaseModel originalModel, BaseModel updatedModel, History history) throws JSONException {
         List<String> originalKeys = Lists.newArrayList(originalModel.keys());
         for (String key : (List<String>) Lists.newArrayList(updatedModel.keys())) {
-            boolean isHistoriesEntry = key.equals(History.HISTORIES);
             boolean newValue = !originalKeys.contains(key) && !updatedModel.get(key).equals("");
-            if(!isHistoriesEntry && newValue) {
+            if(shouldRecordHistoryForKey(key) && newValue) {
                 history.addChangeForValues(key, "", updatedModel.get(key));
             }
         }
+    }
+
+    private static boolean shouldRecordHistoryForKey(String key) {
+        boolean syncedKey = key.equals(Database.ChildTableColumn.synced.getColumnName());
+        boolean historiesKey = key.equals(History.HISTORIES);
+        return !historiesKey && !syncedKey;
     }
 
     private void addChangeForValues(String key, Object oldValue, Object newValue) throws JSONException {

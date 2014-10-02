@@ -205,6 +205,7 @@ public class ChildSyncServiceTest {
         new ChildSyncService(context, childHttpDao, repository).sync(child, currentUser);
         assertThat(child.optString("photo_keys"), is(""));
         assertThat(child.optString("audio_attachments"), is(""));
+        assertThat(child.optString("synced"), is(""));
     }
 
     @Test

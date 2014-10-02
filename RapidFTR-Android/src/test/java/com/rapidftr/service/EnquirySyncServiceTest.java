@@ -79,6 +79,21 @@ public class EnquirySyncServiceTest {
     }
 
     @Test
+    public void shouldNotSendUnnecessaryParamsDuringSync() throws Exception {
+        String response = "{\"_id\" : \"couch_id\", \"photo_keys\":\"[]\", \"audio_attachments\":\"[]\",\"unique_identifier\":\"78223s4h1e468f5200edc\"}";
+        Enquiry record = new Enquiry(response);
+        Enquiry recordSpy = spy(record);
+        getFakeHttpLayer().setDefaultHttpResponse(200, response);
+
+        EnquirySyncService enquirySyncService = new EnquirySyncService(mockContext(), enquiryHttpDao, enquiryRepository);
+        enquirySyncService.sync(recordSpy, user);
+
+        verify(recordSpy).remove("photo_keys");
+        verify(recordSpy).remove("audio_attachments");
+        verify(recordSpy).remove("synced");
+    }
+
+    @Test
     public void shouldUpdateEnquiryWhenItIsNotNew() throws Exception {
         String response = "{\"_id\" : \"couch_id\", \"child_name\":\"subhas\",\"unique_identifier\":\"78223s4h1e468f5200edc\"}";
         Enquiry enquiry = spy(new Enquiry(response, "createdBy"));

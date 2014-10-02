@@ -39,6 +39,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     @Override
     public Enquiry sync(Enquiry record, User currentUser) throws IOException, JSONException, HttpException {
         try {
+            removeParametersForSync(record);
             record = record.isNew() ? enquiryHttpDao.create(record) : enquiryHttpDao.update(record);
             record.setSynced(true);
             record.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
@@ -53,6 +54,12 @@ public class EnquirySyncService implements SyncService<Enquiry> {
         }
 
         return record;
+    }
+
+    private void removeParametersForSync(Enquiry record) {
+        record.remove("photo_keys");
+        record.remove("audio_attachments");
+        record.remove("synced");
     }
 
     @Override

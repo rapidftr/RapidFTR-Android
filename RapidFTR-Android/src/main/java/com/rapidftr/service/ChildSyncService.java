@@ -123,6 +123,7 @@ public class ChildSyncService implements SyncService<Child> {
     private void removeUnusedParametersBeforeSync(Child child) {
         photoKeys = (JSONArray) child.remove("photo_keys");
         audioAttachments = child.remove("audio_attachments");
+        child.remove("synced");
     }
 
     private String getAudioKey(Child child) throws JSONException {

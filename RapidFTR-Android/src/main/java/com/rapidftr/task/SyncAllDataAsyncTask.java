@@ -1,7 +1,9 @@
 package com.rapidftr.task;
 
+import android.content.SharedPreferences;
 import com.google.inject.Inject;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.Repository;
@@ -57,6 +59,15 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
         getFormSections();
         saveIncomingRecords(idsToDownload, startProgressForDownloadingRecords);
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
+        updateLastSyncedAt();
+    }
+
+    private void updateLastSyncedAt() {
+        RapidFtrApplication.getApplicationInstance()
+                .getSharedPreferences()
+                .edit()
+                .putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, System.currentTimeMillis())
+                .commit();
     }
 
 }
