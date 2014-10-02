@@ -20,6 +20,7 @@ public class History extends JSONObject implements Parcelable {
     public static final String CHANGES = "changes";
     public static final String FROM = "from";
     public static final String TO = "to";
+    public static final String CREATED = "created";
 
     public History(String jsonSource) throws JSONException {
         super(jsonSource);
@@ -95,5 +96,18 @@ public class History extends JSONObject implements Parcelable {
         }
         jsonChanges.put(key, changes);
         this.put(CHANGES, jsonChanges);
+    }
+
+    public static History buildCreationHistory(BaseModel model, User user) throws JSONException {
+        History creationHistory = new History();
+        creationHistory.put(USER_NAME, user.getUserName());
+        creationHistory.put(USER_ORGANISATION, user.getOrganisation());
+        creationHistory.put(DATETIME, RapidFtrDateTime.now());
+
+        JSONObject createdChange = new JSONObject().put(CREATED, RapidFtrDateTime.now().toString());
+        JSONObject changes = new JSONObject();
+        changes.put(model.getClass().getSimpleName().toLowerCase(), createdChange);
+        creationHistory.put(CHANGES, changes);
+        return creationHistory;
     }
 }

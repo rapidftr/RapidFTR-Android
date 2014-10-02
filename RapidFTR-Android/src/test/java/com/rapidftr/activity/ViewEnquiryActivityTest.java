@@ -81,8 +81,10 @@ public class ViewEnquiryActivityTest {
         ViewEnquiryActivity viewEnquiryActivity = new ViewEnquiryActivity();
         Enquiry retrievedEnquiry = viewEnquiryActivity.loadEnquiry(bundle, enquiryRepository);
         retrievedEnquiry.remove("id"); //because id attribute is added to the enquiry while saving to the database
+        retrievedEnquiry.remove("histories");
+        enquiry.remove("histories");
 
-        JSONAssert.assertEquals(retrievedEnquiry, enquiry, true);
+        JSONAssert.assertEquals(retrievedEnquiry, enquiry, false);
     }
 
 }

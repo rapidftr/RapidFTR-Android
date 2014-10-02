@@ -4,10 +4,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.History;
+import com.rapidftr.model.User;
 import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
 import org.json.JSONException;
@@ -39,6 +41,9 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         if (exists(enquiry.getUniqueId())) {
             Enquiry existingEnquiry = get(enquiry.getUniqueId());
             enquiry.addHistory(History.buildHistoryBetween(existingEnquiry, enquiry));
+        } else {
+            User currentUser = RapidFtrApplication.getApplicationInstance().getCurrentUser();
+            enquiry.addHistory(History.buildCreationHistory(enquiry, currentUser));
         }
         enquiry.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
         createOrUpdateWithoutHistory(enquiry);

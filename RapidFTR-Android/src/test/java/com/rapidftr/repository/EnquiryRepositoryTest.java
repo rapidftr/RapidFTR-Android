@@ -9,6 +9,8 @@ import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.History;
+import com.rapidftr.utils.JSONArrays;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -58,11 +60,13 @@ public class EnquiryRepositoryTest {
     }
 
     @Test
-    public void shouldCreateChildRecordAndNotSetHistories() throws Exception {
+    public void shouldCreateChildRecordAndSetCreatedAtHistory() throws Exception {
         Enquiry enquiry = new Enquiry("{\"age\":14,\"name\":\"Subhas\"}", user);
         enquiryRepository.createOrUpdate(enquiry);
         JSONObject enquiryJsonValues = enquiryRepository.get(enquiry.getUniqueId()).values();
-        assertFalse(enquiryJsonValues.has(History.HISTORIES));
+        JSONArray histories = (JSONArray) enquiryJsonValues.get(History.HISTORIES);
+        JSONObject changes = (JSONObject) ((JSONObject) histories.get(0)).get("changes");
+        assert(((JSONObject) changes.get("enquiry")).has(History.CREATED));
     }
 
     @Test

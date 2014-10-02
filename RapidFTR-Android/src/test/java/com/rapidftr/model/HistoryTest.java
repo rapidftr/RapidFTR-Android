@@ -148,4 +148,20 @@ public class HistoryTest {
         assertTrue(changedModel.has(History.HISTORIES));
         assertTrue(originalModel.has(History.HISTORIES));
     }
+
+    @Test
+    public void shouldBuildCreationHistory() throws JSONException {
+        Enquiry enquiry = new Enquiry();
+        User user = new User("field_worker");
+        user.setOrganisation("UNICEF");
+        History creationHistory = History.buildCreationHistory(enquiry, user);
+        assertEquals(creationHistory.get(History.USER_NAME), "field_worker");
+        assertEquals(creationHistory.get(History.USER_ORGANISATION), "UNICEF");
+        assert(creationHistory.has(History.DATETIME));
+
+        JSONObject changes = (JSONObject) creationHistory.get(History.CHANGES);
+        JSONObject enquiryChange = (JSONObject) changes.get("enquiry");
+        assert(enquiryChange.has(History.CREATED));
+
+    }
 }
