@@ -71,7 +71,7 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
             return false;
         } catch (Exception e) {
             Log.e("SyncAllDataTask", "Error in sync", e);
-            publishProgress(context.getString(R.string.sync_error));
+            publishProgress(e.getMessage());
             return false;
         }
     }
