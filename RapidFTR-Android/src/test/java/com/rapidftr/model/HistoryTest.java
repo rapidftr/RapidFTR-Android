@@ -135,9 +135,21 @@ public class HistoryTest {
 
     @Test
     public void shouldNotIncludeUnecessaryFieldsInChanges() throws JSONException, ParseException {
-        BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"deletion\":\"old stuff\",\"change2\":\"Foo Bar\",\"unique_identifier\":\"1\", \"synced\":\"true\"}");
+        BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\"," +
+                "\"deletion\":\"old stuff\"," +
+                "\"change2\":\"Foo Bar\"," +
+                "\"unique_identifier\":\"1\"," +
+                "\"last_updated_at\":\"2013-12-12 11:11:11\"," +
+                "\"last_synced_at\":\"2013-12-12 11:11:11\"," +
+                "\"synced\":\"true\"}");
         originalModel.addHistory(new History("{\"changes\":{\"change1\":{\"from\":\"Foo Bar\",\"to\":\"old stuff\"}}}"));
-        BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"new stuff\",\"change2\":\"Foo Bar2\",\"unique_identifier\":\"1\", \"synced\":\"false\"}");
+        BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\"," +
+                "\"addition\":\"new stuff\"," +
+                "\"change2\":\"Foo Bar2\"," +
+                "\"unique_identifier\":\"1\"," +
+                "\"last_updated_at\":\"2014-01-01 00:00:00\"," +
+                "\"last_synced_at\":\"2014-01-01 00:00:00\"," +
+                "\"synced\":\"false\"}");
         changedModel.addHistory(new History("{\"changes\":{\"something_else\":{\"from\":\"Foo Bar\",\"to\":\"old stuff\"}}}"));
 
         History history = History.buildHistoryBetween(originalModel, changedModel);
@@ -145,6 +157,8 @@ public class HistoryTest {
         JSONObject changes = (JSONObject) history.get(History.CHANGES);
         assertFalse(changes.has(History.HISTORIES));
         assertFalse(changes.has(Database.ChildTableColumn.synced.getColumnName()));
+        assertFalse(changes.has(Database.ChildTableColumn.last_updated_at.getColumnName()));
+        assertFalse(changes.has(Database.ChildTableColumn.last_synced_at.getColumnName()));
         assertTrue(changedModel.has(History.HISTORIES));
         assertTrue(originalModel.has(History.HISTORIES));
     }

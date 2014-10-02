@@ -9,6 +9,7 @@ import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -77,9 +78,13 @@ public class History extends JSONObject implements Parcelable {
     }
 
     private static boolean shouldRecordHistoryForKey(String key) {
-        boolean syncedKey = key.equals(Database.ChildTableColumn.synced.getColumnName());
-        boolean historiesKey = key.equals(History.HISTORIES);
-        return !historiesKey && !syncedKey;
+        List<String> keysToIgnore = new ArrayList<String>();
+        keysToIgnore.add(Database.ChildTableColumn.synced.getColumnName());
+        keysToIgnore.add(Database.ChildTableColumn.last_synced_at.getColumnName());
+        keysToIgnore.add(Database.ChildTableColumn.last_updated_at.getColumnName());
+        keysToIgnore.add(History.HISTORIES);
+
+        return !keysToIgnore.contains(key);
     }
 
     private void addChangeForValues(String key, Object oldValue, Object newValue) throws JSONException {

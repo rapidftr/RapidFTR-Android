@@ -10,6 +10,7 @@ import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.History;
+import com.rapidftr.model.User;
 import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
 import org.json.JSONException;
@@ -143,6 +144,9 @@ public class ChildRepository implements Closeable, Repository<Child> {
         if (exists(child.getUniqueId())) {
             Child existingChild = get(child.getUniqueId());
             child.addHistory(History.buildHistoryBetween(existingChild, child));
+        } else {
+            User currentUser = RapidFtrApplication.getApplicationInstance().getCurrentUser();
+            child.addHistory(History.buildCreationHistory(child, currentUser));
         }
         child.setLastUpdatedAt(getTimeStamp());
         createOrUpdateWithoutHistory(child);

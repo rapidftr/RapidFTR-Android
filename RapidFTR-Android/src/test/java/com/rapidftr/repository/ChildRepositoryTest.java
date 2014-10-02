@@ -12,6 +12,7 @@ import com.rapidftr.model.Child;
 import com.rapidftr.model.History;
 import com.rapidftr.model.User;
 import org.hamcrest.CoreMatchers;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -63,10 +64,12 @@ public class ChildRepositoryTest {
     }
 
     @Test
-    public void shouldCreateChildRecordAndNotSetHistories() throws Exception {
+    public void shouldCreateChildRecordAndSetCreatedAt() throws Exception {
         repository.createOrUpdate(new Child("id1", "user1", "{ 'test1' : 'value1' }"));
         JSONObject childJsonValues = repository.get("id1").values();
-        assertFalse(childJsonValues.has(History.HISTORIES));
+        JSONArray histories = (JSONArray) childJsonValues.get(History.HISTORIES);
+        JSONObject changes = (JSONObject) ((JSONObject) histories.get(0)).get("changes");
+        assert(((JSONObject) changes.get("child")).has(History.CREATED));
     }
 
         @Test
@@ -90,13 +93,15 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldUpdateChildRecordWithHistory() throws Exception {
-        repository.createOrUpdate(new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
-        JSONObject childJsonValues = repository.get("id1").values();
-        assertFalse(childJsonValues.has(History.HISTORIES));
+        repository.createOrUpdate(new Child("idx", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
+        Child child = repository.get("idx");
+        JSONObject childJsonValues = child.values();
+        assertEquals(1, childJsonValues.getJSONArray(History.HISTORIES).length());
 
-        repository.createOrUpdate(new Child("id1", "user1", "{ 'test1' : 'value2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
-        childJsonValues = repository.get("id1").values();
-        assertTrue(childJsonValues.has(History.HISTORIES));
+        child.put("test1", "value2");
+        repository.createOrUpdate(child);
+        childJsonValues = repository.get("idx").values();
+        assertEquals(2, childJsonValues.getJSONArray(History.HISTORIES).length());
     }
 
     @Test
