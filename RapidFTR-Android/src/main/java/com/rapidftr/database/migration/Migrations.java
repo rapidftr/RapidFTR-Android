@@ -97,7 +97,6 @@ class MigrationSQL {
             + Database.EnquiryTableColumn.created_by.getColumnName() + " text not null,"
             + Database.EnquiryTableColumn.created_at.getColumnName() + " text not null default '" + RapidFtrDateTime.now().defaultFormat() + "',"
             + Database.EnquiryTableColumn.synced.getColumnName() + "  text not null,"
-            + Database.EnquiryTableColumn.created_organisation.getColumnName() + "  text ,"
             + Database.EnquiryTableColumn.internal_id.getColumnName() + "  text ,"
             + Database.EnquiryTableColumn.internal_rev.getColumnName() + "  text ,"
             + Database.EnquiryTableColumn.unique_identifier.getColumnName() + " text "
