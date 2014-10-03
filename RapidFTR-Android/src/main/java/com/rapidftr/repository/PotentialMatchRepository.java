@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.rapidftr.database.Database.*;
 import static com.rapidftr.database.Database.PotentialMatchTableColumn.*;
-import static com.rapidftr.database.Database.enquiry;
 
-public class PotentialMatchRepository implements Closeable, Repository<PotentialMatch>{
+public class PotentialMatchRepository implements Closeable, Repository<PotentialMatch> {
 
     private final String userName;
     private final DatabaseSession session;
@@ -82,15 +80,23 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
 
     @Override
     public void createOrUpdateWithoutHistory(PotentialMatch potentialMatch) throws JSONException {
-        ContentValues values = new ContentValues();
-        values.put(enquiry_id.getColumnName(), potentialMatch.getEnquiryId());
-        values.put(child_id.getColumnName(), potentialMatch.getChildId());
-        values.put(created_at.getColumnName(), potentialMatch.getCreatedAt());
-        values.put(id.getColumnName(), potentialMatch.getUniqueId());
-        values.put(revision.getColumnName(), potentialMatch.getRevision());
-        values.put(confirmed.getColumnName(), potentialMatch.isConfirmed().toString());
+        if (potentialMatch.isDeleted()) {
+            delete(potentialMatch);
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(enquiry_id.getColumnName(), potentialMatch.getEnquiryId());
+            values.put(child_id.getColumnName(), potentialMatch.getChildId());
+            values.put(created_at.getColumnName(), potentialMatch.getCreatedAt());
+            values.put(id.getColumnName(), potentialMatch.getUniqueId());
+            values.put(revision.getColumnName(), potentialMatch.getRevision());
+            values.put(confirmed.getColumnName(), potentialMatch.isConfirmed().toString());
 
-        session.replaceOrThrow(Database.potential_match.getTableName(), null, values);
+            session.replaceOrThrow(Database.potential_match.getTableName(), null, values);
+        }
+    }
+
+    public void delete(PotentialMatch potentialMatch) {
+        session.execSQL(String.format("DELETE FROM potential_match WHERE id ='%s'", potentialMatch.getUniqueId()));
     }
 
     @Override
@@ -109,7 +115,7 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
     }
 
     public List<PotentialMatch> getPotentialMatchesFor(Enquiry enquiry) throws JSONException {
-        if(enquiry.getInternalId() == null) {
+        if (enquiry.getInternalId() == null) {
             return new ArrayList<PotentialMatch>();
         }
         @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE enquiry_id = ?", new String[]{enquiry.getInternalId()});
@@ -117,7 +123,7 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
     }
 
     public List<PotentialMatch> getPotentialMatchesFor(Child child) throws JSONException {
-        if(child.getInternalId() == null) {
+        if (child.getInternalId() == null) {
             return new ArrayList<PotentialMatch>();
         }
         @Cleanup Cursor cursor = session.rawQuery("SELECT * FROM potential_match WHERE child_id = ?", new String[]{child.getInternalId()});
@@ -126,7 +132,7 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
 
     private ArrayList<PotentialMatch> buildPotentialMatches(Cursor cursor) {
         ArrayList<PotentialMatch> potentialMatches = new ArrayList<PotentialMatch>();
-        while(cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
             potentialMatches.add(buildPotentialMatch(cursor));
         }
         return potentialMatches;

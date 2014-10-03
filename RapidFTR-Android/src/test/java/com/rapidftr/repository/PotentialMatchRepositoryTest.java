@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertNull;
 
 @RunWith(CustomTestRunner.class)
 public class PotentialMatchRepositoryTest {
@@ -58,7 +59,7 @@ public class PotentialMatchRepositoryTest {
         Enquiry enquiry = new Enquiry(enquiryJSON);
         PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_2");
         repository.createOrUpdate(potentialMatch);
-        repository.createOrUpdate(new PotentialMatch("not_matching","child_id","unique_id_1"));
+        repository.createOrUpdate(new PotentialMatch("not_matching", "child_id", "unique_id_1"));
 
         List<PotentialMatch> matches = repository.getPotentialMatchesFor(enquiry);
 
@@ -80,7 +81,7 @@ public class PotentialMatchRepositoryTest {
         Child child = new Child(childJSON);
         PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_1");
         repository.createOrUpdate(potentialMatch);
-        repository.createOrUpdate(new PotentialMatch("enquiry_id","not_matching","unique_id_2"));
+        repository.createOrUpdate(new PotentialMatch("enquiry_id", "not_matching", "unique_id_2"));
 
         List<PotentialMatch> matches = repository.getPotentialMatchesFor(child);
 
@@ -94,7 +95,7 @@ public class PotentialMatchRepositoryTest {
         repository.createOrUpdate(potentialMatch);
         repository.createOrUpdateWithoutHistory(new PotentialMatch("enquiry_id", "child_id", "unique_id_1", true));
         PotentialMatch savedPotentialMatch = repository.get("unique_id_1");
-        assert(savedPotentialMatch.isConfirmed());
+        assert (savedPotentialMatch.isConfirmed());
     }
 
     @Test
@@ -107,5 +108,27 @@ public class PotentialMatchRepositoryTest {
     @Test
     public void shouldReturnNullIfPotentialMatchDoesNotExist() throws JSONException, SQLException {
         assertThat(repository.get("unique_id_1"), is(nullValue()));
+    }
+
+    @Test
+    public void shouldDeletePotentialMatch() throws JSONException, SQLException {
+        PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_1");
+        repository.createOrUpdate(potentialMatch);
+        assertThat(repository.get("unique_id_1"), is(notNullValue()));
+
+        repository.delete(potentialMatch);
+        assertNull(repository.get("unique_id_1"));
+    }
+
+    @Test
+    public void shouldDeletePotentialMatchMarkedAsDeleted() throws JSONException, SQLException {
+        PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_1");
+        repository.createOrUpdate(potentialMatch);
+        assertThat(repository.get("unique_id_1"), is(notNullValue()));
+
+        potentialMatch.put(PotentialMatch.DELETED_FIELD, Boolean.TRUE.toString());
+        repository.createOrUpdateWithoutHistory(potentialMatch);
+
+        assertNull(repository.get("unique_id_1"));
     }
 }

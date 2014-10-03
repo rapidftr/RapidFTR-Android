@@ -6,10 +6,8 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
-import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.History;
-import com.rapidftr.utils.JSONArrays;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,6 +15,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,9 +24,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.rapidftr.model.History.HISTORIES;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -109,14 +108,15 @@ public class EnquiryRepositoryTest {
     }
 
     @Test
-    @Ignore
     public void getShouldReturnEnquiryForId() throws Exception {
         Enquiry enquiry1 = new Enquiry("{age:14,name:Subhas}", user);
         String enquiryId = enquiry1.getUniqueId();
 
         enquiryRepository.createOrUpdate(enquiry1);
 
-        assertEquals(enquiryRepository.get(enquiryId).toString(), enquiry1.toString());
+        Enquiry savedEnquiry = enquiryRepository.get(enquiryId);
+        savedEnquiry.remove("id");
+        JSONAssert.assertEquals(savedEnquiry.toString(), enquiry1.toString(), false);
     }
 
     @Test

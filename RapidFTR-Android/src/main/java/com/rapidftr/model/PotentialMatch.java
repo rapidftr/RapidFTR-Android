@@ -6,7 +6,8 @@ import org.json.JSONException;
 public class PotentialMatch extends BaseModel {
     private static final String ENQUIRY_ID_FIELD = "enquiry_id";
     private static final String CHILD_ID_FIELD = "child_id";
-    private static final String CONFIRMED = "confirmed";
+    private static final String CONFIRMED_FIELD = "confirmed";
+    public static final String DELETED_FIELD = "deleted";
 
     public PotentialMatch(String jsonString) throws JSONException {
         super(jsonString);
@@ -20,7 +21,7 @@ public class PotentialMatch extends BaseModel {
 
     public PotentialMatch(String enquiryId, String childId, String uniqueIdentifier, Boolean isConfirmed) {
         this(enquiryId, childId, uniqueIdentifier);
-        this.put(CONFIRMED, isConfirmed.toString());
+        this.put(CONFIRMED_FIELD, isConfirmed.toString());
     }
 
     public String getChildId() {
@@ -50,13 +51,17 @@ public class PotentialMatch extends BaseModel {
     }
 
     public Boolean isConfirmed() {
-        return Boolean.valueOf(getString(CONFIRMED));
+        return Boolean.valueOf(getString(CONFIRMED_FIELD));
+    }
+
+    public Boolean isDeleted() {
+        return Boolean.valueOf(getString(DELETED_FIELD, "false"));
     }
 
     public static class FilterByConfirmationStatus implements Predicate<PotentialMatch> {
         private Boolean keepConfirmedMatches;
 
-        public FilterByConfirmationStatus(Boolean keepConfirmedMatches){
+        public FilterByConfirmationStatus(Boolean keepConfirmedMatches) {
             this.keepConfirmedMatches = keepConfirmedMatches;
         }
 
