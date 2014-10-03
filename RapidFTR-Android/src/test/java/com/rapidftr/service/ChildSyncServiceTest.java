@@ -15,7 +15,13 @@ import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.http.FluentRequest;
 import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.params.HttpParams;
+import org.hamcrest.Matcher;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Before;
@@ -24,17 +30,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.robolectric.Robolectric;
 import org.robolectric.tester.org.apache.http.FakeHttpLayer;
+import org.robolectric.tester.org.apache.http.HttpResponseStub;
+import org.robolectric.tester.org.apache.http.RequestMatcher;
 import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
 import javax.xml.ws.http.HTTPException;
 import java.io.*;
+import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.rapidftr.RapidFtrApplication.LAST_CHILD_SYNC;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
+import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -270,13 +282,21 @@ public class ChildSyncServiceTest {
     @Test
     public void shouldFetchListOfResourceUrlsToUpdate() throws Exception {
         String response = "[{\"location\":\"http://whatever/api/children/5-1ed26a0e5072830a9064361a570684f6\"},{\"location\":\"http://whatever/api/children/4-b011946150a16b0d2c6271aed05e2abe\"}]";
-
-        getFakeHttpLayer().setDefaultHttpResponse(200, response);
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/", response);
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children?updated_after=1970-01-01%2000%3A00%3A00UTC", response);
 
         List<String> idsToChange = new ChildSyncService(mockContext(), childHttpDao, repository).getIdsToDownload();
         assertEquals(2, idsToChange.size());
         assertEquals("http://whatever/api/children/5-1ed26a0e5072830a9064361a570684f6", idsToChange.get(0));
+    }
+
+    @Test
+    public void shouldUseLastChildSyncTimestampToRetreiveIds() throws Exception {
+        String response = "[{\"location\":\"http://whatever/api/children/5-1ed26a0e5072830a9064361a570684f6\"},{\"location\":\"http://whatever/api/children/4-b011946150a16b0d2c6271aed05e2abe\"}]";
+        long time = 1412330399491l;
+        getApplicationInstance().getSharedPreferences().edit().putLong(RapidFtrApplication.LAST_CHILD_SYNC, time).commit();
+
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children?updated_after=2014-10-03%2009%3A59%3A59UTC", response);
+        new ChildSyncService(mockContext(), childHttpDao, repository).getIdsToDownload();
     }
 
     @Test

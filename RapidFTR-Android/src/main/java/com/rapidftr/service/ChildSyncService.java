@@ -104,6 +104,15 @@ public class ChildSyncService implements SyncService<Child> {
         return context.getString(R.string.child_sync_title);
     }
 
+    @Override
+    public void setLastSyncedAt() {
+        RapidFtrApplication.getApplicationInstance()
+                .getSharedPreferences()
+                .edit()
+                .putLong(RapidFtrApplication.LAST_CHILD_SYNC, System.currentTimeMillis())
+                .commit();
+    }
+
     private void setChildAttributes(Child child) throws JSONException {
         child.setSynced(true);
         child.setLastSyncedAt(RapidFtrDateTime.now().defaultFormat());
@@ -201,7 +210,7 @@ public class ChildSyncService implements SyncService<Child> {
 
     public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {
         // Default value is currently epoch
-        long lastUpdateMillis = context.getSharedPreferences().getLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, 0);
+        long lastUpdateMillis = context.getSharedPreferences().getLong(RapidFtrApplication.LAST_CHILD_SYNC, 0);
         DateTime lastUpdate = new DateTime(lastUpdateMillis);
         return childEntityHttpDao.getUpdatedResourceUrls(lastUpdate);
     }

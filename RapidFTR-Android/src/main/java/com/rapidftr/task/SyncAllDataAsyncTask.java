@@ -42,6 +42,7 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
             }
         } else {
             idsToDownload = recordSyncService.getIdsToDownload();
+            recordSyncService.setLastSyncedAt();
             setProgressBarParameters(idsToDownload, recordsToUpload);
             setProgressAndNotify(context.getString(R.string.synchronize_step_1), 0);
 
@@ -59,15 +60,5 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
         getFormSections();
         saveIncomingRecords(idsToDownload, startProgressForDownloadingRecords);
         setProgressAndNotify(context.getString(R.string.sync_complete), maxProgress);
-        updateLastSyncedAt();
     }
-
-    private void updateLastSyncedAt() {
-        RapidFtrApplication.getApplicationInstance()
-                .getSharedPreferences()
-                .edit()
-                .putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, System.currentTimeMillis())
-                .commit();
-    }
-
 }

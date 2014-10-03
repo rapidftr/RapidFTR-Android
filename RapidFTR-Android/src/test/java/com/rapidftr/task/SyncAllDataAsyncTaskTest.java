@@ -236,7 +236,7 @@ public class SyncAllDataAsyncTaskTest {
     @Test
     public void shouldCompareAndRetrieveIdsToBeDownloadedFromServer() throws JSONException, IOException, HttpException {
         SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
-        sharedPreferences.edit().putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, 0).commit();
+        sharedPreferences.edit().putLong(RapidFtrApplication.LAST_CHILD_SYNC, 0).commit();
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
@@ -253,8 +253,7 @@ public class SyncAllDataAsyncTaskTest {
         verify(childSyncService).getIdsToDownload();
         verify(childSyncService).getRecord("qwerty0987");
         verify(childSyncService).getRecord("abcd1234");
-        long lastSyncedTime = sharedPreferences.getLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, 0);
-        assertEquals(lastSyncedTime, System.currentTimeMillis(), 1000);
+        verify(childSyncService).setLastSyncedAt();
     }
 
     @Test

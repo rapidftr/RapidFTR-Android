@@ -72,7 +72,6 @@ public class EnquirySyncService implements SyncService<Enquiry> {
         return enquiry;
     }
 
-
     @Override
     public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {
         long lastUpdateMillis = sharedPreferences.getLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, 0);  // Default value is currently epoch
@@ -93,6 +92,15 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     @Override
     public String getNotificationTitle() {
         return RapidFtrApplication.getApplicationInstance().getString(R.string.enquires_sync_title);
+    }
+
+    @Override
+    public void setLastSyncedAt() {
+        RapidFtrApplication.getApplicationInstance()
+                .getSharedPreferences()
+                .edit()
+                .putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, System.currentTimeMillis())
+                .commit();
     }
 
 

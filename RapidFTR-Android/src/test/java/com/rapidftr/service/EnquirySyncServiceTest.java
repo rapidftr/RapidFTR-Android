@@ -23,6 +23,7 @@ import java.io.SyncFailedException;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
+import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static org.hamcrest.core.Is.is;
@@ -70,12 +71,22 @@ public class EnquirySyncServiceTest {
     @Test
     public void getIdsToDownloadShouldRetrieveUrlsFromApiSinceLastUpdate() throws Exception {
         String response = "[{\"location\":\"http://blah.com/123\"},{\"location\":\"http://blah.com/234\"}]";
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/enquiries?updated_after=1970-01-01%2B00%253A00%253A00UTC", response);
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/enquiries?updated_after=1970-01-01%2000%3A00%3A00UTC", response);
 
         List<String> enquiryIds = new EnquirySyncService(mockContext(), enquiryHttpDao, enquiryRepository).getIdsToDownload();
 
         assertThat(enquiryIds.get(0), is("http://blah.com/123"));
         assertThat(enquiryIds.get(1), is("http://blah.com/234"));
+    }
+
+    @Test
+    public void shouldUseLastEnquirySyncTimestampToRetreiveIds() throws Exception {
+        String response = "[{\"location\":\"http://whatever/api/children/5-1ed26a0e5072830a9064361a570684f6\"},{\"location\":\"http://whatever/api/children/4-b011946150a16b0d2c6271aed05e2abe\"}]";
+        long time = 1412330399491l;
+        getApplicationInstance().getSharedPreferences().edit().putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, time).commit();
+
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/enquiries?updated_after=2014-10-03%2009%3A59%3A59UTC", response);
+        new EnquirySyncService(mockContext(), enquiryHttpDao, enquiryRepository).getIdsToDownload();
     }
 
     @Test
