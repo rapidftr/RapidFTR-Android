@@ -93,7 +93,7 @@ public class PotentialMatchRepositoryTest {
     public void shouldUpdateExistingRecords() throws JSONException, SQLException {
         PotentialMatch potentialMatch = new PotentialMatch("enquiry_id", "child_id", "unique_id_1");
         repository.createOrUpdate(potentialMatch);
-        repository.update(new PotentialMatch("enquiry_id", "child_id", "unique_id_1", true));
+        repository.createOrUpdateWithoutHistory(new PotentialMatch("enquiry_id", "child_id", "unique_id_1", true));
         PotentialMatch savedPotentialMatch = repository.get("unique_id_1");
         assert (savedPotentialMatch.isConfirmed());
     }
@@ -127,7 +127,7 @@ public class PotentialMatchRepositoryTest {
         assertThat(repository.get("unique_id_1"), is(notNullValue()));
 
         potentialMatch.put(PotentialMatch.DELETED_FIELD, Boolean.TRUE.toString());
-        repository.update(potentialMatch);
+        repository.createOrUpdateWithoutHistory(potentialMatch);
 
         assertNull(repository.get("unique_id_1"));
     }

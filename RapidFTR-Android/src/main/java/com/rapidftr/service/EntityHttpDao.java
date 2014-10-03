@@ -103,7 +103,7 @@ public class EntityHttpDao<T extends BaseModel> {
                 .context(RapidFtrApplication.getApplicationInstance())
                 .host(serverUrl)
                 .path(apiPath)
-                .param(UPDATED_AFTER_FORM_PARAMETER, URLEncoder.encode(utcString, CHARACTER_SET))
+                .param(UPDATED_AFTER_FORM_PARAMETER, utcString)
                 .get()
                 .ensureSuccess();
         String json = getJsonResponse(fluentResponse);

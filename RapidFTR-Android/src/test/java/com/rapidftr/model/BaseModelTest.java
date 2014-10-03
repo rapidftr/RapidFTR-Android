@@ -1,9 +1,13 @@
 package com.rapidftr.model;
 
+import com.rapidftr.CustomTestRunner;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.Arrays;
 
@@ -12,9 +16,11 @@ import static junit.framework.Assert.assertNull;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
+@RunWith(CustomTestRunner.class)
 public class BaseModelTest {
 
     @Test
@@ -108,5 +114,41 @@ public class BaseModelTest {
         assertNull(child.opt("name"));
     }
 
+    @Test
+    public void shouldAddHistoriesToNewModel() throws JSONException {
+        BaseModel model = new BaseModel();
 
+        History history = History.buildHistoryBetween(model, new BaseModel("{\"some_field\":\"Values\"}"));
+        model.addHistory(history);
+
+        JSONArray jsonArray = (JSONArray) model.get(History.HISTORIES);
+        assertThat(jsonArray.length(), is(1));
+        JSONObject changes = (JSONObject) ((JSONObject) jsonArray.get(0)).get(History.CHANGES);
+        assert(changes.has("some_field"));
+    }
+
+    @Test
+    public void shouldAppendHistoriesToModel() throws JSONException {
+        BaseModel model = new BaseModel();
+        History history = History.buildHistoryBetween(model, new BaseModel("{\"some_field\":\"Values\"}"));
+        model.addHistory(history);
+        history = History.buildHistoryBetween(model, new BaseModel("{\"some_other_field\":\"Values\"}"));
+        model.addHistory(history);
+
+        JSONArray jsonArray = (JSONArray) model.get(History.HISTORIES);
+        assertThat(jsonArray.length(), is(2));
+        JSONObject changes = (JSONObject) ((JSONObject) jsonArray.get(0)).get(History.CHANGES);
+        assert(changes.has("some_field"));
+        changes = (JSONObject) ((JSONObject) jsonArray.get(1)).get(History.CHANGES);
+        assert(changes.has("some_other_field"));
+    }
+
+    @Test
+    public void shouldNotAddEmptyHistory() throws JSONException {
+        BaseModel model = new BaseModel();
+        History history = History.buildHistoryBetween(model, model);
+        model.addHistory(history);
+
+        assertFalse(history.has(History.HISTORIES));
+    }
 }

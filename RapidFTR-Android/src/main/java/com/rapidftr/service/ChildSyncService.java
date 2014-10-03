@@ -7,6 +7,7 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.History;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.utils.AudioCaptureHelper;
@@ -44,12 +45,10 @@ public class ChildSyncService implements SyncService<Child> {
 
 
     @Inject
-    public ChildSyncService(RapidFtrApplication context, ChildRepository childRepository) {
+    public ChildSyncService(RapidFtrApplication context, EntityHttpDao<Child> childHttpDao, ChildRepository childRepository) {
         this.context = context;
         this.childRepository = childRepository;
-        this.childEntityHttpDao = EntityHttpDaoFactory.createChildHttpDao(
-                context.getSharedPreferences().getString(RapidFtrApplication.SERVER_URL_PREF, ""),
-                CHILDREN_API_PATH, CHILDREN_API_PARAMETER);
+        this.childEntityHttpDao = childHttpDao;
     }
 
     @Override
@@ -62,7 +61,8 @@ public class ChildSyncService implements SyncService<Child> {
             child = child.isNew() ? childEntityHttpDao.create(child, getSyncPath(child, currentUser), requestParameters)
                     : childEntityHttpDao.update(child, getSyncPath(child, currentUser), requestParameters);
             setChildAttributes(child);
-            childRepository.update(child);
+            child.remove(History.HISTORIES);
+            childRepository.createOrUpdateWithoutHistory(child);
             setMedia(child);
             childRepository.close();
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class ChildSyncService implements SyncService<Child> {
             child.setSyncLog(e.getMessage());
             child.put("photo_keys", photoKeys);
             child.put("audio_attachments", audioAttachments);
-            childRepository.update(child);
+            childRepository.createOrUpdateWithoutHistory(child);
             childRepository.close();
             throw new SyncFailedException(e.getMessage());
         }
@@ -104,6 +104,15 @@ public class ChildSyncService implements SyncService<Child> {
         return context.getString(R.string.child_sync_title);
     }
 
+    @Override
+    public void setLastSyncedAt() {
+        RapidFtrApplication.getApplicationInstance()
+                .getSharedPreferences()
+                .edit()
+                .putLong(RapidFtrApplication.LAST_CHILD_SYNC, System.currentTimeMillis())
+                .commit();
+    }
+
     private void setChildAttributes(Child child) throws JSONException {
         child.setSynced(true);
         child.setLastSyncedAt(RapidFtrDateTime.now().defaultFormat());
@@ -123,6 +132,7 @@ public class ChildSyncService implements SyncService<Child> {
     private void removeUnusedParametersBeforeSync(Child child) {
         photoKeys = (JSONArray) child.remove("photo_keys");
         audioAttachments = child.remove("audio_attachments");
+        child.remove("synced");
     }
 
     private String getAudioKey(Child child) throws JSONException {
@@ -200,7 +210,7 @@ public class ChildSyncService implements SyncService<Child> {
 
     public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {
         // Default value is currently epoch
-        long lastUpdateMillis = context.getSharedPreferences().getLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, 0);
+        long lastUpdateMillis = context.getSharedPreferences().getLong(RapidFtrApplication.LAST_CHILD_SYNC, 0);
         DateTime lastUpdate = new DateTime(lastUpdateMillis);
         return childEntityHttpDao.getUpdatedResourceUrls(lastUpdate);
     }

@@ -21,4 +21,6 @@ public interface SyncService<T extends BaseModel> {
     public int getNotificationId();
 
     public String getNotificationTitle();
+
+    void setLastSyncedAt();
 }

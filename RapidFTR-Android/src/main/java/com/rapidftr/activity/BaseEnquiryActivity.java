@@ -92,7 +92,7 @@ public abstract class BaseEnquiryActivity extends CollectionActivity {
             enquiry.setCreatedBy(getCurrentUser().getUserName());
             enquiry.setOrganisation(getCurrentUser().getOrganisation());
         }
-
+        enquiry.setSynced(false);
         @Cleanup EnquiryRepository enquiryRepository = inject(EnquiryRepository.class);
         enquiryRepository.createOrUpdate(enquiry);
         return enquiry;

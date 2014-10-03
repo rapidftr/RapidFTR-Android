@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.Enquiry;
+import com.rapidftr.model.History;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -29,31 +30,36 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     private static final int NOTIFICATION_ID = 1021;
 
     @Inject
-    public EnquirySyncService(RapidFtrApplication rapidFtrApplication,
-                              EnquiryRepository enquiryRepository) {
+    public EnquirySyncService(RapidFtrApplication rapidFtrApplication, EntityHttpDao<Enquiry> enquiryHttpDao, EnquiryRepository enquiryRepository) {
         this.sharedPreferences = rapidFtrApplication.getSharedPreferences();
-        this.enquiryHttpDao = EntityHttpDaoFactory.createEnquiryHttpDao(
-                sharedPreferences.getString(RapidFtrApplication.SERVER_URL_PREF, ""),
-                ENQUIRIES_API_PATH, ENQUIRIES_API_PARAMETER);
+        this.enquiryHttpDao = enquiryHttpDao;
         this.enquiryRepository = enquiryRepository;
     }
 
     @Override
     public Enquiry sync(Enquiry record, User currentUser) throws IOException, JSONException, HttpException {
         try {
+            removeParametersForSync(record);
             record = record.isNew() ? enquiryHttpDao.create(record) : enquiryHttpDao.update(record);
             record.setSynced(true);
             record.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
-            enquiryRepository.createOrUpdate(record);
+            record.remove(History.HISTORIES);
+            enquiryRepository.createOrUpdateWithoutHistory(record);
         } catch (Exception exception) {
             record.setSynced(false);
             record.setLastUpdatedAt(null);
-            enquiryRepository.update(record);
+            enquiryRepository.createOrUpdateWithoutHistory(record);
             enquiryRepository.close();
             throw new SyncFailedException(exception.getMessage());
         }
 
         return record;
+    }
+
+    private void removeParametersForSync(Enquiry record) {
+        record.remove("photo_keys");
+        record.remove("audio_attachments");
+        record.remove("synced");
     }
 
     @Override
@@ -65,7 +71,6 @@ public class EnquirySyncService implements SyncService<Enquiry> {
 
         return enquiry;
     }
-
 
     @Override
     public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {
@@ -87,6 +92,15 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     @Override
     public String getNotificationTitle() {
         return RapidFtrApplication.getApplicationInstance().getString(R.string.enquires_sync_title);
+    }
+
+    @Override
+    public void setLastSyncedAt() {
+        RapidFtrApplication.getApplicationInstance()
+                .getSharedPreferences()
+                .edit()
+                .putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, System.currentTimeMillis())
+                .commit();
     }
 
 

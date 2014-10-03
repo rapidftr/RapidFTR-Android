@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.adapter.PotentialMatchesFormSectionPagerAdapter;
@@ -19,6 +20,7 @@ import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.service.ChildSyncService;
+import com.rapidftr.service.EntityHttpDao;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SyncSingleRecordTask;
@@ -34,6 +36,9 @@ import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
 
 
 public class ViewChildActivity extends BaseChildActivity {
+
+    @Inject
+    private EntityHttpDao<Child> dao;
 
     @Override
     protected void initializeView() {
@@ -94,7 +99,7 @@ public class ViewChildActivity extends BaseChildActivity {
 
     protected SyncSingleRecordTask createChildSyncTask() {
         ChildRepository childRepository = inject(ChildRepository.class);
-        return new SyncSingleRecordTask(new ChildSyncService(this.getContext(), childRepository), getCurrentUser()) {
+        return new SyncSingleRecordTask(new ChildSyncService(this.getContext(), dao, childRepository), getCurrentUser()) {
             @Override
             public Boolean doInBackground(BaseModel... params) {
                 try {

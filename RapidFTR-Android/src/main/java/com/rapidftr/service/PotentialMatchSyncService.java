@@ -43,7 +43,7 @@ public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
     }
 
     public List<String> getIdsToDownload() throws IOException, HttpException, JSONException {
-        long lastUpdateMillis = context.getSharedPreferences().getLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, 0);  // Default value is currently epoch
+        long lastUpdateMillis = context.getSharedPreferences().getLong(RapidFtrApplication.LAST_POTENTIAL_MATCH_SYNC, 0);  // Default value is currently epoch
         DateTime lastUpdate = new DateTime(lastUpdateMillis);
         return entityHttpDao.getUpdatedResourceUrls(lastUpdate);
     }
@@ -60,5 +60,14 @@ public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
     @Override
     public String getNotificationTitle() {
         return context.getString(R.string.potential_matches_sync_title);
+    }
+
+    @Override
+    public void setLastSyncedAt() {
+        RapidFtrApplication.getApplicationInstance()
+                .getSharedPreferences()
+                .edit()
+                .putLong(RapidFtrApplication.LAST_POTENTIAL_MATCH_SYNC, System.currentTimeMillis())
+                .commit();
     }
 }

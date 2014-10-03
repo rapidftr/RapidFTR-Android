@@ -8,12 +8,11 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.forms.FormField;
-import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
-import com.rapidftr.utils.JSONArrays;
+import com.rapidftr.model.History;
+import com.rapidftr.model.User;
 import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.Closeable;
@@ -142,41 +141,32 @@ public class ChildRepository implements Closeable, Repository<Child> {
 
     @Override
     public void createOrUpdate(Child child) throws JSONException {
-        ContentValues values = new ContentValues();
         if (exists(child.getUniqueId())) {
-            addHistory(child);
+            Child existingChild = get(child.getUniqueId());
+            child.addHistory(History.buildHistoryBetween(existingChild, child));
+        } else {
+            User currentUser = RapidFtrApplication.getApplicationInstance().getCurrentUser();
+            child.addHistory(History.buildCreationHistory(child, currentUser));
         }
         child.setLastUpdatedAt(getTimeStamp());
+        createOrUpdateWithoutHistory(child);
+    }
+
+    @Override
+    public void createOrUpdateWithoutHistory(Child child) throws JSONException {
+        ContentValues values = new ContentValues();
         values.put(Database.ChildTableColumn.owner.getColumnName(), child.getCreatedBy());
         values.put(id.getColumnName(), child.getUniqueId());
         values.put(content.getColumnName(), child.getJsonString());
         values.put(synced.getColumnName(), child.isSynced());
         values.put(created_at.getColumnName(), child.getCreatedAt());
         populateInternalColumns(child, values);
-        long id = session.replace(Database.child.getTableName(), null, values);
-        if (id <= 0) throw new IllegalArgumentException(id + "");
+        session.replaceOrThrow(Database.child.getTableName(), null, values);
     }
 
     private void populateInternalColumns(Child child, ContentValues values) {
         values.put(internal_id.getColumnName(), child.optString("_id"));
         values.put(internal_rev.getColumnName(), child.optString("_rev"));
-    }
-
-    private void addHistory(Child child) throws JSONException {
-        Child existingChild = get(child.getUniqueId());
-        JSONArray existingHistories = (JSONArray) existingChild.opt(BaseModel.History.HISTORIES);
-        List<Child.History> histories = child.changeLogs(existingChild, existingHistories);
-        if (histories.size() > 0)
-            child.put(BaseModel.History.HISTORIES, JSONArrays.asJSONObjectArray(histories));
-    }
-
-    @Override
-    public void update(Child child) throws JSONException {
-        ContentValues values = new ContentValues();
-        values.put(content.getColumnName(), child.toString());
-        values.put(synced.getColumnName(), child.isSynced());
-        populateInternalColumns(child, values);
-        session.update(Database.child.getTableName(), values, format("%s=?", id.getColumnName()), new String[]{child.getUniqueId()});
     }
 
     @Override
@@ -191,7 +181,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
         return toChildren(cursor);
     }
 
-    @Override // TODO remove this method - we no longer want to work out what to update by comparing _revs
+    @Override // TODO remove this method - we no longer want to work out what to updateWithoutHistory by comparing _revs
     public HashMap<String, String> getAllIdsAndRevs() throws JSONException {
         HashMap<String, String> idRevs = new HashMap<String, String>();
         @Cleanup Cursor cursor = session.rawQuery("SELECT "

@@ -38,6 +38,7 @@ public class RapidFtrApplication extends Application {
     public static final String SERVER_URL_PREF = "SERVER_URL";
     public static final String LAST_CHILD_SYNC = "LAST_CHILD_SYNC";
     public static final String LAST_ENQUIRY_SYNC = "LAST_ENQUIRY_SYNC";
+    public static final String LAST_POTENTIAL_MATCH_SYNC = "LAST_POTENTIAL_MATCH_SYNC";
 
     private static
     @Getter

@@ -5,7 +5,6 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
-import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.repository.PotentialMatchRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -24,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
-import static com.rapidftr.model.BaseModel.History.*;
+import static com.rapidftr.model.History.*;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static junit.framework.Assert.*;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -181,21 +180,6 @@ public class ChildTest {
         }
 
         assertThat(child.values(), equalJSONIgnoreOrder("{\"test1\":\"value1\"}"));
-    }
-
-    public void shouldReturnListOfChangeLogsBasedOnChanges() throws JSONException {
-        Child oldChild = new Child("id", "user", "{'name' : 'old-name'}");
-        Child updatedChild = new Child("id", "user", "{'name' : 'updated-name'}");
-        List<Child.History> histories = updatedChild.changeLogs(oldChild, null);
-
-        JSONObject changesMap = (JSONObject) histories.get(0).get(CHANGES);
-        HashMap fromTo = (HashMap) changesMap.get("name");
-
-        assertThat(histories.size(), is(1));
-        assertThat(histories.get(0).get(USER_NAME).toString(), is(updatedChild.getCreatedBy()));
-        assertThat(changesMap.names().get(0).toString(), is("name"));
-        assertThat(fromTo.get(FROM).toString(), is("old-name"));
-        assertThat(fromTo.get(TO).toString(), is("updated-name"));
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.rapidftr.task;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
@@ -12,10 +13,7 @@ import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.roboelectric.shadows.ShadowTaskStackBuilder;
-import com.rapidftr.service.ChildSyncService;
-import com.rapidftr.service.DeviceService;
-import com.rapidftr.service.FormService;
-import com.rapidftr.utils.http.FluentRequest;
+import com.rapidftr.service.*;
 import org.apache.http.HttpException;
 import org.json.JSONException;
 import org.junit.Before;
@@ -33,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -182,8 +181,8 @@ public class SyncAllDataAsyncTaskTest {
         syncAllDataAsyncTask.execute();
 
         verify(childSyncService).getRecord("qwerty0987");
-        verify(childRepository).update(child1);
-        verify(childRepository).createOrUpdate(child2);
+        verify(childRepository).createOrUpdateWithoutHistory(child1);
+        verify(childRepository).createOrUpdateWithoutHistory(child2);
     }
 
     @Test
@@ -226,7 +225,8 @@ public class SyncAllDataAsyncTaskTest {
     public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
         given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
-        syncAllDataAsyncTask.recordSyncService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), childRepository);
+        EntityHttpDao<Child> dao = EntityHttpDaoFactory.createChildHttpDao("","","");
+        syncAllDataAsyncTask.recordSyncService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), dao, childRepository);
         syncAllDataAsyncTask.setContext(rapidFtrActivity);
         syncAllDataAsyncTask.execute();
 
@@ -235,6 +235,8 @@ public class SyncAllDataAsyncTaskTest {
 
     @Test
     public void shouldCompareAndRetrieveIdsToBeDownloadedFromServer() throws JSONException, IOException, HttpException {
+        SharedPreferences sharedPreferences = RapidFtrApplication.getApplicationInstance().getSharedPreferences();
+        sharedPreferences.edit().putLong(RapidFtrApplication.LAST_CHILD_SYNC, 0).commit();
         Child child1 = mock(Child.class);
         Child child2 = mock(Child.class);
         given(childRepository.toBeSynced()).willReturn(newArrayList(child1, child2));
@@ -251,6 +253,7 @@ public class SyncAllDataAsyncTaskTest {
         verify(childSyncService).getIdsToDownload();
         verify(childSyncService).getRecord("qwerty0987");
         verify(childSyncService).getRecord("abcd1234");
+        verify(childSyncService).setLastSyncedAt();
     }
 
     @Test

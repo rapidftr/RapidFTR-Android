@@ -8,7 +8,6 @@ import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
-import com.rapidftr.repository.FailedToSaveException;
 import com.rapidftr.task.SyncSingleRecordTask;
 import com.rapidftr.utils.SpyActivityController;
 import org.json.JSONException;
@@ -66,7 +65,7 @@ public class ViewEnquiryActivityTest {
     }
 
     @Test
-    public void loadShouldMergeCriteriaWithOtherEnquiryKeys() throws JSONException, FailedToSaveException {
+    public void loadShouldMergeCriteriaWithOtherEnquiryKeys() throws JSONException {
         String enquiryJSON = "{\"enquirer_name\":\"godwin\", " +
                 "\"name\":\"robin\", " +
                 "\"age\":\"10\", " +
@@ -82,8 +81,10 @@ public class ViewEnquiryActivityTest {
         ViewEnquiryActivity viewEnquiryActivity = new ViewEnquiryActivity();
         Enquiry retrievedEnquiry = viewEnquiryActivity.loadEnquiry(bundle, enquiryRepository);
         retrievedEnquiry.remove("id"); //because id attribute is added to the enquiry while saving to the database
+        retrievedEnquiry.remove("histories");
+        enquiry.remove("histories");
 
-        JSONAssert.assertEquals(retrievedEnquiry, enquiry, true);
+        JSONAssert.assertEquals(retrievedEnquiry, enquiry, false);
     }
 
 }
