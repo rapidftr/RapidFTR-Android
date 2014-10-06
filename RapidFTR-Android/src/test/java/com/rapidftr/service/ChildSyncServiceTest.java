@@ -1,13 +1,11 @@
 package com.rapidftr.service;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import com.google.common.io.CharStreams;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.model.Child;
-import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.History;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
@@ -15,13 +13,7 @@ import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import com.rapidftr.utils.http.FluentRequest;
 import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.params.HttpParams;
-import org.hamcrest.Matcher;
-import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.Before;
@@ -30,21 +22,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.robolectric.Robolectric;
 import org.robolectric.tester.org.apache.http.FakeHttpLayer;
-import org.robolectric.tester.org.apache.http.HttpResponseStub;
-import org.robolectric.tester.org.apache.http.RequestMatcher;
 import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
 import javax.xml.ws.http.HTTPException;
 import java.io.*;
-import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.rapidftr.RapidFtrApplication.LAST_CHILD_SYNC;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
 import static org.hamcrest.CoreMatchers.*;
@@ -53,7 +40,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.robolectric.Robolectric.getFakeHttpLayer;
 
@@ -132,7 +118,6 @@ public class ChildSyncServiceTest {
         Child child = new Child("id1", "user1", childDetails);
 
         doNothing().when(mockFluentRequest).addPhotoToMultiPart(Matchers.any(MultipartEntity.class), Matchers.any(String.class), Matchers.any(String.class));
-        doNothing().when(childSyncService).savePhoto(Matchers.any(Bitmap.class), Matchers.any(PhotoCaptureHelper.class), Matchers.anyString());
         childSyncService.sync(child, currentUser);
         verify(mockFluentRequest).param("photo_keys", new JSONArray(Arrays.asList("abcd123", "1234ABC")).toString());
     }
@@ -236,25 +221,23 @@ public class ChildSyncServiceTest {
     }
 
     @Test
-    @Ignore
     public void shouldSetMediaIfNotAlreadyExistingOnTheMobile() throws JSONException, IOException {
-        FluentRequest mockFluentRequest = spy(new FluentRequest());
         RapidFtrApplication context = mockContext();
-        String response = "{\"recorded_audio\":\"audio-12321\",\"photo_keys\": \"[photo-998,photo-888, photo-777]\",\"_id\":\"abcd\",\"current_photo_key\": \"photo-888\",\"separation_place\":\"\",\"wishes_address_3\":\"\",\"care_arrangments_name\":\"\",\"other_family\":\"\",\"care_arrangements_knowsfamily\":\"\",\"created_at\":\"2012-12-14 10:57:39UTC\",\"wishes_contacted_details\":\"\",\"posted_from\":\"Browser\"}";
-        ChildSyncService childSyncService = spy(new ChildSyncService(context, childHttpDao, repository));
+        String response = "{\"recorded_audio\":\"audio-12321\",\"photo_keys\": [\"photo-998\",\"photo-888\", \"photo-777\"],\"_id\":\"abcd\",\"current_photo_key\": \"photo-888\",\"separation_place\":\"\",\"wishes_address_3\":\"\",\"care_arrangments_name\":\"\",\"other_family\":\"\",\"care_arrangements_knowsfamily\":\"\",\"created_at\":\"2012-12-14 10:57:39UTC\",\"wishes_contacted_details\":\"\",\"posted_from\":\"Browser\"}";
+        MediaSyncHelper spyMediaHelper = spy(new MediaSyncHelper(childHttpDao, context));
+        ChildSyncService childSyncService = spy(new ChildSyncService(context, childHttpDao, repository, spyMediaHelper));
         getFakeHttpLayer().setDefaultHttpResponse(200, response);
         Child child = new Child("id", "user", "{ 'name' : 'child1'}");
 
-        doNothing().when(childSyncService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-998"));
-        doNothing().when(childSyncService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-888"));
-        doNothing().when(childSyncService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-777"));
+        doNothing().when(spyMediaHelper).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-998"));
+        doNothing().when(spyMediaHelper).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-888"));
+        doNothing().when(spyMediaHelper).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-777"));
 
         childSyncService.sync(child, currentUser);
 
-        verify(mockFluentRequest).path("/api/children/abcd/audio");
-        verify(childSyncService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-888"));
-        verify(childSyncService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-998"));
-        verify(childSyncService).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-777"));
+        verify(spyMediaHelper).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-888"));
+        verify(spyMediaHelper).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-998"));
+        verify(spyMediaHelper).getPhotoFromServer(Matchers.any(Child.class), Matchers.any(PhotoCaptureHelper.class), eq("photo-777"));
     }
 
     @Test
@@ -265,17 +248,6 @@ public class ChildSyncServiceTest {
         InputStream inputStream = new ChildSyncService(mockContext(), childHttpDao, repository).getOriginalPhoto(child, "image_file_name");
 
         String response = CharStreams.toString(new InputStreamReader(inputStream));
-        assertEquals("OK", response);
-    }
-
-    @Test
-    public void shouldFetchAudioFromServer() throws JSONException, IOException, GeneralSecurityException {
-        Child child = new Child("id1", "user1", "{ '_id' : '1234abcd' ,'recorded_audio' : 'audio_file_name'}");
-
-        getFakeHttpLayer().setDefaultHttpResponse(200, "audio stream");
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/1234abcd/audio", "OK");
-
-        String response = CharStreams.toString(new InputStreamReader(new ChildSyncService(mockContext(), childHttpDao, repository).getAudio(child)));
         assertEquals("OK", response);
     }
 
