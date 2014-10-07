@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.History;
 import com.rapidftr.model.User;
@@ -15,7 +16,11 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.io.SyncFailedException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 
 
 public class EnquirySyncService implements SyncService<Enquiry> {
@@ -28,23 +33,30 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     private final SharedPreferences sharedPreferences;
 
     private static final int NOTIFICATION_ID = 1021;
+    private MediaSyncHelper mediaSyncHelper;
 
     @Inject
     public EnquirySyncService(RapidFtrApplication rapidFtrApplication, EntityHttpDao<Enquiry> enquiryHttpDao, EnquiryRepository enquiryRepository) {
         this.sharedPreferences = rapidFtrApplication.getSharedPreferences();
         this.enquiryHttpDao = enquiryHttpDao;
         this.enquiryRepository = enquiryRepository;
+        this.mediaSyncHelper = new MediaSyncHelper(enquiryHttpDao, rapidFtrApplication);
     }
 
     @Override
     public Enquiry sync(Enquiry record, User currentUser) throws IOException, JSONException, HttpException {
         try {
+            Map<String, String> requestParameters = new HashMap<String, String>();
+            mediaSyncHelper.addMultiMediaFilesToTheRequestParameters(record, requestParameters);
             removeParametersForSync(record);
-            record = record.isNew() ? enquiryHttpDao.create(record) : enquiryHttpDao.update(record);
+
+            record = record.isNew() ? enquiryHttpDao.create(record, getSyncPath(record), requestParameters) :
+                    enquiryHttpDao.update(record, getSyncPath(record), requestParameters);
             record.setSynced(true);
             record.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
             record.remove(History.HISTORIES);
             enquiryRepository.createOrUpdateWithoutHistory(record);
+            enquiryRepository.close();
         } catch (Exception exception) {
             record.setSynced(false);
             record.setLastUpdatedAt(null);
@@ -81,7 +93,8 @@ public class EnquirySyncService implements SyncService<Enquiry> {
 
     @Override
     public void setMedia(Enquiry enquiry) throws IOException, JSONException {
-        // do nothing
+        mediaSyncHelper.setPhoto(enquiry);
+        mediaSyncHelper.setAudio(enquiry);
     }
 
     @Override
@@ -103,5 +116,9 @@ public class EnquirySyncService implements SyncService<Enquiry> {
                 .commit();
     }
 
-
+    public String getSyncPath(Enquiry enquiry) throws JSONException {
+        return enquiry.isNew() ? ENQUIRIES_API_PATH:
+                new StringBuilder(ENQUIRIES_API_PATH)
+                        .append("/").append(enquiry.get(internal_id.getColumnName())).toString();
+    }
 }

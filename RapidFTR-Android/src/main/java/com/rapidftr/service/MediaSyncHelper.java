@@ -102,33 +102,24 @@ public class MediaSyncHelper {
         return entityHttpDao.getResourceStream(photoUrl);
     }
 
-
-
-
-
-
-
-
-
-
-    public void setAudio(Child child) throws IOException, JSONException {
+    public void setAudio(BaseModel baseModel) throws IOException, JSONException {
         AudioCaptureHelper audioCaptureHelper = new AudioCaptureHelper(context);
-        String recordedAudio = child.optString("recorded_audio");
+        String recordedAudio = baseModel.optString("recorded_audio");
         try {
             if (!recordedAudio.equals("")) {
                 audioCaptureHelper.getFile(recordedAudio, ".amr");
             }
         } catch (FileNotFoundException e) {
-            getAudioFromServer(child, audioCaptureHelper);
+            getAudioFromServer(baseModel, audioCaptureHelper);
         }
     }
 
-    private void getAudioFromServer(Child child, AudioCaptureHelper audioCaptureHelper) throws IOException, JSONException {
-        audioCaptureHelper.saveAudio(child, getAudio(child));
+    private void getAudioFromServer(BaseModel baseModel, AudioCaptureHelper audioCaptureHelper) throws IOException, JSONException {
+        audioCaptureHelper.saveAudio(baseModel, getAudio(baseModel));
     }
 
-    public InputStream getAudio(Child child) throws IOException {
-        String audioUrlPath = String.format("/api/children/%s/audio", child.optString("_id"));
+    public InputStream getAudio(BaseModel baseModel) throws IOException {
+        String audioUrlPath = String.format("/api/children/%s/audio", baseModel.optString("_id"));
         return entityHttpDao.getResourceStream(audioUrlPath);
     }
 }

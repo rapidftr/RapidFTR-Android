@@ -20,7 +20,9 @@ import org.mockito.Mock;
 
 import javax.xml.ws.http.HTTPException;
 import java.io.SyncFailedException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
@@ -129,7 +131,7 @@ public class EnquirySyncServiceTest {
         doReturn(false).when(enquirySpy).isNew();
 
         enquiryHttpDao = mock(EntityHttpDao.class);
-        doReturn(enquirySpy).when(enquiryHttpDao).update(enquirySpy);
+        doReturn(enquirySpy).when(enquiryHttpDao).update(any(Enquiry.class), any(String.class), any(Map.class));
         new EnquirySyncService(mockContext(), enquiryHttpDao, enquiryRepository).sync(enquirySpy, user);
 
         verify(enquirySpy).remove(History.HISTORIES);
@@ -142,7 +144,7 @@ public class EnquirySyncServiceTest {
         doReturn(false).when(enquirySpy).isNew();
 
         enquiryHttpDao = mock(EntityHttpDao.class);
-        doThrow(new HTTPException(404)).when(enquiryHttpDao).update(enquirySpy);
+        doThrow(new HTTPException(404)).when(enquiryHttpDao).update(any(Enquiry.class), any(String.class), any(Map.class));
         new EnquirySyncService(mockContext(), enquiryHttpDao, enquiryRepository).sync(enquirySpy, user);
 
         verify(enquirySpy, never()).remove(History.HISTORIES);

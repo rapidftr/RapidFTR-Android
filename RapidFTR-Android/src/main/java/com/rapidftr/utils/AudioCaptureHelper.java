@@ -1,6 +1,7 @@
 package com.rapidftr.utils;
 
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import org.json.JSONException;
 
@@ -12,9 +13,9 @@ public class AudioCaptureHelper extends CaptureHelper{
         super(context);
     }
 
-    public void saveAudio(Child child, InputStream inputStream) throws JSONException, IOException {
-        File file = new File(getDir(), child.optString("recorded_audio"));
-        if (!file.exists() && !child.optString("recorded_audio").equals("")){
+    public void saveAudio(BaseModel baseModel, InputStream inputStream) throws JSONException, IOException {
+        File file = new File(getDir(), baseModel.optString("recorded_audio"));
+        if (!file.exists() && !baseModel.optString("recorded_audio").equals("")){
             IOUtils.copy(inputStream, new FileOutputStream(file));
         }
     }
