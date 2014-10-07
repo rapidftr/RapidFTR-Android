@@ -94,10 +94,11 @@ public class MediaSyncHelper {
         savePhoto(bitmap, photoCaptureHelper, fileName);
     }
 
-    private InputStream getReSizedPhoto(BaseModel baseModel, String fileName) throws IOException {
+    protected InputStream getReSizedPhoto(BaseModel baseModel, String fileName) throws IOException {
+        String apiModel = baseModel.getClass().getSimpleName().toLowerCase();
         String photoUrl =
-                String.format("/children/%s/photo/%s/resized/%sx%s",
-                        baseModel.optString("_id"), fileName, PhotoCaptureHelper.PHOTO_WIDTH, PhotoCaptureHelper.PHOTO_HEIGHT);
+                String.format("/%s/%s/photo/%s/resized/%sx%s",
+                        apiModel, baseModel.optString("_id"), fileName, PhotoCaptureHelper.PHOTO_WIDTH, PhotoCaptureHelper.PHOTO_HEIGHT);
 
         return entityHttpDao.getResourceStream(photoUrl);
     }
