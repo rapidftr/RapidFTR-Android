@@ -35,13 +35,6 @@ public class ChildSyncService implements SyncService<Child> {
         this.mediaSyncHelper = new MediaSyncHelper(childEntityHttpDao, context);
     }
 
-    public ChildSyncService(RapidFtrApplication context, EntityHttpDao<Child> childHttpDao, ChildRepository childRepository, MediaSyncHelper mediaSyncHelper) {
-        this.context = context;
-        this.childRepository = childRepository;
-        this.childEntityHttpDao = childHttpDao;
-        this.mediaSyncHelper = mediaSyncHelper;
-    }
-
     @Override
     public Child sync(Child child, User currentUser) throws IOException, JSONException {
         String syncPath = getSyncPath(child, currentUser);

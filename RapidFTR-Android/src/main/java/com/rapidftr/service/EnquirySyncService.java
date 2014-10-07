@@ -45,33 +45,9 @@ public class EnquirySyncService implements SyncService<Enquiry> {
 
     @Override
     public Enquiry sync(Enquiry record, User currentUser) throws IOException, JSONException, HttpException {
-        try {
-            Map<String, String> requestParameters = new HashMap<String, String>();
-            mediaSyncHelper.addMultiMediaFilesToTheRequestParameters(record, requestParameters);
-            removeParametersForSync(record);
-
-            record = record.isNew() ? enquiryHttpDao.create(record, getSyncPath(record), requestParameters) :
-                    enquiryHttpDao.update(record, getSyncPath(record), requestParameters);
-            record.setSynced(true);
-            record.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
-            record.remove(History.HISTORIES);
-            enquiryRepository.createOrUpdateWithoutHistory(record);
-            enquiryRepository.close();
-        } catch (Exception exception) {
-            record.setSynced(false);
-            record.setLastUpdatedAt(null);
-            enquiryRepository.createOrUpdateWithoutHistory(record);
-            enquiryRepository.close();
-            throw new SyncFailedException(exception.getMessage());
-        }
-
-        return record;
-    }
-
-    private void removeParametersForSync(Enquiry record) {
-        record.remove("photo_keys");
-        record.remove("audio_attachments");
-        record.remove("synced");
+        String syncPath = getSyncPath(record);
+        GenericSyncService<Enquiry> syncService = new GenericSyncService<Enquiry>(mediaSyncHelper, enquiryHttpDao, enquiryRepository);
+        return syncService.sync(record, syncPath);
     }
 
     @Override

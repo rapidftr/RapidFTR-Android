@@ -63,10 +63,11 @@ public class GenericSyncService<T extends BaseModel> {
         mediaSyncHelper.setAudio(model);
     }
 
-    public static void setAttributes(BaseModel baseModel) throws JSONException {
-        baseModel.setSynced(true);
-        baseModel.setLastSyncedAt(RapidFtrDateTime.now().defaultFormat());
-        baseModel.remove("_attachments");
+    public static void setAttributes(BaseModel model) throws JSONException {
+        model.setSynced(true);
+        model.setLastSyncedAt(RapidFtrDateTime.now().defaultFormat());
+        model.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
+        model.remove("_attachments");
     }
 }
 

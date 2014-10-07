@@ -93,7 +93,7 @@ public class EnquirySyncServiceTest {
 
     @Test
     public void shouldNotSendUnnecessaryParamsDuringSync() throws Exception {
-        String response = "{\"_id\" : \"couch_id\", \"photo_keys\":\"[]\", \"audio_attachments\":\"[]\",\"unique_identifier\":\"78223s4h1e468f5200edc\"}";
+        String response = "{\"_id\" : \"couch_id\", \"photo_keys\":[], \"audio_attachments\":\"[]\",\"unique_identifier\":\"78223s4h1e468f5200edc\"}";
         Enquiry record = new Enquiry(response);
         Enquiry recordSpy = spy(record);
         getFakeHttpLayer().setDefaultHttpResponse(200, response);
