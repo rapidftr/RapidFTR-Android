@@ -3,11 +3,12 @@ package com.rapidftr.repository;
 import com.rapidftr.model.BaseModel;
 import org.json.JSONException;
 
+import java.io.Closeable;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
-public interface Repository<T extends BaseModel> {
+public interface Repository<T extends BaseModel> extends Closeable {
 
     public List<T> toBeSynced() throws JSONException;
 

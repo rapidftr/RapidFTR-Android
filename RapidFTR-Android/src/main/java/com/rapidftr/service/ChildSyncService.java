@@ -5,23 +5,17 @@ import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
-import com.rapidftr.model.History;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.utils.AudioCaptureHelper;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.apache.http.HttpException;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.SyncFailedException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 
@@ -33,8 +27,6 @@ public class ChildSyncService implements SyncService<Child> {
     private MediaSyncHelper mediaSyncHelper;
     private RapidFtrApplication context;
     private ChildRepository childRepository;
-    private JSONArray photoKeys;
-    private Object audioAttachments;
 
     private static final int NOTIFICATION_ID = 1022;
     private EntityHttpDao<Child> childEntityHttpDao;
@@ -56,29 +48,9 @@ public class ChildSyncService implements SyncService<Child> {
 
     @Override
     public Child sync(Child child, User currentUser) throws IOException, JSONException {
-        try {
-            Map<String, String> requestParameters = new HashMap<String, String>();
-            mediaSyncHelper.addMultiMediaFilesToTheRequestParameters(child, requestParameters);
-            removeUnusedParametersBeforeSync(child);
-
-            child = child.isNew() ? childEntityHttpDao.create(child, getSyncPath(child, currentUser), requestParameters)
-                    : childEntityHttpDao.update(child, getSyncPath(child, currentUser), requestParameters);
-            setChildAttributes(child);
-            child.remove(History.HISTORIES);
-            childRepository.createOrUpdateWithoutHistory(child);
-            setMedia(child);
-            childRepository.close();
-        } catch (Exception e) {
-            child.setSynced(false);
-            child.setSyncLog(e.getMessage());
-            child.put("photo_keys", photoKeys);
-            child.put("audio_attachments", audioAttachments);
-            childRepository.createOrUpdateWithoutHistory(child);
-            childRepository.close();
-            throw new SyncFailedException(e.getMessage());
-        }
-
-        return child;
+        String syncPath = getSyncPath(child, currentUser);
+        GenericSyncService<Child> syncService = new GenericSyncService<Child>(mediaSyncHelper, childEntityHttpDao, childRepository);
+        return syncService.sync(child, syncPath);
     }
 
     public String getSyncPath(Child child, User currentUser) throws JSONException {
@@ -116,22 +88,10 @@ public class ChildSyncService implements SyncService<Child> {
                 .commit();
     }
 
-    private void setChildAttributes(Child child) throws JSONException {
-        child.setSynced(true);
-        child.setLastSyncedAt(RapidFtrDateTime.now().defaultFormat());
-        child.remove("_attachments");
-    }
-
-    private void removeUnusedParametersBeforeSync(Child child) {
-        photoKeys = (JSONArray) child.remove("photo_keys");
-        audioAttachments = child.remove("audio_attachments");
-        child.remove("synced");
-    }
-
     @Override
     public Child getRecord(String resourceUrl) throws IOException, JSONException, HttpException {
         Child child = childEntityHttpDao.get(resourceUrl);
-        setChildAttributes(child);
+        GenericSyncService.setAttributes(child);
         return child;
     }
 

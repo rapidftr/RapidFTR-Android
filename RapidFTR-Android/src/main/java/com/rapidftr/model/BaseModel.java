@@ -265,4 +265,19 @@ public class BaseModel extends JSONObject implements Parcelable {
         }
     }
 
+    public void setLastSyncedAt(String lastSyncedAt) throws JSONException {
+        put(last_synced_at.getColumnName(), lastSyncedAt);
+    }
+
+    public String getLastSyncedAt() throws JSONException {
+        return optString(last_synced_at.getColumnName(), null);
+    }
+
+    public String getSyncLog() throws JSONException {
+        return optString(syncLog.getColumnName(), null);
+    }
+
+    public void setSyncLog(String syncLog1) throws JSONException {
+        put(syncLog.getColumnName(), syncLog1);
+    }
 }
