@@ -95,11 +95,6 @@ public class ChildSyncService implements SyncService<Child> {
         return child;
     }
 
-    public InputStream getOriginalPhoto(BaseModel child, String fileName) throws IOException {
-        String photoUrlPath = String.format("/api/children/%s/photo/%s", child.optString("_id"), fileName);
-        return childEntityHttpDao.getResourceStream(photoUrlPath);
-    }
-
     public List<String> getIdsToDownload() throws IOException, JSONException, HttpException {
         // Default value is currently epoch
         long lastUpdateMillis = context.getSharedPreferences().getLong(RapidFtrApplication.LAST_CHILD_SYNC, 0);

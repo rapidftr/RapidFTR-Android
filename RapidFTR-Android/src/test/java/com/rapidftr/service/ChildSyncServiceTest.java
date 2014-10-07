@@ -241,17 +241,6 @@ public class ChildSyncServiceTest {
     }
 
     @Test
-    public void shouldFetchPrimaryPhotoFromServer() throws JSONException, IOException, GeneralSecurityException {
-        Child child = new Child("id1", "user1", "{ '_id' : '1234abcd' ,'current_photo_key' : 'image_file_name'}");
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/1234abcd/photo/image_file_name", "OK");
-
-        InputStream inputStream = new ChildSyncService(mockContext(), childHttpDao, repository).getOriginalPhoto(child, "image_file_name");
-
-        String response = CharStreams.toString(new InputStreamReader(inputStream));
-        assertEquals("OK", response);
-    }
-
-    @Test
     public void shouldFetchListOfResourceUrlsToUpdate() throws Exception {
         String response = "[{\"location\":\"http://whatever/api/children/5-1ed26a0e5072830a9064361a570684f6\"},{\"location\":\"http://whatever/api/children/4-b011946150a16b0d2c6271aed05e2abe\"}]";
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children?updated_after=1970-01-01%2000%3A00%3A00UTC", response);
