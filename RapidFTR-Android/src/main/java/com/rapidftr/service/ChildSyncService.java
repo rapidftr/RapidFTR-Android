@@ -3,18 +3,14 @@ package com.rapidftr.service;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.utils.RapidFtrDateTime;
 import org.apache.http.HttpException;
 import org.joda.time.DateTime;
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
