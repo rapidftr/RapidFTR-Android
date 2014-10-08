@@ -7,6 +7,7 @@ import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
+import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.History;
 import com.rapidftr.model.User;
@@ -23,7 +24,6 @@ import java.util.List;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.EnquiryTableColumn.*;
 import static com.rapidftr.database.Database.enquiry;
-import static java.lang.String.format;
 
 public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
@@ -85,6 +85,16 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     public List<Enquiry> allCreatedByCurrentUser() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT enquiry_json FROM enquiry WHERE created_by = ? ORDER BY id", new String[]{userName});
         return toEnquiries(cursor);
+    }
+
+    @Override
+    public List<Enquiry> getRecordsForPage(int previousPageNumber, int pageNumber) throws JSONException {
+        return null;
+    }
+
+    @Override
+    public List<Child> getRecordsForFirstPage() throws JSONException {
+        return null;
     }
 
     @Override

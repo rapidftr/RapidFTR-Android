@@ -3,10 +3,13 @@ package com.rapidftr.activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
+import com.google.inject.Inject;
 import com.rapidftr.R;
+import com.rapidftr.adapter.EndlessOnScrollListener;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.Repository;
 import lombok.Cleanup;
 import org.json.JSONException;
 
@@ -14,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewAllChildrenActivity extends RapidFtrActivity {
+
+    @Inject
+    private ChildRepository childRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +33,8 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
         List<Child> children = new ArrayList<Child>();
         @Cleanup ChildRepository childRepository = inject(ChildRepository.class);
         try {
-            children = childRepository.allCreatedByCurrentUser();
+//            children = childRepository.getRecordsForPage(0, Repository.FIRST_PAGE);
+            children = childRepository.getRecordsForFirstPage();
         } catch (JSONException e) {
             Log.e("ViewAllChildrenActivity","Error while displaying children list");
             makeToast(R.string.fetch_child_error);
@@ -42,5 +49,6 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
         }
         childListView.setAdapter(highlightedFieldsViewAdapter);
+        childListView.setOnScrollListener(new EndlessOnScrollListener<Child>(inject(ChildRepository.class), highlightedFieldsViewAdapter));
     }
 }

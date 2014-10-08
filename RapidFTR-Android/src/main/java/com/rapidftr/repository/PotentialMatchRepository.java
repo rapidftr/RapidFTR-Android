@@ -114,6 +114,16 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
         return new ArrayList<PotentialMatch>();
     }
 
+    @Override
+    public List<PotentialMatch> getRecordsForPage(int previousPageNumber, int pageNumber) {
+        return null;
+    }
+
+    @Override
+    public List<Child> getRecordsForFirstPage() throws JSONException {
+        return null;
+    }
+
     public List<PotentialMatch> getPotentialMatchesFor(Enquiry enquiry) throws JSONException {
         if (enquiry.getInternalId() == null) {
             return new ArrayList<PotentialMatch>();

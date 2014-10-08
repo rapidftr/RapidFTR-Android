@@ -1,6 +1,7 @@
 package com.rapidftr.repository;
 
 import com.rapidftr.model.BaseModel;
+import com.rapidftr.model.Child;
 import org.json.JSONException;
 
 import java.sql.SQLException;
@@ -8,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface Repository<T extends BaseModel> {
+
+    public static int FIRST_PAGE = 30;
 
     public List<T> toBeSynced() throws JSONException;
 
@@ -28,4 +31,8 @@ public interface Repository<T extends BaseModel> {
     public List<String> getRecordIdsByOwner() throws JSONException;
 
     public List<T> allCreatedByCurrentUser() throws JSONException;
+
+    public List<T> getRecordsForPage(int previousPageNumber, int pageNumber) throws JSONException;
+
+    public List<Child> getRecordsForFirstPage() throws JSONException;
 }

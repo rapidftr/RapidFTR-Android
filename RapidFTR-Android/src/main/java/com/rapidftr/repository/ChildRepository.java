@@ -6,7 +6,9 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
+import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.DatabaseSession;
+import com.rapidftr.database.SQLCipherHelper;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.History;
@@ -63,6 +65,24 @@ public class ChildRepository implements Closeable, Repository<Child> {
 
     public List<Child> allCreatedByCurrentUser() throws JSONException {
         @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE child_owner = ? ORDER BY id", new String[]{userName});
+        return toChildren(cursor);
+    }
+
+    @Override
+    public List<Child> getRecordsForPage(int previousPageNumber, int pageNumber) throws JSONException {
+        String sql = String.format(
+                "SELECT child_json, synced FROM children WHERE child_owner='%s' ORDER BY id LIMIT %d, %d",
+                userName, previousPageNumber, pageNumber);
+        @Cleanup Cursor cursor = session.rawQuery(sql, null);
+        return toChildren(cursor);
+    }
+
+    @Override
+    public List<Child> getRecordsForFirstPage() throws JSONException {
+        String sql = String.format(
+                "SELECT child_json, synced FROM children WHERE child_owner='%s' ORDER BY id LIMIT %d",
+                userName, Repository.FIRST_PAGE);
+        @Cleanup Cursor cursor = session.rawQuery(sql, null);
         return toChildren(cursor);
     }
 
