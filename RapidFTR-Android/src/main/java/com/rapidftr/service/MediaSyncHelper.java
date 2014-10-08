@@ -30,9 +30,11 @@ public class MediaSyncHelper {
 
     public void addMultiMediaFilesToTheRequestParameters(BaseModel baseModel, Map<String, String> requestParameters) throws JSONException {
         requestParameters.put("photo_keys", updatedPhotoKeys(baseModel).toString());
-        if (baseModel.opt("recorded_audio") != null && !baseModel.optString("recorded_audio").equals("")) {
-            if (!getAudioKey(baseModel).equals(baseModel.optString("recorded_audio"))) {
-                requestParameters.put("recorded_audio", baseModel.optString("recorded_audio"));
+        String recordedAudioEntry = baseModel.getRecordedAudio();
+
+        if (recordedAudioEntry != null && !recordedAudioEntry.equals("")) {
+            if (!getAudioKey(baseModel).equals(recordedAudioEntry)) {
+                requestParameters.put("recorded_audio", recordedAudioEntry);
             }
         }
         baseModel.remove("attachments");
@@ -105,7 +107,7 @@ public class MediaSyncHelper {
 
     public void setAudio(BaseModel baseModel) throws IOException, JSONException {
         AudioCaptureHelper audioCaptureHelper = new AudioCaptureHelper(context);
-        String recordedAudio = baseModel.optString("recorded_audio");
+        String recordedAudio = baseModel.getRecordedAudio();
         try {
             if (!recordedAudio.equals("")) {
                 audioCaptureHelper.getFile(recordedAudio, ".amr");
@@ -120,7 +122,8 @@ public class MediaSyncHelper {
     }
 
     public InputStream getAudio(BaseModel baseModel) throws IOException {
-        String audioUrlPath = String.format("/api/children/%s/audio", baseModel.optString("_id"));
+        String apiModel = baseModel.getClass().getSimpleName().toLowerCase();
+        String audioUrlPath = String.format("/%s/%s/audio", apiModel, baseModel.optString("_id"));
         return entityHttpDao.getResourceStream(audioUrlPath);
     }
 }

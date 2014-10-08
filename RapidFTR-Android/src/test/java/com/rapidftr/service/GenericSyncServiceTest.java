@@ -155,7 +155,7 @@ public class GenericSyncServiceTest {
         Child child = new Child("id", "user", "{'name' : 'child1', 'recorded_audio' : '123455'}");
 
         getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children", response);
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/testing/audio", "RECEIVED");
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/child/testing/audio", "RECEIVED");
 
         AudioCaptureHelper audioCaptureHelper = new AudioCaptureHelper(context);
         audioCaptureHelper.saveAudio(child, new ByteArrayInputStream("OK".getBytes()));

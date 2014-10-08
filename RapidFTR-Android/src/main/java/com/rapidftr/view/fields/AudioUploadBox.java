@@ -125,7 +125,7 @@ public class AudioUploadBox extends BaseView {
 
 	        mPlayer = null;
             mPlayer = getMediaPlayer();
-            mPlayer.setDataSource(audioCaptureHelper.getCompleteFileName(model.getString(formField.getId())));
+            mPlayer.setDataSource(audioCaptureHelper.getCompleteFileName(model.getRecordedAudio()));
             mPlayer.prepare();
             mPlayer.start();
             mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -146,7 +146,7 @@ public class AudioUploadBox extends BaseView {
     @Override
     protected void initialize() throws JSONException {
         super.initialize();
-        if (model.getString(formField.getId()) != null) {
+        if (model.getRecordedAudio() != null) {
             enableButton(findViewById(R.id.play_record), R.drawable.play_active);
         }
     }

@@ -55,7 +55,7 @@ public class MediaSyncHelperTest {
         Child child = new Child("id1", "user1", "{ '_id' : '1234abcd' ,'recorded_audio' : 'audio_file_name'}");
 
         getFakeHttpLayer().setDefaultHttpResponse(200, "audio stream");
-        getFakeHttpLayer().addHttpResponseRule("http://whatever/api/children/1234abcd/audio", "OK");
+        getFakeHttpLayer().addHttpResponseRule("http://whatever/child/1234abcd/audio", "OK");
 
         String response = CharStreams.toString(new InputStreamReader(new MediaSyncHelper(childHttpDao, context).getAudio(child)));
         assertEquals("OK", response);
@@ -81,5 +81,27 @@ public class MediaSyncHelperTest {
         doReturn(null).when(spyDao).getResourceStream(any(String.class));
         helper.getReSizedPhoto(enquiry, "image");
         verify(spyDao).getResourceStream("/enquiry/1234/photo/image/resized/475x635");
+    }
+
+    @Test
+    public void shouldBuildAudioUrlFromChildModel() throws IOException {
+        EntityHttpDao<Child> spyDao = spy(new EntityHttpDao<Child>());
+        MediaSyncHelper helper = new MediaSyncHelper(spyDao, context);
+        Child child = new Child();
+        child.put("_id", "1234");
+        doReturn(null).when(spyDao).getResourceStream(any(String.class));
+        helper.getAudio(child);
+        verify(spyDao).getResourceStream("/child/1234/audio");
+    }
+
+    @Test
+    public void shouldBuildAudioUrlFromEnquiryModel() throws IOException, JSONException {
+        EntityHttpDao<Child> spyDao = spy(new EntityHttpDao<Child>());
+        MediaSyncHelper helper = new MediaSyncHelper(spyDao, context);
+        Enquiry enquiry = new Enquiry("{}");
+        enquiry.put("_id", "1234");
+        doReturn(null).when(spyDao).getResourceStream(any(String.class));
+        helper.getAudio(enquiry);
+        verify(spyDao).getResourceStream("/enquiry/1234/audio");
     }
 }
