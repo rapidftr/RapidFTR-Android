@@ -100,7 +100,7 @@ public class AudioUploadBox extends BaseView {
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
-        model.put(formField.getId(), fileName);
+        model.putRecordedAudio(fileName);
     }
 
     protected void playRecording(View view) throws JSONException {

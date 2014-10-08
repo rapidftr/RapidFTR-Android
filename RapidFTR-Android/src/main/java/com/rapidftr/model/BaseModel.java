@@ -284,4 +284,8 @@ public class BaseModel extends JSONObject implements Parcelable {
     public String getRecordedAudio() {
         return null;
     }
+
+    public void putRecordedAudio(String fileName) {
+        put("recorded_audio", fileName);
+    }
 }
