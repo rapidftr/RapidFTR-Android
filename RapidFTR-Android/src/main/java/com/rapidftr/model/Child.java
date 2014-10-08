@@ -125,4 +125,9 @@ public class Child extends BaseModel {
         }
         return ids;
     }
+
+    @Override
+    public String getRecordedAudio() {
+        return optString("recorded_audio");
+    }
 }

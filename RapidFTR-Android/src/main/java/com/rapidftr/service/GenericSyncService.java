@@ -56,6 +56,7 @@ public class GenericSyncService<T extends BaseModel> {
         photoKeys = (JSONArray) model.remove("photo_keys");
         audioAttachments = model.remove("audio_attachments");
         model.remove("synced");
+        model.remove("_rev");
     }
 
     private void setMedia(T model) throws IOException, JSONException {

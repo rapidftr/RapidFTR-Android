@@ -110,7 +110,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         verify(view).enableButton(play, R.drawable.play_active);
         verify(view).enableButton(record, R.drawable.record_active);
         verify(view).disableButton(stop, R.drawable.stop);
-        assertEquals(fileName, child.getString(field.getId()));
+        assertEquals(fileName, child.getString("recorded_audio"));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class AudioUploadBoxTest extends BaseViewSpec<AudioUploadBox> {
         //verify(play).setBackgroundDrawable(play.getResources().getDrawable(R.drawable.pause_active));
 
         verify(view).disableButton(record, R.drawable.record);
-        verify(mediaPlayer).setDataSource(audioCaptureHelper.getCompleteFileName(child.getString(field.getId())));
+        verify(mediaPlayer).setDataSource(audioCaptureHelper.getCompleteFileName(child.getRecordedAudio()));
         verify(mediaPlayer).prepare();
         verify(mediaPlayer).start();
     }

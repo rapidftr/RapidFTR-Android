@@ -122,4 +122,11 @@ public class Enquiry extends BaseModel {
     public String getApiParameter() {
         return "enquiry";
     }
+
+    @Override
+    public String getRecordedAudio() {
+        if(has("recorded_audio"))
+            return optString("recorded_audio");
+        return optString("7_recorded_audio"); //Due to hard coded form section field ids in the Rails app...
+    }
 }

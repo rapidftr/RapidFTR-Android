@@ -280,4 +280,12 @@ public class BaseModel extends JSONObject implements Parcelable {
     public void setSyncLog(String syncLog1) throws JSONException {
         put(syncLog.getColumnName(), syncLog1);
     }
+
+    public String getRecordedAudio() {
+        return null;
+    }
+
+    public void putRecordedAudio(String fileName) {
+        put("recorded_audio", fileName);
+    }
 }
