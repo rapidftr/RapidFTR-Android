@@ -341,7 +341,7 @@
                             <zipalign>
                                 <verbose>true</verbose>
                                 <inputApk>${project.build.directory}/${project.artifactId}-${project.version}.apk</inputApk>
-                                <outputApk>${project.build.directory}/${project.artifactId}-signed-aligned.apk</outputApk>
+                                <outputApk>${project.build.directory}/${project.artifactId}-release.apk</outputApk>
                                 <skip>false</skip>
                             </zipalign>
                         </configuration>
