@@ -126,7 +126,7 @@ public class PotentialMatchRepositoryTest {
         repository.createOrUpdate(potentialMatch);
         assertThat(repository.get("unique_id_1"), is(notNullValue()));
 
-        potentialMatch.put(PotentialMatch.DELETED_FIELD, Boolean.TRUE.toString());
+        potentialMatch.put(PotentialMatch.STATUS_FIELD, PotentialMatch.PotentialMatchStatus.DELETED.name());
         repository.createOrUpdateWithoutHistory(potentialMatch);
 
         assertNull(repository.get("unique_id_1"));
