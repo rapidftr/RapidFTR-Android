@@ -4,10 +4,19 @@ import com.google.common.base.Predicate;
 import org.json.JSONException;
 
 public class PotentialMatch extends BaseModel {
+
+    public static enum PotentialMatchStatus {
+        POTENTIAL,
+        DELETED,
+        INVALID,
+        CONFIRMED,
+        REUNITED,
+        REUNITED_ELSEWHERE
+    }
+
     private static final String ENQUIRY_ID_FIELD = "enquiry_id";
     private static final String CHILD_ID_FIELD = "child_id";
-    private static final String CONFIRMED_FIELD = "confirmed";
-    public static final String DELETED_FIELD = "deleted";
+    public static final String STATUS_FIELD = "status";
 
     public PotentialMatch(String jsonString) throws JSONException {
         super(jsonString);
@@ -17,11 +26,13 @@ public class PotentialMatch extends BaseModel {
         this.put(ENQUIRY_ID_FIELD, enquiryId);
         this.put(CHILD_ID_FIELD, childId);
         this.put(FIELD_INTERNAL_ID, uniqueIdentifier);
+        this.put(STATUS_FIELD, PotentialMatchStatus.POTENTIAL.name());
     }
 
     public PotentialMatch(String enquiryId, String childId, String uniqueIdentifier, Boolean isConfirmed) {
         this(enquiryId, childId, uniqueIdentifier);
-        this.put(CONFIRMED_FIELD, isConfirmed.toString());
+
+        this.put(STATUS_FIELD, isConfirmed ? PotentialMatchStatus.CONFIRMED.name() : PotentialMatchStatus.POTENTIAL.name());
     }
 
     public String getChildId() {
@@ -51,11 +62,11 @@ public class PotentialMatch extends BaseModel {
     }
 
     public Boolean isConfirmed() {
-        return Boolean.valueOf(getString(CONFIRMED_FIELD));
+        return PotentialMatchStatus.valueOf(getString(STATUS_FIELD)) == PotentialMatchStatus.CONFIRMED;
     }
 
     public Boolean isDeleted() {
-        return Boolean.valueOf(getString(DELETED_FIELD, "false"));
+        return PotentialMatchStatus.valueOf(getString(STATUS_FIELD)) == PotentialMatchStatus.DELETED;
     }
 
     public static class FilterByConfirmationStatus implements Predicate<PotentialMatch> {
