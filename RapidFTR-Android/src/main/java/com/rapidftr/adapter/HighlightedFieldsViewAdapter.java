@@ -51,6 +51,7 @@ public class HighlightedFieldsViewAdapter<T extends BaseModel> extends BaseModel
             LayoutInflater vi = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
             view = vi.inflate(textViewResourceId, null);
         }
+
         final BaseModel baseModel = objects.get(position);
         if (baseModel != null) {
             TextView uniqueIdView = (TextView) view.findViewById(R.id.row_child_unique_id);

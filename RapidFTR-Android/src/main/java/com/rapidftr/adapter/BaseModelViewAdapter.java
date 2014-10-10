@@ -5,26 +5,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.CollectionActivity;
 import com.rapidftr.model.BaseModel;
+import com.rapidftr.repository.Repository;
 import com.rapidftr.task.AssignThumbnailAsyncTask;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import org.json.JSONException;
 
 import java.util.List;
 
-public class BaseModelViewAdapter<T> extends ArrayAdapter<T> {
+public class BaseModelViewAdapter<T> extends BaseAdapter {
     protected final Context context;
     protected final int textViewResourceId;
     protected List<T> objects;
     protected PhotoCaptureHelper photoCaptureHelper;
 
     public BaseModelViewAdapter(Context context, int textViewResourceId, List<T> objects) {
-        super(context, textViewResourceId, objects);
+        super();
         this.context = context;
         this.textViewResourceId = textViewResourceId;
         this.objects = objects;
@@ -35,7 +38,6 @@ public class BaseModelViewAdapter<T> extends ArrayAdapter<T> {
         if (textView != null) {
             textView.setText(text);
         }
-
     }
 
     protected void assignThumbnail(BaseModel model, ImageView imageView) {
@@ -88,5 +90,36 @@ public class BaseModelViewAdapter<T> extends ArrayAdapter<T> {
                 activity.startActivity(intent);
             }
         };
+    }
+
+    @Override
+    public int getCount() {
+        return objects.size();
+    }
+
+    @Override
+    public Object getItem(int index) {
+        return objects.get(index);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return 0;
+    }
+
+    @Override
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        return null;
+    }
+
+    public void addAll(List<T> records) {
+        objects.addAll(records);
+    }
+
+    public void removeFirstPage() {
+        int quarterListSize = objects.size() / 4;
+        for(int i = 0; i <= quarterListSize; i++){
+            objects.remove(i);
+        }
     }
 }
