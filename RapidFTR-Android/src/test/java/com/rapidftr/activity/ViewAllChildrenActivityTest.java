@@ -50,7 +50,7 @@ public class ViewAllChildrenActivityTest {
     public void shouldListChildrenCreatedByTheLoggedInUser() throws JSONException {
         List<Child> children = new ArrayList<Child>();
         children.add(new Child("id1", "user1", "{ \"name\" : \"child1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }"));
-        when(childRepository.allCreatedByCurrentUser()).thenReturn(children);
+        when(childRepository.getRecordsForFirstPage()).thenReturn(children);
 
         activityController.create();
         ListView listView = (ListView) activity.findViewById(R.id.child_list);
