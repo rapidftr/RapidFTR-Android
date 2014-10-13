@@ -46,7 +46,6 @@ public class Scroller<T extends BaseModel> {
     public void updateAdapterSizeAndPageNumbers() {
         if (isLoadingCompleted()) {
             loading = false;
-            highlightedFieldsViewAdapter.removeFirstPage();
             numberOfPreviouslyLoadedItems = numberOfItemsInAdapter;
             previousPageNumber = currentPage;
             currentPage += DEFAULT_PAGE_SIZE;

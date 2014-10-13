@@ -112,11 +112,4 @@ public class BaseModelViewAdapter<T extends BaseModel> extends BaseAdapter {
     public void addAll(List<T> records) {
         objects.addAll(records);
     }
-
-    public void removeFirstPage() {
-        int quarterListSize = objects.size() / 4;
-        for(int i = 0; i <= quarterListSize; i++){
-            objects.remove(i);
-        }
-    }
 }
