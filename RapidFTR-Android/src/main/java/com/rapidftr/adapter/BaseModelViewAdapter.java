@@ -6,21 +6,18 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.activity.CollectionActivity;
 import com.rapidftr.model.BaseModel;
-import com.rapidftr.repository.Repository;
 import com.rapidftr.task.AssignThumbnailAsyncTask;
 import com.rapidftr.utils.PhotoCaptureHelper;
 import org.json.JSONException;
-
 import java.util.List;
 
-public class BaseModelViewAdapter<T> extends BaseAdapter {
+public class BaseModelViewAdapter<T extends BaseModel> extends BaseAdapter {
     protected final Context context;
     protected final int textViewResourceId;
     protected List<T> objects;
@@ -98,17 +95,17 @@ public class BaseModelViewAdapter<T> extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int index) {
+    public T getItem(int index) {
         return objects.get(index);
     }
 
     @Override
-    public long getItemId(int i) {
-        return 0;
+    public long getItemId(int id) {
+        return id;
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(int position, View convertView, ViewGroup viewGroup){
         return null;
     }
 
