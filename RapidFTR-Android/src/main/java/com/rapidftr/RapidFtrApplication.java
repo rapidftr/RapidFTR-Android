@@ -197,4 +197,14 @@ public class RapidFtrApplication extends Application {
     public void cancelNotification(int notificationId) {
         notificationManager.cancel(notificationId);
     }
+
+    public String getLanguageOfCurrentUser() {
+        String languageCode = getCurrentUser().getLanguage();
+
+        if (languageCode == null || languageCode.trim().length() == 0) {
+            languageCode = "en";
+        }
+
+        return languageCode;
+    }
 }
