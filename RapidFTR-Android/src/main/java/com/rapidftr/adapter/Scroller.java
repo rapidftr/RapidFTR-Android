@@ -1,5 +1,8 @@
 package com.rapidftr.adapter;
 
+import android.content.Context;
+import android.widget.Toast;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.repository.Repository;
 import org.json.JSONException;
@@ -9,18 +12,22 @@ import java.util.List;
 import static com.rapidftr.adapter.PaginatedScrollListener.DEFAULT_PAGE_SIZE;
 
 public class Scroller<T extends BaseModel> {
-    private Repository<T> repository;
-    private HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter;
-    private boolean loading = true;
+
     private int visibleItemThreshold = 5;
     private int currentPage = 0;
     private int numberOfPreviouslyLoadedItems = 0;
+    private boolean loading = true;
     private int previousPageNumber = 0;
-    int firstVisibleItem;
-    int numberOfVisibleItems;
-    int numberOfItemsInAdapter;
 
-    public Scroller(Repository<T> repository, HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter, int firstVisibleItem, int numberOfVisibleItems, int numberOfItemsInAdapter) {
+    private int firstVisibleItem;
+    private int numberOfVisibleItems;
+    private int numberOfItemsInAdapter;
+
+    private Repository<T> repository;
+    private HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter;
+
+    public Scroller(Repository<T> repository, HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter,
+                    int firstVisibleItem, int numberOfVisibleItems, int numberOfItemsInAdapter) {
         this.repository = repository;
         this.highlightedFieldsViewAdapter = highlightedFieldsViewAdapter;
         this.firstVisibleItem = firstVisibleItem;
@@ -51,10 +58,10 @@ public class Scroller<T extends BaseModel> {
     }
 
     private boolean shouldQueryForMoreData() {
-        return !loading && scrollPositionGreaterThanVisibleItemThreshold();
+        return !loading && scrolledPastVisibleItemThreshold();
     }
 
-    private boolean scrollPositionGreaterThanVisibleItemThreshold() {
+    private boolean scrolledPastVisibleItemThreshold() {
         return (numberOfItemsInAdapter - numberOfVisibleItems) <= (firstVisibleItem + visibleItemThreshold);
     }
 

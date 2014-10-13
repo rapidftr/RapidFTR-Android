@@ -69,10 +69,10 @@ public class ChildRepository implements Closeable, Repository<Child> {
     }
 
     @Override
-    public List<Child> getRecordsForPage(int previousPageNumber, int pageNumber) throws JSONException {
+    public List<Child> getRecordsForPage(int fromPageNumber, int toPageNumber) throws JSONException {
         String sql = String.format(
                 "SELECT child_json, synced FROM children WHERE child_owner='%s' ORDER BY id LIMIT %d, %d",
-                userName, previousPageNumber, pageNumber);
+                userName, fromPageNumber, toPageNumber);
         @Cleanup Cursor cursor = session.rawQuery(sql, null);
         return toChildren(cursor);
     }
