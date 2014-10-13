@@ -5,11 +5,9 @@ import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import org.json.JSONException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,13 +35,13 @@ public class ScrollerTest {
         repository = mock(ChildRepository.class);
         highlightedFieldsViewAdapter = mock(HighlightedFieldsViewAdapter.class);
         List<Child> children = Arrays.asList(new Child("id", "user", "{\"name\": \"Foo Bar\"}"));
-        when(repository.getRecordsForPage(anyInt(), anyInt())).thenReturn(children);
-
+        when(repository.getRecordsBetween(anyInt(), anyInt())).thenReturn(children);
         scroller = spy(new Scroller(repository, highlightedFieldsViewAdapter, 24, 6, 30));
         doReturn(true).when(scroller).shouldQueryForMoreData();
+
         scroller.loadRecordsForNextPage();
 
-        verify(repository, atLeastOnce()).getRecordsForPage(anyInt(), anyInt());
+        verify(repository, atLeastOnce()).getRecordsBetween(anyInt(), anyInt());
         verify(highlightedFieldsViewAdapter, atLeastOnce()).addAll(children);
     }
 

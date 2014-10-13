@@ -115,7 +115,7 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
     }
 
     @Override
-    public List<PotentialMatch> getRecordsForPage(int previousPageNumber, int pageNumber) {
+    public List<PotentialMatch> getRecordsBetween(int previousPageNumber, int pageNumber) {
         return null;
     }
 

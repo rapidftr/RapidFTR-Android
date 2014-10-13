@@ -1,5 +1,6 @@
 package com.rapidftr.repository;
 
+import android.database.Cursor;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
@@ -11,7 +12,6 @@ import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.History;
 import com.rapidftr.model.User;
-import org.hamcrest.CoreMatchers;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.rapidftr.CustomTestRunner.createUser;
-import static com.rapidftr.model.History.*;
+import static com.rapidftr.model.History.HISTORIES;
 import static com.rapidftr.utils.JSONMatcher.equalJSONIgnoreOrder;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,8 +34,7 @@ import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
 public class ChildRepositoryTest {
@@ -72,7 +71,7 @@ public class ChildRepositoryTest {
         assert(((JSONObject) changes.get("child")).has(History.CREATED));
     }
 
-        @Test
+    @Test
     public void shouldUpdateChildRecordIfIdAlreadyExistsAndSetLastUpdateAt() throws Exception {
         ChildRepository repository = spy(new ChildRepository("user1", session));
         repository.createOrUpdate(new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
@@ -289,6 +288,30 @@ public class ChildRepositoryTest {
         assertTrue(children.contains(child2));
         assertTrue(children.contains(child3));
         assertTrue(children.contains(child4));
+    }
+
+    @Test
+    public void shouldReturnFirstPage() throws JSONException {
+        session = mock(DatabaseSession.class);
+        repository = spy(new ChildRepository("user1", session));
+        doReturn(new ArrayList<Child>()).when(repository).toChildren(any(Cursor.class));
+
+        repository.getRecordsForFirstPage();
+
+        String sql = "SELECT child_json, synced FROM children WHERE child_owner='user1' ORDER BY id LIMIT 30";
+        verify(session, atLeastOnce()).rawQuery(sql, null);
+    }
+
+    @Test
+    public void shouldReturnRecordsBetweenSpecifiedLimits() throws JSONException {
+        session = mock(DatabaseSession.class);
+        repository = spy(new ChildRepository("user1", session));
+        doReturn(new ArrayList<Child>()).when(repository).toChildren(any(Cursor.class));
+
+        repository.getRecordsBetween(1, 10);
+
+        String sql = "SELECT child_json, synced FROM children WHERE child_owner='user1' ORDER BY id LIMIT 1, 10";
+        verify(session, atLeastOnce()).rawQuery(sql, null);
     }
 
     @Test

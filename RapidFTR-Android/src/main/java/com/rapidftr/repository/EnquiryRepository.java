@@ -88,7 +88,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     }
 
     @Override
-    public List<Enquiry> getRecordsForPage(int previousPageNumber, int pageNumber) throws JSONException {
+    public List<Enquiry> getRecordsBetween(int previousPageNumber, int pageNumber) throws JSONException {
         return null;
     }
 

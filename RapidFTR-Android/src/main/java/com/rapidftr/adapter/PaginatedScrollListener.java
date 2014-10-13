@@ -9,6 +9,7 @@ import org.json.JSONException;
 public class PaginatedScrollListener<T extends BaseModel> implements AbsListView.OnScrollListener{
 
     public static final int DEFAULT_PAGE_SIZE = 30;
+    public static final int FIRST_PAGE = 30;
     private final Repository<T> repository;
     private final HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter;
     private Scroller scroller;

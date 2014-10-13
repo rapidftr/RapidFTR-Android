@@ -5,6 +5,7 @@ import android.database.Cursor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.adapter.PaginatedScrollListener;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.DatabaseSession;
@@ -69,7 +70,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
     }
 
     @Override
-    public List<Child> getRecordsForPage(int fromPageNumber, int pageNumber) throws JSONException {
+    public List<Child> getRecordsBetween(int fromPageNumber, int pageNumber) throws JSONException {
         String sql = String.format(
                 "SELECT child_json, synced FROM children WHERE child_owner='%s' ORDER BY id LIMIT %d, %d",
                 userName, fromPageNumber, pageNumber);
@@ -81,7 +82,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
     public List<Child> getRecordsForFirstPage() throws JSONException {
         String sql = String.format(
                 "SELECT child_json, synced FROM children WHERE child_owner='%s' ORDER BY id LIMIT %d",
-                userName, Repository.FIRST_PAGE);
+                userName, PaginatedScrollListener.FIRST_PAGE);
         @Cleanup Cursor cursor = session.rawQuery(sql, null);
         return toChildren(cursor);
     }
@@ -223,7 +224,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
         }
     }
 
-    private List<Child> toChildren(Cursor cursor) throws JSONException {
+    protected List<Child> toChildren(Cursor cursor) throws JSONException {
         List<Child> children = new ArrayList<Child>();
         while (cursor.moveToNext()) {
             children.add(childFrom(cursor));

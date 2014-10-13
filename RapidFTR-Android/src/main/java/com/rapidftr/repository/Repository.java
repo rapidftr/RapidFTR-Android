@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface Repository<T extends BaseModel> {
 
-    public static int FIRST_PAGE = 30;
-
     public List<T> toBeSynced() throws JSONException;
 
     public boolean exists(String id);
@@ -32,7 +30,7 @@ public interface Repository<T extends BaseModel> {
 
     public List<T> allCreatedByCurrentUser() throws JSONException;
 
-    public List<T> getRecordsForPage(int previousPageNumber, int pageNumber) throws JSONException;
+    public List<T> getRecordsBetween(int previousPageNumber, int pageNumber) throws JSONException;
 
     public List<Child> getRecordsForFirstPage() throws JSONException;
 }

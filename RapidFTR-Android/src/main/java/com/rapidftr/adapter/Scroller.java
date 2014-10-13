@@ -37,7 +37,7 @@ public class Scroller<T extends BaseModel> {
     public void loadRecordsForNextPage() throws JSONException {
         if (shouldQueryForMoreData()) {
             loading = true;
-            List<T> records = repository.getRecordsForPage(previousPageNumber, nextPageNumber);
+            List<T> records = repository.getRecordsBetween(previousPageNumber, nextPageNumber);
             highlightedFieldsViewAdapter.addAll(records);
         }
     }
