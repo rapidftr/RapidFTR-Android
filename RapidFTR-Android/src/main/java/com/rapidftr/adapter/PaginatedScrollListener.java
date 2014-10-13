@@ -23,7 +23,7 @@ public class PaginatedScrollListener<T extends BaseModel> implements AbsListView
     public void onScroll(AbsListView absListView, int firstVisibleItem,
                          int numberOfVisibleItems, int numberOfItemsInAdapter) {
         scroller = new Scroller(repository, highlightedFieldsViewAdapter, firstVisibleItem, numberOfVisibleItems, numberOfItemsInAdapter);
-        scroller.updateAdapterSizeAndPageNumbers();
+        scroller.updatePageNumbers();
 
         try {
             scroller.loadRecordsForNextPage();
