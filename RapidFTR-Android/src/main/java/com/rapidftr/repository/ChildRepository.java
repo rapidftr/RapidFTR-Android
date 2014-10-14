@@ -29,7 +29,7 @@ import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
 import static java.lang.String.format;
 
-public class ChildRepository implements Closeable, Repository<Child> {
+public class ChildRepository implements Repository<Child> {
 
     protected final String userName;
     protected final DatabaseSession session;

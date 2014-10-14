@@ -42,7 +42,7 @@ public class HighlightedFieldViewGroup extends LinearLayout {
 
             if (StringUtils.isNotEmpty(baseModel.optString(highlightedFields.get(fieldId).getId()))) {
                 String fieldValue = String.format("%s: %s",
-                        highlightedFields.get(fieldId).getDisplayName().get(RapidFtrApplication.getApplicationInstance().getCurrentUser().getLanguage()),
+                        highlightedFields.get(fieldId).getDisplayName().get(RapidFtrApplication.getApplicationInstance().getLanguageOfCurrentUser()),
                         baseModel.optString(highlightedFields.get(fieldId).getId()));
 
                 textView.setText(fieldValue);

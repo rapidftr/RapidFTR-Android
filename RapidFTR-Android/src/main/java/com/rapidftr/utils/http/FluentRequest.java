@@ -164,7 +164,7 @@ public class FluentRequest {
 
     private void addAudio(MultipartEntity multipartEntity, Map.Entry<String, String> modelParam) {
         try {
-            multipartEntity.addPart("child[audio]",
+            multipartEntity.addPart("[audio]",
                     new ByteArrayBody(IOUtils.toByteArray(new FileInputStream(new File(new AudioCaptureHelper((RapidFtrApplication) context).getCompleteFileName(modelParam.getValue())))),
                             "audio/amr", modelParam.getValue()+".amr"));
         } catch (Exception e) {

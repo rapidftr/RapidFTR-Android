@@ -30,7 +30,6 @@ public class EntityHttpDao<T extends BaseModel> {
     private static final String UPDATED_AFTER_FORM_PARAMETER = "updated_after";
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
     private static final String LOCATION_ATTRIBUTE = "location";
-    private static final String CHARACTER_SET = "UTF-8";
 
     protected String serverUrl;
     protected String apiPath;
@@ -64,19 +63,6 @@ public class EntityHttpDao<T extends BaseModel> {
                 .get();
 
         return fluentResponse.getEntity().getContent();
-    }
-
-
-    public T update(T entity) throws IOException, JSONException, HttpException {
-        FluentResponse fluentResponse = http()
-                .context(RapidFtrApplication.getApplicationInstance())
-                .host(serverUrl)
-                .path(buildUpdatePath(entity))
-                .param(apiParameter, entity.values().toString())
-                .putWithMultiPart()
-                .ensureSuccess();
-
-        return buildEntityFromJson(getJsonResponse(fluentResponse));
     }
 
     public T update(T entity, String path, Map<String, String> requestParameters) throws IOException, HttpException {
@@ -113,18 +99,6 @@ public class EntityHttpDao<T extends BaseModel> {
             urls.add(jsonArray.getJSONObject(i).getString(LOCATION_ATTRIBUTE));
         }
         return urls;
-    }
-
-    public T create(T entity) throws IOException, HttpException, JSONException {
-        FluentResponse fluentResponse = http()
-                .context(RapidFtrApplication.getApplicationInstance())
-                .host(serverUrl)
-                .path(apiPath)
-                .param(apiParameter, entity.getJsonString())
-                .postWithMultiPart()
-                .ensureSuccess();
-
-        return buildEntityFromJson(getJsonResponse(fluentResponse));
     }
 
     public T create(T entity, String path, Map<String, String> requestParameters) throws IOException, HttpException {
