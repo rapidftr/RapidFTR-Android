@@ -5,7 +5,7 @@ import android.database.Cursor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.adapter.ViewAllChildrenPaginatedScrollListener;
+import com.rapidftr.adapter.pagination.ViewAllChildrenPaginatedScrollListener;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.forms.FormField;

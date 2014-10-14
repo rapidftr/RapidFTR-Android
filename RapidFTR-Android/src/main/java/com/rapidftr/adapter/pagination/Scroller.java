@@ -1,10 +1,11 @@
-package com.rapidftr.adapter;
+package com.rapidftr.adapter.pagination;
 
+import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.repository.Repository;
 import org.json.JSONException;
 
-import static com.rapidftr.adapter.ViewAllChildrenPaginatedScrollListener.DEFAULT_PAGE_SIZE;
+import static com.rapidftr.adapter.pagination.ViewAllChildrenPaginatedScrollListener.DEFAULT_PAGE_SIZE;
 
 public abstract class Scroller<T extends BaseModel> {
 

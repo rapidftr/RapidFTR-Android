@@ -1,6 +1,7 @@
-package com.rapidftr.adapter;
+package com.rapidftr.adapter.pagination;
 
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import org.json.JSONException;
@@ -13,7 +14,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 

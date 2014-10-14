@@ -1,10 +1,9 @@
-package com.rapidftr.adapter;
+package com.rapidftr.adapter.pagination;
 
 import android.widget.AbsListView;
-import com.rapidftr.model.BaseModel;
+import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.repository.Repository;
 import org.json.JSONException;
 
 
