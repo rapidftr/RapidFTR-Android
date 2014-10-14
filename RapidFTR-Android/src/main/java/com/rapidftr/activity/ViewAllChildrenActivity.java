@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 import com.rapidftr.R;
-import com.rapidftr.adapter.PaginatedScrollListener;
+import com.rapidftr.adapter.ViewAllChildrenPaginatedScrollListener;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
@@ -43,6 +43,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
         }
         childListView.setAdapter(highlightedFieldsViewAdapter);
-        childListView.setOnScrollListener(new PaginatedScrollListener<Child>(inject(ChildRepository.class), highlightedFieldsViewAdapter));
+        ViewAllChildrenPaginatedScrollListener scrollListener = new ViewAllChildrenPaginatedScrollListener(inject(ChildRepository.class), highlightedFieldsViewAdapter);
+        childListView.setOnScrollListener(scrollListener);
     }
 }

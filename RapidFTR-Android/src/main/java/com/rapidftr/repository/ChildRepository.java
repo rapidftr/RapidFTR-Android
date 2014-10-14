@@ -5,11 +5,9 @@ import android.database.Cursor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.adapter.PaginatedScrollListener;
+import com.rapidftr.adapter.ViewAllChildrenPaginatedScrollListener;
 import com.rapidftr.database.Database;
-import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.DatabaseSession;
-import com.rapidftr.database.SQLCipherHelper;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.History;
@@ -82,7 +80,7 @@ public class ChildRepository implements Closeable, Repository<Child> {
     public List<Child> getRecordsForFirstPage() throws JSONException {
         String sql = String.format(
                 "SELECT child_json, synced FROM children WHERE child_owner='%s' ORDER BY id LIMIT %d",
-                userName, PaginatedScrollListener.FIRST_PAGE);
+                userName, ViewAllChildrenPaginatedScrollListener.FIRST_PAGE);
         @Cleanup Cursor cursor = session.rawQuery(sql, null);
         return toChildren(cursor);
     }

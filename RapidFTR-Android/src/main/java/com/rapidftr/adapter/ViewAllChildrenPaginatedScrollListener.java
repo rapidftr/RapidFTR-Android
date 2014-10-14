@@ -2,28 +2,30 @@ package com.rapidftr.adapter;
 
 import android.widget.AbsListView;
 import com.rapidftr.model.BaseModel;
+import com.rapidftr.model.Child;
+import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.Repository;
 import org.json.JSONException;
 
 
-public class PaginatedScrollListener<T extends BaseModel> implements AbsListView.OnScrollListener{
+public class ViewAllChildrenPaginatedScrollListener implements AbsListView.OnScrollListener{
 
     public static final int DEFAULT_PAGE_SIZE = 30;
     public static final int FIRST_PAGE = 30;
-    private final Repository<T> repository;
-    private final HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter;
-    private Scroller scroller;
+    private final ChildRepository repository;
+    private final HighlightedFieldsViewAdapter<Child> highlightedFieldsViewAdapter;
+    private ViewAllChildScroller scroller;
 
-    public PaginatedScrollListener(Repository<T> repository,
-                                   HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter) {
+    public ViewAllChildrenPaginatedScrollListener(ChildRepository repository,
+                                                  HighlightedFieldsViewAdapter<Child> adapter) {
         this.repository = repository;
-        this.highlightedFieldsViewAdapter = highlightedFieldsViewAdapter;
+        this.highlightedFieldsViewAdapter = adapter;
     }
 
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem,
                          int numberOfVisibleItems, int numberOfItemsInAdapter) {
-        scroller = new Scroller(repository, highlightedFieldsViewAdapter, firstVisibleItem, numberOfVisibleItems, numberOfItemsInAdapter);
+        scroller = new ViewAllChildScroller(repository, highlightedFieldsViewAdapter, firstVisibleItem, numberOfVisibleItems, numberOfItemsInAdapter);
         scroller.updatePageNumbers();
 
         try {
@@ -35,6 +37,4 @@ public class PaginatedScrollListener<T extends BaseModel> implements AbsListView
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int i) {}
-
-
 }
