@@ -16,7 +16,6 @@ import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
 import org.json.JSONException;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +26,6 @@ import java.util.regex.Pattern;
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
-import static java.lang.String.format;
 
 public class ChildRepository implements Repository<Child> {
 
