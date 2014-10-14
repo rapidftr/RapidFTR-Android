@@ -299,7 +299,7 @@ public class ChildRepositoryTest {
         repository.getRecordsForFirstPage();
 
         String sql = "SELECT child_json, synced FROM children WHERE child_owner='user1' ORDER BY id LIMIT 30";
-        verify(session, atLeastOnce()).rawQuery(sql, null);
+        verify(session, times(1)).rawQuery(sql, null);
     }
 
     @Test
@@ -311,7 +311,35 @@ public class ChildRepositoryTest {
         repository.getRecordsBetween(1, 10);
 
         String sql = "SELECT child_json, synced FROM children WHERE child_owner='user1' ORDER BY id LIMIT 1, 10";
-        verify(session, atLeastOnce()).rawQuery(sql, null);
+        verify(session, times(1)).rawQuery(sql, null);
+    }
+
+    @Test
+    public void shouldQueryForFirstThirtyMatches() throws JSONException {
+        session = mock(DatabaseSession.class);
+        repository = spy(new ChildRepository("user1", session));
+        doReturn(new ArrayList<Child>()).when(repository).toChildren(any(Cursor.class));
+
+        repository.getFirstPageOfChildrenMatchingString("john");
+
+        PaginatedSearchQueryBuilder queryBuilder = new PaginatedSearchQueryBuilder(
+                RapidFtrApplication.getApplicationInstance(), "john");
+        String sql = queryBuilder.queryForMatchingChildrenFirstPage();
+        verify(session, times(1)).rawQuery(sql, null);
+    }
+
+    @Test
+    public void shouldQueryForMatchingChildrenBetweenSpecifiedLimits() throws JSONException {
+        session = mock(DatabaseSession.class);
+        repository = spy(new ChildRepository("user1", session));
+        doReturn(new ArrayList<Child>()).when(repository).toChildren(any(Cursor.class));
+
+        repository.getChildrenMatchingStringBetween("john", 1, 10);
+
+        PaginatedSearchQueryBuilder queryBuilder = new PaginatedSearchQueryBuilder(
+                RapidFtrApplication.getApplicationInstance(), "john");
+        String sql = queryBuilder.queryForMatchingChildrenBetweenPages(1, 10);
+        verify(session, times(1)).rawQuery(sql, null);
     }
 
     @Test

@@ -31,11 +31,14 @@ public class ChildRepository implements Repository<Child> {
 
     protected final String userName;
     protected final DatabaseSession session;
+    private PaginatedSearchQueryBuilder paginatedSearchQueryBuilder;
+    private RapidFtrApplication applicationInstance;
 
     @Inject
     public ChildRepository(@Named("USER_NAME") String userName, DatabaseSession session) {
         this.userName = userName;
         this.session = session;
+        this.applicationInstance = RapidFtrApplication.getApplicationInstance();
     }
 
     @Override
@@ -255,5 +258,20 @@ public class ChildRepository implements Repository<Child> {
                 children.add(childFrom(cursor));
         }
         return children;
+    }
+
+    public List<Child> getFirstPageOfChildrenMatchingString(String searchKey) throws JSONException {
+        paginatedSearchQueryBuilder = new PaginatedSearchQueryBuilder(
+                applicationInstance, searchKey);
+        @Cleanup Cursor cursor = session.rawQuery(paginatedSearchQueryBuilder.queryForMatchingChildrenFirstPage(), null);
+        return toChildren(cursor);
+    }
+
+    public List<Child> getChildrenMatchingStringBetween(
+            String searchKey, int fromPageNumber, int toPageNumber) throws JSONException {
+        paginatedSearchQueryBuilder = new PaginatedSearchQueryBuilder(applicationInstance, searchKey);
+        @Cleanup Cursor cursor = session.rawQuery(paginatedSearchQueryBuilder.queryForMatchingChildrenBetweenPages(
+                fromPageNumber, toPageNumber), null);
+        return toChildren(cursor);
     }
 }
