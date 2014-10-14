@@ -4,26 +4,24 @@ import com.rapidftr.model.BaseModel;
 import com.rapidftr.repository.Repository;
 import org.json.JSONException;
 
-import java.util.List;
+import static com.rapidftr.adapter.ViewAllChildrenPaginatedScrollListener.DEFAULT_PAGE_SIZE;
 
-import static com.rapidftr.adapter.PaginatedScrollListener.DEFAULT_PAGE_SIZE;
-
-public class Scroller<T extends BaseModel> {
+public abstract class Scroller<T extends BaseModel> {
 
     //we have already loaded the first 30 records
-    private int nextPageNumber = 60;
-    private int previousPageNumber = 30;
+    protected int nextPageNumber = 60;
+    protected int previousPageNumber = 30;
 
     private int visibleItemThreshold = 5;
     private int numberOfPreviouslyLoadedItems = 0;
-    private boolean loading = true;
+    protected boolean loading = true;
 
     private int firstVisibleItem;
     private int numberOfVisibleItems;
     private int numberOfItemsInAdapter;
 
-    private Repository<T> repository;
-    private HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter;
+    protected Repository<T> repository;
+    protected HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter;
 
     public Scroller(Repository<T> repository, HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter,
                     int firstVisibleItem, int numberOfVisibleItems, int numberOfItemsInAdapter) {
@@ -34,13 +32,7 @@ public class Scroller<T extends BaseModel> {
         this.numberOfItemsInAdapter = numberOfItemsInAdapter;
     }
 
-    public void loadRecordsForNextPage() throws JSONException {
-        if (shouldQueryForMoreData()) {
-            loading = true;
-            List<T> records = repository.getRecordsBetween(previousPageNumber, nextPageNumber);
-            highlightedFieldsViewAdapter.addAll(records);
-        }
-    }
+    public abstract void loadRecordsForNextPage() throws JSONException;
 
     public void updatePageNumbers() {
         if (isLoadingCompleted()) {
