@@ -1,13 +1,9 @@
 package com.rapidftr.adapter.pagination;
 
-import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
-import com.rapidftr.model.BaseModel;
-import com.rapidftr.repository.Repository;
 import org.json.JSONException;
-
 import static com.rapidftr.adapter.pagination.ViewAllChildrenPaginatedScrollListener.DEFAULT_PAGE_SIZE;
 
-public abstract class Scroller<T extends BaseModel> {
+public abstract class Scroller {
 
     //we have already loaded the first 30 records
     protected int nextPageNumber = 60;
@@ -21,13 +17,7 @@ public abstract class Scroller<T extends BaseModel> {
     private int numberOfVisibleItems;
     private int numberOfItemsInAdapter;
 
-    protected Repository<T> repository;
-    protected HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter;
-
-    public Scroller(Repository<T> repository, HighlightedFieldsViewAdapter<T> highlightedFieldsViewAdapter,
-                    int firstVisibleItem, int numberOfVisibleItems, int numberOfItemsInAdapter) {
-        this.repository = repository;
-        this.highlightedFieldsViewAdapter = highlightedFieldsViewAdapter;
+    public Scroller(int firstVisibleItem, int numberOfVisibleItems, int numberOfItemsInAdapter) {
         this.firstVisibleItem = firstVisibleItem;
         this.numberOfVisibleItems = numberOfVisibleItems;
         this.numberOfItemsInAdapter = numberOfItemsInAdapter;
