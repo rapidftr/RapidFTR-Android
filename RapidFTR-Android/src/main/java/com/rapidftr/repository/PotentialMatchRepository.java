@@ -120,7 +120,7 @@ public class PotentialMatchRepository implements Closeable, Repository<Potential
     }
 
     @Override
-    public List<Child> getRecordsForFirstPage() throws JSONException {
+    public List<PotentialMatch> getRecordsForFirstPage() throws JSONException {
         return null;
     }
 

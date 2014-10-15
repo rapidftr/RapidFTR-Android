@@ -33,5 +33,5 @@ public interface Repository<T extends BaseModel> extends Closeable {
 
     public List<T> getRecordsBetween(int previousPageNumber, int pageNumber) throws JSONException;
 
-    public List<Child> getRecordsForFirstPage() throws JSONException;
+    public List<T> getRecordsForFirstPage() throws JSONException;
 }

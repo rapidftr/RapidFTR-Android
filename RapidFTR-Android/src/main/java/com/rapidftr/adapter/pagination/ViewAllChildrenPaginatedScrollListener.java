@@ -4,6 +4,7 @@ import android.widget.AbsListView;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import lombok.Cleanup;
 import org.json.JSONException;
 
 

@@ -17,7 +17,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
 @RunWith(CustomTestRunner.class)
@@ -37,7 +36,7 @@ public class PaginatedSearchResultsScrollerTest {
     @Test
     public void shouldLoadRecordsForNextPage() throws JSONException {
         repository = mock(ChildRepository.class);
-        childSearch = new ChildSearch("", repository);
+        childSearch = new ChildSearch("", repository, null);
         highlightedFieldsViewAdapter = mock(HighlightedFieldsViewAdapter.class);
 
         List<Child> children = Arrays.asList(new Child("id", "user", "{\"name\": \"Foo Bar\"}"));

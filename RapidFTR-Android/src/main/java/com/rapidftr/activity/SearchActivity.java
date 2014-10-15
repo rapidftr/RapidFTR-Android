@@ -21,9 +21,9 @@ import java.util.List;
 public class SearchActivity extends RapidFtrActivity {
 
     private HighlightedFieldsViewAdapter highlightedFieldsViewAdapter;
-
     private FormService formService;
     private ChildSearch childSearch;
+    private PaginatedSearchResultsScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class SearchActivity extends RapidFtrActivity {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
         }
         childListView.setAdapter(highlightedFieldsViewAdapter);
-        PaginatedSearchResultsScrollListener scrollListener = new PaginatedSearchResultsScrollListener(childSearch, highlightedFieldsViewAdapter);
+        scrollListener = new PaginatedSearchResultsScrollListener(childSearch, highlightedFieldsViewAdapter);
         childListView.setOnScrollListener(scrollListener);
     }
 
@@ -65,8 +65,7 @@ public class SearchActivity extends RapidFtrActivity {
         if ("".equals(subString)) {
             return new ArrayList<Child>();
         }
-        this.childSearch = new ChildSearch(subString, inject(ChildRepository.class));
-//        return childRepository.getMatchingChildren(subString, formService.getHighlightedFields(Child.CHILD_FORM_NAME));
+        this.childSearch = new ChildSearch(subString, inject(ChildRepository.class), formService.getHighlightedFields(Child.CHILD_FORM_NAME));
         return childSearch.getRecordsForFirstPage();
     }
 

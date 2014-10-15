@@ -5,6 +5,7 @@ import android.database.Cursor;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.adapter.pagination.ViewAllChildrenPaginatedScrollListener;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.model.Child;
@@ -88,16 +89,6 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     }
 
     @Override
-    public List<Enquiry> getRecordsBetween(int previousPageNumber, int pageNumber) throws JSONException {
-        return null;
-    }
-
-    @Override
-    public List<Child> getRecordsForFirstPage() throws JSONException {
-        return null;
-    }
-
-    @Override
     public List<Enquiry> currentUsersUnsyncedRecords() throws JSONException {
         throw new UnsupportedOperationException();
     }
@@ -140,7 +131,7 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         return toEnquiries(cursor);
     }
 
-    private List<Enquiry> toEnquiries(Cursor cursor) throws JSONException {
+    List<Enquiry> toEnquiries(Cursor cursor) throws JSONException {
         List<Enquiry> enquiries = new ArrayList<Enquiry>();
         while (cursor.moveToNext()) {
             enquiries.add(buildEnquiry(cursor));
@@ -183,6 +174,24 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
         } catch (JSONException e) {
             return new ArrayList<Enquiry>();
         }
+    }
+
+    @Override
+    public List<Enquiry> getRecordsForFirstPage() throws JSONException {
+        String sql = String.format(
+                "SELECT enquiry_json, synced FROM enquiry WHERE created_by ='%s' ORDER BY id LIMIT %d",
+                userName, ViewAllChildrenPaginatedScrollListener.FIRST_PAGE);
+        @Cleanup Cursor cursor = session.rawQuery(sql, null);
+        return toEnquiries(cursor);
+    }
+
+    @Override
+    public List<Enquiry> getRecordsBetween(int fromPageNumber, int pageNumber) throws JSONException {
+        String sql = String.format(
+                "SELECT enquiry_json, synced FROM enquiry WHERE created_by='%s' ORDER BY id LIMIT %d, %d",
+                userName, fromPageNumber, pageNumber);
+        @Cleanup Cursor cursor = session.rawQuery(sql, null);
+        return toEnquiries(cursor);
     }
 
     private String buildSelectAllQuery(List<String> ids) {

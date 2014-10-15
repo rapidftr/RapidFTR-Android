@@ -6,6 +6,7 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
+import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.History;
 import org.json.JSONArray;
@@ -27,8 +28,10 @@ import static com.rapidftr.model.History.HISTORIES;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(CustomTestRunner.class)
 public class EnquiryRepositoryTest {
@@ -335,5 +338,29 @@ public class EnquiryRepositoryTest {
         assertNotNull(savedEnquiry);
         assertFalse(savedEnquiry.has(HISTORIES));
         assertEquals("some_more_stuff", savedEnquiry.get("more_stuff"));
+    }
+
+    @Test
+    public void shouldReturnFirstPage() throws JSONException {
+        session = mock(DatabaseSession.class);
+        enquiryRepository = spy(new EnquiryRepository("user1", session));
+        doReturn(new ArrayList<Child>()).when(enquiryRepository).toEnquiries(any(Cursor.class));
+
+        enquiryRepository.getRecordsForFirstPage();
+
+        String sql = "SELECT enquiry_json, synced FROM enquiry WHERE created_by ='user1' ORDER BY id LIMIT 30";
+        verify(session, times(1)).rawQuery(sql, null);
+    }
+
+    @Test
+    public void shouldReturnRecordsBetweenSpecifiedLimits() throws JSONException {
+        session = mock(DatabaseSession.class);
+        enquiryRepository = spy(new EnquiryRepository("user1", session));
+        doReturn(new ArrayList<Child>()).when(enquiryRepository).toEnquiries(any(Cursor.class));
+
+        enquiryRepository.getRecordsBetween(1, 10);
+
+        String sql = "SELECT enquiry_json, synced FROM enquiry WHERE created_by='user1' ORDER BY id LIMIT 1, 10";
+        verify(session, times(1)).rawQuery(sql, null);
     }
 }
