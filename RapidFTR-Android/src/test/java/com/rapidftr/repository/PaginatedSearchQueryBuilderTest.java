@@ -34,7 +34,7 @@ public class PaginatedSearchQueryBuilderTest {
         String actualQuery = queryBuilder.queryForMatchingChildrenFirstPage();
 
         String expectQuery = "SELECT child_json, synced " +
-                "FROM children WHERE ( child_owner = 'user1' AND child_json LIKE '%john%' OR id LIKE '%john%' LIMIT 30)";
+                "FROM children WHERE ( child_owner = 'user1' AND child_json LIKE '%john%' OR id LIKE '%john%') LIMIT 30";
         assertEquals(expectQuery, actualQuery);
     }
 
@@ -46,7 +46,7 @@ public class PaginatedSearchQueryBuilderTest {
         String actualQuery = queryBuilder.queryForMatchingChildrenFirstPage();
 
         String expectQuery = "SELECT child_json, synced " +
-                "FROM children WHERE (child_json LIKE '%john%' OR id LIKE '%john%' LIMIT 30)";
+                "FROM children WHERE (child_json LIKE '%john%' OR id LIKE '%john%') LIMIT 30";
         assertEquals(expectQuery, actualQuery);
     }
 
@@ -59,7 +59,7 @@ public class PaginatedSearchQueryBuilderTest {
 
         String expectQuery = "SELECT child_json, synced " +
                 "FROM children WHERE (child_json LIKE '%john%' OR id LIKE '%john%' " +
-                "OR child_json LIKE '%doe%' OR id LIKE '%doe%' LIMIT 30)";
+                "OR child_json LIKE '%doe%' OR id LIKE '%doe%') LIMIT 30";
         assertEquals(expectQuery, actualQuery);
     }
 
@@ -73,7 +73,7 @@ public class PaginatedSearchQueryBuilderTest {
         String expectQuery = "SELECT child_json, synced " +
                 "FROM children WHERE (child_json LIKE '%john%' OR id LIKE '%john%' " +
                 "OR child_json LIKE '%doe%' OR id LIKE '%doe%' " +
-                "OR child_json LIKE '%foo%' OR id LIKE '%foo%' LIMIT 30)";
+                "OR child_json LIKE '%foo%' OR id LIKE '%foo%') LIMIT 30";
         assertEquals(expectQuery, actualQuery);
     }
 
@@ -87,7 +87,7 @@ public class PaginatedSearchQueryBuilderTest {
         String expectQuery = "SELECT child_json, synced " +
                 "FROM children WHERE (child_json LIKE '%john%' OR id LIKE '%john%' " +
                 "OR child_json LIKE '%doe%' OR id LIKE '%doe%' " +
-                "OR child_json LIKE '%foo%' OR id LIKE '%foo%' LIMIT 1, 10)";
+                "OR child_json LIKE '%foo%' OR id LIKE '%foo%') LIMIT 1, 10";
         assertEquals(expectQuery, actualQuery);
     }
 

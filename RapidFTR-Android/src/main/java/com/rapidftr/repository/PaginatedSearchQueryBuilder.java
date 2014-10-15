@@ -15,12 +15,12 @@ public class PaginatedSearchQueryBuilder {
 
     public String queryForMatchingChildrenFirstPage() throws JSONException {
         StringBuilder queryBuilder = buildQuery();
-        return queryBuilder.append(" LIMIT 30)").toString();
+        return queryBuilder.append(") LIMIT 30").toString();
     }
 
     public String queryForMatchingChildrenBetweenPages(int fromPageNumber, int toPageNumber) throws JSONException {
         StringBuilder queryBuilder = buildQuery();
-        return queryBuilder.append(String.format(" LIMIT %d, %d)", fromPageNumber, toPageNumber)).toString();
+        return queryBuilder.append(String.format(") LIMIT %d, %d", fromPageNumber, toPageNumber)).toString();
     }
 
     private StringBuilder buildQuery() throws JSONException {
