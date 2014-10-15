@@ -15,6 +15,10 @@ public class ChildSearch {
         this.repository = repository;
     }
 
+    public List<Child> getRecordsForFirstPage() throws JSONException {
+        return repository.getFirstPageOfChildrenMatchingString(searchKey);
+    }
+
     public List<Child> getRecordsForNextPage(int currentPageNumber, int nextPageNumber) throws JSONException {
         return repository.getChildrenMatchingStringBetween(searchKey, currentPageNumber, nextPageNumber);
     }
