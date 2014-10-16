@@ -2,8 +2,8 @@ package com.rapidftr.adapter.pagination;
 
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
-import com.rapidftr.model.Child;
-import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.model.Enquiry;
+import com.rapidftr.repository.EnquiryRepository;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,29 +16,29 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.*;
 
 @RunWith(CustomTestRunner.class)
-public class ViewAllChildScrollerTest {
+public class ViewAllEnquiryScrollerTest {
 
-    private ChildRepository repository;
-    private HighlightedFieldsViewAdapter<Child> highlightedFieldsViewAdapter;
-    private ViewAllChildScroller scroller;
+    private EnquiryRepository repository;
+    private HighlightedFieldsViewAdapter<Enquiry> highlightedFieldsViewAdapter;
+    private ViewAllEnquiryScroller scroller;
 
     @Before
     public void setUp() throws Exception {
-        repository = mock(ChildRepository.class);
+        repository = mock(EnquiryRepository.class);
         highlightedFieldsViewAdapter = mock(HighlightedFieldsViewAdapter.class);
-        scroller = spy(new ViewAllChildScroller(repository, highlightedFieldsViewAdapter));
+        scroller = spy(new ViewAllEnquiryScroller(repository, highlightedFieldsViewAdapter));
     }
 
     @Test
     public void shouldLoadRecordsForNextPage() throws JSONException {
-        List<Child> children = Arrays.asList(new Child("id", "user", "{\"name\": \"Foo Bar\"}"));
-        when(repository.getRecordsBetween(anyInt(), anyInt())).thenReturn(children);
+        List<Enquiry> enquiries = Arrays.asList(new Enquiry("{\"name\": \"Foo Bar\"}"));
+        when(repository.getRecordsBetween(anyInt(), anyInt())).thenReturn(enquiries);
         doReturn(true).when(scroller).shouldQueryForMoreData();
 
         scroller.loadRecordsForNextPage();
 
         verify(repository, atLeastOnce()).getRecordsBetween(anyInt(), anyInt());
-        verify(highlightedFieldsViewAdapter, atLeastOnce()).addAll(children);
+        verify(highlightedFieldsViewAdapter, atLeastOnce()).addAll(enquiries);
     }
 
     @Test

@@ -360,7 +360,7 @@ public class EnquiryRepositoryTest {
 
         enquiryRepository.getRecordsBetween(1, 10);
 
-        String sql = "SELECT enquiry_json, synced FROM enquiry WHERE created_by='user1' ORDER BY id LIMIT 1, 10";
+        String sql = "SELECT enquiry_json, synced FROM enquiry WHERE created_by='user1' ORDER BY id LIMIT 9 OFFSET 10";
         verify(session, times(1)).rawQuery(sql, null);
     }
 }

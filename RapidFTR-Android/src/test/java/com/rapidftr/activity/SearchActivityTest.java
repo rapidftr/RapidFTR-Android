@@ -7,6 +7,8 @@ import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormField;
+import com.rapidftr.forms.FormSection;
+import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.service.FormService;
@@ -35,7 +37,11 @@ public class SearchActivityTest {
     @Mock
     private ChildRepository childRepository;
 
+    @Mock
+    private FormService formService;
+
     private RapidFtrApplication application;
+    private List<FormField> highLightedFields;
 
     @Before
     public void setUp() throws IOException {
@@ -47,16 +53,23 @@ public class SearchActivityTest {
 
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
-        doReturn(new FormService(application)).when(mockInjector).getInstance(FormService.class);
+        doReturn(formService).when(mockInjector).getInstance(FormService.class);
         doReturn(childRepository).when(mockInjector).getInstance(ChildRepository.class);
+        highLightedFields = new ArrayList<FormField>();
+        List<FormSection> formSections = FormSectionTest.loadFormSectionsFromClassPathResource();
+        for (FormSection formSection : formSections) {
+            highLightedFields.addAll(formSection.getOrderedHighLightedFields());
+        }
     }
 
     @Test
     public void shouldListChildrenForSearchedString() throws JSONException {
+
         List<Child> searchResults = new ArrayList<Child>();
         searchResults.add(new Child("id1", "user1", "{ \"name\" : \"child1\", \"test2\" : 0, \"test3\" : [ \"1\", 2, \"3\" ] }"));
         String searchString = "Hild";
-        when(childRepository.getMatchingChildren(eq(searchString), anyListOf(FormField.class))).thenReturn(searchResults);
+        when(childRepository.getFirstPageOfChildrenMatchingString(eq(searchString))).thenReturn(searchResults);
+        when(formService.getHighlightedFields(anyString())).thenReturn(highLightedFields);
 
         activityController.create();
         TextView textView = (TextView) activity.findViewById(R.id.search_text);
@@ -71,7 +84,7 @@ public class SearchActivityTest {
     public void shouldShowEmptyViewForNoSearchResults() throws JSONException {
         List<Child> searchResults = new ArrayList<Child>();
         String searchString = "Hild";
-        when(childRepository.getMatchingChildren(eq(searchString), anyListOf(FormField.class))).thenReturn(searchResults);
+        when(childRepository.getFirstPageOfChildrenMatchingString(eq(searchString))).thenReturn(searchResults);
 
         activityController.create();
         TextView textView = (TextView) activity.findViewById(R.id.search_text);
@@ -89,7 +102,7 @@ public class SearchActivityTest {
         textView.setText(searchString);
         activity.findViewById(R.id.search_btn).performClick();
         ListView listView = (ListView) activity.findViewById(R.id.child_list);
-        verify(childRepository, never()).getMatchingChildren(eq(searchString), anyListOf(FormField.class));
+        verify(childRepository, never()).getFirstPageOfChildrenMatchingString(eq(searchString));
         assertNotNull(listView.getEmptyView());
     }
 

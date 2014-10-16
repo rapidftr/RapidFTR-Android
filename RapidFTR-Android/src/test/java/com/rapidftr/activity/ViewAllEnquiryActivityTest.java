@@ -50,7 +50,7 @@ public class ViewAllEnquiryActivityTest {
         List<Enquiry> enquiries = new ArrayList<Enquiry>();
         enquiries.add(new Enquiry("{name:NAME}", "CREATEDBY"));
         enquiries.add(new Enquiry("{name:NAME}", "CREATEDBY"));
-        when(repository.allCreatedByCurrentUser()).thenReturn(enquiries);
+        when(repository.getRecordsForFirstPage()).thenReturn(enquiries);
 
         activityController.create();
         ListView listView = (ListView) activity.findViewById(R.id.enquiry_list);

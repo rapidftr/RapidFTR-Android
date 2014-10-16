@@ -152,99 +152,6 @@ public class ChildRepositoryTest {
         repository.get("blah");
     }
 
-    @Test
-    public void shouldReturnMatchedChildRecordsBasedOnId() throws Exception {
-        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ], \"x\": \"y\" }");
-        Child child4 = new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
-
-        repository.createOrUpdate(child1);
-        repository.createOrUpdate(child2);
-        repository.createOrUpdate(child3);
-        repository.createOrUpdate(child4);
-
-        List<Child> children = repository.getMatchingChildren("hiLd1", null);
-        assertEquals(1, children.size());
-    }
-
-    @Test
-    public void shouldReturnMatchedChildRecordsBasedOnHighlightedFields() throws JSONException, IOException {
-        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child3 = new Child("id3", "user3", "{ 'name' : 'child3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ], \"x\": \"y\" }");
-        Child child4 = new Child("child1", "user4", "{ 'name' : 'child4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
-        Child child5 = new Child("child2", "user5", "{ 'name' : 'child4 developer', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
-
-        repository.createOrUpdate(child1);
-        repository.createOrUpdate(child2);
-        repository.createOrUpdate(child3);
-        repository.createOrUpdate(child4);
-        repository.createOrUpdate(child5);
-
-        List<Child> children = repository.getMatchingChildren("child3", highlightedFormFields);
-        assertEquals(1, children.size());
-
-        children = repository.getMatchingChildren("hiLd", highlightedFormFields);
-        assertEquals(5, children.size());
-
-        children = repository.getMatchingChildren("hiLd1", highlightedFormFields);
-        assertEquals(2, children.size());
-
-        children = repository.getMatchingChildren("developer", highlightedFormFields);
-        assertEquals(1, children.size());
-    }
-
-    @Test
-    public void shouldMatchIndependentOfSearchTermOrder() throws JSONException, IOException {
-        Child child1 = new Child("id1", "user1", "{ 'name' : 'first second', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child2 = new Child("id2", "user1", "{ 'name' : 'john smith', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        repository.createOrUpdate(child1);
-        repository.createOrUpdate(child2);
-
-        List<Child> children = repository.getMatchingChildren("first second", highlightedFormFields);
-        assertEquals(1, children.size());
-
-        children = repository.getMatchingChildren("second first", highlightedFormFields);
-        assertEquals(1, children.size());
-
-        children = repository.getMatchingChildren("sam", highlightedFormFields);
-        assertEquals(0, children.size());
-    }
-
-    @Test
-    public void shouldReturnMatchedChildRecordsWithAccentedCharacters() throws JSONException {
-        Child child1 = new Child("id1", "user1", "{ 'name' : 'child1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child2 = new Child("id2", "user2", "{ 'name' : 'child2', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        Child child3 = new Child("id3", "user3", "{ 'name' : 'chåld3', 'test2' :  'child1', 'test3' : [ '1', 2, '3' ], \"x\": \"y\" }");
-        Child child4 = new Child("child1", "user4", "{ 'name' : 'chåld4', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
-        Child child5 = new Child("child2", "user5", "{ 'name' : 'child4 developer', 'test2' :  'test2', 'test3' : [ '1', 2, '3' ] }");
-
-        repository.createOrUpdate(child1);
-        repository.createOrUpdate(child2);
-        repository.createOrUpdate(child3);
-        repository.createOrUpdate(child4);
-        repository.createOrUpdate(child5);
-
-        List<Child> children = repository.getMatchingChildren("chåld", highlightedFormFields);
-        assertEquals(2, children.size());
-    }
-
-
-    @Test
-    public void shouldMatchOnlyShortId() throws JSONException, IOException {
-        String childId = "abcdefghijklmnop";
-        String childShortId = "jklmnop";
-        Child child1 = new Child(childId, "user1", "{ 'name' : 'first second', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }");
-        repository.createOrUpdate(child1);
-
-        List<Child> children = repository.getMatchingChildren(childId, highlightedFormFields);
-        assertEquals(0, children.size());
-
-        children = repository.getMatchingChildren(childShortId, highlightedFormFields);
-        assertEquals(1, children.size());
-    }
-
 
     @Test
     public void shouldNotReturnChildrenCreatedByOtherUnAuthorizedUsers() throws Exception {
@@ -260,7 +167,7 @@ public class ChildRepositoryTest {
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
-        List<Child> children = repository.getMatchingChildren("hild", highlightedFormFields);
+        List<Child> children = repository.getFirstPageOfChildrenMatchingString("hild");
         assertEquals(1, children.size());
     }
 
@@ -310,7 +217,7 @@ public class ChildRepositoryTest {
 
         repository.getRecordsBetween(1, 10);
 
-        String sql = "SELECT child_json, synced FROM children WHERE child_owner='user1' ORDER BY id LIMIT 1, 10";
+        String sql = "SELECT child_json, synced FROM children WHERE child_owner='user1' ORDER BY id LIMIT 9 OFFSET 1";
         verify(session, times(1)).rawQuery(sql, null);
     }
 
@@ -343,13 +250,13 @@ public class ChildRepositoryTest {
     }
 
     @Test
-    public void shouldCorrectlyGetSyncedStateWhenGettingAllRecords() throws JSONException, IOException {
+    public void shouldCorrectlyGetSyncedStateWhenGettingAllRecordsInFirstPage() throws JSONException, IOException {
         Child syncedChild = new Child("syncedID", "user1", null, true);
         Child unsyncedChild = new Child("unsyncedID", "user1", null, false);
         repository.createOrUpdate(syncedChild);
         repository.createOrUpdate(unsyncedChild);
 
-        List<Child> all = repository.allCreatedByCurrentUser();
+        List<Child> all = repository.getRecordsForFirstPage();
         assertThat(all.get(0).isSynced(), is(true));
         assertThat(all.get(1).isSynced(), is(false));
     }
@@ -361,7 +268,7 @@ public class ChildRepositoryTest {
         repository.createOrUpdate(child1);
         repository.createOrUpdate(child2);
 
-        List<Child> children = repository.allCreatedByCurrentUser();
+        List<Child> children = repository.getRecordsForFirstPage();
         assertThat(children.size(), equalTo(2));
         assertThat(child2.getInternalId(), equalTo(children.get(0).getInternalId()));
         assertThat(child1.getInternalId(), equalTo(children.get(1).getInternalId()));
@@ -535,7 +442,7 @@ public class ChildRepositoryTest {
         repository.createOrUpdate(unSyncedChild);
 
         repository.deleteChildrenByOwner();
-        assertEquals(0, repository.allCreatedByCurrentUser().size());
+        assertEquals(0, repository.getRecordsForFirstPage().size());
     }
 
     @Test

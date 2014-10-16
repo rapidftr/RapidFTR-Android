@@ -87,7 +87,7 @@ public class PaginatedSearchQueryBuilderTest {
         String expectQuery = "SELECT child_json, synced " +
                 "FROM children WHERE (child_json LIKE '%john%' OR id LIKE '%john%' " +
                 "OR child_json LIKE '%doe%' OR id LIKE '%doe%' " +
-                "OR child_json LIKE '%foo%' OR id LIKE '%foo%') LIMIT 1, 10";
+                "OR child_json LIKE '%foo%' OR id LIKE '%foo%') LIMIT 9 OFFSET 10";
         assertEquals(expectQuery, actualQuery);
     }
 
