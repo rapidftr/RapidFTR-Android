@@ -5,14 +5,15 @@ import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildSearch;
 import org.json.JSONException;
 
+import static com.rapidftr.adapter.pagination.ViewAllChildrenPaginatedScrollListener.DEFAULT_PAGE_SIZE;
+
 public class PaginatedSearchResultsScroller extends Scroller{
 
     private ChildSearch childSearch;
     private HighlightedFieldsViewAdapter<Child> adapter;
 
-    public PaginatedSearchResultsScroller(ChildSearch childSearch, HighlightedFieldsViewAdapter<Child> adapter,
-                                          int firstVisibleItem, int numberOfVisibleItems, int numberOfItemsInAdapter) {
-        super(firstVisibleItem, numberOfVisibleItems, numberOfItemsInAdapter);
+    public PaginatedSearchResultsScroller(ChildSearch childSearch, HighlightedFieldsViewAdapter<Child> adapter) {
+        super();
         this.childSearch = childSearch;
         this.adapter = adapter;
     }
@@ -20,8 +21,7 @@ public class PaginatedSearchResultsScroller extends Scroller{
     @Override
     public void loadRecordsForNextPage() throws JSONException {
         if (shouldQueryForMoreData()) {
-            loading = true;
-            adapter.addAll(childSearch.getRecordsForNextPage(previousPageNumber, nextPageNumber));
+            adapter.addAll(childSearch.getRecordsForNextPage(adapter.getCount(), adapter.getCount() + DEFAULT_PAGE_SIZE));
         }
     }
 }

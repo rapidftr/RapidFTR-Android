@@ -2,6 +2,7 @@ package com.rapidftr.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
@@ -188,8 +189,9 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
     @Override
     public List<Enquiry> getRecordsBetween(int fromPageNumber, int pageNumber) throws JSONException {
         String sql = String.format(
-                "SELECT enquiry_json, synced FROM enquiry WHERE created_by='%s' ORDER BY id LIMIT %d, %d",
-                userName, fromPageNumber, pageNumber);
+                "SELECT enquiry_json, synced FROM enquiry WHERE created_by='%s' ORDER BY id LIMIT %d OFFSET %d",
+                userName, pageNumber - fromPageNumber, pageNumber);
+        Log.d("QUERY LIMIT", sql);
         @Cleanup Cursor cursor = session.rawQuery(sql, null);
         return toEnquiries(cursor);
     }

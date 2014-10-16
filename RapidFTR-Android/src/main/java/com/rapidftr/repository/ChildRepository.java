@@ -2,6 +2,7 @@ package com.rapidftr.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
@@ -71,8 +72,9 @@ public class ChildRepository implements Repository<Child> {
     @Override
     public List<Child> getRecordsBetween(int fromPageNumber, int pageNumber) throws JSONException {
         String sql = String.format(
-                "SELECT child_json, synced FROM children WHERE child_owner='%s' ORDER BY id LIMIT %d, %d",
-                userName, fromPageNumber, pageNumber);
+                "SELECT child_json, synced FROM children WHERE child_owner='%s' ORDER BY id LIMIT %d OFFSET %d",
+                userName, pageNumber - fromPageNumber, fromPageNumber);
+        Log.d("QUERY LIMIT", String.format(sql));
         @Cleanup Cursor cursor = session.rawQuery(sql, null);
         return toChildren(cursor);
     }
@@ -270,6 +272,7 @@ public class ChildRepository implements Repository<Child> {
     public List<Child> getChildrenMatchingStringBetween(
             String searchKey, int fromPageNumber, int toPageNumber) throws JSONException {
         paginatedSearchQueryBuilder = new PaginatedSearchQueryBuilder(applicationInstance, searchKey);
+        Log.d("QUERY LIMIT", paginatedSearchQueryBuilder.queryForMatchingChildrenBetweenPages(fromPageNumber, toPageNumber));
         @Cleanup Cursor cursor = session.rawQuery(paginatedSearchQueryBuilder.queryForMatchingChildrenBetweenPages(
                 fromPageNumber, toPageNumber), null);
         return toChildren(cursor);

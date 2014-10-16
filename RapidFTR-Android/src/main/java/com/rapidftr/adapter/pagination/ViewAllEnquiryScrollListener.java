@@ -9,20 +9,16 @@ import org.json.JSONException;
 public class ViewAllEnquiryScrollListener implements AbsListView.OnScrollListener {
 
     private ViewAllEnquiryScroller scroller;
-    private EnquiryRepository repository;
-    private HighlightedFieldsViewAdapter<Enquiry> highlightedFieldsViewAdapter;
 
     public ViewAllEnquiryScrollListener(
             EnquiryRepository repository, HighlightedFieldsViewAdapter<Enquiry> highlightedFieldsViewAdapter) {
-        this.repository = repository;
-        this.highlightedFieldsViewAdapter = highlightedFieldsViewAdapter;
+        scroller = new ViewAllEnquiryScroller(repository, highlightedFieldsViewAdapter);
     }
 
     @Override
     public void onScroll(AbsListView absListView,
                          int firstVisibleItem, int numberOfVisibleItems, int numberOfItemsInAdapter) {
-        scroller = new ViewAllEnquiryScroller(repository, highlightedFieldsViewAdapter, firstVisibleItem, numberOfVisibleItems, numberOfItemsInAdapter);
-        scroller.updatePageNumbers();
+        scroller.updateRecordNumbers( firstVisibleItem, numberOfVisibleItems, numberOfItemsInAdapter);
         try {
             scroller.loadRecordsForNextPage();
         } catch (JSONException e) {
@@ -31,7 +27,5 @@ public class ViewAllEnquiryScrollListener implements AbsListView.OnScrollListene
     }
 
     @Override
-    public void onScrollStateChanged(AbsListView absListView, int i) {
-
-    }
+    public void onScrollStateChanged(AbsListView absListView, int i) {}
 }

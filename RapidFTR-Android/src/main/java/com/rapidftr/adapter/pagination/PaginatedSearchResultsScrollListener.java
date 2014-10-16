@@ -9,22 +9,17 @@ import org.json.JSONException;
 public class PaginatedSearchResultsScrollListener implements AbsListView.OnScrollListener {
 
     private PaginatedSearchResultsScroller scroller;
-    private ChildSearch childSearch;
-    private HighlightedFieldsViewAdapter<Child> highlightedFieldsViewAdapter;
 
     public PaginatedSearchResultsScrollListener(
             ChildSearch childSearch, HighlightedFieldsViewAdapter<Child> highlightedFieldsViewAdapter) {
-        this.childSearch = childSearch;
-        this.highlightedFieldsViewAdapter = highlightedFieldsViewAdapter;
+        scroller = new PaginatedSearchResultsScroller(childSearch, highlightedFieldsViewAdapter);
+
     }
 
     @Override
     public void onScroll(AbsListView absListView,
                          int firstVisibleItem, int numberOfVisibleItems, int numberOfItemsInAdapter) {
-
-        scroller = new PaginatedSearchResultsScroller(childSearch, highlightedFieldsViewAdapter,
-                firstVisibleItem, numberOfVisibleItems, numberOfItemsInAdapter);
-        scroller.updatePageNumbers();
+        scroller.updateRecordNumbers(firstVisibleItem, numberOfVisibleItems, numberOfItemsInAdapter);
 
         try {
             scroller.loadRecordsForNextPage();

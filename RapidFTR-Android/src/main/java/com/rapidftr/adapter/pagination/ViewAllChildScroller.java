@@ -7,14 +7,15 @@ import org.json.JSONException;
 
 import java.util.List;
 
+import static com.rapidftr.adapter.pagination.ViewAllChildrenPaginatedScrollListener.DEFAULT_PAGE_SIZE;
+
 public class ViewAllChildScroller extends Scroller {
 
     private final ChildRepository repository;
     private final HighlightedFieldsViewAdapter<Child> adapter;
 
-    public ViewAllChildScroller(ChildRepository repository, HighlightedFieldsViewAdapter<Child> adapter,
-                                int firstVisibleItem, int numberOfVisibleItems, int numberOfItemsInAdapter) {
-        super(firstVisibleItem, numberOfVisibleItems, numberOfItemsInAdapter);
+    public ViewAllChildScroller(ChildRepository repository, HighlightedFieldsViewAdapter<Child> adapter) {
+        super();
         this.repository = repository;
         this.adapter = adapter;
     }
@@ -22,8 +23,7 @@ public class ViewAllChildScroller extends Scroller {
     @Override
     public void loadRecordsForNextPage() throws JSONException {
         if (shouldQueryForMoreData()) {
-            loading = true;
-            List<Child> records = repository.getRecordsBetween(previousPageNumber, nextPageNumber);
+            List<Child> records = repository.getRecordsBetween(adapter.getCount(), adapter.getCount() + DEFAULT_PAGE_SIZE);
             adapter.addAll(records);
         }
     }
