@@ -84,7 +84,7 @@ public class FormServiceTest {
         when(sharedPreferences.getString(FormService.FORM_SECTIONS_PREF, null)).thenReturn(null);
         formService = new FormService(application);
 
-        int noOfChildFormSectionsBeforeDownload = 10, noOfEnquiryFormSectionsBeforeDownload = 8;
+        int noOfChildFormSectionsBeforeDownload = 10, noOfEnquiryFormSectionsBeforeDownload = 7;
         assertEquals(noOfChildFormSectionsBeforeDownload, formService.getFormSections(Child.CHILD_FORM_NAME).size());
         assertEquals(noOfEnquiryFormSectionsBeforeDownload, formService.getFormSections(Enquiry.ENQUIRY_FORM_NAME).size());
     }
