@@ -45,13 +45,14 @@ public class HighlightedFieldsViewAdapter<T extends BaseModel> extends BaseModel
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup viewGroup){
         View view = convertView;
         if (view == null) {
             LayoutInflater vi = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);
             view = vi.inflate(textViewResourceId, null);
         }
-        final BaseModel baseModel = objects.get(position);
+
+        final T baseModel = objects.get(position) ;
         if (baseModel != null) {
             TextView uniqueIdView = (TextView) view.findViewById(R.id.row_child_unique_id);
 

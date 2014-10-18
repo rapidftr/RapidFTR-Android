@@ -2,12 +2,13 @@ package com.rapidftr.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.adapter.pagination.ViewAllChildrenPaginatedScrollListener;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
-import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.History;
 import com.rapidftr.model.User;
@@ -15,28 +16,27 @@ import com.rapidftr.utils.RapidFtrDateTime;
 import lombok.Cleanup;
 import org.json.JSONException;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static com.rapidftr.database.Database.BooleanColumn;
 import static com.rapidftr.database.Database.BooleanColumn.falseValue;
 import static com.rapidftr.database.Database.ChildTableColumn.*;
-import static java.lang.String.format;
 
 public class ChildRepository implements Repository<Child> {
 
     protected final String userName;
     protected final DatabaseSession session;
+    private PaginatedSearchQueryBuilder paginatedSearchQueryBuilder;
+    private RapidFtrApplication applicationInstance;
 
     @Inject
     public ChildRepository(@Named("USER_NAME") String userName, DatabaseSession session) {
         this.userName = userName;
         this.session = session;
+        this.applicationInstance = RapidFtrApplication.getApplicationInstance();
     }
 
     @Override
@@ -61,8 +61,25 @@ public class ChildRepository implements Repository<Child> {
         return cursor.moveToNext() ? cursor.getInt(0) : 0;
     }
 
-    public List<Child> allCreatedByCurrentUser() throws JSONException {
-        @Cleanup Cursor cursor = session.rawQuery("SELECT child_json, synced FROM children WHERE child_owner = ? ORDER BY id", new String[]{userName});
+    @Override
+    public List<Child> getRecordsBetween(int fromPageNumber, int pageNumber) throws JSONException {
+        String sql = String.format(
+                "SELECT child_json, synced FROM children WHERE child_owner='%s' ORDER BY id LIMIT %d OFFSET %d",
+                userName, pageNumber - fromPageNumber, fromPageNumber);
+        Log.d("QUERY LIMIT", String.format(sql));
+        @Cleanup Cursor cursor = session.rawQuery(sql, null);
+        return toChildren(cursor);
+    }
+
+    @Override
+    public List<Child> allCreatedByCurrentUser() throws JSONException { return new ArrayList<Child>(); }
+
+    @Override
+    public List<Child> getRecordsForFirstPage() throws JSONException {
+        String sql = String.format(
+                "SELECT child_json, synced FROM children WHERE child_owner='%s' ORDER BY id LIMIT %d",
+                userName, ViewAllChildrenPaginatedScrollListener.FIRST_PAGE);
+        @Cleanup Cursor cursor = session.rawQuery(sql, null);
         return toChildren(cursor);
     }
 
@@ -78,65 +95,6 @@ public class ChildRepository implements Repository<Child> {
 
     public void deleteChildrenByOwner() throws JSONException {
         session.execSQL("DELETE FROM children WHERE child_owner = '" + userName + "';");
-    }
-
-    public List<Child> getMatchingChildren(String searchString, List<FormField> highlightedFields) throws JSONException {
-        highlightedFields = (highlightedFields == null) ? Collections.EMPTY_LIST : highlightedFields;
-        String query = buildSQLQueryForSearch(searchString, RapidFtrApplication.getApplicationInstance());
-        @Cleanup Cursor cursor = session.rawQuery(query, null);
-        return filterChildrenWithRegularExpression(cursor, searchString, highlightedFields);
-    }
-
-    private String buildSQLQueryForSearch(String searchString, RapidFtrApplication context) throws JSONException {
-        StringBuilder queryBuilder = new StringBuilder("SELECT child_json, synced FROM children WHERE (").append(fetchByOwner(context));
-        String[] subQueries = searchString.split("\\s+");
-        for (int i = 0; i < subQueries.length; i++) {
-            queryBuilder.append(String.format("child_json LIKE '%%%s%%' OR id LIKE '%%%s%%'", subQueries[i], subQueries[i]));
-            if (i < subQueries.length - 1) {
-                queryBuilder.append(" OR ");
-            }
-        }
-        return queryBuilder.append(")").toString();
-    }
-
-    private List<Child> filterChildrenWithRegularExpression(Cursor cursor, String filterString, List<FormField> highlightedFields) throws JSONException {
-        List<Child> children = new ArrayList<Child>();
-        Pattern pattern = buildPatternFromSearchString(filterString);
-
-        while (cursor.moveToNext()) {
-            Child child = childFrom(cursor);
-            if (pattern.matcher(child.getShortId()).matches()) {
-                children.add(child);
-            } else {
-                for (FormField formField : highlightedFields) {
-                    boolean formFieldMatchesPattern = pattern.matcher(child.optString(formField.getId())).matches();
-                    if (!children.contains(child) && formFieldMatchesPattern) {
-                        children.add(child);
-                    }
-                }
-            }
-        }
-        return children;
-    }
-
-    private Pattern buildPatternFromSearchString(String searchString) {
-        String[] splitQuery = searchString.split("\\s+");
-        StringBuilder regexBuilder = new StringBuilder();
-        for (int i = 0; i < splitQuery.length; i++) {
-            regexBuilder.append(String.format(".*(%s)+.*", splitQuery[i]));
-            if ((i < splitQuery.length - 1)) {
-                regexBuilder.append("|");
-            }
-        }
-        return Pattern.compile(regexBuilder.toString(), Pattern.CASE_INSENSITIVE);
-    }
-
-    private String fetchByOwner(RapidFtrApplication context) throws JSONException {
-        if (!context.getCurrentUser().isVerified()) {
-            return " child_owner = '" + userName + "' AND ";
-        } else {
-            return "";
-        }
     }
 
     @Override
@@ -203,7 +161,7 @@ public class ChildRepository implements Repository<Child> {
         }
     }
 
-    private List<Child> toChildren(Cursor cursor) throws JSONException {
+    protected List<Child> toChildren(Cursor cursor) throws JSONException {
         List<Child> children = new ArrayList<Child>();
         while (cursor.moveToNext()) {
             children.add(childFrom(cursor));
@@ -238,5 +196,21 @@ public class ChildRepository implements Repository<Child> {
                 children.add(childFrom(cursor));
         }
         return children;
+    }
+
+    public List<Child> getFirstPageOfChildrenMatchingString(String searchKey) throws JSONException {
+        paginatedSearchQueryBuilder = new PaginatedSearchQueryBuilder(
+                applicationInstance, searchKey);
+        @Cleanup Cursor cursor = session.rawQuery(paginatedSearchQueryBuilder.queryForMatchingChildrenFirstPage(), null);
+        return toChildren(cursor);
+    }
+
+    public List<Child> getChildrenMatchingStringBetween(
+            String searchKey, int fromPageNumber, int toPageNumber) throws JSONException {
+        paginatedSearchQueryBuilder = new PaginatedSearchQueryBuilder(applicationInstance, searchKey);
+        Log.d("QUERY LIMIT", paginatedSearchQueryBuilder.queryForMatchingChildrenBetweenPages(fromPageNumber, toPageNumber));
+        @Cleanup Cursor cursor = session.rawQuery(paginatedSearchQueryBuilder.queryForMatchingChildrenBetweenPages(
+                fromPageNumber, toPageNumber), null);
+        return toChildren(cursor);
     }
 }

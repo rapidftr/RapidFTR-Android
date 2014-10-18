@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.ListView;
 import com.rapidftr.R;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
+import com.rapidftr.adapter.pagination.ViewAllChildrenPaginatedScrollListener;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
 import lombok.Cleanup;
@@ -27,7 +28,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
         List<Child> children = new ArrayList<Child>();
         @Cleanup ChildRepository childRepository = inject(ChildRepository.class);
         try {
-            children = childRepository.allCreatedByCurrentUser();
+            children = childRepository.getRecordsForFirstPage();
         } catch (JSONException e) {
             Log.e("ViewAllChildrenActivity","Error while displaying children list");
             makeToast(R.string.fetch_child_error);
@@ -42,5 +43,7 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
         }
         childListView.setAdapter(highlightedFieldsViewAdapter);
+        ViewAllChildrenPaginatedScrollListener scrollListener = new ViewAllChildrenPaginatedScrollListener(inject(ChildRepository.class), highlightedFieldsViewAdapter);
+        childListView.setOnScrollListener(scrollListener);
     }
 }

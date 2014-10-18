@@ -7,8 +7,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.rapidftr.R;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
+import com.rapidftr.adapter.pagination.PaginatedSearchResultsScrollListener;
 import com.rapidftr.model.Child;
 import com.rapidftr.repository.ChildRepository;
+import com.rapidftr.repository.ChildSearch;
 import com.rapidftr.service.FormService;
 import lombok.Cleanup;
 import org.json.JSONException;
@@ -19,8 +21,9 @@ import java.util.List;
 public class SearchActivity extends RapidFtrActivity {
 
     private HighlightedFieldsViewAdapter highlightedFieldsViewAdapter;
-
     private FormService formService;
+    private ChildSearch childSearch;
+    private PaginatedSearchResultsScrollListener scrollListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,8 @@ public class SearchActivity extends RapidFtrActivity {
             childListView.setEmptyView(findViewById(R.id.no_child_view));
         }
         childListView.setAdapter(highlightedFieldsViewAdapter);
+        scrollListener = new PaginatedSearchResultsScrollListener(childSearch, highlightedFieldsViewAdapter);
+        childListView.setOnScrollListener(scrollListener);
     }
 
     private View.OnClickListener searchListener() {
@@ -48,7 +53,7 @@ public class SearchActivity extends RapidFtrActivity {
                 try {
                     listView(search(subString));
                 } catch (Exception e) {
-                    Log.e("ChildSearch", "Error while Searching Children");
+                    Log.e("ChildSearchError", e.getMessage());
                     makeToast(R.string.fetch_child_error);
                 }
             }
@@ -56,12 +61,12 @@ public class SearchActivity extends RapidFtrActivity {
     }
 
     private List<Child> search(String subString) throws JSONException {
-        @Cleanup ChildRepository childRepository = inject(ChildRepository.class);
         subString = subString.trim();
         if ("".equals(subString)) {
             return new ArrayList<Child>();
         }
-        return childRepository.getMatchingChildren(subString, formService.getHighlightedFields(Child.CHILD_FORM_NAME));
+        this.childSearch = new ChildSearch(subString, inject(ChildRepository.class), formService.getHighlightedFields(Child.CHILD_FORM_NAME));
+        return childSearch.getRecordsForFirstPage();
     }
 
 }

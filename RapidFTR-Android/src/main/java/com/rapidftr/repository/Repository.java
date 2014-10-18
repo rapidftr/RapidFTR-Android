@@ -1,6 +1,7 @@
 package com.rapidftr.repository;
 
 import com.rapidftr.model.BaseModel;
+import com.rapidftr.model.Child;
 import org.json.JSONException;
 
 import java.io.Closeable;
@@ -29,4 +30,8 @@ public interface Repository<T extends BaseModel> extends Closeable {
     public List<String> getRecordIdsByOwner() throws JSONException;
 
     public List<T> allCreatedByCurrentUser() throws JSONException;
+
+    public List<T> getRecordsBetween(int previousPageNumber, int pageNumber) throws JSONException;
+
+    public List<T> getRecordsForFirstPage() throws JSONException;
 }

@@ -30,6 +30,7 @@ public class PhotoCaptureHelper extends CaptureHelper {
 	public static final int PHOTO_WIDTH = 475;
 	public static final int PHOTO_HEIGHT = 635;
     public static final int QUALITY = 85;
+    private Bitmap defaultThumbNail;
 
     public PhotoCaptureHelper(RapidFtrApplication context) {
         super(context);
@@ -95,7 +96,10 @@ public class PhotoCaptureHelper extends CaptureHelper {
     }
 
     public Bitmap getDefaultThumbnail() {
-        return decodeResource(application.getResources(), R.drawable.no_photo_clip);
+        if(defaultThumbNail == null || defaultThumbNail.getByteCount() == 0){
+            defaultThumbNail = decodeResource(application.getResources(), R.drawable.no_photo_clip);
+        }
+        return defaultThumbNail;
     }
 
     public void savePhoto(Bitmap original, int rotationDegree, String fileNameWithoutExtension) throws IOException, GeneralSecurityException {
