@@ -64,4 +64,16 @@ public class FormSection implements Comparable<FormSection> {
 
         return Arrays.asList(sortedFormFields.values().toArray(new FormField[]{}));
     }
+
+    public List<FormField> getOrderedTitleFields() {
+        SortedMap<Integer, FormField> sortedFormFields = new TreeMap<Integer, FormField>();
+        for (FormField formField : fields) {
+            if (formField.isTitleField() && formField.getHighlightInfo() != null && formField.getHighlightInfo().getHighlighted()) {
+                Integer order = Integer.parseInt(formField.getHighlightInfo().getOrder());
+                sortedFormFields.put(order, formField);
+            }
+        }
+
+        return Arrays.asList(sortedFormFields.values().toArray(new FormField[]{}));
+    }
 }
