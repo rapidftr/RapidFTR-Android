@@ -26,6 +26,7 @@ public class HighlightedFieldsViewAdapter<T extends BaseModel> extends BaseModel
     protected Map<Integer, FormField> highlightedFields;
     private FormService formService;
     private Class<CollectionActivity> activityToLaunch;
+    private final List<FormField> titleFields;
 
     public HighlightedFieldsViewAdapter(Context context, List<T> baseModels, String formName, Class<CollectionActivity> activityToLaunch) {
         super(context, R.layout.row_highlighted_fields, baseModels);
@@ -33,6 +34,7 @@ public class HighlightedFieldsViewAdapter<T extends BaseModel> extends BaseModel
         formService = RapidFtrApplication.getApplicationInstance().getBean(FormService.class);
 
         List<FormField> fields = formService.getHighlightedFields(formName);
+        titleFields = formService.getTitleFields(formName);
 
         highlightedFields = new TreeMap<Integer, FormField>();
         this.activityToLaunch = activityToLaunch;
@@ -61,7 +63,7 @@ public class HighlightedFieldsViewAdapter<T extends BaseModel> extends BaseModel
 
             ImageView imageView = (ImageView) view.findViewById(R.id.thumbnail);
             try {
-                setFields(String.valueOf(baseModel.getShortId()), uniqueIdView);
+                setFields(String.valueOf(buildTitle(baseModel)), uniqueIdView);
                 assignThumbnail(baseModel, imageView);
 
                 view.setOnClickListener(createClickListener(baseModel, activityToLaunch));
@@ -70,5 +72,20 @@ public class HighlightedFieldsViewAdapter<T extends BaseModel> extends BaseModel
             }
         }
         return view;
+    }
+
+    private String buildTitle(T baseModel) throws JSONException {
+        if(titleFields.size() == 0) {
+            return baseModel.getShortId();
+        }
+        StringBuilder titleBuilder = new StringBuilder();
+        for (int i = 0; i < titleFields.size(); i++) {
+            FormField titleField = titleFields.get(i);
+            titleBuilder.append(baseModel.optString(titleField.getId()));
+            if((i + 1) < titleFields.size()) {
+                titleBuilder.append(" ");
+            }
+        }
+        return String.format("%s (%s)", titleBuilder.toString(), baseModel.getShortId());
     }
 }

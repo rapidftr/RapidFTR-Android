@@ -109,4 +109,15 @@ public class FormService {
         return formFields;
     }
 
+    public List<FormField> getTitleFields(String formName) {
+        List<FormField> formFields = new ArrayList<FormField>();
+
+        List<FormSection> formSections = getFormSections(formName);
+        for (FormSection formSection : formSections) {
+            formFields.addAll(formSection.getOrderedTitleFields());
+        }
+
+        return formFields;
+    }
+
 }
