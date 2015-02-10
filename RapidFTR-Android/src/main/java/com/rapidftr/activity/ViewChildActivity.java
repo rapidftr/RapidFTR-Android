@@ -130,6 +130,8 @@ public class ViewChildActivity extends BaseChildActivity {
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
         return true;
     }

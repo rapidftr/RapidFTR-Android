@@ -1,6 +1,5 @@
 package com.rapidftr.activity;
 
-import android.content.Intent;
 import android.view.MenuItem;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
@@ -11,7 +10,6 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowToast;
 
 import java.io.IOException;
