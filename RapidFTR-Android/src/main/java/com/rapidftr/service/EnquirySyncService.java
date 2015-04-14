@@ -84,7 +84,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     }
 
     @Override
-    public void setLastSyncedAt() {
+    public void setLastSyncedAt(Enquiry enquiry) {
         RapidFtrApplication.getApplicationInstance()
                 .getSharedPreferences()
                 .edit()

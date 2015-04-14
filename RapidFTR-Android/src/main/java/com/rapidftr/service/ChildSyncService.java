@@ -11,6 +11,9 @@ import org.joda.time.DateTime;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
@@ -69,12 +72,24 @@ public class ChildSyncService implements SyncService<Child> {
     }
 
     @Override
-    public void setLastSyncedAt() {
+    public void setLastSyncedAt(Child child) {
         RapidFtrApplication.getApplicationInstance()
                 .getSharedPreferences()
                 .edit()
-                .putLong(RapidFtrApplication.LAST_CHILD_SYNC, System.currentTimeMillis())
+                .putLong(RapidFtrApplication.LAST_CHILD_SYNC, getLastUpdatedAt(child))
                 .commit();
+    }
+
+    private Long getLastUpdatedAt(Child child){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        try {
+            return dateFormat.parse(child.getLastUpdatedAt()).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

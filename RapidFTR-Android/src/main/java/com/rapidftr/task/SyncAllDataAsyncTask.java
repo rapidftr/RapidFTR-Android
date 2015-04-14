@@ -47,7 +47,7 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
 
             sendRecordsToServer(recordsToUpload);
             downloadRecordsFromServer(idsToDownload, numberOfUploadedRecords(recordsToUpload));
-            recordSyncService.setLastSyncedAt();
+
         }
     }
 
