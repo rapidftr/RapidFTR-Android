@@ -4,9 +4,7 @@ import android.content.SharedPreferences;
 import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
-import com.rapidftr.model.History;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.utils.RapidFtrDateTime;
@@ -15,10 +13,7 @@ import org.joda.time.DateTime;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.io.SyncFailedException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
 
@@ -88,7 +83,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
         RapidFtrApplication.getApplicationInstance()
                 .getSharedPreferences()
                 .edit()
-                .putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, System.currentTimeMillis())
+                .putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, enquiry.lastUpdatedAtInMillis())
                 .commit();
     }
 
