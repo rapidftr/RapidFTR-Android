@@ -67,7 +67,11 @@ public class GenericSyncService<T extends BaseModel> {
     public static void setAttributes(BaseModel model) throws JSONException {
         model.setSynced(true);
         model.setLastSyncedAt(RapidFtrDateTime.now().defaultFormat());
-        model.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
+        if (model.values().has("last_updated_at")) {
+            model.setLastUpdatedAt(model.values().getString("last_updated_at"));
+        } else {
+            model.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
+        }
         model.remove("_attachments");
     }
 }

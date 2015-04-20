@@ -69,11 +69,11 @@ public class ChildSyncService implements SyncService<Child> {
     }
 
     @Override
-    public void setLastSyncedAt() {
+    public void setLastSyncedAt(Child child) {
         RapidFtrApplication.getApplicationInstance()
                 .getSharedPreferences()
                 .edit()
-                .putLong(RapidFtrApplication.LAST_CHILD_SYNC, System.currentTimeMillis())
+                .putLong(RapidFtrApplication.LAST_CHILD_SYNC, child.lastUpdatedAtInMillis())
                 .commit();
     }
 

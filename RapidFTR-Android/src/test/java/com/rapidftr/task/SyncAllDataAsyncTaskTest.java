@@ -253,7 +253,6 @@ public class SyncAllDataAsyncTaskTest {
         verify(childSyncService).getIdsToDownload();
         verify(childSyncService).getRecord("qwerty0987");
         verify(childSyncService).getRecord("abcd1234");
-        verify(childSyncService).setLastSyncedAt();
     }
 
     @Test
