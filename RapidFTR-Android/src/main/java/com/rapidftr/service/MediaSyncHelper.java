@@ -92,7 +92,9 @@ public class MediaSyncHelper {
     }
 
     public void getPhotoFromServer(BaseModel baseModel, PhotoCaptureHelper photoCaptureHelper, String fileName) throws IOException {
-        Bitmap bitmap = BitmapFactory.decodeStream(getReSizedPhoto(baseModel, fileName));
+        InputStream stream = getReSizedPhoto(baseModel, fileName);
+        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+        stream.close();
         savePhoto(bitmap, photoCaptureHelper, fileName);
     }
 
@@ -118,7 +120,9 @@ public class MediaSyncHelper {
     }
 
     private void getAudioFromServer(BaseModel baseModel, AudioCaptureHelper audioCaptureHelper) throws IOException, JSONException {
-        audioCaptureHelper.saveAudio(baseModel, getAudio(baseModel));
+        InputStream stream = getAudio(baseModel);
+        audioCaptureHelper.saveAudio(baseModel, stream);
+        stream.close();
     }
 
     public InputStream getAudio(BaseModel baseModel) throws IOException {
