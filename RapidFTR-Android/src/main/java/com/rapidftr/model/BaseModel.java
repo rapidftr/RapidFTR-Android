@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -97,6 +98,18 @@ public class BaseModel extends JSONObject implements Parcelable {
 
     public String getLastUpdatedAt() throws JSONException {
         return optString(last_updated_at.getColumnName(), null);
+    }
+
+    public Long lastUpdatedAtInMillis(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        try {
+            return dateFormat.parse(getLastUpdatedAt()).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void setLastUpdatedAt(String lastUpdatedAt) throws JSONException {
