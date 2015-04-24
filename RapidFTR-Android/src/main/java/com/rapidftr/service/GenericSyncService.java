@@ -19,6 +19,7 @@ public class GenericSyncService<T extends BaseModel> {
     private Repository<T> repository;
     private JSONArray photoKeys;
     private Object audioAttachments;
+    private static String lastUpdateAt;
 
     public GenericSyncService(MediaSyncHelper mediaSyncHelper, EntityHttpDao<T> entityHttpDao, Repository<T> repository) {
         this.mediaSyncHelper = mediaSyncHelper;
@@ -68,10 +69,9 @@ public class GenericSyncService<T extends BaseModel> {
         model.setSynced(true);
         model.setLastSyncedAt(RapidFtrDateTime.now().defaultFormat());
         if (model.values().has("last_updated_at")) {
-            model.setLastUpdatedAt(model.values().getString("last_updated_at"));
-        } else {
-            model.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
+            lastUpdateAt = model.values().getString("last_updated_at");
         }
+        model.setLastUpdatedAt(lastUpdateAt);
         model.remove("_attachments");
     }
 }
