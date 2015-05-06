@@ -347,7 +347,7 @@ public class ChildRepositoryTest {
         repository.createOrUpdate(updatedChild);
 
         Child savedChild = repository.get(updatedChild.getUniqueId());
-        assertTrue(savedChild.get(HISTORIES).toString().matches(".*\"changes\":\\{.*\"name\":\\{(\"to\":\"updatedname\"|\"from\":\"oldname\"),(\"from\":\"oldname\"|\"to\":\"updatedname\")\\}.*"));
+        assertTrue(savedChild.get(HISTORIES).toString().matches(".*\"changes\":\\{.*\"name\":\\{\"from\":\"oldname\",\"to\":\"updatedname\"\\}.*"));
     }
 
     @Test
