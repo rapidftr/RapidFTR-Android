@@ -1,11 +1,13 @@
 package com.rapidftr.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.adapter.pagination.PaginatedSearchResultsScrollListener;
 import com.rapidftr.model.Child;
@@ -31,6 +33,11 @@ public class SearchActivity extends RapidFtrActivity {
         setContentView(R.layout.activity_search_child);
         findViewById(R.id.search_btn).setOnClickListener(searchListener());
         formService = inject(FormService.class);
+        SharedPreferences sharedPreferences = getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
+
+        if(sharedPreferences.getString("disabled_features", "").contains("Enquiries")) {
+            super.hideEnquiryTab();
+        }
     }
 
     private void listView(List<Child> children) {

@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.google.common.collect.HashMultimap;
@@ -422,5 +423,10 @@ public abstract class RapidFtrActivity extends Activity {
 
     protected BroadcastReceiver getBroadcastReceiver() {
         return networkChangeReceiver;
+    }
+
+    public void hideEnquiryTab() {
+        Button enquiryTab = (Button) findViewById(R.id.enquiry_tab);
+        enquiryTab.setVisibility(View.GONE);
     }
 }

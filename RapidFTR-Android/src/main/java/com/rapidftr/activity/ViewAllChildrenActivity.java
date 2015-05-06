@@ -1,9 +1,13 @@
 package com.rapidftr.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.adapter.pagination.ViewAllChildrenPaginatedScrollListener;
 import com.rapidftr.model.Child;
@@ -20,6 +24,12 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_children);
+        SharedPreferences sharedPreferences = getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
+
+        if(sharedPreferences.getString("disabled_features", "").contains("Enquiries")) {
+            super.hideEnquiryTab();
+        }
+
         listView(getChildren());
     }
     
