@@ -12,7 +12,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import com.google.common.base.Strings;
-import com.google.common.io.CharStreams;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.rapidftr.activity.RapidFtrActivity;
@@ -29,8 +28,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -94,7 +91,7 @@ public class RapidFtrApplication extends Application {
         super.onCreate();
         try {
             reloadCurrentUser();
-            loadFeatureTogglesFrom(ResourceLoader.loadResourceFromClasspath("disabled_features.json"));
+            loadFeatureTogglesFrom(R.raw.disabled_features);
             notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         } catch (IOException e) {
             Log.e(APP_IDENTIFIER, "Failed to load form sections", e);
@@ -103,8 +100,8 @@ public class RapidFtrApplication extends Application {
         }
     }
 
-    private void loadFeatureTogglesFrom(InputStream in) throws IOException, JSONException {
-        String featuresJSON = CharStreams.toString(new InputStreamReader(in));
+    private void loadFeatureTogglesFrom(int resourceId) throws IOException, JSONException {
+        String featuresJSON = ResourceLoader.loadStringFromRawResource(getApplicationContext(), resourceId);
         JSONObject object = new JSONObject(featuresJSON);
         SharedPreferences.Editor editor = this.getSharedPreferences().edit();
 

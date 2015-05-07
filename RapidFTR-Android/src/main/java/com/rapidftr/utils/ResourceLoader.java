@@ -1,5 +1,7 @@
 package com.rapidftr.utils;
 
+import android.content.Context;
+import android.content.res.Resources;
 import com.google.common.io.CharStreams;
 import lombok.Cleanup;
 
@@ -15,6 +17,11 @@ public class ResourceLoader {
 
     public static String loadResourceAsStringFromClasspath(String resourceName) throws IOException {
         @Cleanup InputStream inputStream = loadResourceFromClasspath(resourceName);
+        return CharStreams.toString(new InputStreamReader(inputStream));
+    }
+
+    public static String loadStringFromRawResource(Context context, int resourceId) throws IOException {
+        @Cleanup InputStream inputStream = context.getResources().openRawResource(resourceId);
         return CharStreams.toString(new InputStreamReader(inputStream));
     }
 }
