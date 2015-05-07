@@ -1,13 +1,9 @@
 package com.rapidftr.activity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.task.AsyncTaskWithDialog;
-import com.sun.javafx.tools.packager.bundlers.Bundler;
 import org.json.JSONException;
 
 public class RegisterChildActivity extends BaseChildActivity {
