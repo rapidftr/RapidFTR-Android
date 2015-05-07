@@ -16,6 +16,7 @@ import com.rapidftr.repository.ChildSearch;
 import com.rapidftr.service.FormService;
 import lombok.Cleanup;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +34,14 @@ public class SearchActivity extends RapidFtrActivity {
         setContentView(R.layout.activity_search_child);
         findViewById(R.id.search_btn).setOnClickListener(searchListener());
         formService = inject(FormService.class);
-        SharedPreferences sharedPreferences = getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
 
-        if(sharedPreferences.getString("disabled_features", "").contains("Enquiries")) {
-            super.hideEnquiryTab();
+        try {
+            super.hideEnquiriesTabIfRapidReg();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
+
 
     private void listView(List<Child> children) {
         highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, children, Child.CHILD_FORM_NAME, ViewChildActivity.class);

@@ -14,10 +14,10 @@ public class RegisterChildActivity extends BaseChildActivity {
 
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        SharedPreferences sharedPreferences = getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
-
-        if(sharedPreferences.getString("disabled_features", "").contains("Enquiries")) {
-            super.hideEnquiryTab();
+        try {
+            super.hideEnquiriesTabIfRapidReg();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

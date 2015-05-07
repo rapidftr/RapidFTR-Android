@@ -29,6 +29,8 @@ import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.view.fields.TextField;
 import lombok.Getter;
 import lombok.Setter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -425,8 +427,16 @@ public abstract class RapidFtrActivity extends Activity {
         return networkChangeReceiver;
     }
 
-    public void hideEnquiryTab() {
+    private void hideEnquiryTab() {
         Button enquiryTab = (Button) findViewById(R.id.enquiry_tab);
         enquiryTab.setVisibility(View.GONE);
+    }
+
+    public void hideEnquiriesTabIfRapidReg() throws JSONException {
+        SharedPreferences sharedPreferences = getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
+        JSONObject disabled_features = new JSONObject(sharedPreferences.getString("disabled_features", "").toString());
+        if (disabled_features.getBoolean("Enquiries") == true) {
+            hideEnquiryTab();
+        }
     }
 }
