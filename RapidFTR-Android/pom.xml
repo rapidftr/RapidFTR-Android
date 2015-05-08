@@ -236,6 +236,13 @@
                 <directory>${project.basedir}/src/main/brands/${brand}/res</directory>
                 <targetPath>${project.build.directory}/filtered-res</targetPath>
             </resource>
+            <resource>
+                <directory>${project.basedir}/src/main</directory>
+                <targetPath>${project.build.directory}</targetPath>
+                <includes>
+                    <include>AndroidManifest.xml</include>
+                </includes>
+            </resource>
         </resources>
 
         <plugins>
@@ -292,6 +299,9 @@
                         <skip>false</skip>
                     </zipalign>
                     <resourceDirectory>${project.build.directory}/filtered-res</resourceDirectory>
+                    <renameManifestPackage>com.${brand}</renameManifestPackage>
+                    <manifestApplicationLabel>${brand}</manifestApplicationLabel>
+                    <androidManifestFile>${project.build.directory}/AndroidManifest.xml</androidManifestFile>
                 </configuration>
             </plugin>
 
