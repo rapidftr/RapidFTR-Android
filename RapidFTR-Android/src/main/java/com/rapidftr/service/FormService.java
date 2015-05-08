@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import com.google.inject.Inject;
+import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.Form;
 import com.rapidftr.forms.FormField;
@@ -24,7 +25,6 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 public class FormService {
 
     public static final String FORM_SECTIONS_PREF = "FORM_SECTION";
-    public static final String DEFAULT_FORM_SECTIONS_FILE_NAME = "default_form_sections.json";
     public static final String API_FORM_SECTIONS_PATH = "/api/form_sections";
 
     private RapidFtrApplication context;
@@ -81,8 +81,7 @@ public class FormService {
     }
 
     private String loadDefaultFormSections() throws IOException {
-        @Cleanup InputStream in = ResourceLoader.loadResourceFromClasspath(DEFAULT_FORM_SECTIONS_FILE_NAME);
-        return CharStreams.toString(new InputStreamReader(in));
+        return ResourceLoader.loadStringFromRawResource(context, R.raw.default_form_sections);
     }
 
     public List<FormSection> getFormSections(String formName) {

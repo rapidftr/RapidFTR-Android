@@ -95,13 +95,15 @@ public class RapidFtrApplication extends Application {
             notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         } catch (IOException e) {
             Log.e(APP_IDENTIFIER, "Failed to load form sections", e);
-        } catch (JSONException e) {
+        }
+        catch (JSONException e) {
             Log.e("DISABLED_FEATURES", "Failed to load features something went wrong");
         }
     }
 
     private void loadFeatureTogglesFrom(int resourceId) throws IOException, JSONException {
         String featuresJSON = ResourceLoader.loadStringFromRawResource(getApplicationContext(), resourceId);
+        Log.d("Toggle", featuresJSON);
         JSONObject object = new JSONObject(featuresJSON);
         SharedPreferences.Editor editor = this.getSharedPreferences().edit();
 
