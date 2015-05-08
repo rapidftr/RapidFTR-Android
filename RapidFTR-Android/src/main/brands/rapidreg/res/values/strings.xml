@@ -1,0 +1,161 @@
+<resources>
+
+    <string name="app_name">RapidREG</string>
+
+    <!-- Login -->
+    <string name="log_in">Log In</string>
+    <string name="login_online_progress">Trying to login online</string>
+    <string name="login_online_success">Online login successful</string>
+    <string name="login_online_failed">Online login failed, will try to login offline</string>
+    <string name="login_online_no_connectivity">No connectivity, will try to login offline</string>
+
+    <string name="login_migrate_progress">You are now a verified user, migrating your data</string>
+    <string name="login_migrate_failed">Failed to migrate data, logging in offline, please sync data</string>
+    <string name="login_save_failed">Failed to complete the login, please contact your system administrator</string>
+
+    <string name="login_form_progress">Loading latest form sections</string>
+    <string name="login_form_failed">Failed to load latest form sections, you can still keep using older forms</string>
+
+    <string name="login_offline_progress">Trying to login offline</string>
+    <string name="login_offline_success">Offline login successful</string>
+    <string name="login_offline_no_user">Login failed, first time users please login online to enable your account for offline mode</string>
+    <string name="login_offline_failed">Login failed, Incorrect username or password</string>
+
+    <!-- Others, need to organize/group as we go -->
+    <string name="log_out">Log Out</string>
+    <string name="confirm_logout_message">Records are still being sychronised. Logging out now will cancel this process, are you sure you want to log out?</string>
+    <string name="session_timeout">Your session is not active on the server, Please logout and login again</string>
+
+    <string name="logout_successful">You have been logged out successfully.</string>
+    <string name="change_url">Change URL</string>
+    <string name="register_child">Register Child</string>
+    <string name="view_all_children">View All Children</string>
+    <string name="search_for_a_child">Search for a Child</string>
+    <string name="synchronize">Synchronize</string>
+    <string name="new_user">New to RapidFTR? </string>
+    <string name="full_name_required">Full name required</string>
+    <string name="username_taken">Username taken. Please choose a different username</string>
+    <string name="full_name">Full Name</string>
+
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="url">URL</string>
+
+    <string name="rapidftr_url"></string>
+    <string name="rapidftr_username"></string>
+
+    <string name="username_required">Username is required</string>
+    <string name="password_required">Password is required</string>
+    <string name="organisation_required">Organisation is required</string>
+    <string name="confirm_password_required">Re-type password</string>
+    <string name="url_required">Server URL is required</string>
+    <string name="password_mismatch">Password mismatch</string>
+
+    <string name="loading_message">Loading&#8230;</string>
+    <string name="unauthorized">Incorrect username or password</string>
+    <string name="invalid_url">Please enter a valid url</string>
+    <string name="server_not_reachable">Unable to connect to the server, please contact your system administrator</string>
+    <string name="RapidFTRLogo">RapidFTR</string>
+
+    <string name="new_registration">New Registration</string>
+    <string name="save_child_progress">Saving record</string>
+    <string name="save_child_invalid">Please fill up at least one field</string>
+    <string name="save_child_success">Saved record successfully</string>
+    <string name="save_child_failure">Failed to save record!</string>
+
+    <string name="photo_capture">Capture Photo</string>
+    <string name="photo_capture_error">An error occurred while capturing the photo</string>
+    <string name="photo_view">View Photo</string>
+    <string name="photo_view_error">An error occurred while loading the photo</string>
+    <string name="photo_not_captured">No photo captured for the record</string>
+    <string name="photo_gallery_delete_error">Unable to delete photo from Gallery. Please go to Gallery and delete it manually</string>
+    <string name="set_as_primary">Set as primary photo</string>
+
+
+    <string name="synchronize_all">Synchronize All</string>
+    <string name="cancel_synchronize_all">Cancel Synchronize All</string>
+    <string name="sync_single">Synchronize This Record</string>
+    <string name="sync_progress">Sync in progress&#8230;</string>
+    <string name="sync_success">Sync successful</string>
+    <string name="sync_failure">Sync failed</string>
+    <string name="network_not_available">Network connection is not available, Please try again later</string>
+
+    <string name="internal_error">An error occurred while performing this operation</string>
+    <string name="fetch_child_error">An error occurred while fetching record(s), please try again</string>
+    <string name="fetch_form_sections_error">An error occurred while fetching form sections</string>
+    <string name="submit">Submit</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="choose_action">Choose an action</string>
+    <string name="discard">Discard</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+
+    <string name="register_tab_name">Register</string>
+    <string name="view_all_tab_name">View All</string>
+    <string name="search_tab_name">Search</string>
+    <string name="synchronize_log">Sync error</string>
+    <string name="synchronize_step_1">Step 1 of 3 - Syncing Form Sections&#8230;</string>
+    <string name="synchronize_step_2">Step 2 of 3 - Sending records to server&#8230;</string>
+    <string name="synchronize_step_3">Step 3 of 3 - Getting records from server&#8230;</string>
+    <string name="signup">Sign Up!</string>
+    <string name="confirm">Re-enter Password</string>
+    <string name="organisation">Organisation</string>
+    <string name="optional_url">URL(Optional)</string>
+
+    <string name="sync_complete">Sync complete.</string>
+    <string name="sync_error">Error in syncing. Try again after some time.</string>
+    <string name="search_child">Search record</string>
+    <string name="go">Go</string>
+    <string name="child_not_found">No Record Found</string>
+
+    <string name="this_is_audio_upload_box">This is an audio upload box</string>
+    <string name="info">Info</string>
+
+    <string name="info_text">RapidFTR is supported in the following languages:</string>
+    <string name="full_name_label">Full name:</string>
+    <string name="username_label">Username:</string>
+    <string name="password_label">Password:</string>
+    <string name="confirm_label">Re-enter Password:</string>
+    <string name="organisation_label">Organisation:</string>
+    <string name="mandatory">All fields are mandatory</string>
+    <string name="registered">You are registered. Login with the username </string>
+
+    <string name="yes">Yes</string>
+    <string name="start_record">Start</string>
+    <string name="stop_record">Stop</string>
+    <string name="play_record">Play</string>
+    <string name="forgot_password">Request password reset</string>
+
+    <string name="network_down">Connection to the server lost, the sync process has been cancelled</string>
+    <string name="no_connection">Connection to the server lost, Try again later</string>
+    <string name="connection_off">No connectivity, turn on your WiFi or Data Connection</string>
+    <string name="temp_sync_error">Error occurred while syncing the record with the server, please try again.</string>
+    <string name="current_password_label">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="change_password">Change Password</string>
+    <string name="password_change_success">Password Changed Successfully</string>
+    <string name="password_change_failed">Could not change password. Try again</string>
+    <string name="confirm_change_password_text">Records are still being sychronised. Changing password will stop synchronising. Do you still want to continue? </string>
+    <string name="save_enquiry_progress">Saving Enquiry</string>
+    <string name="save_enqury_success">Enquiry Saved</string>
+    <string name="save_enquiry_failed">Enquiry Save Failed</string>
+    <string name="save_enquiry_invalid">Please fill up at least one field</string>
+    <string name="enquirer_name_required">Enquirer name is required</string>
+    <string name="enquiry_not_found">No Enquiries found</string>
+    <string name="enquiry_tab">Enquiry</string>
+    <string name="child_tab">Child</string>
+    <string name="create_enquiry_tab">New</string>
+    <string name="view_all_enquiry_tab">View All</string>
+
+    <string name="no_matches">No matches found yet</string>
+    <string name="child_records_sync_success">Child Records successfully synchronized</string>
+    <string name="enquiry_records_sync_success">Enquiry Records successfully synchronized</string>
+    <string name="potential_match_records_sync_success">Potential Match Records successfully synchronized</string>
+    <string name="sync_title">Synchronising</string>
+    <string name="enquires_sync_title">Synchronising Enquiries</string>
+    <string name="child_sync_title">Synchronising Children</string>
+    <string name="potential_matches_sync_title">Synchronising Potential Matches</string>
+    <string name="matches">Matches</string>
+    <string name="matches_help_text">Matches</string>
+</resources>
