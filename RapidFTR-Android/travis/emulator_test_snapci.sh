@@ -6,6 +6,6 @@ if (( ${SNAP_WORKER_TOTAL:-0} < 2 )); then
 fi
 
 case "$SNAP_WORKER_INDEX" in
-  1) ./RapidFTR-Android/travis/emulator_test.sh features/login.feature features/navigation.feature features/register.feature ;;
-  2) ./RapidFTR-Android/travis/emulator_test.sh features/search.feature features/sync.feature features/unverified_user.feature ;;
+  1) ./RapidFTR-Android/travis/emulator_test.sh features/*_rg1.feature ;;
+  2) ./RapidFTR-Android/travis/emulator_test.sh features/*_rg2.feature ;;
 esac

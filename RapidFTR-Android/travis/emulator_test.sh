@@ -18,11 +18,7 @@ if [ ! -n "$1" ]
     bundle exec calabash-android run `ls target/*.apk | head -1` -f rerun --out rerun.txt -f pretty --tags ~@ignore
 
     else
-    echo $'\e[32m'"Running only the following features:"$'\e[0m'
-    for feature in "$@"
-        do
-        echo $'\e[32m'" [x] $feature"$'\e[0m'
-        done
-        echo ""
+    echo $'\e[32m'"Running only the following features: $@"$'\e[0m'
     bundle exec calabash-android run `ls target/*.apk | head -1` -f rerun --out rerun.txt -f pretty --tags ~@ignore $@
+
     fi
