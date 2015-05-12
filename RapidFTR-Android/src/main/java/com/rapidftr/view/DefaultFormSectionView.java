@@ -71,7 +71,7 @@ public class DefaultFormSectionView extends ScrollView implements FormSectionVie
     }
 
     protected int getFieldLayoutId(String fieldType) {
-        return getResources().getIdentifier("form_" + fieldType, "layout", getContext().getPackageName());
+        return getResources().getIdentifier("form_" + fieldType, "layout", "com.rapidftr");
     }
 
     protected BaseView createFormField(FormField field) {
