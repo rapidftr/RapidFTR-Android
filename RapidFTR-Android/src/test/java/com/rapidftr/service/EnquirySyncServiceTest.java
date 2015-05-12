@@ -50,6 +50,7 @@ public class EnquirySyncServiceTest {
     @Before
     public void setUp() {
         initMocks(this);
+
         enquiryHttpDao = EntityHttpDaoFactory.createEnquiryHttpDao(
                 "http://whatever",
                 EnquiryHttpDao.ENQUIRIES_API_PATH,

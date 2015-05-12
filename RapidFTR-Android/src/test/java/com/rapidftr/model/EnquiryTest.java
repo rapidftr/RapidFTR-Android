@@ -76,6 +76,7 @@ public class EnquiryTest {
     public void shouldNotReturnConfirmedMatchesForPotentialMatches() throws JSONException, SQLException {
         Child child1 = new Child("id1", "owner1", "{'test':'a','_id':'child_id_1' }");
         Child child2 = new Child("id2", "owner1", "{'test':'a','_id':'child_id_2' }");
+
         childRepository.createOrUpdate(child1);
         childRepository.createOrUpdate(child2);
         potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_1", "potential_match_id_1"));

@@ -435,8 +435,9 @@ public abstract class RapidFtrActivity extends Activity {
     public void hideEnquiriesTabIfRapidReg() throws JSONException {
         SharedPreferences sharedPreferences = getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
         JSONObject disabled_features = new JSONObject(sharedPreferences.getString("disabled_features", "").toString());
-        if (disabled_features.getBoolean("Enquiries") == true) {
+        if (disabled_features.optBoolean("Enquiries", false) == true) {
             hideEnquiryTab();
         }
+
     }
 }

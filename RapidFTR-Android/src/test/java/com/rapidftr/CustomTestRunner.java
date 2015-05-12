@@ -10,6 +10,7 @@ import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.User;
+import com.rapidftr.service.FormService;
 import com.rapidftr.utils.ApplicationInjector;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.runners.model.InitializationError;
@@ -22,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CustomTestRunner extends RobolectricTestRunner {
-
-
 
     public static List<FormSection> formSectionSeed = Arrays.asList(
         new FormSection(new HashMap<String, String>(){{put("en", "Section 1");}}, 1, true, new HashMap<String, String>(){{put("en", "Section Help 1");}}, Arrays.asList(
@@ -41,6 +40,7 @@ public class CustomTestRunner extends RobolectricTestRunner {
     public static class TestInjector extends AbstractModule {
         @Override
         protected void configure() {
+            bind(FormService.class);
         }
 
         @Provides
