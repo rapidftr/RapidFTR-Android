@@ -98,21 +98,21 @@ public class ApplicationInjector extends AbstractModule {
 
     @Provides
     public EntityHttpDao<Enquiry> getEnquiryHttpDao(RapidFtrApplication rapidFtrApplication) {
-        return EntityHttpDaoFactory.createEnquiryHttpDao(rapidFtrApplication.getCurrentUser().getServerUrl(),
+        return EntityHttpDaoFactory.createEnquiryHttpDao(rapidFtrApplication, rapidFtrApplication.getCurrentUser().getServerUrl(),
                 EnquirySyncService.ENQUIRIES_API_PATH,
                 EnquirySyncService.ENQUIRIES_API_PARAMETER);
     }
 
     @Provides
     public EntityHttpDao<Child> getChildHttpDao(RapidFtrApplication rapidFtrApplication) {
-        return EntityHttpDaoFactory.createChildHttpDao(rapidFtrApplication.getCurrentUser().getServerUrl(),
+        return EntityHttpDaoFactory.createChildHttpDao(rapidFtrApplication, rapidFtrApplication.getCurrentUser().getServerUrl(),
                 ChildSyncService.CHILDREN_API_PATH,
                 ChildSyncService.CHILDREN_API_PARAMETER);
     }
 
     @Provides
     public EntityHttpDao<PotentialMatch> getPotentialMatchesHttpDao(RapidFtrApplication rapidFtrApplication) {
-        return EntityHttpDaoFactory.createPotentialMatchHttpDao(rapidFtrApplication.getCurrentUser().getServerUrl(), PotentialMatchSyncService.POTENTIAL_MATCH_API_PATH,
+        return EntityHttpDaoFactory.createPotentialMatchHttpDao(rapidFtrApplication, rapidFtrApplication.getCurrentUser().getServerUrl(), PotentialMatchSyncService.POTENTIAL_MATCH_API_PATH,
                 PotentialMatchSyncService.POTENTIAL_MATCH_API_PARAMETER);
     }
 

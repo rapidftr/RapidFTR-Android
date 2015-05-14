@@ -3,9 +3,11 @@ package com.rapidftr.activity;
 import android.os.Bundle;
 import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Enquiry;
+import com.rapidftr.model.User;
 import com.rapidftr.repository.ChildRepository;
 import com.rapidftr.repository.EnquiryRepository;
 import com.rapidftr.task.SyncSingleRecordTask;
@@ -15,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.Robolectric;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.mockito.Mockito.*;
@@ -33,19 +36,23 @@ public class ViewEnquiryActivityTest {
     private ChildRepository childRepository;
     @Mock
     private Enquiry enquiry;
+    private RapidFtrApplication rapidFtrApplication;
 
     @Before
     public void setUp()throws Exception{
         initMocks(this);
         activity = SpyActivityController.of(ViewEnquiryActivity.class).attach().get();
-
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
         doReturn(enquiry).when(mockInjector).getInstance(Enquiry.class);
         doReturn(mockEnquiryRepository).when(mockInjector).getInstance(EnquiryRepository.class);
         doReturn(childRepository).when(mockInjector).getInstance(ChildRepository.class);
+
+        rapidFtrApplication = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        rapidFtrApplication.setCurrentUser(new User("userName", "password", true, "http://1.2.3.4"));
+
         session = new ShadowSQLiteHelper("test_database").getSession();
-        enquiryRepository = new EnquiryRepository("user", session);
+        enquiryRepository = new EnquiryRepository("user", session, rapidFtrApplication);
     }
 
     @Test(expected = Exception.class)

@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.robolectric.Robolectric;
 import org.robolectric.tester.org.apache.http.FakeHttpLayer;
 import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
@@ -46,11 +47,12 @@ import static org.robolectric.Robolectric.getFakeHttpLayer;
 
 @RunWith(CustomTestRunner.class)
 public class GenericSyncServiceTest {
-
-@Mock
+    @Mock
     private ChildRepository repository;
     @Mock
     private User currentUser;
+
+    private RapidFtrApplication application;
 
     FluentRequest fluentRequest;
     public static final String RESPONSE = "{\"unique_identifier\":\"adf7c0c9-0137-4cae-beea-b7d282344829\",\"created_at\":\"2013-02-08 12:18:37\",\"created_by_full_name\":\"RapidFTR\",\"couchrest-type\":\"Child\",\"short_id\":\"2344829\",\"_id\":\"b7f89b978870da823e0af6491c3e295b\",\"_rev\":\"2-bc72af384e177fcaa8e9e8d181bfe05b\",\"name\":\"\",\"last_updated_at\":\"2013-02-08 11:37:33\",\"current_photo_key\":\"photo--1475374810-2013-02-08T175138\",\"created_by\":\"rapidftr\",\"photo_keys\":[\"photo--1475374810-2013-02-08T175138\"],\"created_organisation\":\"N/A\",\"posted_at\":\"2013-02-08 12:16:55UTC\",\"last_updated_by_full_name\":\"RapidFTR\"}";
@@ -61,7 +63,11 @@ public class GenericSyncServiceTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        childHttpDao = EntityHttpDaoFactory.createChildHttpDao(
+        application = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        User user = new User("userName", "password", true, "http://1.2.3.4");
+        application.setCurrentUser(user);
+
+        childHttpDao = EntityHttpDaoFactory.createChildHttpDao(application,
                 "http://whatever",
                 ChildSyncService.CHILDREN_API_PATH,
                 ChildSyncService.CHILDREN_API_PARAMETER);
@@ -114,7 +120,7 @@ public class GenericSyncServiceTest {
         getFakeHttpLayer().setDefaultHttpResponse(201, RESPONSE);
         List<String> photoKeysList = Arrays.asList("photo-998877", "photo-998547", "abcd123", "1234ABC");
         Child child = new Child("id1", "user1", String.format("{ '_id' : 'abcdef', 'name' : 'child1', 'test2' : 0, 'current_photo_key' : '1234ABC', 'photo_keys' : %s}", new JSONArray(photoKeysList).toString()));
-        EntityHttpDao<Child> httpDao = new EntityHttpDao<Child>("","","child");
+        EntityHttpDao<Child> httpDao = new EntityHttpDao<Child>(application, "", "", "child");
         EntityHttpDao<Child> spyHttpDao = spy(httpDao);
         doReturn(child).when(spyHttpDao).update(any(Child.class), any(String.class), any(Map.class));
 
@@ -171,7 +177,7 @@ public class GenericSyncServiceTest {
     public void shouldNotAddAudioRecordedToTheRequestIfItsAlreadyPresentInServer() throws JSONException, IOException, HttpException {
         getFakeHttpLayer().setDefaultHttpResponse(201, RESPONSE);
         Child child = new Child("id", "user", "{'_id' : 'abcd123488', 'name' : 'child1', 'recorded_audio' : '123455', 'audio_attachments' : {'original' : '123455', 'amr':'123455'}}");
-        EntityHttpDao<Child> httpDao = new EntityHttpDao<Child>("","","child");
+        EntityHttpDao<Child> httpDao = new EntityHttpDao<Child>(application, "", "", "child");
         EntityHttpDao<Child> spyHttpDao = spy(httpDao);
         doReturn(child).when(spyHttpDao).update(any(Child.class), any(String.class), any(Map.class));
 
@@ -276,6 +282,7 @@ public class GenericSyncServiceTest {
     private RapidFtrApplication mockContext() {
         RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();
         context.getSharedPreferences().edit().putString(SERVER_URL_PREF, "whatever").commit();
+        context.getCurrentUser().setDbKey("tu2347893023u2");
         return context;
     }
 
@@ -290,12 +297,13 @@ public class GenericSyncServiceTest {
         public boolean matches(Object params) {
             String actualPhotoKeys = ((Map<String, String>) params).get("photo_keys");
             for (int i = 0; i < photoKeys.length; i++) {
-                if(!actualPhotoKeys.matches(".*" + photoKeys[i] + ".*"))
+                if (!actualPhotoKeys.matches(".*" + photoKeys[i] + ".*"))
                     return false;
             }
             return true;
         }
     }
+
     class DoesntContainAudioKeyParams extends ArgumentMatcher<Map> {
         public boolean matches(Object params) {
             return !((Map<String, String>) params).containsKey("recorded_audio");

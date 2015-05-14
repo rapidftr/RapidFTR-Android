@@ -26,7 +26,7 @@ public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
     @Inject
     public PotentialMatchSyncService(RapidFtrApplication rapidFtrApplication, PotentialMatchRepository repository) {
         this.context = rapidFtrApplication;
-        this.entityHttpDao = EntityHttpDaoFactory.createPotentialMatchHttpDao(rapidFtrApplication.getSharedPreferences().getString(RapidFtrApplication.SERVER_URL_PREF, ""),
+        this.entityHttpDao = EntityHttpDaoFactory.createPotentialMatchHttpDao(rapidFtrApplication, rapidFtrApplication.getSharedPreferences().getString(RapidFtrApplication.SERVER_URL_PREF, ""),
                 POTENTIAL_MATCH_API_PATH, POTENTIAL_MATCH_API_PARAMETER);
     }
 

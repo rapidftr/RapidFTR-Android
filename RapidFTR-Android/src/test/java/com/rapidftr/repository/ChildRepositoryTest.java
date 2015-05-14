@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,12 +43,16 @@ public class ChildRepositoryTest {
     public DatabaseSession session;
     public ChildRepository repository;
 
-    List<FormField> highlightedFormFields;
+    private List<FormField> highlightedFormFields;
+    private RapidFtrApplication rapidFtrApplication;
 
     @Before
     public void setupSession() throws IOException {
         session = new ShadowSQLiteHelper("test_database").getSession();
-        repository = new ChildRepository("user1", session);
+        rapidFtrApplication = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        User user = new User("userName", "password", true, "http://1.2.3.4");
+        rapidFtrApplication.setCurrentUser(user);
+        repository = new ChildRepository("user1", session, rapidFtrApplication);
 
         highlightedFormFields = new ArrayList<FormField>();
         List<FormSection> formSections = FormSectionTest.loadFormSectionsFromClassPathResource();
@@ -73,7 +78,7 @@ public class ChildRepositoryTest {
 
     @Test
     public void shouldUpdateChildRecordIfIdAlreadyExistsAndSetLastUpdateAt() throws Exception {
-        ChildRepository repository = spy(new ChildRepository("user1", session));
+        ChildRepository repository = spy(new ChildRepository("user1", session, rapidFtrApplication));
         repository.createOrUpdate(new Child("id1", "user1", "{ 'test1' : 'value1', 'test2' : 0, 'test3' : [ '1', 2, '3' ] }"));
 
         String updateString = "{ 'test1' : 'value1' }";
@@ -200,7 +205,7 @@ public class ChildRepositoryTest {
     @Test
     public void shouldReturnFirstPage() throws JSONException {
         session = mock(DatabaseSession.class);
-        repository = spy(new ChildRepository("user1", session));
+        repository = spy(new ChildRepository("user1", session, rapidFtrApplication));
         doReturn(new ArrayList<Child>()).when(repository).toChildren(any(Cursor.class));
 
         repository.getRecordsForFirstPage();
@@ -212,7 +217,7 @@ public class ChildRepositoryTest {
     @Test
     public void shouldReturnRecordsBetweenSpecifiedLimits() throws JSONException {
         session = mock(DatabaseSession.class);
-        repository = spy(new ChildRepository("user1", session));
+        repository = spy(new ChildRepository("user1", session, rapidFtrApplication));
         doReturn(new ArrayList<Child>()).when(repository).toChildren(any(Cursor.class));
 
         repository.getRecordsBetween(1, 10);
@@ -224,7 +229,7 @@ public class ChildRepositoryTest {
     @Test
     public void shouldQueryForFirstThirtyMatches() throws JSONException {
         session = mock(DatabaseSession.class);
-        repository = spy(new ChildRepository("user1", session));
+        repository = spy(new ChildRepository("user1", session, rapidFtrApplication));
         doReturn(new ArrayList<Child>()).when(repository).toChildren(any(Cursor.class));
 
         repository.getFirstPageOfChildrenMatchingString("john");
@@ -238,7 +243,7 @@ public class ChildRepositoryTest {
     @Test
     public void shouldQueryForMatchingChildrenBetweenSpecifiedLimits() throws JSONException {
         session = mock(DatabaseSession.class);
-        repository = spy(new ChildRepository("user1", session));
+        repository = spy(new ChildRepository("user1", session, rapidFtrApplication));
         doReturn(new ArrayList<Child>()).when(repository).toChildren(any(Cursor.class));
 
         repository.getChildrenMatchingStringBetween("john", 1, 10);
@@ -279,7 +284,7 @@ public class ChildRepositoryTest {
         Child child1 = new Child("id1", "user1", null);
         repository.createOrUpdate(child1);
 
-        ChildRepository anotherUsersRepository = new ChildRepository("user2", session);
+        ChildRepository anotherUsersRepository = new ChildRepository("user2", session, rapidFtrApplication);
         Child child2 = new Child("id2", "user2", null);
         anotherUsersRepository.createOrUpdate(child2);
 

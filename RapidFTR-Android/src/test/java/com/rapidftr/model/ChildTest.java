@@ -2,6 +2,7 @@ package com.rapidftr.model;
 
 
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
@@ -14,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -36,13 +38,17 @@ public class ChildTest {
     private PotentialMatchRepository potentialMatchRepository;
     private String user;
     private DatabaseSession session;
+    private RapidFtrApplication rapidFtrApplication;
 
     @Before
     public void setUp() throws JSONException {
         user = "Foo";
+        rapidFtrApplication = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        rapidFtrApplication.setCurrentUser(new User("userName", "password", true, "http://1.2.3.4"));
+
         session = new ShadowSQLiteHelper("test_database").getSession();
         potentialMatchRepository = new PotentialMatchRepository(user, session);
-        enquiryRepository = new EnquiryRepository(user, session);
+        enquiryRepository = new EnquiryRepository(user, session, rapidFtrApplication);
     }
 
     @Test

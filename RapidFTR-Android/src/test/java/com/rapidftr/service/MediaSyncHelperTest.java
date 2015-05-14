@@ -3,24 +3,20 @@ package com.rapidftr.service;
 import com.google.common.io.CharStreams;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
-import com.rapidftr.database.Database;
-import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.User;
-import com.rapidftr.repository.ChildRepository;
-import com.rapidftr.utils.http.FluentRequest;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.Robolectric;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 
-import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
@@ -36,18 +32,21 @@ public class MediaSyncHelperTest {
     @Mock
     private User currentUser;
     private EntityHttpDao<Child> childHttpDao;
-    private RapidFtrApplication context;
+    private RapidFtrApplication application;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        childHttpDao = EntityHttpDaoFactory.createChildHttpDao(
+
+        application = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        User user = new User("userName", "password", true, "whatever");
+        application.setCurrentUser(user);
+
+        childHttpDao = EntityHttpDaoFactory.createChildHttpDao(application,
                 "http://whatever",
                 ChildSyncService.CHILDREN_API_PATH,
                 ChildSyncService.CHILDREN_API_PARAMETER);
         given(currentUser.isVerified()).willReturn(true);
-        context = RapidFtrApplication.getApplicationInstance();
-        context.getSharedPreferences().edit().putString(SERVER_URL_PREF, "whatever").commit();
     }
 
     @Test
@@ -57,14 +56,14 @@ public class MediaSyncHelperTest {
         getFakeHttpLayer().setDefaultHttpResponse(200, "audio stream");
         getFakeHttpLayer().addHttpResponseRule("http://whatever/child/1234abcd/audio", "OK");
 
-        String response = CharStreams.toString(new InputStreamReader(new MediaSyncHelper(childHttpDao, context).getAudio(child)));
+        String response = CharStreams.toString(new InputStreamReader(new MediaSyncHelper(childHttpDao, application).getAudio(child)));
         assertEquals("OK", response);
     }
 
     @Test
     public void shouldBuildPhotoUrlFromChildModel() throws IOException {
-        EntityHttpDao<Child> spyDao = spy(new EntityHttpDao<Child>());
-        MediaSyncHelper helper = new MediaSyncHelper(spyDao, context);
+        EntityHttpDao<Child> spyDao = spy(new EntityHttpDao<Child>(application));
+        MediaSyncHelper helper = new MediaSyncHelper(spyDao, application);
         Child child = new Child();
         child.put("_id", "1234");
         doReturn(null).when(spyDao).getResourceStream(any(String.class));
@@ -74,8 +73,8 @@ public class MediaSyncHelperTest {
 
     @Test
     public void shouldBuildPhotoUrlFromEnquiryModel() throws IOException, JSONException {
-        EntityHttpDao<Child> spyDao = spy(new EntityHttpDao<Child>());
-        MediaSyncHelper helper = new MediaSyncHelper(spyDao, context);
+        EntityHttpDao<Child> spyDao = spy(new EntityHttpDao<Child>(application));
+        MediaSyncHelper helper = new MediaSyncHelper(spyDao, application);
         Enquiry enquiry = new Enquiry("{}");
         enquiry.put("_id", "1234");
         doReturn(null).when(spyDao).getResourceStream(any(String.class));
@@ -85,8 +84,8 @@ public class MediaSyncHelperTest {
 
     @Test
     public void shouldBuildAudioUrlFromChildModel() throws IOException {
-        EntityHttpDao<Child> spyDao = spy(new EntityHttpDao<Child>());
-        MediaSyncHelper helper = new MediaSyncHelper(spyDao, context);
+        EntityHttpDao<Child> spyDao = spy(new EntityHttpDao<Child>(application));
+        MediaSyncHelper helper = new MediaSyncHelper(spyDao, application);
         Child child = new Child();
         child.put("_id", "1234");
         doReturn(null).when(spyDao).getResourceStream(any(String.class));
@@ -96,8 +95,8 @@ public class MediaSyncHelperTest {
 
     @Test
     public void shouldBuildAudioUrlFromEnquiryModel() throws IOException, JSONException {
-        EntityHttpDao<Child> spyDao = spy(new EntityHttpDao<Child>());
-        MediaSyncHelper helper = new MediaSyncHelper(spyDao, context);
+        EntityHttpDao<Child> spyDao = spy(new EntityHttpDao<Child>(application));
+        MediaSyncHelper helper = new MediaSyncHelper(spyDao, application);
         Enquiry enquiry = new Enquiry("{}");
         enquiry.put("_id", "1234");
         doReturn(null).when(spyDao).getResourceStream(any(String.class));

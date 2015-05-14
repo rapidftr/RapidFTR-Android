@@ -35,12 +35,12 @@ public class EntityHttpDao<T extends BaseModel> {
     protected String apiPath;
     protected String apiParameter;
 
-    public EntityHttpDao() {
-        this.serverUrl = RapidFtrApplication.getApplicationInstance().getCurrentUser().getServerUrl();
+    public EntityHttpDao(RapidFtrApplication application) {
+        this.serverUrl = application.getCurrentUser().getServerUrl();
     }
 
-    public EntityHttpDao(String serverUrl, String apiPath, String apiParameter) {
-        this();
+    public EntityHttpDao(RapidFtrApplication application, String serverUrl, String apiPath, String apiParameter) {
+        this(application);
         this.serverUrl = serverUrl;
         this.apiPath = apiPath;
         this.apiParameter = apiParameter;

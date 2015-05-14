@@ -50,7 +50,7 @@ public class MigrateUnverifiedDataToVerifiedTest {
         JSONObject mockJSONObject = mock(JSONObject.class);
         doReturn(verifiedUser.getDbKey()).when(mockJSONObject).getString("db_key");
         doReturn(verifiedUser.isVerified()).when(mockJSONObject).optBoolean("verified");
-        MigrateUnverifiedDataToVerified task = new MigrateUnverifiedDataToVerified(mockJSONObject, unverifiedUser);
+        MigrateUnverifiedDataToVerified task = new MigrateUnverifiedDataToVerified(mockJSONObject, unverifiedUser, application);
         task = spy(task);
 
         doReturn(verifiedUser).when(task).getUserFromResponse();
@@ -71,7 +71,7 @@ public class MigrateUnverifiedDataToVerifiedTest {
         doReturn("DB_KEY_FROM_SERVER").when(mockJSONObject).getString("db_key");
         doReturn(true).when(mockJSONObject).optBoolean("verified");
 
-        MigrateUnverifiedDataToVerified task = new MigrateUnverifiedDataToVerified(mockJSONObject, unverifiedUser);
+        MigrateUnverifiedDataToVerified task = new MigrateUnverifiedDataToVerified(mockJSONObject, unverifiedUser, application);
         task = spy(task);
 
         doReturn(mock(ChildRepository.class)).when(task).getChildRepo(Matchers.<User>any());

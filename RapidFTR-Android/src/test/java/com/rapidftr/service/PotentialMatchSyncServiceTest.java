@@ -22,6 +22,8 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.robolectric.Robolectric.getFakeHttpLayer;
@@ -77,6 +79,7 @@ public class PotentialMatchSyncServiceTest {
 
     private RapidFtrApplication mockContext() {
         RapidFtrApplication context = RapidFtrApplication.getApplicationInstance();
+        context.setCurrentUser(new User("foo", "bar"));
         context.getSharedPreferences().edit().putString(SERVER_URL_PREF, "whatever").commit();
         return context;
     }

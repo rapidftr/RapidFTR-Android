@@ -177,7 +177,7 @@ public class RapidFtrActivityTest {
     @Test
     public void shouldNotSyncDataWhenNetworkIsNotPresent() {
         RapidFtrActivity mainActivity = spy(new ViewAllChildrenActivity());
-        RapidFtrApplication mockApplication = spy(mainActivity.getContext());
+        RapidFtrApplication mockApplication = mock(RapidFtrApplication.class);
 
         doReturn(false).when(mockApplication).isOnline();
         doReturn(mockApplication).when(mainActivity).getContext();

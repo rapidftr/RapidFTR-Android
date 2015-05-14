@@ -8,6 +8,7 @@ import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import lombok.Cleanup;
 import org.json.JSONException;
 import org.junit.Before;
@@ -48,7 +49,9 @@ public class ChildHighlightedFieldViewTest {
 
         child = new Child("1", "field_worker", loadChildDataFromClassPathResource());
 
-        application = spy((RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext());
+        application = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        User user = new User("userName", "password", true, "http://1.2.3.4");
+        application.setCurrentUser(user);
     }
 
     private String loadChildDataFromClassPathResource() throws IOException {

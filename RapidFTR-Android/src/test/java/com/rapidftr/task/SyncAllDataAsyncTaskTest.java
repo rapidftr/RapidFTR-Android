@@ -74,13 +74,13 @@ public class SyncAllDataAsyncTaskTest {
 
         given(rapidFtrActivity.getSystemService(Matchers.<String>any())).willReturn(notificationManager);
 
-        application = spy(RapidFtrApplication.getApplicationInstance());
+        application = mock(RapidFtrApplication.class);
         doReturn(application).when(rapidFtrActivity).getApplication();
-
         syncAllDataAsyncTask = new SyncAllDataAsyncTask(formService, childSyncService, deviceService, childRepository, currentUser);
 
         doReturn("Notify").when(rapidFtrActivity).getString(any(Integer.class));
         doReturn("Notify").when(application).getString(any(Integer.class));
+        doReturn(new User("foo", "bar")).when(application).getCurrentUser();
         doReturn("Child Synchronization").when(childSyncService).getNotificationTitle();
     }
 
@@ -225,7 +225,7 @@ public class SyncAllDataAsyncTaskTest {
     public void shouldShowSessionTimeoutMessage() throws JSONException, IOException {
         Robolectric.getFakeHttpLayer().setDefaultHttpResponse(401, "Unauthorized");
         given(rapidFtrActivity.getString(R.string.session_timeout)).willReturn("Your session is timed out");
-        EntityHttpDao<Child> dao = EntityHttpDaoFactory.createChildHttpDao("","","");
+        EntityHttpDao<Child> dao = EntityHttpDaoFactory.createChildHttpDao(application, "","","");
         syncAllDataAsyncTask.recordSyncService = new ChildSyncService(RapidFtrApplication.getApplicationInstance(), dao, childRepository);
         syncAllDataAsyncTask.setContext(rapidFtrActivity);
         syncAllDataAsyncTask.execute();

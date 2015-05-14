@@ -1,14 +1,17 @@
 package com.rapidftr.model;
 
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.utils.RapidFtrDateTime;
 import junit.framework.TestCase;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.text.ParseException;
@@ -21,12 +24,21 @@ import static org.junit.Assert.assertEquals;
 @RunWith(CustomTestRunner.class)
 public class HistoryTest {
 
+    private RapidFtrApplication rapidFtrApplication;
+
+    @Before
+    public void setUp(){
+        rapidFtrApplication = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        User user = new User("userName", "password", true, "http://1.2.3.4");
+        rapidFtrApplication.setCurrentUser(user);
+    }
+
     @Test
     public void shouldCompareObjectsAndReturnHistory() throws JSONException {
         BaseModel originalModel = new BaseModel("{\"child_name\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"child_name\":\"Foo Bar124\",\"unique_identifier\":\"1\"}");
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
 
         String  expectedJSON = "{\"child_name\":{\"from\":\"Foo Bar\", \"to\":\"Foo Bar124\"}}";
         JSONAssert.assertEquals(expectedJSON, history.getString(History.CHANGES), true);
@@ -37,7 +49,7 @@ public class HistoryTest {
         BaseModel originalModel = new BaseModel("{\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"child_name\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
 
         String  expectedJSON = "{\"child_name\":{\"from\":\"\", \"to\":\"Foo Bar\"}}";
         JSONAssert.assertEquals(expectedJSON, history.getString(History.CHANGES), true);
@@ -48,7 +60,7 @@ public class HistoryTest {
         BaseModel originalModel = new BaseModel("{\"child_name\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"unique_identifier\":\"1\"}");
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
 
         String  expectedJSON = "{\"child_name\":{\"from\":\"Foo Bar\", \"to\":\"\"}}";
         JSONAssert.assertEquals(expectedJSON, history.getString(History.CHANGES), true);
@@ -59,7 +71,7 @@ public class HistoryTest {
         BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"deletion\":\"old stuff\",\"change2\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"new stuff\",\"change2\":\"Foo Bar2\",\"unique_identifier\":\"1\"}");
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
 
         String  expectedJSON = "{\"change1\":{\"from\":\"Foo Bar\",\"to\":\"Foo Bar1\"}," +
                 "\"change2\":{\"from\":\"Foo Bar\",\"to\":\"Foo Bar2\"}," +
@@ -76,7 +88,7 @@ public class HistoryTest {
         BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"deletion\":\"old stuff\",\"change2\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"new stuff\",\"change2\":\"Foo Bar2\",\"unique_identifier\":\"1\"}");
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
         assertEquals("user_name", history.getString(History.USER_NAME));
     }
 
@@ -89,7 +101,7 @@ public class HistoryTest {
         BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"deletion\":\"old stuff\",\"change2\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"new stuff\",\"change2\":\"Foo Bar2\",\"unique_identifier\":\"1\"}");
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
         assertEquals("UNICEF", history.getString(History.USER_ORGANISATION));
     }
 
@@ -98,7 +110,7 @@ public class HistoryTest {
         BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"deletion\":\"old stuff\",\"change2\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"new stuff\",\"change2\":\"Foo Bar2\",\"unique_identifier\":\"1\"}");
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
         Calendar updatedAt = RapidFtrDateTime.getDateTime(history.getString(History.DATETIME));
         assert(Calendar.getInstance().getTimeInMillis() - updatedAt.getTimeInMillis() < 1000);
     }
@@ -108,7 +120,7 @@ public class HistoryTest {
         BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"unique_identifier\":\"1\",\"deletionz\":\"\"}");
         BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"unique_identifier\":\"1\"}");
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
         JSONObject changes = (JSONObject) history.get(History.CHANGES);
         assertFalse(changes.has("deletion"));
     }
@@ -118,7 +130,7 @@ public class HistoryTest {
         BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"\",\"unique_identifier\":\"1\"}");
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
         JSONObject changes = (JSONObject) history.get(History.CHANGES);
         assertFalse(changes.has("addition"));
     }
@@ -128,7 +140,7 @@ public class HistoryTest {
         BaseModel originalModel = new BaseModel("{\"change1\":\"Foo Bar\",\"addition\":\"\",\"unique_identifier\":\"1\"}");
         BaseModel changedModel = new BaseModel("{\"change1\":\"Foo Bar1\",\"addition\":\"\",\"unique_identifier\":\"1\"}");
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
         JSONObject changes = (JSONObject) history.get(History.CHANGES);
         assertFalse(changes.has("addition"));
     }
@@ -152,7 +164,7 @@ public class HistoryTest {
                 "\"synced\":\"false\"}");
         changedModel.addHistory(new History("{\"changes\":{\"something_else\":{\"from\":\"Foo Bar\",\"to\":\"old stuff\"}}}"));
 
-        History history = History.buildHistoryBetween(originalModel, changedModel);
+        History history = History.buildHistoryBetween(rapidFtrApplication, originalModel, changedModel);
 
         JSONObject changes = (JSONObject) history.get(History.CHANGES);
         assertFalse(changes.has(History.HISTORIES));

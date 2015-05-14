@@ -103,13 +103,9 @@ public class RapidFtrApplication extends Application {
 
     private void loadFeatureTogglesFrom(int resourceId) throws IOException, JSONException {
         String featuresJSON = ResourceLoader.loadStringFromRawResource(getApplicationContext(), resourceId);
-        Log.d("Toggle", featuresJSON);
         JSONObject object = new JSONObject(featuresJSON);
         SharedPreferences.Editor editor = this.getSharedPreferences().edit();
-
-        editor.putString("disabled_features", object.toString());
-
-        editor.commit();
+        editor.putString("disabled_features", object.toString()).commit();
     }
 
     protected void setCurrentUser(String user) throws IOException {

@@ -131,7 +131,7 @@ public class LoginTask {
         if (offlineUser != null && onlineUser.isVerified() && !offlineUser.isVerified()) {
             try {
                 notifyProgress(login_migrate_progress);
-                new MigrateUnverifiedDataToVerified(new JSONObject(onlineUser.asJSON()), offlineUser).execute();
+                new MigrateUnverifiedDataToVerified(new JSONObject(onlineUser.asJSON()), offlineUser, application).execute();
             } catch (Exception e) {
                 throw new LoginException(login_migrate_failed, null);
             }
