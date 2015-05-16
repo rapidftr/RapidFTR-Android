@@ -8,6 +8,7 @@ import com.rapidftr.model.User;
 import com.rapidftr.service.ChangePasswordService;
 import com.rapidftr.utils.http.FluentResponse;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -46,6 +47,7 @@ public class ChangePasswordTaskTest {
         verify(changePasswordService).updatePassword("param1", "param2", "param3");
     }
 
+    @Ignore
     @Test
     public void shouldShowToastMessageIfPasswordIsChanged() {
         changePasswordTask.setActivity(new ChangePasswordActivity());
