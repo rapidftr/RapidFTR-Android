@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.adapter.PotentialMatchesFormSectionPagerAdapter;
+import com.rapidftr.features.FEATURE;
 import com.rapidftr.forms.PotentialMatchesFormSection;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.Child;
@@ -89,9 +90,7 @@ public class ViewChildActivity extends BaseChildActivity {
         this.editable = false;
         load();
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences();
-        JSONObject features = new JSONObject(sharedPreferences.getString("features", "{}"));
-        if (features.optBoolean("Enquiries", true)) {
+        if (featureToggle.isEnabled(FEATURE.ENQUIRIES)) {
             PotentialMatchesFormSection section = new PotentialMatchesFormSection();
             section.setOrder(formSections.size());
             formSections.add(section);

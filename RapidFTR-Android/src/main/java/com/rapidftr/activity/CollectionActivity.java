@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.*;
+import com.google.inject.Inject;
 import com.rapidftr.R;
 import com.rapidftr.adapter.FormSectionPagerAdapter;
+import com.rapidftr.features.FeatureToggle;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.service.FormService;
@@ -25,6 +27,9 @@ public abstract class CollectionActivity extends RapidFtrActivity {
     @Getter
     @Setter
     MediaPlayer mediaPlayer;
+
+    @Inject
+    protected FeatureToggle featureToggle;
 
     protected FormService formService;
     protected List<FormSection> formSections;
