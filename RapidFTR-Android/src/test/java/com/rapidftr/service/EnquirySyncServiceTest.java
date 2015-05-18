@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
+import static com.rapidftr.RapidFtrApplication.SHARED_PREFERENCES_FILE;
 import static com.rapidftr.RapidFtrApplication.getApplicationInstance;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
@@ -174,7 +175,7 @@ public class EnquirySyncServiceTest {
 
     @Test
     public void shouldUpdateEnquiryAttributesAfterSync() throws Exception {
-        String response = "{\"_id\" : \"couch_id\", \"child_name\":\"subhas\",\"unique_identifier\":\"78223s4h1e468f5200edc\"}";
+        String response = "{\"_id\" : \"couch_id\", \"child_name\":\"subhas\",\"unique_identifier\":\"78223s4h1e468f5200edc\", \"last_updated_at\":\"2014-04-12\"}";
         Enquiry enquiry = spy(new Enquiry(response, "createdBy"));
         enquiry.put(Enquiry.FIELD_INTERNAL_ID, "id");
 
@@ -184,12 +185,7 @@ public class EnquirySyncServiceTest {
         httpResponse.setEntity(new StringEntity(response, ContentType.APPLICATION_JSON));
 
         getFakeHttpLayer().addHttpResponseRule("PUT", "http://whatever/api/enquiries/id", httpResponse);
-        Enquiry returnedEnquiry = new Enquiry();
-
-        assertThat(returnedEnquiry.isSynced(), CoreMatchers.is(false));
-        assertNull(returnedEnquiry.getLastUpdatedAt());
-
-        returnedEnquiry = new EnquirySyncService(mockContext(), enquiryHttpDao, enquiryRepository).sync(enquiry, user);
+        Enquiry returnedEnquiry = new EnquirySyncService(mockContext(), enquiryHttpDao, enquiryRepository).sync(enquiry, user);
 
         verify(enquiryRepository).createOrUpdateWithoutHistory(returnedEnquiry);
         assertNotNull(returnedEnquiry.getLastUpdatedAt());
