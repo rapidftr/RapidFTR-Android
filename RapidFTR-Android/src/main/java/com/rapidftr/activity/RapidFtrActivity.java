@@ -41,6 +41,7 @@ public abstract class RapidFtrActivity extends Activity {
 
     public static final String LOGOUT_INTENT_FILTER = "com.rapidftr.LOGOUT_INTENT";
 
+
     protected
     @Getter
     @Setter

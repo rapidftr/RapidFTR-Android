@@ -25,7 +25,6 @@ import static com.rapidftr.utils.http.FluentRequest.http;
 public class FormService {
 
     public static final String FORM_SECTIONS_PREF = "FORM_SECTION";
-    public static final String DEFAULT_FORM_SECTIONS_FILE_NAME = "default_form_sections.json";
     public static final String API_FORM_SECTIONS_PATH = "/api/form_sections";
 
     private RapidFtrApplication context;

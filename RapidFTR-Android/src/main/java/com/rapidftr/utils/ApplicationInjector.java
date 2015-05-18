@@ -11,6 +11,7 @@ import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.DatabaseHelper;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.SQLCipherHelper;
+import com.rapidftr.features.FeatureToggle;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.PotentialMatch;
@@ -53,6 +54,7 @@ public class ApplicationInjector extends AbstractModule {
         bind(LogOutService.class);
         bind(LoginService.class);
         bind(DeviceService.class);
+        bind(FeatureToggle.class);
     }
 
     @Provides
