@@ -1,6 +1,7 @@
 package com.rapidftr.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -28,11 +29,13 @@ import com.rapidftr.view.PotentialMatchesFormSectionView;
 import com.rapidftr.view.PotentialMatchesViewAdapter;
 import lombok.Cleanup;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.rapidftr.RapidFtrApplication.APP_IDENTIFIER;
+import static com.rapidftr.RapidFtrApplication.SHARED_PREFERENCES_FILE;
 
 
 public class ViewChildActivity extends BaseChildActivity {
@@ -85,9 +88,14 @@ public class ViewChildActivity extends BaseChildActivity {
         super.initializeData(savedInstanceState);
         this.editable = false;
         load();
-        PotentialMatchesFormSection section = new PotentialMatchesFormSection();
-        section.setOrder(formSections.size());
-        formSections.add(section);
+
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences();
+        JSONObject features = new JSONObject(sharedPreferences.getString("features", "{}"));
+        if (features.optBoolean("Enquiries", true)) {
+            PotentialMatchesFormSection section = new PotentialMatchesFormSection();
+            section.setOrder(formSections.size());
+            formSections.add(section);
+        }
     }
 
     protected void sync() {
