@@ -1,11 +1,21 @@
 package com.rapidftr.activity;
 
+import android.os.Bundle;
 import android.view.View;
 import com.rapidftr.R;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import org.json.JSONException;
 
 public class RegisterChildActivity extends BaseChildActivity {
+
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        try {
+            super.hideEnquiriesTabIfRapidReg();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     protected void initializeLabels() throws JSONException {

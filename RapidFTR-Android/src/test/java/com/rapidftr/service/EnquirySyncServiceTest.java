@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.Robolectric;
 
 import javax.xml.ws.http.HTTPException;
 import java.io.SyncFailedException;
@@ -34,6 +35,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.getFakeHttpLayer;
 
 @RunWith(CustomTestRunner.class)
@@ -44,17 +46,21 @@ public class EnquirySyncServiceTest {
     private EnquiryRepository enquiryRepository;
     @Mock
     private SharedPreferences sharedPreferences;
-    @Mock
+    private RapidFtrApplication application;
     private User user;
 
     @Before
     public void setUp() {
         initMocks(this);
-        enquiryHttpDao = EntityHttpDaoFactory.createEnquiryHttpDao(
+
+        application = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        user = new User("userName", "password", true, "http://1.2.3.4");
+        application.setCurrentUser(user);
+
+        enquiryHttpDao = EntityHttpDaoFactory.createEnquiryHttpDao(application,
                 "http://whatever",
                 EnquiryHttpDao.ENQUIRIES_API_PATH,
                 EnquirySyncService.ENQUIRIES_API_PARAMETER);
-        given(user.isVerified()).willReturn(true);
     }
 
     @Test

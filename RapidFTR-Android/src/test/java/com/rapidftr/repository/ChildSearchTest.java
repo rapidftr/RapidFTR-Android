@@ -1,16 +1,19 @@
 package com.rapidftr.repository;
 
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.forms.FormSectionTest;
 import com.rapidftr.model.Child;
+import com.rapidftr.model.User;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,11 +29,16 @@ public class ChildSearchTest {
     private DatabaseSession session;
     private ChildSearch childSearch;
     private List<FormField> highlightedFormFields;
+    private RapidFtrApplication rapidFtrApplication;
 
     @Before
     public void setUp() throws IOException {
         session = new ShadowSQLiteHelper("test_database").getSession();
-        repository = new ChildRepository("user1", session);
+        rapidFtrApplication = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        User user = new User("userName", "password", true, "http://1.2.3.4");
+        rapidFtrApplication.setCurrentUser(user);
+
+        repository = new ChildRepository("user1", session, rapidFtrApplication);
         highlightedFormFields = new ArrayList<FormField>();
         List<FormSection> formSections = FormSectionTest.loadFormSectionsFromClassPathResource();
         for (FormSection formSection : formSections) {

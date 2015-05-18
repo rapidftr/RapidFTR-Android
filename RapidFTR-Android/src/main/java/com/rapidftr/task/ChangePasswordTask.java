@@ -56,9 +56,9 @@ public class ChangePasswordTask extends AsyncTask<String, Boolean, Boolean> {
             } catch (Exception e) {
                 Log.e("ChangePasswordTask",e.getMessage());
             }
-            Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.password_change_success, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.password_change_success, Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(RapidFtrApplication.getApplicationInstance(), R.string.password_change_failed, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, R.string.password_change_failed, Toast.LENGTH_LONG).show();
         }
     }
 

@@ -31,18 +31,20 @@ public class EnquiryRepository implements Closeable, Repository<Enquiry> {
 
     private final String userName;
     private final DatabaseSession session;
+    private final RapidFtrApplication applicationInstance;
 
     @Inject
-    public EnquiryRepository(@Named("USER_NAME") String userName, DatabaseSession session) {
+    public EnquiryRepository(@Named("USER_NAME") String userName, DatabaseSession session, RapidFtrApplication rapidFtrApplication) {
         this.userName = userName;
         this.session = session;
+        this.applicationInstance = rapidFtrApplication;
     }
 
     @Override
     public void createOrUpdate(Enquiry enquiry) throws JSONException {
         if (exists(enquiry.getUniqueId())) {
             Enquiry existingEnquiry = get(enquiry.getUniqueId());
-            enquiry.addHistory(History.buildHistoryBetween(existingEnquiry, enquiry));
+            enquiry.addHistory(History.buildHistoryBetween(applicationInstance, existingEnquiry, enquiry));
         } else {
             User currentUser = RapidFtrApplication.getApplicationInstance().getCurrentUser();
             enquiry.addHistory(History.buildCreationHistory(enquiry, currentUser));

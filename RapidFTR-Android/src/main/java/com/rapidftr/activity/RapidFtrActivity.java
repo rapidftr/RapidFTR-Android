@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.google.common.collect.HashMultimap;
@@ -28,6 +29,8 @@ import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.view.fields.TextField;
 import lombok.Getter;
 import lombok.Setter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -422,5 +425,19 @@ public abstract class RapidFtrActivity extends Activity {
 
     protected BroadcastReceiver getBroadcastReceiver() {
         return networkChangeReceiver;
+    }
+
+    private void hideEnquiryTab() {
+        Button enquiryTab = (Button) findViewById(R.id.enquiry_tab);
+        enquiryTab.setVisibility(View.GONE);
+    }
+
+    public void hideEnquiriesTabIfRapidReg() throws JSONException {
+        SharedPreferences sharedPreferences = getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
+        JSONObject disabled_features = new JSONObject(sharedPreferences.getString("disabled_features", "").toString());
+        if (disabled_features.optBoolean("Enquiries", false) == true) {
+            hideEnquiryTab();
+        }
+
     }
 }

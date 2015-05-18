@@ -39,11 +39,11 @@ public class History extends JSONObject implements Parcelable {
         parcel.writeString(this.toString());
     }
 
-    public static History buildHistoryBetween(BaseModel originalModel, BaseModel updatedModel) throws JSONException {
+    public static History buildHistoryBetween(RapidFtrApplication rapidFtrApplication, BaseModel originalModel, BaseModel updatedModel) throws JSONException {
         History history = new History();
         addChangesForOldValues(originalModel, updatedModel, history);
         addChangesForNewValues(originalModel, updatedModel, history);
-        User currentUser = RapidFtrApplication.getApplicationInstance().getCurrentUser();
+        User currentUser = rapidFtrApplication.getCurrentUser();
         String organisation = currentUser.getOrganisation();
         String userName = currentUser.getUserName();
         history.put(History.USER_NAME, userName);

@@ -9,6 +9,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.io.IOException;
 
@@ -26,7 +27,8 @@ public class LogOutServiceTest {
 	@Before
 	public void setUp() {
 		service = spy(new LogOutService());
-		application = spy(RapidFtrApplication.getApplicationInstance());
+		application = mock(RapidFtrApplication.class);
+		when(application.getResources()).thenReturn(Robolectric.application.getResources());
 		activity = mock(RapidFtrActivity.class, RETURNS_DEEP_STUBS);
 		given(activity.getContext()).willReturn(application);
 	}

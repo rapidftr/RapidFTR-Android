@@ -7,9 +7,11 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 @RunWith(CustomTestRunner.class)
@@ -22,7 +24,7 @@ public class PaginatedSearchQueryBuilderTest {
     @Before
     public void setUp() throws Exception {
         user = spy(new User("user1"));
-        applicationContext = spy(RapidFtrApplication.getApplicationInstance());
+        applicationContext = mock(RapidFtrApplication.class);
         doReturn(user).when(applicationContext).getCurrentUser();
     }
 

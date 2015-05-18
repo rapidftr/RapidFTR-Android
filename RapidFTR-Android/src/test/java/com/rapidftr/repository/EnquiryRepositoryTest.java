@@ -3,12 +3,14 @@ package com.rapidftr.repository;
 import android.content.ContentValues;
 import android.database.Cursor;
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.Database;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.model.Child;
 import com.rapidftr.model.Enquiry;
 import com.rapidftr.model.History;
+import com.rapidftr.model.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +18,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.sql.SQLException;
@@ -39,11 +42,15 @@ public class EnquiryRepositoryTest {
     private DatabaseSession session;
     private EnquiryRepository enquiryRepository;
     private String user = "field worker";
+    private RapidFtrApplication rapidFtrApplication;
 
     @Before
     public void setUp() {
+        rapidFtrApplication = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        rapidFtrApplication.setCurrentUser(new User("userName", "password", true, "http://1.2.3.4"));
+
         session = new ShadowSQLiteHelper("test_database").getSession();
-        enquiryRepository = new EnquiryRepository(user, session);
+        enquiryRepository = new EnquiryRepository(user, session, rapidFtrApplication);
     }
 
     @Ignore
@@ -343,7 +350,7 @@ public class EnquiryRepositoryTest {
     @Test
     public void shouldReturnFirstPage() throws JSONException {
         session = mock(DatabaseSession.class);
-        enquiryRepository = spy(new EnquiryRepository("user1", session));
+        enquiryRepository = spy(new EnquiryRepository("user1", session, rapidFtrApplication));
         doReturn(new ArrayList<Child>()).when(enquiryRepository).toEnquiries(any(Cursor.class));
 
         enquiryRepository.getRecordsForFirstPage();
@@ -355,7 +362,7 @@ public class EnquiryRepositoryTest {
     @Test
     public void shouldReturnRecordsBetweenSpecifiedLimits() throws JSONException {
         session = mock(DatabaseSession.class);
-        enquiryRepository = spy(new EnquiryRepository("user1", session));
+        enquiryRepository = spy(new EnquiryRepository("user1", session, rapidFtrApplication));
         doReturn(new ArrayList<Child>()).when(enquiryRepository).toEnquiries(any(Cursor.class));
 
         enquiryRepository.getRecordsBetween(1, 10);

@@ -1,6 +1,7 @@
 package com.rapidftr.model;
 
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.database.DatabaseSession;
 import com.rapidftr.database.ShadowSQLiteHelper;
 import com.rapidftr.repository.ChildRepository;
@@ -11,6 +12,7 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -29,14 +31,17 @@ public class EnquiryTest {
     private PotentialMatchRepository potentialMatchRepository;
     private EnquiryRepository enquiryRepo;
     private String user;
+    private RapidFtrApplication rapidFtrApplication;
 
     @Before
     public void setUp() throws JSONException {
         user = "Foo";
         session = new ShadowSQLiteHelper("test_database").getSession();
-        childRepository = new ChildRepository("user1", session);
+        rapidFtrApplication = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        rapidFtrApplication.setCurrentUser(new User());
+        childRepository = new ChildRepository("user1", session, rapidFtrApplication);
         potentialMatchRepository = new PotentialMatchRepository("user1", session);
-        enquiryRepo = new EnquiryRepository(user, session);
+        enquiryRepo = new EnquiryRepository(user, session, rapidFtrApplication);
     }
 
     @Test
@@ -76,6 +81,7 @@ public class EnquiryTest {
     public void shouldNotReturnConfirmedMatchesForPotentialMatches() throws JSONException, SQLException {
         Child child1 = new Child("id1", "owner1", "{'test':'a','_id':'child_id_1' }");
         Child child2 = new Child("id2", "owner1", "{'test':'a','_id':'child_id_2' }");
+
         childRepository.createOrUpdate(child1);
         childRepository.createOrUpdate(child2);
         potentialMatchRepository.createOrUpdate(new PotentialMatch("enquiry_id_1", "child_id_1", "potential_match_id_1"));

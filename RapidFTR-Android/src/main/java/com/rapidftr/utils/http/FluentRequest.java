@@ -242,7 +242,7 @@ public class FluentRequest {
     }
 
     public String getBaseUrl(Context context) {
-        return ((RapidFtrApplication) context.getApplicationContext()).getSharedPreferences().getString(SERVER_URL_PREF, null);
+        return ((RapidFtrApplication) context).getSharedPreferences().getString(SERVER_URL_PREF, null);
     }
 
     public int getConnectionTimeout(Context context) {

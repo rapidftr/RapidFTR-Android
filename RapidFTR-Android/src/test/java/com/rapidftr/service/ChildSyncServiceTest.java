@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.robolectric.Robolectric;
 import org.robolectric.tester.org.apache.http.FakeHttpLayer;
 import org.robolectric.tester.org.apache.http.TestHttpResponse;
 
@@ -51,6 +52,8 @@ public class ChildSyncServiceTest {
     @Mock
     private User currentUser;
 
+    private RapidFtrApplication application;
+
     FluentRequest fluentRequest;
     public static final String RESPONSE = "{\"unique_identifier\":\"adf7c0c9-0137-4cae-beea-b7d282344829\",\"created_at\":\"2013-02-08 12:18:37\",\"created_by_full_name\":\"RapidFTR\",\"couchrest-type\":\"Child\",\"short_id\":\"2344829\",\"_id\":\"b7f89b978870da823e0af6491c3e295b\",\"_rev\":\"2-bc72af384e177fcaa8e9e8d181bfe05b\",\"name\":\"\",\"last_updated_at\":\"2013-02-08 11:37:33\",\"current_photo_key\":\"photo--1475374810-2013-02-08T175138\",\"created_by\":\"rapidftr\",\"photo_keys\":[\"photo--1475374810-2013-02-08T175138\"],\"created_organisation\":\"N/A\",\"posted_at\":\"2013-02-08 12:16:55UTC\",\"last_updated_by_full_name\":\"RapidFTR\"}";
     private EntityHttpDao<Child> childHttpDao;
@@ -58,7 +61,12 @@ public class ChildSyncServiceTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        childHttpDao = EntityHttpDaoFactory.createChildHttpDao(
+
+        application = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        User user = new User("userName", "password", true, "http://1.2.3.4");
+        application.setCurrentUser(user);
+
+        childHttpDao = EntityHttpDaoFactory.createChildHttpDao(application,
                 "http://whatever",
                 ChildSyncService.CHILDREN_API_PATH,
                 ChildSyncService.CHILDREN_API_PARAMETER);

@@ -1,11 +1,13 @@
 package com.rapidftr.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.adapter.pagination.PaginatedSearchResultsScrollListener;
 import com.rapidftr.model.Child;
@@ -14,6 +16,7 @@ import com.rapidftr.repository.ChildSearch;
 import com.rapidftr.service.FormService;
 import lombok.Cleanup;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +34,14 @@ public class SearchActivity extends RapidFtrActivity {
         setContentView(R.layout.activity_search_child);
         findViewById(R.id.search_btn).setOnClickListener(searchListener());
         formService = inject(FormService.class);
+
+        try {
+            super.hideEnquiriesTabIfRapidReg();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
+
 
     private void listView(List<Child> children) {
         highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, children, Child.CHILD_FORM_NAME, ViewChildActivity.class);

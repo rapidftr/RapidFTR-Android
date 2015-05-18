@@ -80,7 +80,7 @@ public class SyncUnverifiedDataAsyncTask<T extends BaseModel> extends Synchronis
     }
 
     protected void startMigrationTask(JSONObject response, RapidFtrApplication application) {
-        new MigrateUnverifiedDataToVerified(response, application.getCurrentUser()).execute();
+        new MigrateUnverifiedDataToVerified(response, application.getCurrentUser(), applicationContext).execute();
     }
 
     private void registerUser() throws IOException {

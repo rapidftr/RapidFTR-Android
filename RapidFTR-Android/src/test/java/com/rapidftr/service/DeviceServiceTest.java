@@ -6,18 +6,26 @@ import android.os.Environment;
 import android.telephony.TelephonyManager;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.activity.RapidFtrActivity;
+import com.rapidftr.model.User;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
+import org.robolectric.Robolectric;
+import org.robolectric.shadows.ShadowTelephonyManager;
 import org.robolectric.tester.org.apache.http.TestHttpResponse;
+import org.robolectric.util.RobolectricBackgroundExecutorService;
 
 import java.io.File;
 import java.io.IOException;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.rapidftr.RapidFtrApplication.SERVER_URL_PREF;
+import static com.rapidftr.RapidFtrApplication.SHARED_PREFERENCES_FILE;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.BDDMockito.given;
@@ -35,15 +43,17 @@ public class DeviceServiceTest {
     @Before
     public void setUp() {
         initMocks(this);
-        context = spy(RapidFtrApplication.getApplicationInstance());
-        context.getSharedPreferences().edit().putString(SERVER_URL_PREF, "whatever").commit();
-        deviceService = spy(new DeviceService(context));
 
-        telephonyManager = spy((TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE));
+        telephonyManager = mock(TelephonyManager.class);
+        context = mock(RapidFtrApplication.class);
+        when(context.getSharedPreferences()).thenReturn(Robolectric.application.getSharedPreferences(SHARED_PREFERENCES_FILE, MODE_PRIVATE));
+        context.getSharedPreferences().edit().putString(SERVER_URL_PREF, "whatever").commit();
+
+        deviceService = spy(new DeviceService(context));
         when(context.getSystemService(Context.TELEPHONY_SERVICE)).thenReturn(telephonyManager);
+        when(context.getResources()).thenReturn(Robolectric.application.getResources());
         when(telephonyManager.getDeviceId()).thenReturn("1234");
         given(context.getSystemService(Context.DEVICE_POLICY_SERVICE)).willReturn(devicePolicyManager);
-
     }
 
     @Test

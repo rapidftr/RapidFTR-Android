@@ -1,9 +1,13 @@
 package com.rapidftr.activity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.adapter.HighlightedFieldsViewAdapter;
 import com.rapidftr.adapter.pagination.ViewAllChildrenPaginatedScrollListener;
 import com.rapidftr.model.Child;
@@ -20,22 +24,28 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_children);
+
+        try {
+            super.hideEnquiriesTabIfRapidReg();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         listView(getChildren());
     }
-    
-    private List<Child> getChildren()
-    {
+
+    private List<Child> getChildren() {
         List<Child> children = new ArrayList<Child>();
         @Cleanup ChildRepository childRepository = inject(ChildRepository.class);
         try {
             children = childRepository.getRecordsForFirstPage();
         } catch (JSONException e) {
-            Log.e("ViewAllChildrenActivity","Error while displaying children list");
+            Log.e("ViewAllChildrenActivity", "Error while displaying children list");
             makeToast(R.string.fetch_child_error);
         }
         return children;
     }
-    
+
     private void listView(List<Child> children) {
         HighlightedFieldsViewAdapter highlightedFieldsViewAdapter = new HighlightedFieldsViewAdapter(this, children, Child.CHILD_FORM_NAME, ViewChildActivity.class);
         ListView childListView = (ListView) findViewById(R.id.child_list);

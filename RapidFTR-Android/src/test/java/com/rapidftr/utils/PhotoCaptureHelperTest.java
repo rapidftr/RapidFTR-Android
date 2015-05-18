@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import static com.rapidftr.RapidFtrApplication.*;
 import static com.rapidftr.utils.PhotoCaptureHelper.QUALITY;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -44,7 +45,8 @@ public class PhotoCaptureHelperTest {
 
     @Before
     public void setUp() {
-        application = spy((RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext());
+        application = mock(RapidFtrApplication.class);
+        when(application.getSharedPreferences()).thenReturn(Robolectric.application.getSharedPreferences(APP_IDENTIFIER, MODE_PRIVATE));
         photoCaptureHelper = spy(new PhotoCaptureHelper(application));
     }
 

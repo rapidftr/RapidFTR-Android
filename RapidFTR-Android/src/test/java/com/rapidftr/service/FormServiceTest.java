@@ -3,6 +3,7 @@ package com.rapidftr.service;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
+import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.model.Child;
@@ -42,22 +43,22 @@ public class FormServiceTest {
 
     private String jsonResponse = null;
     private FormService formService;
+    private Resources resources;
 
     @Before
     public void setUp() throws IOException {
-        jsonResponse = ResourceLoader.loadResourceAsStringFromClasspath("form_sections_for_children_and_enquiries.json");
-
         application = mock(RapidFtrApplication.class);
-
-        when(application.getResources()).thenReturn(mock(Resources.class));
-
+        resources = mock(Resources.class);
         sharedPreferences = mock(SharedPreferences.class);
         editor = mock(SharedPreferences.Editor.class);
 
+        jsonResponse = ResourceLoader.loadResourceAsStringFromClasspath("form_sections_for_children_and_enquiries.json");
+        when(application.getResources()).thenReturn(resources);
         when(sharedPreferences.edit()).thenReturn(editor);
         when(editor.putString(anyString(), anyString())).thenReturn(editor);
         when(editor.commit()).thenReturn(true);
         when(application.getSharedPreferences()).thenReturn(sharedPreferences);
+        when(resources.openRawResource(anyInt())).thenReturn(ResourceLoader.loadResourceFromClasspath("form_sections_for_children_and_enquiries.json"));
 
         formService = new FormService(application);
     }
@@ -82,7 +83,6 @@ public class FormServiceTest {
     @Test
     public void shouldLoadDefaultFormSections() throws IOException {
         when(sharedPreferences.getString(FormService.FORM_SECTIONS_PREF, null)).thenReturn(null);
-        formService = new FormService(application);
 
         int noOfChildFormSectionsBeforeDownload = 10, noOfEnquiryFormSectionsBeforeDownload = 7;
         assertEquals(noOfChildFormSectionsBeforeDownload, formService.getFormSections(Child.CHILD_FORM_NAME).size());
@@ -92,7 +92,6 @@ public class FormServiceTest {
     @Test
     public void shouldReturnHighlightedFieldsForChildForm() throws IOException {
         when(sharedPreferences.getString(FormService.FORM_SECTIONS_PREF, null)).thenReturn(null);
-        formService = new FormService(application);
 
         List<FormField> formFields = formService.getHighlightedFields(Child.CHILD_FORM_NAME);
         int expectedNoOfHighlightedFields = 4;

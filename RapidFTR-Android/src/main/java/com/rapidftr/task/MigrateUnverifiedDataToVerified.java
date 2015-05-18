@@ -18,10 +18,12 @@ import java.util.List;
 public class MigrateUnverifiedDataToVerified extends AsyncTask<Void, Void, Void> {
     private JSONObject responseFromServer;
     private User unVerifiedUser;
+    private RapidFtrApplication rapidFtrApplication;
 
-    public MigrateUnverifiedDataToVerified(JSONObject responseFromServer, User unVerifiedUser){
+    public MigrateUnverifiedDataToVerified(JSONObject responseFromServer, User unVerifiedUser, RapidFtrApplication rapidFtrApplication){
         this.responseFromServer = responseFromServer;
         this.unVerifiedUser = unVerifiedUser;
+        this.rapidFtrApplication = rapidFtrApplication;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class MigrateUnverifiedDataToVerified extends AsyncTask<Void, Void, Void>
     }
 
     protected ChildRepository getChildRepo(User user) {
-        return new ChildRepository(user.getUserName(), new SQLCipherHelper(user, RapidFtrApplication.getApplicationInstance()).getSession());
+        return new ChildRepository(user.getUserName(), new SQLCipherHelper(user, rapidFtrApplication).getSession(), rapidFtrApplication);
     }
 
     private void migrateChildren(ChildRepository unverifiedChildRepo, ChildRepository verifiedChildRepo) {

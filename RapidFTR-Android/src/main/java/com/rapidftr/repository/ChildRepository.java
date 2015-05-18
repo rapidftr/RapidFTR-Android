@@ -33,10 +33,10 @@ public class ChildRepository implements Repository<Child> {
     private RapidFtrApplication applicationInstance;
 
     @Inject
-    public ChildRepository(@Named("USER_NAME") String userName, DatabaseSession session) {
+    public ChildRepository(@Named("USER_NAME") String userName, DatabaseSession session, RapidFtrApplication applicationInstance) {
         this.userName = userName;
         this.session = session;
-        this.applicationInstance = RapidFtrApplication.getApplicationInstance();
+        this.applicationInstance = applicationInstance;
     }
 
     @Override
@@ -101,9 +101,9 @@ public class ChildRepository implements Repository<Child> {
     public void createOrUpdate(Child child) throws JSONException {
         if (exists(child.getUniqueId())) {
             Child existingChild = get(child.getUniqueId());
-            child.addHistory(History.buildHistoryBetween(existingChild, child));
+            child.addHistory(History.buildHistoryBetween(applicationInstance, existingChild, child));
         } else {
-            User currentUser = RapidFtrApplication.getApplicationInstance().getCurrentUser();
+            User currentUser = applicationInstance.getCurrentUser();
             child.addHistory(History.buildCreationHistory(child, currentUser));
         }
         child.setLastUpdatedAt(getTimeStamp());

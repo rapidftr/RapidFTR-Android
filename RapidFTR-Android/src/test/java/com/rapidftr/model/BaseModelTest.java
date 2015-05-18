@@ -1,12 +1,15 @@
 package com.rapidftr.model;
 
 import com.rapidftr.CustomTestRunner;
+import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.utils.RapidFtrDateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 
 import java.util.Arrays;
 
@@ -21,6 +24,15 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(CustomTestRunner.class)
 public class BaseModelTest {
+
+    private RapidFtrApplication rapidFtrApplication;
+
+    @Before
+    public void setUp(){
+        rapidFtrApplication = (RapidFtrApplication) Robolectric.getShadowApplication().getApplicationContext();
+        User user = new User("userName", "password", true, "http://1.2.3.4");
+        rapidFtrApplication.setCurrentUser(user);
+    }
 
     @Test
     public void shouldDecodeIDFromJSON() throws JSONException {
@@ -117,7 +129,7 @@ public class BaseModelTest {
     public void shouldAddHistoriesToNewModel() throws JSONException {
         BaseModel model = new BaseModel();
 
-        History history = History.buildHistoryBetween(model, new BaseModel("{\"some_field\":\"Values\"}"));
+        History history = History.buildHistoryBetween(rapidFtrApplication, model, new BaseModel("{\"some_field\":\"Values\"}"));
         model.addHistory(history);
 
         JSONArray jsonArray = (JSONArray) model.get(History.HISTORIES);
@@ -129,9 +141,9 @@ public class BaseModelTest {
     @Test
     public void shouldAppendHistoriesToModel() throws JSONException {
         BaseModel model = new BaseModel();
-        History history = History.buildHistoryBetween(model, new BaseModel("{\"some_field\":\"Values\"}"));
+        History history = History.buildHistoryBetween(rapidFtrApplication, model, new BaseModel("{\"some_field\":\"Values\"}"));
         model.addHistory(history);
-        history = History.buildHistoryBetween(model, new BaseModel("{\"some_other_field\":\"Values\"}"));
+        history = History.buildHistoryBetween(rapidFtrApplication, model, new BaseModel("{\"some_other_field\":\"Values\"}"));
         model.addHistory(history);
 
         JSONArray jsonArray = (JSONArray) model.get(History.HISTORIES);
@@ -145,7 +157,7 @@ public class BaseModelTest {
     @Test
     public void shouldNotAddEmptyHistory() throws JSONException {
         BaseModel model = new BaseModel();
-        History history = History.buildHistoryBetween(model, model);
+        History history = History.buildHistoryBetween(rapidFtrApplication, model, model);
         model.addHistory(history);
 
         assertFalse(history.has(History.HISTORIES));

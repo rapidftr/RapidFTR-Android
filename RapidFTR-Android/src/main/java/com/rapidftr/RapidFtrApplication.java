@@ -20,9 +20,12 @@ import com.rapidftr.model.User;
 import com.rapidftr.task.AsyncTaskWithDialog;
 import com.rapidftr.task.SynchronisationAsyncTask;
 import com.rapidftr.utils.ApplicationInjector;
+import com.rapidftr.utils.ResourceLoader;
 import lombok.Getter;
 import lombok.Setter;
 import org.androidannotations.annotations.EApplication;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -88,10 +91,21 @@ public class RapidFtrApplication extends Application {
         super.onCreate();
         try {
             reloadCurrentUser();
+            loadFeatureTogglesFrom(R.raw.disabled_features);
             notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         } catch (IOException e) {
             Log.e(APP_IDENTIFIER, "Failed to load form sections", e);
         }
+        catch (JSONException e) {
+            Log.e("DISABLED_FEATURES", "Failed to load features something went wrong");
+        }
+    }
+
+    private void loadFeatureTogglesFrom(int resourceId) throws IOException, JSONException {
+        String featuresJSON = ResourceLoader.loadStringFromRawResource(getApplicationContext(), resourceId);
+        JSONObject object = new JSONObject(featuresJSON);
+        SharedPreferences.Editor editor = this.getSharedPreferences().edit();
+        editor.putString("disabled_features", object.toString()).commit();
     }
 
     protected void setCurrentUser(String user) throws IOException {
