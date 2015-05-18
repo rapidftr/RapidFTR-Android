@@ -32,7 +32,7 @@
     <string name="view_all_children">View All Children</string>
     <string name="search_for_a_child">Search for a Child</string>
     <string name="synchronize">Synchronize</string>
-    <string name="new_user">New to RapidFTR? </string>
+    <string name="new_user">New to RapidREG? </string>
     <string name="full_name_required">Full name required</string>
     <string name="username_taken">Username taken. Please choose a different username</string>
     <string name="full_name">Full Name</string>
@@ -55,7 +55,7 @@
     <string name="unauthorized">Incorrect username or password</string>
     <string name="invalid_url">Please enter a valid url</string>
     <string name="server_not_reachable">Unable to connect to the server, please contact your system administrator</string>
-    <string name="RapidFTRLogo">RapidFTR</string>
+    <string name="RapidFTRLogo">RapidREG</string>
 
     <string name="new_registration">New Registration</string>
     <string name="save_child_progress">Saving record</string>
@@ -112,7 +112,7 @@
     <string name="this_is_audio_upload_box">This is an audio upload box</string>
     <string name="info">Info</string>
 
-    <string name="info_text">RapidFTR is supported in the following languages:</string>
+    <string name="info_text">RapidREG is supported in the following languages:</string>
     <string name="full_name_label">Full name:</string>
     <string name="username_label">Username:</string>
     <string name="password_label">Password:</string>
