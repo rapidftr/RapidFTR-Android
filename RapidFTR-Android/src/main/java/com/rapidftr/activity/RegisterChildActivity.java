@@ -8,15 +8,6 @@ import org.json.JSONException;
 
 public class RegisterChildActivity extends BaseChildActivity {
 
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        try {
-            super.hideEnquiriesTabIfRapidReg();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     protected void initializeLabels() throws JSONException {
         setLabel(R.string.save);

@@ -32,7 +32,6 @@ import com.rapidftr.view.fields.TextField;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -450,6 +449,7 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     public void hideEnquiriesTabIfRapidReg() throws JSONException {
+        featureToggle = inject(FeatureToggle.class);
         if (!featureToggle.isEnabled(FEATURE.ENQUIRIES)) {
             hideEnquiryTab();
         }

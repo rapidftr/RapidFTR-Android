@@ -1,8 +1,12 @@
 package com.rapidftr.activity;
 
+import android.content.Context;
 import android.view.MenuItem;
+import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
+import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.features.FeatureToggle;
 import com.rapidftr.model.Child;
 import com.rapidftr.task.SyncSingleRecordTask;
 import com.rapidftr.utils.SpyActivityController;
@@ -10,6 +14,7 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowToast;
 
 import java.io.IOException;
@@ -24,11 +29,17 @@ public class ViewChildActivityTest {
 
     private SpyActivityController<ViewChildActivity> activityController;
     protected ViewChildActivity activity;
+    private FeatureToggle featureToggle;
+    private Injector mockInjector;
 
     @Before
     public void setUp() throws JSONException {
         activityController = SpyActivityController.of(ViewChildActivity.class);
         activity = activityController.attach().get();
+        featureToggle = new FeatureToggle(Robolectric.application.getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE));
+        mockInjector = mock(Injector.class);
+        doReturn(mockInjector).when(activity).getInjector();
+        doReturn(featureToggle).when(mockInjector).getInstance(FeatureToggle.class);
     }
 
     @Test(expected = Exception.class)

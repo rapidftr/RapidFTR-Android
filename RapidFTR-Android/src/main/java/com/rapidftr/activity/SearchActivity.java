@@ -34,9 +34,8 @@ public class SearchActivity extends RapidFtrActivity {
         setContentView(R.layout.activity_search_child);
         findViewById(R.id.search_btn).setOnClickListener(searchListener());
         formService = inject(FormService.class);
-
         try {
-            super.hideEnquiriesTabIfRapidReg();
+            hideEnquiriesTabIfRapidReg();
         } catch (JSONException e) {
             e.printStackTrace();
         }
