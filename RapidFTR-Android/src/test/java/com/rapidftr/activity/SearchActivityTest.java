@@ -1,11 +1,13 @@
 package com.rapidftr.activity;
 
+import android.content.Context;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.google.inject.Injector;
 import com.rapidftr.CustomTestRunner;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.features.FeatureToggle;
 import com.rapidftr.forms.FormField;
 import com.rapidftr.forms.FormSection;
 import com.rapidftr.forms.FormSectionTest;
@@ -18,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.Robolectric;
 import org.robolectric.util.ActivityController;
 
 import java.io.IOException;
@@ -42,17 +45,19 @@ public class SearchActivityTest {
 
     private RapidFtrApplication application;
     private List<FormField> highLightedFields;
+    private FeatureToggle featureToggle;
 
     @Before
     public void setUp() throws IOException {
         initMocks(this);
         activityController = SpyActivityController.of(SearchActivity.class);
         activity = activityController.attach().get();
-
+        featureToggle = new FeatureToggle(Robolectric.application.getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE));
         application = RapidFtrApplication.getApplicationInstance();
 
         Injector mockInjector = mock(Injector.class);
         doReturn(mockInjector).when(activity).getInjector();
+        doReturn(featureToggle).when(mockInjector).getInstance(FeatureToggle.class);
         doReturn(formService).when(mockInjector).getInstance(FormService.class);
         doReturn(childRepository).when(mockInjector).getInstance(ChildRepository.class);
         highLightedFields = new ArrayList<FormField>();

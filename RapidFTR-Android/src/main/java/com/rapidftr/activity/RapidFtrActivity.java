@@ -8,7 +8,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -19,10 +18,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.rapidftr.R;
 import com.rapidftr.RapidFtrApplication;
+import com.rapidftr.features.FEATURE;
+import com.rapidftr.features.FeatureToggle;
 import com.rapidftr.model.*;
 import com.rapidftr.service.LogOutService;
 import com.rapidftr.task.SynchronisationAsyncTask;
@@ -30,7 +32,6 @@ import com.rapidftr.view.fields.TextField;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import static android.net.ConnectivityManager.EXTRA_NETWORK_INFO;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -41,11 +42,13 @@ public abstract class RapidFtrActivity extends Activity {
 
     public static final String LOGOUT_INTENT_FILTER = "com.rapidftr.LOGOUT_INTENT";
 
-
     protected
     @Getter
     @Setter
     Menu menu;
+
+    @Inject
+    protected FeatureToggle featureToggle;
 
     private BroadcastReceiver networkChangeReceiver = new BroadcastReceiver() {
         @Override
@@ -208,20 +211,32 @@ public abstract class RapidFtrActivity extends Activity {
         if (!this.getContext().isOnline()) {
             makeToast(R.string.connection_off);
         } else {
-            SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {
-            });
-            syncChildTask.setSuccessMessage(getString(R.string.child_records_sync_success));
-            executeTask(syncChildTask);
 
-            SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {
-            });
-            syncEnquiryTask.setSuccessMessage(getString(R.string.enquiry_records_sync_success));
-            executeTask(syncEnquiryTask);
+            try {
+                if(featureToggle.isEnabled(FEATURE.ENQUIRIES)) {
+                    SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {
+                    });
+                    syncChildTask.setSuccessMessage(getString(R.string.child_records_sync_success));
+                    executeTask(syncChildTask);
 
-            SynchronisationAsyncTask<PotentialMatch> syncPotentialMatchesTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<PotentialMatch>>() {
-            });
-            syncPotentialMatchesTask.setSuccessMessage(getString(R.string.potential_match_records_sync_success));
-            executeTask(syncPotentialMatchesTask);
+                    SynchronisationAsyncTask<Enquiry> syncEnquiryTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Enquiry>>() {
+                    });
+                    syncEnquiryTask.setSuccessMessage(getString(R.string.enquiry_records_sync_success));
+                    executeTask(syncEnquiryTask);
+
+                    SynchronisationAsyncTask<PotentialMatch> syncPotentialMatchesTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<PotentialMatch>>() {
+                    });
+                    syncPotentialMatchesTask.setSuccessMessage(getString(R.string.potential_match_records_sync_success));
+                    executeTask(syncPotentialMatchesTask);
+                } else {
+                    SynchronisationAsyncTask<Child> syncChildTask = getSynchronisationTask(new Key<SynchronisationAsyncTask<Child>>() {
+                    });
+                    syncChildTask.setSuccessMessage(getString(R.string.child_records_sync_success));
+                    executeTask(syncChildTask);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -434,11 +449,9 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     public void hideEnquiriesTabIfRapidReg() throws JSONException {
-        SharedPreferences sharedPreferences = getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
-        JSONObject features = new JSONObject(sharedPreferences.getString("features", "").toString());
-        if (features.optBoolean("Enquiries", true) == false) {
+        featureToggle = inject(FeatureToggle.class);
+        if (!featureToggle.isEnabled(FEATURE.ENQUIRIES)) {
             hideEnquiryTab();
         }
-
     }
 }

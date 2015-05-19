@@ -28,9 +28,6 @@ public abstract class CollectionActivity extends RapidFtrActivity {
     @Setter
     MediaPlayer mediaPlayer;
 
-    @Inject
-    protected FeatureToggle featureToggle;
-
     protected FormService formService;
     protected List<FormSection> formSections;
 

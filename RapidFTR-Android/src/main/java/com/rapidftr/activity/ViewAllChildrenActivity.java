@@ -24,13 +24,11 @@ public class ViewAllChildrenActivity extends RapidFtrActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_children);
-
         try {
-            super.hideEnquiriesTabIfRapidReg();
+            hideEnquiriesTabIfRapidReg();
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         listView(getChildren());
     }
 

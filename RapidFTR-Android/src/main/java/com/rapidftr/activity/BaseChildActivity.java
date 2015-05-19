@@ -87,6 +87,8 @@ public abstract class BaseChildActivity extends CollectionActivity {
         return child;
     }
 
+
+
     public void view() throws JSONException {
         Intent intent = new Intent(this, ViewChildActivity.class);
         intent.putExtra("id", child.getUniqueId());
@@ -132,6 +134,17 @@ public abstract class BaseChildActivity extends CollectionActivity {
             this.cancel(false);
         }
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        try {
+            hideEnquiriesTabIfRapidReg();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void showAlertDialog() {
         DialogInterface.OnClickListener listener = createAlertListener();
