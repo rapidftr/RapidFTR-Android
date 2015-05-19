@@ -1,6 +1,5 @@
 package com.rapidftr.view;
 
-import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import lombok.Cleanup;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class PotentialMatchesViewAdapter<T extends BaseModel> extends HighlightedFieldsViewAdapter<T> {
