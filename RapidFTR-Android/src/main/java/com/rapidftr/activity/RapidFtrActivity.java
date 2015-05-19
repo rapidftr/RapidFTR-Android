@@ -8,7 +8,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -451,11 +450,8 @@ public abstract class RapidFtrActivity extends Activity {
     }
 
     public void hideEnquiriesTabIfRapidReg() throws JSONException {
-        SharedPreferences sharedPreferences = getSharedPreferences(RapidFtrApplication.SHARED_PREFERENCES_FILE, MODE_PRIVATE);
-        JSONObject features = new JSONObject(sharedPreferences.getString("features", "").toString());
-        if (features.optBoolean("Enquiries", true) == false) {
+        if (!featureToggle.isEnabled(FEATURE.ENQUIRIES)) {
             hideEnquiryTab();
         }
-
     }
 }
