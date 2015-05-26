@@ -1,0 +1,97 @@
+<resources>
+
+    <string name="app_name">RapidREG</string>
+
+    <string name="log_in">Iniciar la sesión</string>
+    <string name="log_out">Cerrar la sesión</string>
+    <string name="confirm_logout_message">La sincronización de registros está en marcha. Cerrar la sesión ahora cancelará este proceso, ¿está seguro que quiere cerrar la sesión?</string>
+    <string name="logout_successful">Su sesión ha sido cerrada exitosamente.</string>
+    <string name="change_url">Cambiar el URL</string>
+    <string name="register_child">Registrar a un Niño</string>
+    <string name="view_all_children">Ver a Todos los Niños</string>
+    <string name="search_for_a_child">Buscar a un Niño</string>
+    <string name="synchronize">Sincronizar</string>
+    <string name="new_user">Nuevo Usuario de RapidREG? </string>
+    <string name="full_name_required">Su Nombre Completo es Requerido</string>
+    <string name="full_name">Nombre Completo</string>
+
+    <string name="username">Nombre de Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="url">URL</string>
+
+    <string name="rapidftr_url">https://test.rapidftr.com</string>
+    <string name="rapidftr_username">rapidftr</string>
+
+    <string name="username_required">El nombre de usuario es requerido</string>
+    <string name="password_required">La contraseña es requerida</string>
+    <string name="organisation_required">La organización es requerida</string>
+    <string name="confirm_password_required">Vuelva a ingresar su contraseña</string>
+    <string name="url_required">El URL del servidor es requerido</string>
+    <string name="password_mismatch">Las contraseñas no concuerdan</string>
+
+    <string name="loading_message">Cargando&#8230;</string>
+    <string name="unauthorized">Nombre de usuario o contraseña incorrectos</string>
+    <string name="login_successful">Inicio de Sesión Exitoso</string>
+    <string name="invalid_url">Por favor ingrese un URL válido</string>
+    <string name="server_not_reachable">Imposible conectarse con el servidor, por favor contacte su administrador de sistemas</string>
+    <string name="RapidFTRLogo">RapidREG</string>
+
+    <string name="new_registration">Nueva Registración</string>
+    <string name="save_child_progress">Grabando el registro</string>
+    <string name="save_child_invalid">Por favor complete al menos un campo</string>
+    <string name="save_child_success">Registro guardado de manera existosa</string>
+    <string name="save_child_failure">El registro no se pudo guardar!</string>
+
+    <string name="photo_capture">Tomar Foto</string>
+    <string name="photo_capture_error">Hubo un error al tratar de tomar la foto</string>
+    <string name="photo_view">Ver Foto</string>
+    <string name="photo_view_error">Hubo un error al tratar de cargar la foto</string>
+    <string name="photo_not_captured">No hay foto asociada con este registro</string>
+    <string name="photo_gallery_delete_error">No es posible borrar la foto de la Galería. Por favor vaya a la Galería y bórrela manualmente</string>
+    <string name="set_as_primary">Utilícela como foto principal</string>
+
+    <string name="synchronize_all">Sincronizar Todo</string>
+    <string name="cancel_synchronize_all">Cancelar Sincronizar Todo</string>
+    <string name="sync_single">Sincronizar este Registro</string>
+    <string name="sync_progress">Sinc. en curso&#8230;</string>
+    <string name="sync_success">Sinc. existosa</string>
+    <string name="sync_failure">Falló la Sinc.</string>
+    <string name="network_not_available">La red no está disponible. Por favor, trate de nuevo más tarde</string>
+
+    <string name="internal_error">Ocurrió un error al tratar de hacer esta operación</string>
+    <string name="fetch_child_error">Ocurrió un error al descargas el/los registro(s), por favor, trate de nuevo</string>
+    <string name="submit">Enviar</string>
+    <string name="edit">Editar</string>
+    <string name="save">Guardar</string>
+    <string name="choose_action">Elija una acción</string>
+    <string name="discard">Descartar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="clear">Limpiar</string>
+
+    <string name="register_tab_name">Registro</string>
+    <string name="view_all_tab_name">Ver Todos</string>
+    <string name="search_tab_name">Buscar</string>
+    <string name="synchronize_log">Error de Sinc.</string>
+    <string name="synchronize_step_1">Paso 1 de 3 - Sincronizando Formularios de Secciones&#8230;</string>
+    <string name="synchronize_step_2">Paso 2 de 3 - Enviando registros al servidor&#8230;</string>
+    <string name="synchronize_step_3">Paso 3 de 3 - Recibiendo registros del servidor&#8230;</string>
+    <string name="signup">Inscríbase!</string>
+    <string name="confirm">Confirma su Constraseña</string>
+    <string name="organisation">Organización</string>
+    <string name="optional_url">URL(Opcional)</string>
+
+    <string name="sync_complete">Sinc. completada.</string>
+    <string name="sync_error">Error sincronizando. Trate de nuevo después de un tiempo.</string>
+    <string name="search_child">Buscar récord</string>
+    <string name="go">Acción</string>
+    <string name="child_not_found">No Se Encontró Ningún Registro</string>
+
+    <string name="this_is_audio_upload_box">Ésta es una caja de envio de audio</string>
+    <string name="child_records_sync_success">Registros secundarios sincronizados con éxito</string>
+    <string name="enquiry_records_sync_success">Consulta registros sincronizados con éxito</string>
+    <string name="sync_title">Synchronising</string>
+    <string name="enquires_sync_title">Synchronising Enquiries</string>
+    <string name="child_sync_title">Synchronising Children</string>
+
+</resources>
+

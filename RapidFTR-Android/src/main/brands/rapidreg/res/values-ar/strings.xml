@@ -1,0 +1,97 @@
+<resources>
+
+    <string name="app_name">RapidREG</string>
+
+    <string name="log_in">تسجيل الدخول</string>
+    <string name="log_out">تسجيل الخروج</string>
+    <string name="confirm_logout_message">جاري تزامن السجلات. تسجيل الخروج سيلغي هذه العملية، هل أنت متأكد من أنك تريد تسجيل الخروج؟</string>
+    <string name="logout_successful">تم تسجيل الخروج بنجاح</string>
+    <string name="change_url">تغيير الرابط</string>
+    <string name="register_child">تسجيل طفل</string>
+    <string name="view_all_children">عرض كل الأطفال</string>
+    <string name="search_for_a_child">البحث عن طفل</string>
+    <string name="synchronize">تزامن</string>
+    <string name="new_user">جديد في RapidFTR? </string>
+    <string name="full_name_required">الإسم الكامل ضروري</string>
+    <string name="full_name">الإسم الكامل</string>
+    <string name="signup">إشترك!</string>
+
+    <string name="username">إسم المستخدم</string>
+    <string name="password">كلمة السر</string>
+    <string name="url">الرابط</string>
+
+    <string name="rapidftr_url">https://test.rapidftr.com</string>
+    <string name="rapidftr_username">rapidftr</string>
+
+    <string name="username_required">إسم المستخدم ضروري</string>
+    <string name="password_required">كلمة السر ضرورية</string>
+    <string name="organisation_required">المنظمة ضرورية</string>
+    <string name="confirm_password_required">أعد إدخال كلمة السر</string>
+    <string name="url_required">رابط المخدم ضروري</string>
+    <string name="password_mismatch">كلمات السر غير متطابقة</string>
+
+    <string name="loading_message">جاري التحميل&#8230;</string>
+    <string name="unauthorized">إسم المستخدم أو كلمة السر خطأ</string>
+    <string name="login_successful">تم تسجيل الدخول بنجاح</string>
+    <string name="invalid_url">الرجاء إدخال رابط صالح</string>
+    <string name="server_not_reachable">غير قادر على الإتصال بالمخدم. الرجاء الإتصال بمشرف النظام</string>
+    <string name="RapidFTRLogo">RapidREG</string>
+
+    <string name="new_registration">تسجيل جديد</string>
+    <string name="save_child_progress">حفظ السجل</string>
+    <string name="save_child_invalid">الرجاء ملء حقل واحد على الأقل</string>
+    <string name="save_child_success">تم حفظ السجل بنجاح</string>
+    <string name="save_child_failure">فشل في حفظ السجل!</string>
+
+    <string name="photo_capture">إلتقاط صورة</string>
+    <string name="photo_capture_error">حدث خطأ عند إلتقاط الصورة</string>
+    <string name="photo_view">عرض الصورة</string>
+    <string name="photo_view_error">حدث خطأ عند تحميل الصورة</string>
+    <string name="photo_not_captured">لم يتم إلتقاط صورة للسجل</string>
+    <string name="photo_gallery_delete_error">غير قادر على مسح الصورة. الرجاء الذهاب إلى الأستوديو و مسحها يدويا</string>
+    <string name="set_as_primary">Set as primary photo</string>
+
+    <string name="synchronize_all">تزامن الكل</string>
+    <string name="cancel_synchronize_all">إلغاء تزامن الكل</string>
+    <string name="sync_single">تزامن هذا السجل</string>
+    <string name="sync_progress">جاري التزامن&#8230;</string>
+    <string name="sync_success">تم التزامن بنجاح</string>
+    <string name="sync_failure">فشل التزامن</string>
+    <string name="network_not_available">الشبكة غير متوفرة، الرجاء المحاولة لاحقا</string>
+
+    <string name="internal_error">حدث خطأ عند أداء العملية</string>
+    <string name="fetch_child_error">حدث خطأ عند جلب السجلات، الرجاء المحاولة لاحقا</string>
+    <string name="submit">تسليم</string>
+    <string name="edit">تعديل</string>
+    <string name="save">حفظ</string>
+    <string name="choose_action">إختيار إجراء</string>
+    <string name="discard">إلغاء</string>
+    <string name="cancel">إلغاء</string>
+    <string name="clear">مسح</string>
+
+    <string name="register_tab_name">تسجيل</string>
+    <string name="view_all_tab_name">عرض الكل</string>
+    <string name="search_tab_name">بحث</string>
+    <string name="synchronize_log">خطأ في التزامن</string>
+    <string name="synchronize_step_1">خطوة ١ من ٣ - التزامن من الأقسام&#8230;</string>
+    <string name="synchronize_step_2">خطوة ٢ من ٣ - إرسال السجلات إلى المخدم&#8230;</string>
+    <string name="synchronize_step_3">خطوة ٣ من ٣ - إستعادة السجلات من المخدم&#8230;</string>
+    <string name="confirm">أكد كلمة السر</string>
+    <string name="organisation">المنظمة</string>
+    <string name="optional_url">الرابط (إختياري)</string>
+
+    <string name="sync_complete">إكتمال التزامن</string>
+    <string name="sync_error">خطأ في التزامن. الرجاء المحاولة لاحقا</string>
+    <string name="search_child">سجل البحث</string>
+    <string name="go">إذهب</string>
+    <string name="child_not_found">لم يتم العثور على السجل</string>
+
+    <string name="this_is_audio_upload_box">هذا صندوق تحميل ملف صوتي</string>
+    <string name="child_records_sync_success">تزامن السجلات الطفل بنجاح</string>
+    <string name="enquiry_records_sync_success">مزامنة سجلات الاستفسار بنجاح</string>
+    <string name="sync_title">Synchronising</string>
+    <string name="enquires_sync_title">Synchronising Enquiries</string>
+    <string name="child_sync_title">Synchronising Children</string>
+
+</resources>
+
