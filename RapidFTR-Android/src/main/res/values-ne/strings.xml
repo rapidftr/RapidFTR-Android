@@ -1,0 +1,161 @@
+﻿<resources>
+
+    <string name="app_name">RapidFTR</string>
+
+    <!-- Login -->
+    <string name="log_in">लग इन</string>
+    <string name="login_online_progress">अनलाइन लग इन कोसिस गर्दै</string>
+    <string name="login_online_success">अनलाइन लग इन सफल</string>
+    <string name="login_online_failed">अनलाइन लग इन असफल, अफलाइन लग इन कोसिस गर्दै</string>
+    <string name="login_online_no_connectivity">सम्पर्क नभएकोले अफलाइन लग इन कोसिस गर्दै</string>
+
+    <string name="login_migrate_progress">तपाईं अब एक प्रमाणित प्रयोगकर्ता हुनुहुन्छ, तपाईंको डाटा सारिदैछ</string>
+    <string name="login_migrate_failed">डाटा सार्न सकिएन, अफलाइन लग इन गर्दै, डाटा सिंक गर्नुहोस</string>
+    <string name="login_save_failed">लग इन गर्न सकिएन, कृपया तपाईँको प्रणाली प्रशासकलाई सम्पर्क गर्नुहोस</string>
+
+    <string name="login_form_progress">नयाँ फारम सेक्सन लोड गर्दै</string>
+    <string name="login_form_failed">नयाँ फारम सेक्सन लोड गर्न सकिएन, तर तपाई पुरानो फारम सेक्सन प्रयोग गर्न सक्नुहुन्छ</string>
+
+    <string name="login_offline_progress">अफलाइन लग इन कोसिस गर्दै</string>
+    <string name="login_offline_success">अफलाइन लग इन  सफल</string>
+    <string name="login_offline_no_user">लग इन  असफल, नयाँ प्रयोगकर्ताहरु कृपया अफ लाइन लग इन सक्षम गर्न पहिला अनलाइन लग इन गर्नुहोस </string>
+    <string name="login_offline_failed">लग इन  असफल, युसरनेम वा पासवर्ड मिलेन</string>
+
+    <!-- Others, need to organize/group as we go -->
+    <string name="log_out">लग आउट</string>
+    <string name="confirm_logout_message">रेकर्डहरु सिन्क्रोनाइज हुदैछन, लग आउट गर्नाले यो प्रक्रिया रद्द हुन्छ, के तपाईं लग आउट गर्न निश्चित हुनुहुन्छ?</string>
+    <string name="session_timeout">तपाईंको सेसन सर्भरमा सक्रिय छैन, कृपया लग आउट गरेर फेरि लग इन गर्नुहोस</string>
+
+    <string name="logout_successful">तपाईं सफलतापुर्वक लग आउट हुनु भयो</string>
+    <string name="change_url">युआरएल परिवर्तन</string>
+    <string name="register_child">बाल दर्ता</string>
+    <string name="view_all_children">सबै बच्चा हेर्नुहोस</string>
+    <string name="search_for_a_child">बच्चा खोज्नुहोस</string>
+    <string name="synchronize">सिन्क्रोनाइज</string>
+    <string name="new_user">RapidFTR मा नयाँ हुनुहुन्छा? </string>
+    <string name="full_name_required">पुरा नाम चाहिन्छ</string>
+    <string name="username_taken">यो युसरनेम कसैले लिइसक्नुभएको छ, कृपया अर्को युसरनेम छान्नुहोस</string>
+    <string name="full_name">पुरा नाम</string>
+
+    <string name="username">युसरनेम</string>
+    <string name="password">पासवर्ड</string>
+    <string name="url">युआरएल</string>
+
+    <string name="rapidftr_url"></string>
+    <string name="rapidftr_username"></string>
+
+    <string name="username_required">युसरनेम अनिवार्य चाहिन्छ</string>
+    <string name="password_required">पासवर्ड अनिवार्य चाहिन्छ</string>
+    <string name="organisation_required">संस्था अनिवार्य चाहिन्छ</string>
+    <string name="confirm_password_required">पासवर्ड फेरि हाल्नुहोस</string>
+    <string name="url_required">सर्भर युआरएल अनिवार्य चाहिन्छ</string>
+    <string name="password_mismatch">पासवर्ड एउटै भएन</string>
+
+    <string name="loading_message">लोड गर्दै&#8230;</string>
+    <string name="unauthorized">युसरनेम वा पासवर्ड मिलेन</string>
+    <string name="invalid_url">मिल्ने युआरएल हाल्नुहोस</string>
+    <string name="server_not_reachable">सर्भरसँग सम्पर्क गर्न सकिएन, कृपया प्रणाली प्रबन्धकलाई सम्पर्क गर्नुहोस</string>
+    <string name="RapidFTRLogo">RapidFTR</string>
+
+    <string name="new_registration">नयाँ दर्ता</string>
+    <string name="save_child_progress">रेकर्ड सेभ गर्दै</string>
+    <string name="save_child_invalid">कृपया कम्तिमा एउटा फिल्ड भर्नुहोस्</string>
+    <string name="save_child_success">रेकर्ड सफलतापुर्वक सेभ गरियो</string>
+    <string name="save_child_failure">रेकर्ड सेभ गर्न सकिएन!</string>
+
+    <string name="photo_capture">फोटो खिच्नुहोस</string>
+    <string name="photo_capture_error">फोटो खिच्दा समस्या भेटियो</string>
+    <string name="photo_view">फोटो हेर्नुहोस</string>
+    <string name="photo_view_error">फोटो लोड गर्दा समस्या भेटियो</string>
+    <string name="photo_not_captured">यो रेकर्डको लागि फोटो खिचिएको छैन</string>
+    <string name="photo_gallery_delete_error">ग्यालरीबाट फोटो हटाउन सकिएन, कृपया ग्यालरीबाट आफैले डिलिट गर्नुहोस</string>
+    <string name="set_as_primary">प्राथमिक फोटो बनाउनुहोस</string>
+
+
+    <string name="synchronize_all">सबै सिन्क्रोनाइज गर्नुहोस</string>
+    <string name="cancel_synchronize_all">सबै सिन्क्रोनाइज गर्न रद्द गर्नुहोस</string>
+    <string name="sync_single">यो रेकर्ड सिन्क्रोनाइज गर्नुहोस</string>
+    <string name="sync_progress">सिंक गर्दै&#8230;</string>
+    <string name="sync_success">सिंक सफल</string>
+    <string name="sync_failure">सिंक असफल</string>
+    <string name="network_not_available">नेटवर्क सम्पर्क छैन, कृपया पछि फेरि प्रयास गर्नुहोस</string>
+
+    <string name="internal_error">यो कार्य गर्दा एउटा समस्या भेटियो</string>
+    <string name="fetch_child_error">रेकर्ड फेच गर्दा एउटा समस्या भेटियो, कृपया फेरि प्रयास गर्नुहोस</string>
+    <string name="fetch_form_sections_error">फारम सेक्सन फेच गर्दा एउटा समस्या भेटियो</string>
+    <string name="submit">बुझाउनुहोस</string>
+    <string name="edit">सम्पादन गर्नुहोस</string>
+    <string name="save">सेभ गर्नुहोस</string>
+    <string name="choose_action">कुनै कार्य छान्नुहोस</string>
+    <string name="discard">रद्द गर्नुहोस</string>
+    <string name="cancel">रद्द गर्नुहोस</string>
+    <string name="clear">मेटाउनुहोस</string>
+
+    <string name="register_tab_name">दर्ता</string>
+    <string name="view_all_tab_name">सबै हेर्नुहोस</string>
+    <string name="search_tab_name">खोज्नुहोस</string>
+    <string name="synchronize_log">सिंक गर्दा समस्या</string>
+    <string name="synchronize_step_1">३ मध्यको चरण १- फारम सेक्सन सिंक गर्दै&#8230;</string>
+    <string name="synchronize_step_2">३ मध्यको चरण २ - रेकर्ड सर्भरमा पठाउँदै&#8230;</string>
+    <string name="synchronize_step_3">३ मध्यको चरण ३ - सर्भरबाट रेकर्ड लिंदै&#8230;</string>
+    <string name="signup">साइन अप</string>
+    <string name="confirm">पासवर्ड फेरि हाल्नुहोस</string>
+    <string name="organisation">संस्था</string>
+    <string name="optional_url">युआरएल (वैकल्पिक)</string>
+
+    <string name="sync_complete">सिंक पुरा भयो</string>
+    <string name="sync_error">सिंक गर्दा समस्या, केहि समय पछि फेरि प्रयास गर्नुहोस</string>
+    <string name="search_child">रेकर्ड खोज्नुहोस</string>
+    <string name="go">खोज</string>
+    <string name="child_not_found">कुनै रेकर्ड भेटिएन</string>
+
+    <string name="this_is_audio_upload_box">यो अडियो अपलोड बक्स हो</string>
+    <string name="info">जानकारी</string>
+
+    <string name="info_text">RapidFTR निम्न भाषामा उपलब्ध छ:</string>
+    <string name="full_name_label">पुरा नाम:</string>
+    <string name="username_label">युसरनेम:</string>
+    <string name="password_label">पासवर्ड:</string>
+    <string name="confirm_label">पासवर्ड फेरि हाल्नुहोस:</string>
+    <string name="organisation_label">संस्था:</string>
+    <string name="mandatory">सबै फिल्डहरु अनिवार्य छन्</string>
+    <string name="registered">तपाईंले दर्ता गर्नुभएको छ, युसरनेम राखेर लग इन गर्नुहोस </string>
+
+    <string name="yes">हो</string>
+    <string name="start_record">सुरु</string>
+    <string name="stop_record">बन्द</string>
+    <string name="play_record">प्ले</string>
+    <string name="forgot_password">पासवर्ड रिसेट गर्न अनुरोध गर्नुहोस</string>
+
+    <string name="network_down">सर्भरसँग सम्पर्क टुट्यो, सिंक प्रक्रिया रद्द भयो</string>
+    <string name="no_connection">सर्भरसँग सम्पर्क टुट्यो, पछि फेरि प्रयास गर्नुहोस</string>
+    <string name="connection_off">सम्पर्क छैन, मोबाइलको वाईफाई वा डाटा अन गर्नुहोस</string>
+    <string name="temp_sync_error">सर्भरसँग सिंक गर्दा समस्या भेटियो, कृपया फेरि प्रयास गर्नुहोस</string>
+    <string name="current_password_label">वर्तमान पासवर्ड</string>
+    <string name="new_password">नया पासवर्ड</string>
+    <string name="change_password">पासवर्ड परिवर्तन</string>
+    <string name="password_change_success">पासवर्ड परिवर्तन सफल</string>
+    <string name="password_change_failed">पासवर्ड परिवर्तन असफल, फेरि प्रयास गर्नुहोस</string>
+    <string name="confirm_change_password_text">रेकर्डहरु सिंक हुदैछन, पासवर्ड परिवर्तन गर्नाले सिंक बन्द हुन्छ, क तपाईं अघि बढ्न निश्चित हुनुहुन्छ?</string>
+    <string name="save_enquiry_progress">पुछताछ सेभ गर्दै</string>
+    <string name="save_enqury_success">पुछताछ सेभ गरियो</string>
+    <string name="save_enquiry_failed">पुछताछ सेभ असफल</string>
+    <string name="save_enquiry_invalid">कृपया कम्तिमा एउटा फिल्ड भर्नुहोस्</string>
+    <string name="enquirer_name_required">पुछताछ गर्नेको नाम अनिवार्य चाहिन्छ</string>
+    <string name="enquiry_not_found">कुनै पुछताछ भेटिएन</string>
+    <string name="enquiry_tab">पुछताछ</string>
+    <string name="child_tab">बच्चा</string>
+    <string name="create_enquiry_tab">नयाँ</string>
+    <string name="view_all_enquiry_tab">सबै हेर्नुहोस</string>
+
+    <string name="no_matches">कुनै मिल्दो भेटिएन</string>
+    <string name="child_records_sync_success">बाल रेकर्ड सफलतापुर्वक सिंक गरियो</string>
+    <string name="enquiry_records_sync_success">पुछताछ रेकर्ड सफलतापुर्वक सिंक गरियो</string>
+    <string name="potential_match_records_sync_success">सम्भावित मिल्दो रेकर्ड सफलतापुर्वक सिंक गरियो</string>
+    <string name="sync_title">सिंक गर्दै</string>
+    <string name="enquires_sync_title">पुछताछ सिंक गर्दै</string>
+    <string name="child_sync_title">बच्चाहरु सिंक गर्दै</string>
+    <string name="potential_matches_sync_title">सम्भावित मिल्दो सिंक गर्दै</string>
+    <string name="matches">मिल्दो</string>
+    <string name="matches_help_text">मिल्दो</string>
+</resources>
