@@ -94,7 +94,7 @@ public class SyncUnverifiedDataAsyncTask<T extends BaseModel> extends Synchronis
     }
 
     private JSONObject login() throws IOException, JSONException {
-        HttpResponse response = loginService.login(context, currentUser.getUserName(), currentUser.getUnauthenticatedPassword(), currentUser.getServerUrl());
+        HttpResponse response = loginService.login(applicationContext, currentUser.getUserName(), currentUser.getUnauthenticatedPassword(), currentUser.getServerUrl());
         if(response !=null && (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED || response.getStatusLine().getStatusCode() == HttpStatus.SC_OK))
             return new JSONObject(getResponse(response));
         return null;
