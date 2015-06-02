@@ -295,6 +295,19 @@
                     <renameManifestPackage>com.${brand}</renameManifestPackage>
                     <manifestApplicationLabel>${brand}</manifestApplicationLabel>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>manifest-merge</id>
+                        <goals>
+                            <goal>manifest-merger</goal>
+                        </goals>
+                        <configuration>
+                            <manifestMerger>
+                                <versionCode>${android.manifestMerger.versionCode}</versionCode>
+                            </manifestMerger>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -344,7 +357,9 @@
                                     <removeExistingSignatures>true</removeExistingSignatures>
                                     <archiveDirectory/>
                                     <includes>
-                                        <include>${project.build.directory}/${project.artifactId}-${project.version}.apk</include>
+                                        <include>
+                                            ${project.build.directory}/${project.artifactId}-${project.version}.apk
+                                        </include>
                                     </includes>
                                     <keystore>${keystore.file}</keystore>
                                     <storepass>${keystore.password}</storepass>
@@ -372,7 +387,8 @@
                             </sign>
                             <zipalign>
                                 <verbose>true</verbose>
-                                <inputApk>${project.build.directory}/${project.artifactId}-${project.version}.apk</inputApk>
+                                <inputApk>${project.build.directory}/${project.artifactId}-${project.version}.apk
+                                </inputApk>
                                 <outputApk>${project.build.directory}/${project.artifactId}-release.apk</outputApk>
                                 <skip>false</skip>
                             </zipalign>
