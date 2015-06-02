@@ -80,7 +80,7 @@ public class SyncUnverifiedDataAsyncTaskTest {
         task.onPreExecute();
         task.execute();
 
-        verify(loginService).login(rapidFtrActivity, "username", "password", "serverUrl");
+        verify(loginService).login(applicationContext, "username", "password", "serverUrl");
     }
 
     @Test
