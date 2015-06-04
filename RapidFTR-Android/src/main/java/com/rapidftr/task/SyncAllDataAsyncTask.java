@@ -1,9 +1,7 @@
 package com.rapidftr.task;
 
-import android.content.SharedPreferences;
 import com.google.inject.Inject;
 import com.rapidftr.R;
-import com.rapidftr.RapidFtrApplication;
 import com.rapidftr.model.BaseModel;
 import com.rapidftr.model.User;
 import com.rapidftr.repository.Repository;
