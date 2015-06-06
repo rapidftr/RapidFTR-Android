@@ -39,7 +39,6 @@ public class GenericSyncService<T extends BaseModel> {
             model.remove(History.HISTORIES);
             repository.createOrUpdateWithoutHistory(model);
             setMedia(model);
-            repository.close();
         } catch (Exception e) {
             model.setSynced(false);
             model.setSyncLog(e.getMessage());

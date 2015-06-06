@@ -46,6 +46,7 @@ public class SyncAllDataAsyncTask<T extends BaseModel> extends SynchronisationAs
             sendRecordsToServer(recordsToUpload);
             downloadRecordsFromServer(idsToDownload, numberOfUploadedRecords(recordsToUpload));
         }
+        repository.close();
     }
 
     private int numberOfUploadedRecords(List<T> recordsToUpload) throws JSONException {
