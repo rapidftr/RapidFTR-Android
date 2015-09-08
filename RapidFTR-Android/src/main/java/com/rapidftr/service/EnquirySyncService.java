@@ -80,6 +80,9 @@ public class EnquirySyncService implements SyncService<Enquiry> {
 
     @Override
     public void setLastSyncedAt(Enquiry enquiry) {
+        if (enquiry.lastUpdatedAtInMillis() == null) {
+            return;
+        }
         RapidFtrApplication.getApplicationInstance()
                 .getSharedPreferences()
                 .edit()

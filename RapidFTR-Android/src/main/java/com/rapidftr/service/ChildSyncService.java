@@ -70,6 +70,9 @@ public class ChildSyncService implements SyncService<Child> {
 
     @Override
     public void setLastSyncedAt(Child child) {
+        if (child.lastUpdatedAtInMillis() == null) {
+            return;
+        }
         RapidFtrApplication.getApplicationInstance()
                 .getSharedPreferences()
                 .edit()

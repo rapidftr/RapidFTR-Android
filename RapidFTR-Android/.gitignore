@@ -9,3 +9,4 @@ gen/
 screenshot_*
 .irb-history
 rerun.txt
+*.keystore

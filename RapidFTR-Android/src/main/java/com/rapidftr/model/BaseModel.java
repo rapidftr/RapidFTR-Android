@@ -103,7 +103,7 @@ public class BaseModel extends JSONObject implements Parcelable {
     public Long lastUpdatedAtInMillis(){
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         try {
-            return dateFormat.parse(getLastUpdatedAt()).getTime();
+            return getLastUpdatedAt() != null ? dateFormat.parse(getLastUpdatedAt()).getTime() : null;
         } catch (ParseException e) {
             e.printStackTrace();
         } catch (JSONException e) {
