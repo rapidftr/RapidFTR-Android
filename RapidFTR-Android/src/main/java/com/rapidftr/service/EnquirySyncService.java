@@ -48,10 +48,7 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     @Override
     public Enquiry getRecord(String url) throws IOException, JSONException, HttpException {
         Enquiry enquiry = enquiryHttpDao.get(url);
-        enquiry.setSynced(true);
-        enquiry.setLastUpdatedAt(RapidFtrDateTime.now().defaultFormat());
-        enquiry.remove(Enquiry.FIELD_ATTACHMENTS);
-
+        GenericSyncService.setAttributes(enquiry);
         return enquiry;
     }
 
