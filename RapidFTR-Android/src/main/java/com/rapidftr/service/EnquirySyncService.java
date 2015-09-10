@@ -76,14 +76,23 @@ public class EnquirySyncService implements SyncService<Enquiry> {
     }
 
     @Override
-    public void setLastSyncedAt(Enquiry enquiry) {
-        if (enquiry.lastUpdatedAtInMillis() == null) {
+    public void setLastSyncedAt(Enquiry enquiry, boolean isLastRecord) {
+        Long lastSynced = null;
+
+        if (isLastRecord) {
+            lastSynced = System.currentTimeMillis();
+        } else {
+            lastSynced = enquiry.lastUpdatedAtInMillis();
+        }
+
+        if (lastSynced == null) {
             return;
         }
+
         RapidFtrApplication.getApplicationInstance()
                 .getSharedPreferences()
                 .edit()
-                .putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, enquiry.lastUpdatedAtInMillis())
+                .putLong(RapidFtrApplication.LAST_ENQUIRY_SYNC, lastSynced)
                 .commit();
     }
 

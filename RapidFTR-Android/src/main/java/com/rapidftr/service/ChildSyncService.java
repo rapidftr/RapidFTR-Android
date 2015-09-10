@@ -11,6 +11,8 @@ import org.joda.time.DateTime;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.lang.Boolean;
+import java.lang.Long;
 import java.util.List;
 
 import static com.rapidftr.database.Database.ChildTableColumn.internal_id;
@@ -69,14 +71,23 @@ public class ChildSyncService implements SyncService<Child> {
     }
 
     @Override
-    public void setLastSyncedAt(Child child) {
-        if (child.lastUpdatedAtInMillis() == null) {
+    public void setLastSyncedAt(Child child, boolean isLastRecord) {
+        Long lastSynced = null;
+
+        if (isLastRecord) {
+            lastSynced = System.currentTimeMillis();
+        } else {
+            lastSynced = child.lastUpdatedAtInMillis();
+        }
+
+        if (lastSynced == null) {
             return;
         }
+
         RapidFtrApplication.getApplicationInstance()
                 .getSharedPreferences()
                 .edit()
-                .putLong(RapidFtrApplication.LAST_CHILD_SYNC, child.lastUpdatedAtInMillis())
+                .putLong(RapidFtrApplication.LAST_CHILD_SYNC, lastSynced)
                 .commit();
     }
 

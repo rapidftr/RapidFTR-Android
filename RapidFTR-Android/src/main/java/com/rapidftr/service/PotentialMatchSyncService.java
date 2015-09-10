@@ -63,7 +63,7 @@ public class PotentialMatchSyncService implements SyncService<PotentialMatch> {
     }
 
     @Override
-    public void setLastSyncedAt(PotentialMatch potentialMatch) {
+    public void setLastSyncedAt(PotentialMatch potentialMatch, boolean isLastRecord) {
         RapidFtrApplication.getApplicationInstance()
                 .getSharedPreferences()
                 .edit()

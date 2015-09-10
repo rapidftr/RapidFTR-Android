@@ -157,8 +157,8 @@ public abstract class SynchronisationAsyncTask<T extends BaseModel> extends Asyn
             try {
                 repository.createOrUpdateWithoutHistory(incomingRecord);
                 recordSyncService.setMedia(incomingRecord);
-                recordSyncService.setLastSyncedAt(incomingRecord);
                 setProgressAndNotify(String.format(subStatusFormat, ++counter), startProgress);
+                recordSyncService.setLastSyncedAt(incomingRecord, counter == idsToDownload.size());
                 startProgress += 1;
             } catch (Exception e) {
                 Log.e("SyncAllDataTask", "Error syncing record", e);
