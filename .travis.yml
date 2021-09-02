@@ -20,3 +20,7 @@ script:
   - sh RapidFTR-Android/travis/$CMD
 notifications:
   - email: false
+
+cache:
+  directories:
+  - $HOME/.m2
